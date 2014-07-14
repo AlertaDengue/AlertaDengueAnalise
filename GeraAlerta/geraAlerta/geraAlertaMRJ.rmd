@@ -1,0 +1,139 @@
+Gerador de alerta a nivel de Municipio (versão 1.0)
+===================================================
+
+```{r echo=FALSE}
+source("../fun/Rt.r")
+source("../fun/data2SE.r")
+```
+
+
+```{r echo=FALSE}
+hoje <- Sys.Date()
+SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
+```
+
+**Hoje e' dia `r as.character(hoje)`, SE `r as.character(SEhoje)`**
+
+Dados:
+------
+
+```{r}
+dadosMRJ <- paste("../",dadosMRJ,sep="")
+d<-read.csv(dadosMRJ)
+tail(d)
+```
+
+
+**Rt(dengue)**
+```{r echo=FALSE}
+d$Rt<-Rt(d$casos)
+```
+
+```{r  echo=FALSE}
+par(mfrow=c(2,1),mar=c(3,4,1,1))
+plot(d$casos,type='l',ylab="casos",xlab="",axes=FALSE,main="Serie temporal de casos")
+axis(2)
+plot(d$Rt,main="Rt cidade",axes=FALSE,xlab="",ylab="",type="b",pch=16)
+axis(2)
+axis(1,at=seq(1,length(d$SE),by=6*4),label=d$SE[seq(1,length(d$SE),by=6*4)],las=2,cex.axis=0.7)
+abline(h=1,col=2,lty=3)
+```
+
+**Rt(tweets), com tg=2**
+```{r echo=FALSE}
+d$Rtw <-Rt(d$tweets,tg=2)
+```
+
+```{r  echo=FALSE}
+par(mfrow=c(2,1),mar=c(3,4,1,1))
+plot(d$Rtw,type='l',ylab="Rt(tweets)",xlab="",axes=FALSE,main="Rt(tweets)")
+axis(2)
+abline(h=1,col=2,lty=3)
+```
+
+```{r  echo=FALSE}
+# Cria variavel Rt > 1
+d$Rt1 <- ifelse(d$Rt>1,1,0)
+```
+
+
+Predição
+========
+
+**Modelo de alerta com 3 indicadores**
+
+- Rt > 1 
+- Casos > Media + 1.96dp
+- Temperatura mínima semanal > 24 graus  
+
+1. Estimação de Rt (dengue) a partir dos dados de tweet e clima
+----------------------------------------------------------------------------------------
+lm(Rt~Rtw*temp.min,data=d)
+
+```{r echo=FALSE}
+le=dim(d)[1]
+d$Rt_est<-NA
+
+mod<-lm(Rt~Rtw*temp.min,data=d,na.action=na.exclude)
+d$Rt_est<-predict(mod)
+
+par(mfrow=c(1,1))
+plot(d$Rt,type="l")
+lines(d$Rt_est,col=2)
+abline(h=1,lty=2)
+legend(0,1.7,c("predito","observado"),lty=1,col=c(2,1))
+```
+
+**Rt.est>1**
+```{r}
+d$alertaRt1 <-ifelse(d$Rt_est>1,1,0)
+```
+
+**Temperatura min > Tcrit** 
+d$temp e' a variavel que vai para o bd final
+
+```{r}
+d$temp <- d$temp.min 
+d$temp_crit<-22
+d$alertaTemp <-ifelse(d$temp>d$temp_crit,1,0)
+```
+
+2. Estimacao de casos a partir do Rt: casos(t+1)=casos(t)*Rt
+-------------------------------------------------------------
+
+```{r echo=FALSE}
+d$casos_est<-NA
+d$casos_est[2:le]<-d$casos[1:(le-1)]*d$Rt_est[2:le]
+plot(d$casos,type="l")
+lines(d$casos.est,col=2)
+```
+
+**Casos > media+1.96dp**
+
+```{r}
+limiarinc<-mean(d$casos,na.rm=TRUE)+1.96*sd(d$casos,na.rm=TRUE)
+d$casos_crit<-limiarinc
+d$alertaCasos<-ifelse(d$casos_est>d$casos_crit,1,0)
+```
+
+
+Salvar
+======
+
+Primeiro, cortar a parte final que nao tenha os 3 alertas:
+
+```{r echo=FALSE}
+d$test<- with(d, alertaRt1+alertaTemp+alertaCasos)
+df <- d[is.na(d$test)==FALSE,c("SE","casos","tweets","temp","Rt","temp","temp_crit","casos_crit","alertaRt1","alertaTemp","alertaCasos")]
+```
+
+```{r echo=FALSE}
+outputfile = paste("../alerta/alertaMRJ_",max(df$SE),".csv",sep="")
+```
+
+- **Data do alerta: `r max(df$SE)`**
+- Arquivo de saida: `r outputfile`  
+
+```{r}
+write.table(df,file=outputfile,row.names=FALSE,sep=",")
+```
