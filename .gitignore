@@ -3,4 +3,5 @@
 *.html
 *.dbf
 *.csv
-*.rdata
+.RData
+.Rhistory
