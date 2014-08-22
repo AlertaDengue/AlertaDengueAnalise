@@ -5,7 +5,7 @@ todas as APS
 
 ```{r include=FALSE}
 #library("lubridate")
-#library(xts)
+library(xts)
 source("../fun/data2SE.r")
 ```
 
@@ -13,8 +13,10 @@ Abre dados:
 -----------
 
 ```{r}
-novoclima <- novosinan <- paste("../",novoclima,sep="")
-d<-read.csv2(novoclima)
+#novoclima <- novosinan <- paste("../",novoclima,sep="")
+#d<-read.csv2(novoclima)
+galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
+d <- galeao
 tail(d)
 ```
 
@@ -31,7 +33,7 @@ d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
 
 Acumular por SE e estacao
 ```{r echo=FALSE}
-df<-aggregate(d[,2:9],by=list(estacao=d$estacao,SE=d$SE),FUN=mean,na.rm=TRUE)
+df<-aggregate(d[,3:10],by=list(estacao=d$estacao,SE=d$SE),FUN=mean,na.rm=TRUE)
 head(df)
 ```
 
