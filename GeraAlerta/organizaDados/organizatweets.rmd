@@ -1,0 +1,86 @@
+Organização dos dados do tweet RJ
+===================================
+Concatena os dados mais recentes com a serie historica. Sao precisos 3 dados de entrada:
+- serie historica em semanas (a mais atualizada que tiver)
+- ultima serie de tweets recem-recebidos, diarios
+- penultima serie de tweets diarios (necessario porque as vezes a semana epidemiologica nao fecha direitinho) 
+
+
+```{r, echo=FALSE}
+# funcoes criadas para o projeto
+source("../fun/data2SE.r")
+source("../fun/concatweet.r")
+```
+
+
+Dados 
+-----
+
+**Serie historica de tweets por semana:**
+```{r}
+ult_tweet_limpo<-paste("../",ult_tweet_limpo,sep="")
+dant<-read.csv(ult_tweet_limpo)
+```
+
+**Penultima serie da tweets diarios:**
+
+```{r}
+penultimotweet_diario<-paste("../",penultimotweet_diario,sep="")
+d1<-read.table(penultimotweet_diario,sep=",",header=TRUE)[,c("data","rio")]
+d1
+```
+
+**Ultima serie de tweets diarios:**
+```{r}
+ultimotweet_diario<-paste("../",ultimotweet_diario,sep="")
+d2<-read.csv(ultimotweet_diario)[,c("data","rio")]
+d2
+```
+
+Concatenacao
+------------
+
+Concatenar as series diarias, preenchendo com NA, se necessario.
+```{r echo=FALSE}
+d<-concatweet(d1,d2)
+d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")   
+```
+
+```{r echo=FALSE}
+ult<-sum(d$SE==max(d$SE))
+pri<-sum(d$SE==min(d$SE))
+```
+
+A serie tem `r pri` dias na primeira semana e `r ult` dias na ultima semana. Serao removidos.
+
+**Tweets/semana**
+```{r echo=FALSE}
+dsem<-aggregate(d$rio,by=list(SE=d$SE),FUN=sum,na.rm=TRUE)
+names(dsem)[2]<-"tweets"
+if (ult<7) dsem<-dsem[-(dim(dsem)[1]),]
+if (pri<7) dsem<-dsem[-1,]
+dsem
+```
+
+```{r echo=FALSE}
+twRJ <- merge(dant,dsem,all=TRUE)
+```
+
+```{r echo=FALSE}
+plot(twRJ$tweets,type="l",ylab="tweets",xlab="semana",main="Serie temporal completa 2011-2014")
+abline(v=156,lty=3)
+```
+
+Salvar
+------
+
+```{r echo=FALSE}
+outputfile = paste("../dados_limpos/tweet_",max(twRJ$SE),".csv",sep="")
+```
+
+O arquivo de saida e' `r outputfile`  
+
+```{r}
+write.table(twRJ,file=outputfile,sep=",",row.names=FALSE)
+```
+

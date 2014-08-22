@@ -1,0 +1,114 @@
+#!/usr/bin/env Rscript
+
+Junta todos os dados para o alerta
+=====================================
+
+```{r echo=FALSE}
+source("../fun/data2SE.r")
+```
+
+```{r echo=FALSE}
+hoje <- Sys.Date()
+SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
+```
+
+**Hoje e' dia `r hoje`, SE `r as.character(SEhoje)`**
+
+Dados 
+------
+
+Casos de Dengue no MRJ
+
+```{r}
+dengueRJlimpo<-paste("../",dengueRJlimpo,sep="")
+st<-read.csv(dengueRJlimpo)
+```
+
+Casos de Dengue por APS
+```{r}
+dengueAPSlimpo<-paste("../",dengueAPSlimpo,sep="")
+st.ap<-read.csv(dengueAPSlimpo)
+```
+
+Tweets
+```{r}
+twlimpo<-paste("../",twlimpo,sep="")
+tw<-read.csv(twlimpo)
+```
+
+Temperatura 
+```{r}
+climalimpo<-paste("../",climalimpo,sep="")
+tempAP<-read.csv(climalimpo)
+
+```
+
+
+Tabela a nivel de municipio
+---------------------------------
+
+```{r echo=FALSE}
+# agregar por municipio
+temp<-aggregate(tempAP[,4:11],by=list(SE=tempAP$SE),mean)
+names(temp)[2]<-"tmin"
+```
+
+
+```{r echo=FALSE}
+# merge
+d<-merge(st,tw,all=TRUE)
+d<-merge(d,temp,all=TRUE)
+```
+
+```{r echo=FALSE}
+tail(d)
+```
+ 
+
+```{r echo=FALSE}
+outputfile = paste("../dados_limpos/dadosMRJ_",max(d$SE),".csv",sep="")
+```
+
+ 
+
+```{r}
+write.table(d,file=outputfile,row.names=FALSE,sep=",")
+``` 
+
+Dados por APS
+--------------
+  
+```{r  echo=FALSE}
+listaAPS<-unique(st.ap$APS)
+```
+
+```{r echo=FALSE}
+#Juntando dados de temperatura
+Rt.ap<-merge(st.ap,tempAP,by=c(SE="SE",APS="APS"),all=TRUE)
+```
+
+
+```{r echo=FALSE}
+#Juntado dados dos tweets
+yi<-merge(tw,Rt.ap[Rt.ap$APS==listaAPS[1],],by=c("SE"),all=TRUE)
+yi$APS<-listaAPS[1]
+for (i in 2:10) {
+      y<- merge(tw,Rt.ap[Rt.ap$APS==listaAPS[i],],by=c("SE"),all=TRUE)
+      y$APS<-listaAPS[i]
+      yi<-rbind(yi,y)
+      }
+Rt.ap <- yi
+rm(yi)
+
+tail(Rt.ap)
+```
+
+
+```{r echo=FALSE}
+outputfile = paste("../dados_limpos/dadosAPS_",max(d$SE),".csv",sep="")
+```
+
+
+```{r}
+write.table(Rt.ap,file=outputfile,row.names=FALSE,sep=",")
+``` 

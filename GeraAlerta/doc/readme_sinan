@@ -1,0 +1,18 @@
+### Sinan 2010-2013 ####
+- Dados sinan 2010-2013 nao vieram com informacao de bairro, so xy
+
+- O Flavio fez uma funcao converte.py para localizar xy -> APS. Esse
+mapeamento esta nos arquivos /dados/aps_201*.csv . 
+
+- o script "organizasinan2010-13.rmd" faz o merge do dbf original com o criado pelo converte.py e salva as series de casos por semana por APS  de 2010 e 2013
+
+- o script gera dois objetos: st10.13 com a serie temporal e st10.13.ap com a serie por aps. Ambos salvos num arquivo casos2010.2013.Rdata
+
+- Esses dados sao usados no organizasinan2014 para agregar com os casos novos do ano em aberto. AO VIRAR O ANO, ISSO TERÁ QUE SER REVISTO
+
+## Sinan 2014 ########
+
+- requer arquivo "bairro2AP.csv" para converter bairro em AP. 
+
+- salva STsinan.RData para usar no alerta
+

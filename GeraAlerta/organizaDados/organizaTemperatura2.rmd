@@ -1,0 +1,71 @@
+Organiza dados de temperatura do Alerta dengue 
+===============================================
+Usa dados do OpenWeather, atualmente so' de uma estacao, que e' replicado para
+todas as APS
+
+```{r include=FALSE}
+#library("lubridate")
+#library(xts)
+source("../fun/data2SE.r")
+```
+
+Abre dados: 
+-----------
+
+```{r}
+novoclima <- novosinan <- paste("../",novoclima,sep="")
+d<-read.csv2(novoclima)
+tail(d)
+```
+
+```{r echo=FALSE}
+d$estacao <- "galeao"
+```
+
+Incluir variavel semana epidemiologica
+
+```{r echo=FALSE}
+d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
+#head(d[,c("data","SE")])
+```
+
+Acumular por SE e estacao
+```{r echo=FALSE}
+df<-aggregate(d[,2:9],by=list(estacao=d$estacao,SE=d$SE),FUN=mean,na.rm=TRUE)
+head(df)
+```
+
+```{r echo=FALSE}
+tmin.ts <- xts(d$temp.min,as.Date(d$data))
+plot(tmin.ts,type="s")
+abline(h=24,lty=2,col=2)
+```
+
+
+```{r echo=FALSE}
+#Estacao -> APS
+listaAPS<-c("AP1","AP2.1","AP2.2","AP3.1","AP3.2","AP3.3","AP4","AP5.1","AP5.2","AP5.3")
+dAP<-cbind(APS="AP1",df[df$estacao=="galeao",])
+dAP<-rbind(dAP,cbind(APS="AP2.1",df[df$estacao=="galeao",]))
+dAP<-rbind(dAP,cbind(APS="AP2.2",df[df$estacao=="galeao",]))
+dAP<-rbind(dAP,cbind(APS="AP3.1",df[df$estacao=="galeao",]))
+dAP<-rbind(dAP,cbind(APS="AP3.2",df[df$estacao=="galeao",]))
+dAP<-rbind(dAP,cbind(APS="AP3.3",df[df$estacao=="galeao",]))
+dAP<-rbind(dAP,cbind(APS="AP4",df[df$estacao=="galeao",]))
+dAP<-rbind(dAP,cbind(APS="AP5.1",df[df$estacao=="galeao",]))
+dAP<-rbind(dAP,cbind(APS="AP5.2",df[df$estacao=="galeao",]))
+dAP<-rbind(dAP,cbind(APS="AP5.3",df[df$estacao=="galeao",]))
+```
+
+Salvar:
+```{r echo=FALSE}
+outputfile = paste("../dados_limpos/temp_",max(dAP$SE),".csv",sep="")
+```
+
+```{r}
+outputfile
+```
+
+```{r}
+write.table(dAP,file=outputfile,sep=",",row.names=FALSE)
+```
