@@ -34,8 +34,9 @@ novosinan <- "dados_brutos/sinan/Dengue2014_23_06_2014.dbf"
 #-----------------------------
 # 2. Ultimos dados de temperatura:
 #-----------------------------
-#(atualmente so uma estacao)
-novoclima <- "dados_brutos/clima/galeao_01012010-15062014.csv"
+#(atualmente so uma estacao - galeao)
+#novoclima <- "dados_brutos/clima/galeao_01012010-15062014.csv" # antigo
+# atualmente capta direto da internet galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
 
 #-----------------------
 # 3. Ultimos dados de tweet:
