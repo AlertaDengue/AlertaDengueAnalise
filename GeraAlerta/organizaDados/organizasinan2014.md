@@ -71,19 +71,3 @@ Numero de registros sem AP (falha no mapeamento bairro -> APS)
 **Salvando**
 
 
-
-```r
-outputfile1
-```
-
-```
-## [1] "../dados_limpos/sinanAP_201433.csv"
-```
-
-```r
-outputfile2
-```
-
-```
-## [1] "../dados_limpos/sinanRJ_201433.csv"
-```

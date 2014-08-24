@@ -10,26 +10,28 @@ Abre dados:
 
 
 ```r
-novoclima <- novosinan <- paste("../",novoclima,sep="")
-d<-read.csv2(novoclima)
+#novoclima <- novosinan <- paste("../",novoclima,sep="")
+#d<-read.csv2(novoclima)
+galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
+d <- galeao
 tail(d)
 ```
 
 ```
-##            data temp.mean temp.sd temp.min temp.max umid.mean umid.sd
-## 1620 2014-06-10     22.48    0.89       21       24     80.93    8.43
-## 1621 2014-06-11     22.92    2.10       21       27     79.79   13.77
-## 1622 2014-06-12     22.96    2.22       19       27     76.46    9.67
-## 1623 2014-06-13     23.17    2.32       20       27     74.88   10.28
-## 1624 2014-06-14     22.67    3.32       18       28     70.62   12.93
-## 1625 2014-06-15     22.92    2.80       19       27     74.42   13.35
+##         X       data temp.mean temp.sd temp.min temp.max umid.mean umid.sd
+## 1627 1627 2014-07-08     22.52    1.39       20       25     73.92    6.23
+## 1628 1628 2014-07-09     21.79    2.08       19       26     76.42   11.22
+## 1629 1629 2014-07-10     20.73    1.19       19       23     83.58    5.35
+## 1630 1630 2014-07-11     19.48    1.37       18       23     83.56    9.00
+## 1631 1631 2014-07-12     20.19    1.23       19       22     81.19    7.29
+## 1632 1632 2014-07-13     20.88    2.25       18       25     68.58   11.84
 ##      umid.min umid.max
-## 1620       57       94
-## 1621       51       94
-## 1622       58       94
-## 1623       58       88
-## 1624       45       88
-## 1625       51       94
+## 1627       61       83
+## 1628       54       94
+## 1629       73       88
+## 1630       61       94
+## 1631       69       88
+## 1632       50       88
 ```
 
 
@@ -71,10 +73,10 @@ outputfile
 ```
 
 ```
-## [1] "../dados_limpos/temp_201425.csv"
+## [1] "../dados_limpos/temp_201429.csv"
 ```
 
 
 ```r
-write.table(dAP,file=outputfile,sep=",",row.names=FALSE)
+write.table(dAP,file="../dados_limpos/climasemanaRJ.csv",sep=",",row.names=FALSE)
 ```

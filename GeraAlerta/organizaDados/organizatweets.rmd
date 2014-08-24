@@ -16,25 +16,17 @@ source("../fun/concatweet.r")
 Dados 
 -----
 
-**Serie historica de tweets por semana:**
+**Serie historica de tweets por semana (2010-2013):**
 ```{r}
-ult_tweet_limpo<-paste("../",ult_tweet_limpo,sep="")
-dant<-read.csv(ult_tweet_limpo)
+dant<-read.csv("../dados_limpos/tweets_week_2010-2013.csv")
 ```
 
-**Penultima serie da tweets diarios:**
-
+**Serie de 2014 de tweets diarios:**
 ```{r}
-penultimotweet_diario<-paste("../",penultimotweet_diario,sep="")
-d1<-read.table(penultimotweet_diario,sep=",",header=TRUE)[,c("data","rio")]
-d1
-```
-
-**Ultima serie de tweets diarios:**
-```{r}
-ultimotweet_diario<-paste("../",ultimotweet_diario,sep="")
-d2<-read.csv(ultimotweet_diario)[,c("data","rio")]
-d2
+comando<-paste("../../pega_tweets.py -i 2014-01-05 -f ",Sys.Date()) # primeira SE de 2014 ate hoje
+system(comando)
+d<-read.csv("tweets_teste.csv",header=TRUE)[,1:2]
+names(d)[2]<-"rio"
 ```
 
 Concatenacao
@@ -63,24 +55,17 @@ dsem
 ```
 
 ```{r echo=FALSE}
-twRJ <- merge(dant,dsem,all=TRUE)
+twRJ <- rbind(dant[,2:3],dsem)
 ```
 
 ```{r echo=FALSE}
-plot(twRJ$tweets,type="l",ylab="tweets",xlab="semana",main="Serie temporal completa 2011-2014")
-abline(v=156,lty=3)
+plot(twRJ$SE,twRJ$tweets,ylab="tweets",xlab="semana",main="Serie temporal completa 2010-2014")
 ```
 
 Salvar
 ------
 
-```{r echo=FALSE}
-outputfile = paste("../dados_limpos/tweet_",max(twRJ$SE),".csv",sep="")
-```
-
-O arquivo de saida e' `r outputfile`  
-
 ```{r}
-write.table(twRJ,file=outputfile,sep=",",row.names=FALSE)
+write.table(twRJ,file="../dados_limpos/tweetsemanaRJ.csv",sep=",",row.names=FALSE)
 ```
 

@@ -17,30 +17,11 @@ SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
 Dados 
 ------
 
-Casos de Dengue no MRJ
-
-```{r}
-dengueRJlimpo<-paste("../",dengueRJlimpo,sep="")
-st<-read.csv(dengueRJlimpo)
-```
-
-Casos de Dengue por APS
-```{r}
-dengueAPSlimpo<-paste("../",dengueAPSlimpo,sep="")
-st.ap<-read.csv(dengueAPSlimpo)
-```
-
-Tweets
-```{r}
-twlimpo<-paste("../",twlimpo,sep="")
-tw<-read.csv(twlimpo)
-```
-
-Temperatura 
-```{r}
-climalimpo<-paste("../",climalimpo,sep="")
-tempAP<-read.csv(climalimpo)
-
+```{r echo=FALSE}
+st<-read.csv("../dados_limpos/sinansemana_RJ.csv")
+st.ap<-read.csv("../dados_limpos/sinansemanaAP_RJ.csv")
+tw<-read.csv("../dados_limpos/tweetsemanaRJ.csv")
+tempAP <- read.csv("../dados_limpos/climasemanaRJ.csv")
 ```
 
 
@@ -48,9 +29,8 @@ Tabela a nivel de municipio
 ---------------------------------
 
 ```{r echo=FALSE}
-# agregar por municipio
+# agregar clima pro municipio
 temp<-aggregate(tempAP[,4:11],by=list(SE=tempAP$SE),mean)
-names(temp)[2]<-"tmin"
 ```
 
 

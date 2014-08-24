@@ -7,7 +7,7 @@ versao 0.1
 
 
 
-**Hoje e' dia 2014-07-10 , SE 201428**
+**Hoje e' dia 2014-08-22 , SE 201434**
 
 
 
@@ -19,12 +19,12 @@ versao 0.1
 
 
 
-Os ultimos dados disponiveis de casos de dengue se referem a'semana 201425:
+Os ultimos dados disponiveis de casos de dengue se referem a'semana 201433:
 
 
 ```
 ##   AP1 AP2.1 AP2.2 AP3.1 AP3.2 AP3.3   AP4 AP5.1 AP5.2 AP5.3 
-##     0     3     0     0     0     0     0     1     0     0
+##     0     0     1     0     0     0     0     0     1     0
 ```
 
 
@@ -37,17 +37,17 @@ Os ultimos dados disponiveis de casos de dengue se referem a'semana 201425:
 
 
 
-Os ultimos dados disponiveis de tweet sao da semana 201425:
+Os ultimos dados disponiveis de tweet sao da semana 201433:
 
 
 ```
 ##          SE tweets
-## 2655 201420    105
-## 2656 201421     41
-## 2657 201422     80
-## 2658 201423     54
-## 2659 201424     49
-## 2660 201425     55
+## 2415 201428     61
+## 2416 201429     56
+## 2417 201430     55
+## 2418 201431     54
+## 2419 201432     68
+## 2420 201433     47
 ```
 
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
@@ -62,12 +62,12 @@ Os ultimos dados disponiveis de tweet sao da semana 201425:
 
 
 
-Os ultimos dados disponiveis de temperatura minima sao da semana 201425. 
+Os ultimos dados disponiveis de temperatura minima sao da semana 201429. 
 
 
 ```
 ##   AP1 AP2.1 AP2.2 AP3.1 AP3.2 AP3.3   AP4 AP5.1 AP5.2 AP5.3 
-##    19    19    19    19    19    19    19    19    19    19
+##    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
 ```
 
       
@@ -142,12 +142,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP1"
 ##          SE APS alertaTemp alertaRt1 alertaCasos
-## 2861 201420 AP1          0         0           0
-## 2871 201421 AP1          0         0           0
-## 2881 201422 AP1          0         0           0
-## 2891 201423 AP1          0         0           0
-## 2901 201424 AP1          0         0           0
-## 2911 201425 AP1          0         0           0
+## 2361 201428 AP1          0         0           0
+## 2371 201429 AP1          0         0           0
+## 2381 201430 AP1         NA        NA          NA
+## 2391 201431 AP1         NA        NA          NA
+## 2401 201432 AP1         NA        NA          NA
+## 2411 201433 AP1         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-231.png) 
@@ -155,12 +155,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP2.1"
 ##          SE   APS alertaTemp alertaRt1 alertaCasos
-## 2862 201420 AP2.1          0         0           0
-## 2872 201421 AP2.1          0         0           0
-## 2882 201422 AP2.1          0         0           0
-## 2892 201423 AP2.1          0         1           0
-## 2902 201424 AP2.1          0         0           0
-## 2912 201425 AP2.1          0         0           0
+## 2362 201428 AP2.1          0         0           0
+## 2372 201429 AP2.1          0         0           0
+## 2382 201430 AP2.1         NA        NA          NA
+## 2392 201431 AP2.1         NA        NA          NA
+## 2402 201432 AP2.1         NA        NA          NA
+## 2412 201433 AP2.1         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-232.png) 
@@ -168,12 +168,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP2.2"
 ##          SE   APS alertaTemp alertaRt1 alertaCasos
-## 2863 201420 AP2.2          0         0           0
-## 2873 201421 AP2.2          0         0           0
-## 2883 201422 AP2.2          0         0           0
-## 2893 201423 AP2.2          0         1           0
-## 2903 201424 AP2.2          0         0           0
-## 2913 201425 AP2.2          0         0           0
+## 2363 201428 AP2.2          0         0           0
+## 2373 201429 AP2.2          0         0           0
+## 2383 201430 AP2.2         NA        NA          NA
+## 2393 201431 AP2.2         NA        NA          NA
+## 2403 201432 AP2.2         NA        NA          NA
+## 2413 201433 AP2.2         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-233.png) 
@@ -181,12 +181,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP3.1"
 ##          SE   APS alertaTemp alertaRt1 alertaCasos
-## 2864 201420 AP3.1          0         0           0
-## 2874 201421 AP3.1          0         0           0
-## 2884 201422 AP3.1          0         0           0
-## 2894 201423 AP3.1          0         0           0
-## 2904 201424 AP3.1          0         0           0
-## 2914 201425 AP3.1          0         0           0
+## 2364 201428 AP3.1          0         0           0
+## 2374 201429 AP3.1          0         0           0
+## 2384 201430 AP3.1         NA        NA          NA
+## 2394 201431 AP3.1         NA        NA          NA
+## 2404 201432 AP3.1         NA        NA          NA
+## 2414 201433 AP3.1         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-234.png) 
@@ -194,12 +194,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP3.2"
 ##          SE   APS alertaTemp alertaRt1 alertaCasos
-## 2865 201420 AP3.2          0         0           0
-## 2875 201421 AP3.2          0         0           0
-## 2885 201422 AP3.2          0         0           0
-## 2895 201423 AP3.2          0         0           0
-## 2905 201424 AP3.2          0         0           0
-## 2915 201425 AP3.2          0         0           0
+## 2365 201428 AP3.2          0         0           0
+## 2375 201429 AP3.2          0         0           0
+## 2385 201430 AP3.2         NA        NA          NA
+## 2395 201431 AP3.2         NA        NA          NA
+## 2405 201432 AP3.2         NA        NA          NA
+## 2415 201433 AP3.2         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-235.png) 
@@ -207,12 +207,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP3.3"
 ##          SE   APS alertaTemp alertaRt1 alertaCasos
-## 2866 201420 AP3.3          0         0           0
-## 2876 201421 AP3.3          0         0           0
-## 2886 201422 AP3.3          0         0           0
-## 2896 201423 AP3.3          0         0           0
-## 2906 201424 AP3.3          0         0           0
-## 2916 201425 AP3.3          0         0           0
+## 2366 201428 AP3.3          0         0           0
+## 2376 201429 AP3.3          0         0           0
+## 2386 201430 AP3.3         NA        NA          NA
+## 2396 201431 AP3.3         NA        NA          NA
+## 2406 201432 AP3.3         NA        NA          NA
+## 2416 201433 AP3.3         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-236.png) 
@@ -220,12 +220,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP4"
 ##          SE APS alertaTemp alertaRt1 alertaCasos
-## 2867 201420 AP4          0         0           0
-## 2877 201421 AP4          0         0           0
-## 2887 201422 AP4          0         0           0
-## 2897 201423 AP4          0         0           0
-## 2907 201424 AP4          0         0           0
-## 2917 201425 AP4          0         0           0
+## 2367 201428 AP4          0         0           0
+## 2377 201429 AP4          0         0           0
+## 2387 201430 AP4         NA        NA          NA
+## 2397 201431 AP4         NA        NA          NA
+## 2407 201432 AP4         NA        NA          NA
+## 2417 201433 AP4         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-237.png) 
@@ -233,12 +233,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP5.1"
 ##          SE   APS alertaTemp alertaRt1 alertaCasos
-## 2868 201420 AP5.1          0         0           0
-## 2878 201421 AP5.1          0         0           0
-## 2888 201422 AP5.1          0         0           0
-## 2898 201423 AP5.1          0         0           0
-## 2908 201424 AP5.1          0         0           0
-## 2918 201425 AP5.1          0         0           0
+## 2368 201428 AP5.1          0         0           0
+## 2378 201429 AP5.1          0         0           0
+## 2388 201430 AP5.1         NA        NA          NA
+## 2398 201431 AP5.1         NA        NA          NA
+## 2408 201432 AP5.1         NA        NA          NA
+## 2418 201433 AP5.1         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-238.png) 
@@ -246,12 +246,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP5.2"
 ##          SE   APS alertaTemp alertaRt1 alertaCasos
-## 2869 201420 AP5.2          0         0           0
-## 2879 201421 AP5.2          0         0           0
-## 2889 201422 AP5.2          0         0           0
-## 2899 201423 AP5.2          0         0           0
-## 2909 201424 AP5.2          0         0           0
-## 2919 201425 AP5.2          0         0           0
+## 2369 201428 AP5.2          0         0           0
+## 2379 201429 AP5.2          0         0           0
+## 2389 201430 AP5.2         NA        NA          NA
+## 2399 201431 AP5.2         NA        NA          NA
+## 2409 201432 AP5.2         NA        NA          NA
+## 2419 201433 AP5.2         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-239.png) 
@@ -259,12 +259,12 @@ serao usados para criar o codigo de cores do alerta.
 ```
 ## [1] "AP5.3"
 ##          SE   APS alertaTemp alertaRt1 alertaCasos
-## 2870 201420 AP5.3          0         0           0
-## 2880 201421 AP5.3          0         0           0
-## 2890 201422 AP5.3          0         0           0
-## 2900 201423 AP5.3          0         0           0
-## 2910 201424 AP5.3          0         0           0
-## 2920 201425 AP5.3          0         0           0
+## 2370 201428 AP5.3          0         0           0
+## 2380 201429 AP5.3          0         0           0
+## 2390 201430 AP5.3         NA        NA          NA
+## 2400 201431 AP5.3         NA        NA          NA
+## 2410 201432 AP5.3         NA        NA          NA
+## 2420 201433 AP5.3         NA        NA          NA
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-2310.png) 
@@ -277,7 +277,7 @@ serao usados para criar o codigo de cores do alerta.
 
 
 
-- **Data do alerta: 201425**
-- Arquivo de saida: ../alerta/alertaAPS_201425.csv  
+- **Data do alerta: 201429**
+- Arquivo de saida: ../alerta/alertaAPS_201429.csv  
 
 

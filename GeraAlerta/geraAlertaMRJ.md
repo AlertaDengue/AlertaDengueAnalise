@@ -6,7 +6,7 @@ Gerador de alerta a nivel de Municipio (versão 1.0)
 
 
 
-**Hoje e' dia 2014-07-10, SE 201428**
+**Hoje e' dia 2014-08-22, SE 201434**
 
 Dados:
 ------
@@ -19,20 +19,20 @@ tail(d)
 ```
 
 ```
-##         SE casos tweets  tmin temp.sd temp.min temp.max umid.mean umid.sd
-## 261 201420    63    105 21.49   3.244    17.00    27.14     70.18   15.61
-## 262 201421    57     41 23.47   2.420    20.00    27.57     73.25   11.44
-## 263 201422    38     80 21.17   2.059    18.43    25.00     77.14   10.58
-## 264 201423    40     54 22.19   3.019    18.71    28.00     72.01   14.86
-## 265 201424    19     49 23.37   2.706    19.43    27.86     72.66   12.77
-## 266 201425     4     55 22.92   2.800    19.00    27.00     74.42   13.35
-##     umid.min umid.max
-## 261    40.86    88.86
-## 262    53.29    87.57
-## 263    56.14    91.57
-## 264    45.43    89.71
-## 265    48.29    89.86
-## 266    51.00    94.00
+##         SE casos tweets temp.mean temp.sd temp.min temp.max umid.mean
+## 237 201428    25     61     21.36   1.825       19    24.83     77.77
+## 238 201429    26     56     20.88   2.250       18    25.00     68.58
+## 239 201430    24     55        NA      NA       NA       NA        NA
+## 240 201431    41     54        NA      NA       NA       NA        NA
+## 241 201432    29     68        NA      NA       NA       NA        NA
+## 242 201433     2     47        NA      NA       NA       NA        NA
+##     umid.sd umid.min umid.max
+## 237   9.377     58.5    89.17
+## 238  11.840     50.0    88.00
+## 239      NA       NA       NA
+## 240      NA       NA       NA
+## 241      NA       NA       NA
+## 242      NA       NA       NA
 ```
 
 
@@ -104,8 +104,8 @@ Primeiro, cortar a parte final que nao tenha os 3 alertas:
 
 
 
-- **Data do alerta: 201425**
-- Arquivo de saida: ../alerta/alertaMRJ_201425.csv  
+- **Data do alerta: 201429**
+- Arquivo de saida: ../alerta/alertaMRJ_201429.csv  
 
 
 ```r

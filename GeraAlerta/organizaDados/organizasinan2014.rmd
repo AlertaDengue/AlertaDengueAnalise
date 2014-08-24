@@ -92,13 +92,9 @@ legend(0,1.5*max(st.ap$casos),listaAPS,lty=1,col=1:10,cex=0.6)
 
 **Salvando**
 ```{r echo=FALSE}
-outputfile1 = paste("../dados_limpos/sinanAP_",max(st$SE),".csv",sep="")
-write.table(st.ap,file=outputfile1,sep=",",row.names=FALSE)
-outputfile2 = paste("../dados_limpos/sinanRJ_",max(st$SE),".csv",sep="")
-write.table(st,file=outputfile2,sep=",",row.names=FALSE)
+#outputfile1 = paste("../dados_limpos/sinanAP_",max(st$SE),".csv",sep="")
+write.table(st.ap,file="../dados_limpos/sinansemanaAP_RJ.csv",sep=",",row.names=FALSE)
+#outputfile2 = paste("../dados_limpos/sinanRJ_",max(st$SE),".csv",sep="")
+write.table(st,file="../dados_limpos/sinansemana_RJ.csv",sep=",",row.names=FALSE)
 ```
 
-```{r}
-outputfile1
-outputfile2
-```

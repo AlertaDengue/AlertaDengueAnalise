@@ -69,5 +69,5 @@ outputfile
 ```
 
 ```{r}
-write.table(dAP,file=outputfile,sep=",",row.names=FALSE)
+write.table(dAP,file="../dados_limpos/climasemanaRJ.csv",sep=",",row.names=FALSE)
 ```
