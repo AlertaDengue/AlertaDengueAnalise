@@ -33,7 +33,7 @@ Concatenacao
 Concatenar as series diarias, preenchendo com NA, se necessario.
 
 ```
-## Error: objeto 'd2' não encontrado
+## Error: objeto 'd1' não encontrado
 ```
 
 
@@ -76,6 +76,8 @@ A serie tem 7 dias na primeira semana e 2 dias na ultima semana. Serao removidos
 ## 30 201431     54
 ## 31 201432     68
 ## 32 201433     47
+## 33 201434     50
+## 34 201435     68
 ```
 
 

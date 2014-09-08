@@ -2,26 +2,26 @@
 
 <h1>Junta todos os dados para o alerta</h1>
 
-<p><strong>Hoje e&#39; dia 2014-08-22, SE 201434</strong></p>
+<p><strong>Hoje e&#39; dia 2014-09-03, SE 201436</strong></p>
 
 <h2>Dados </h2>
 
 <h2>Tabela a nivel de municipio</h2>
 
-<pre><code>##         SE casos tweets temp.mean temp.sd temp.min temp.max umid.mean
-## 237 201428    25     61     21.36   1.825       19    24.83     77.77
-## 238 201429    26     56     20.88   2.250       18    25.00     68.58
-## 239 201430    24     55        NA      NA       NA       NA        NA
-## 240 201431    41     54        NA      NA       NA       NA        NA
-## 241 201432    29     68        NA      NA       NA       NA        NA
-## 242 201433     2     47        NA      NA       NA       NA        NA
-##     umid.sd umid.min umid.max
-## 237   9.377     58.5    89.17
-## 238  11.840     50.0    88.00
-## 239      NA       NA       NA
-## 240      NA       NA       NA
-## 241      NA       NA       NA
-## 242      NA       NA       NA
+<pre><code>##         SE casos tweets temp.sd temp.min temp.max umid.mean umid.sd
+## 239 201430    26     55   2.790    17.14    26.00     67.23   12.26
+## 240 201431    39     54   2.471    16.14    23.86     77.39   11.20
+## 241 201432    31     68   3.461    15.86    26.14     74.25   15.75
+## 242 201433    30     47   3.149    16.29    25.57     76.34   12.48
+## 243 201434     5     50   2.847    18.00    26.71     78.02   13.21
+## 244 201435    NA     68   5.140    17.00    32.00     68.50   25.40
+##     umid.min umid.max estacao.1
+## 239    44.14    84.57        NA
+## 240    55.86    90.57        NA
+## 241    46.71    93.29        NA
+## 242    54.86    91.43        NA
+## 243    52.86    93.29        NA
+## 244    24.00    94.00        NA
 </code></pre>
 
 <pre><code class="r">write.table(d,file=outputfile,row.names=FALSE,sep=&quot;,&quot;)
@@ -29,20 +29,20 @@
 
 <h2>Dados por APS</h2>
 
-<pre><code>##          SE tweets   APS casos estacao temp.mean temp.sd temp.min temp.max
-## 2415 201428     61 AP5.3     0  galeao     21.36   1.825       19    24.83
-## 2416 201429     56 AP5.3     2  galeao     20.88   2.250       18    25.00
-## 2417 201430     55 AP5.3     3    &lt;NA&gt;        NA      NA       NA       NA
-## 2418 201431     54 AP5.3     7    &lt;NA&gt;        NA      NA       NA       NA
-## 2419 201432     68 AP5.3    10    &lt;NA&gt;        NA      NA       NA       NA
-## 2420 201433     47 AP5.3     0    &lt;NA&gt;        NA      NA       NA       NA
-##      umid.mean umid.sd umid.min umid.max
-## 2415     77.77   9.377     58.5    89.17
-## 2416     68.58  11.840     50.0    88.00
-## 2417        NA      NA       NA       NA
-## 2418        NA      NA       NA       NA
-## 2419        NA      NA       NA       NA
-## 2420        NA      NA       NA       NA
+<pre><code>##          SE tweets   APS casos estacao temp.sd temp.min temp.max umid.mean
+## 2435 201430     55 AP5.3     2  galeao   2.790    17.14    26.00     67.23
+## 2436 201431     54 AP5.3     5  galeao   2.471    16.14    23.86     77.39
+## 2437 201432     68 AP5.3     7  galeao   3.461    15.86    26.14     74.25
+## 2438 201433     47 AP5.3     1  galeao   3.149    16.29    25.57     76.34
+## 2439 201434     50 AP5.3     3  galeao   2.847    18.00    26.71     78.02
+## 2440 201435     68 AP5.3    NA  galeao   5.140    17.00    32.00     68.50
+##      umid.sd umid.min umid.max estacao.1
+## 2435   12.26    44.14    84.57        NA
+## 2436   11.20    55.86    90.57        NA
+## 2437   15.75    46.71    93.29        NA
+## 2438   12.48    54.86    91.43        NA
+## 2439   13.21    52.86    93.29        NA
+## 2440   25.40    24.00    94.00        NA
 </code></pre>
 
 <pre><code class="r">write.table(Rt.ap,file=outputfile,row.names=FALSE,sep=&quot;,&quot;)

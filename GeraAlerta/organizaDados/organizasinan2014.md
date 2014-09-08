@@ -16,13 +16,13 @@ novosinan <- paste("../",novosinan,sep="")
 
 
 ```
-##   DT_NOTIFIC SEM_NOT NU_ANO DT_SIN_PRI SEM_PRI   NM_BAIRRO
-## 1 2014-01-15  201403   2014 2014-01-11  201402      TIJUCA
-## 2 2014-01-10  201402   2014 2014-01-07  201402       BANGU
-## 3 2014-01-09  201402   2014 2014-01-03  201401 SAO CONRADO
-## 4 2014-01-16  201403   2014 2014-01-03  201401    ANCHIETA
-## 5 2014-01-06  201402   2014 2014-01-04  201401       BANGU
-## 6 2014-01-13  201403   2014 2014-01-03  201401 LARANJEIRAS
+##   DT_NOTIFIC SEM_NOT NU_ANO DT_SIN_PRI SEM_PRI        NM_BAIRRO
+## 1 2014-01-15  201403   2014 2014-01-11  201402          PILARES
+## 2 2014-02-16  201408   2014 2014-02-14  201407        PACIENCIA
+## 3 2014-01-24  201404   2014 2014-01-22  201404          TURIACU
+## 4 2014-01-15  201403   2014 2014-01-14  201403 MAGALHAES BASTOS
+## 5 2014-01-21  201404   2014 2014-01-19  201404         REALENGO
+## 6 2014-01-11  201402   2014 2014-01-11  201402       PRACA SECA
 ```
 
 
@@ -33,7 +33,7 @@ novosinan <- paste("../",novosinan,sep="")
 Numero de registros sem AP (falha no mapeamento bairro -> APS)
 
 ```
-## [1] 47
+## [1] 46
 ```
 
 
@@ -42,19 +42,19 @@ Numero de registros sem AP (falha no mapeamento bairro -> APS)
 
 ```
 ##        SE casos
-## 28 201428    25
-## 29 201429    26
-## 30 201430    24
-## 31 201431    41
-## 32 201432    29
-## 33 201433     2
+## 29 201429    25
+## 30 201430    26
+## 31 201431    39
+## 32 201432    31
+## 33 201433    30
+## 34 201434     5
 ```
 
 **Total de casos no ano**
 
 
 ```
-## [1] 1891
+## [1] 1927
 ```
 
 
