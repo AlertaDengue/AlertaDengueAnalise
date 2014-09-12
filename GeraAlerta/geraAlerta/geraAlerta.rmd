@@ -1,0 +1,306 @@
+Alerta de Dengue para o Rio de Janeiro
+======================
+versao 0.2
+
+```{r echo=FALSE}
+source("../fun/Rt.r")
+source("../fun/data2SE.r")
+```
+
+
+```{r echo=FALSE}
+hoje <- Sys.Date()
+SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
+```
+
+**Hoje e' dia `r as.character(hoje)` , SE `r as.character(SEhoje)`**
+
+```{r echo=FALSE}
+# Abre os dados mais recentes
+dadosAPS<-"dados_limpos/dadosAPS_201435.csv" # tirar quando for rodar a partir do atualiza_alerta
+dadosAPS <- paste("../",dadosAPS,sep="")
+d<-read.csv(dadosAPS)
+```
+
+**Curvas epidemica da dengue na cidade**
+
+
+```{r echo=FALSE}
+# identificando a ultima semana com casos
+dc <- d[d$APS=="AP1",c("SE","casos")]
+dc <-na.omit(dc)
+uSE <- max(dc$SE)
+```
+
+Os ultimos dados disponiveis de casos de dengue se referem a'semana `r uSE`:
+
+
+```{r echo=FALSE}
+# serie temporal de casos agregados na cidade
+casos <- aggregate(d[,c(4)],by=list(SE=d$SE),FUN=sum)
+tail(casos)
+plot(casos$x, type="l", xlab="",ylab="casos notificados no MRJ",axes=FALSE)
+axis(2)
+axis(1,at=seq(1,length(casos$SE),by=6),labels=casos$SE[seq(1,length(casos$SE),by=6)],las=2)
+```
+
+**Curvas epidemicas da dengue por APS**
+
+```{r echo=FALSE}
+# Grafico das curvas epidemicas por APS
+listaAPS<-unique(d$APS)
+par(mfrow=c(5,2),mar=c(1,1,1,1))
+
+for (j in 1:10) {
+      plot(d$casos[d$APS==listaAPS[(j)]],xlab="",ylab="",axes=FALSE,type="l")
+      axis(2)
+      mtext(listaAPS[(j)],cex=0.8,line=-1)
+      box()
+      }
+```
+
+
+**Tweet na cidade**
+
+```{r echo=FALSE}
+# identificando a ultima semana de tweet
+dc <- d[d$APS=="AP1",c("SE","tweets")]
+dc <-na.omit(dc)
+uSE <- max(dc$SE)
+```
+
+Os ultimos dados disponiveis de tweet sao da semana `r uSE`:
+
+```{r echo=FALSE}
+par(mfrow=c(1,1),mar=c(4,4,1,1))
+tail(d)[,c(1,2)]
+plot(d$tweets[d$APS=="AP1"],type="l",ylab="tweets",axes=FALSE,xlab="")
+axis(2)
+axis(1,at=seq(1,length(casos$SE),by=6),labels=casos$SE[seq(1,length(casos$SE),by=6)],las=2)
+```
+
+** Dados de temperatura mínima e máxima por APS**
+
+```{r echo=FALSE}
+# identificando a ultima semana de clima
+dc <- d[d$APS=="AP1",c("SE","temp.min")]
+dc <-na.omit(dc)
+uSE <- max(dc$SE)
+```
+
+Os ultimos dados disponiveis de temperatura minima sao da semana `r uSE`. 
+
+```{r echo=FALSE}
+tapply(d$temp.min[d$SE==max(d$SE)],d$APS[d$SE==max(d$SE)],sum)
+```
+
+```{r echo=FALSE}
+#dados de clima
+par(mfrow=c(5,2),mar=c(1,2,1,0))
+for (j in 1:10) {
+      plot(d$temp.min[d$APS==listaAPS[(j)]],xlab="",ylab="",ylim=c(5,40),axes=FALSE,type="l")
+      lines(d$temp.max[d$APS==listaAPS[(j)]])
+      axis(2)
+      mtext(listaAPS[(j)],cex=0.8,line=-1)
+      box()
+      }
+```
+
+** Dados de umidade mínima e máxima por APS**
+```{r echo=FALSE}
+#dados de clima
+par(mfrow=c(5,2),mar=c(1,2,1,0))
+
+for (j in 1:10) {
+      plot(d$umid.min[d$APS==listaAPS[(j)]],xlab="",ylab="",ylim=c(0,100),axes=FALSE,type="l")
+      lines(d$umid.max[d$APS==listaAPS[(j)]])
+      axis(2)
+      mtext(listaAPS[(j)],cex=0.8,line=-1)
+      box()
+      }
+```
+
+
+Modelo de alerta com 5 indicadores
+========
+
+- Cli = Temperatura minima semanal > 22 graus por 3 semanas
+- tw1 = crescimento significativo de tweet na ultima semana
+- Rt =  (Rt > 1) por 3 semanas. Se nao houver notificacao, completar com o Rt dos tweets
+- C = Casos > limiar de epidemia (300 por 100.000) 
+- Rm = Mosquitos que aumentam significativamente
+
+```{r echo=FALSE}
+# data.frame para colocar os resultados
+SE<-d$SE[d$APS=="AP1"]
+d2 <- expand.grid(SE=SE,APS=listaAPS)
+d2<-merge(d2,d[,c("SE","APS","tweets","estacao","casos","temp.min","temp.max",
+                  "umid.min","umid.max")],by=c("SE","APS"),all=TRUE)
+# agregar dados de populacao (cuidado, desorganiza tudo!)
+pop<-read.csv(file="../tabelas/populacao2010porAPS_RJ.csv")
+d2<-merge(d2,pop)
+d2<-d2[order(d2$APS,d2$SE),]
+
+#d2[d2$SE==max(d2$SE),]
+```
+
+
+```{r echo=FALSE}
+#Cli = Alerta de Temperatura minima semanal > 22 graus por 3 semanas**
+
+#Temperatura > Tcrit
+detcli <- function(temp,tempcrit=22,lag=3){
+    t1<-as.numeric(temp>tempcrit)
+    le <- length(t1)
+    ac <- t1[lag:le]
+    for(i in 1:(lag-1)) ac <- ac+t1[(lag-i):(le-i)]
+    c(rep(NA,(lag-1)),ac)
+}
+
+d2$Cli <- NA
+for(i in 1:10) d2$Cli[which(d2$APS==listaAPS[i])] <-detcli(d$temp.min[d$APS==listaAPS[i]])
+#d2[d2$SE==max(d2$SE),]
+```
+
+
+```{r echo=FALSE}
+# Rtw = crescimento significativo de tweet na ultima semana (repete os valores para todas as APS)
+d2$Rtw <-NA
+d2$ptw1 <-NA
+d2$Rtwlr <-NA
+d2$Rtwur <-NA
+
+for(i in 1:10) d2[d2$APS==listaAPS[i],c("Rtw","ptw1","Rtwlr","Rtwur")] <- Rt.beta(d2$tweets[d2$APS==listaAPS[i]])
+
+# funcao que calcula o indicador Rt>pcrit (default pcrit=0.95, lag=3)  # serve tanto para Rt de tweet como para casos,
+# acumulado ou nao
+
+Rtgreat1 <- function(p1,pcrit=0.8,lag=0){
+    t1<-as.numeric(p1>pcrit)
+    ac<-t1
+    if (lag>0) {
+          le <- length(t1)
+          ini <- (lag+1)
+          ac <- t1[ini:le]
+          for(i in 1:(ini-1)) ac <- ac+t1[(ini-i):(le-i)]
+          ac<-c(rep(NA,(ini-1)),ac)
+          }
+    ac
+}
+
+
+# Rt(tweet) > 1 se Pr>0.8 
+for(i in 1:10) d2$twgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$ptw1[d2$APS==listaAPS[i]],pcrit=0.90,lag=0)
+
+# alertaRt = acumulado de Rt>1 por 3 vezes
+for(i in 1:10) d2$ac.twgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$ptw1[d2$APS==listaAPS[i]],pcrit=0.90,lag=3)
+
+#d2[d2$SE==max(d2$SE),]
+```
+
+
+```{r echo=FALSE}
+# calculo do Rt de dengue**
+d2$Rt <-NA
+d2$pRt1 <-NA
+d2$Rtlr <-NA
+d2$Rtur <-NA
+
+for(i in 1:10) d2[d2$APS==listaAPS[i],c("Rt","pRt1","Rtlr","Rtur")] <- Rt.beta((d2$casos[d2$APS==listaAPS[i]]))
+
+#d2[d2$SE==max(d2$SE),]
+
+#  imputa os P(Rt) faltantes com p(Rtw)
+d2$pRti <- d2$pRt1
+d2$pRti[is.na(d2$pRt1)]<-d2$ptw1[is.na(d2$pRt1)]
+d2$Rti <- d2$Rt1
+d2$Rti[is.na(d2$Rt)]<-d2$Rtw[is.na(d2$Rt)]
+
+# Rt(dengue) > 1 se Pr>0.8 
+for(i in 1:10) d2$Rtgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==listaAPS[i]],pcrit=0.80,lag=0)
+
+# alertaRt = acumulado de Rt>1 por 3 vezes
+for(i in 1:10) d2$ac.Rtgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==listaAPS[i]],pcrit=0.80,lag=3)
+
+#d2[d2$SE==max(d2$SE),]
+```
+
+**Grafico de Prob(Rt > 1)**
+
+```{r  echo=FALSE}
+# Grafico de Rt(dengue). 
+par(mfrow=c(5,2),mar=c(1,2,1,1))
+for (j in 1:10) {
+      plot(d2$pRt1[d2$APS==listaAPS[j]],ylim=range(0,1),xlab="",ylab="Rt",axes=FALSE,type="l")
+      axis(2)
+      mtext(listaAPS[(j)],cex=0.8,line=-1)
+      box()
+      abline(h=0.8,col=2)
+      }
+```
+
+
+```{r echo=FALSE}
+# Casos:
+# onde houver dados faltantes, completar calculando o valor esperado considerando a tendencia de variacao das ultimas 3 semanas.
+# Isso é, calcula a média de variacao (Rt) das ultimas 3 semanas e multiplica pelo valor observado de casos. 
+
+fillCasos <- function(casos, Rt){
+  casos_est <- casos
+  n <- which(is.na(casos_est))
+  casos_est[n]<-casos[(n-2)]*mean(Rt[(n-2):n],na.rm=TRUE)
+  casos_est
+  }
+
+for(i in 1:10) d2$casos_est[d2$APS==listaAPS[i]]<-fillCasos((d2$casos[d2$APS==listaAPS[i]]),d2$Rt[d2$APS==listaAPS[i]])
+
+d2$inc <- d2$casos_est/d2$Pop2010*100000
+d2$alertaCasos <- as.numeric(d2$inc>100)
+
+```
+
+
+**Alerta por APS**
+
+Para cada APS, indica-se as semanas em que houve alerta de temperatura, de Rt e de casos.
+```{r echo=FALSE}
+
+le = length(d2$temp.min[d2$APS==listaAPS[1]])
+plot.alerta<-function(ap){
+      par(mai=c(0,0,0,0),mar=c(4,4,1,1))
+      d2v <- subset(d2,APS==ap)
+      plot(1:le,d2v$casos,type="l",axes=F,ylab="casos",xlab="")
+      abline(v=which(d2v$Cli>=3),col="grey",lwd=1)
+      abline(v=which(d2v$ac.Rtgreat1>=3),col="yellow")
+      lines(1:le,d2v$casos)
+      abline(v=which(d2v$inc>=100),col="red",pch=16)
+      title(as.character(ap),cex=1.4)
+      axis(2)
+      axis(1,at=seq(1,le,by=6),labels=d2v$SE[seq(1,le,by=6)],las=2)
+}
+par(mfrow=c(5,2))
+for(i in 1:10) {
+      print(as.character(listaAPS[i]))
+      print(tail(d2[d2$APS==listaAPS[i],c("SE","APS","Cli","ac.Rtgreat1","alertaCasos")]))
+      plot.alerta(listaAPS[i])
+}
+
+```
+
+
+
+
+```{r echo=FALSE}
+#Primeiro, cortar a parte final que nao tenha os 3 alertas:
+      
+#d2$test<- with(d4, alertaRt1+alertaTemp)
+#df <- d4[is.na(d4$test)==FALSE,c("SE","APS","casos","tweets","temp","Rt","casos_est","temp_crit","casos_crit","alertaRt1","alertaTemp","alertaCasos")]
+```
+
+```{r echo=FALSE}
+#outputfile = paste("../alerta/alertaAPS_",max(df$SE),".csv",sep="")
+```
+
+```{r echo=FALSE}
+write.table(df,file=outputfile,row.names=FALSE,sep=",")
+```

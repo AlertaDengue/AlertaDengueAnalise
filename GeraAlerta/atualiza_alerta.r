@@ -6,7 +6,6 @@
 library(knitr)
 library(markdown)
 #library(lubridate)
-library(xts)
 require(foreign)
 rm(list=ls())
 
@@ -61,19 +60,9 @@ markdownToHTML("organizaDados/juntaTudo.md", "html/html-organizacao/juntaTudo.ht
 # =======================================
 # Selecione os dados da semana desejada
 
-# Dados do municipio do Rio de Janeiro (formato ../dados_limpos/dadosMRJ*.csv)
-dadosMRJ <- "dados_limpos/dadosMRJ_201435.csv"
-
-# Dados por APS (formato ../dados_limpos/dadosAPS*.csv)
 dadosAPS<-"dados_limpos/dadosAPS_201435.csv"
-
-knit(input="geraAlerta/geraAlertaMRJ.rmd",quiet=TRUE,envir=new.env())
-knit(input="geraAlerta/geraAlertaAPS.rmd",quiet=TRUE,envir=new.env())
-
-markdownToHTML("geraAlertaMRJ.md",output="AlertaMRJ.html",fragment.only = TRUE)  
-markdownToHTML("geraAlertaAPS.md",output="AlertaAPS.html", fragment.only = TRUE)  
-
-
+knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
+markdownToHTML("geraAlerta.md",output="Alerta.html", fragment.only = TRUE)  
 
 
 

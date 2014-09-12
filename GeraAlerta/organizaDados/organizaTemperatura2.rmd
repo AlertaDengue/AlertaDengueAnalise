@@ -5,7 +5,6 @@ todas as APS
 
 ```{r include=FALSE}
 #library("lubridate")
-library(xts)
 source("../fun/data2SE.r")
 ```
 
