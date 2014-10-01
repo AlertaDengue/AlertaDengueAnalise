@@ -298,9 +298,9 @@ for(i in 1:10) {
 ```
 
 ```{r echo=FALSE}
-#outputfile = paste("../alerta/alertaAPS_",max(df$SE),".csv",sep="")
+outputfile = paste("../alerta/alertaAPS_",max(d2$SE),".csv",sep="")
 ```
 
 ```{r echo=FALSE}
-write.table(df,file=outputfile,row.names=FALSE,sep=",")
+write.table(d2,file=outputfile,row.names=FALSE,sep=",")
 ```

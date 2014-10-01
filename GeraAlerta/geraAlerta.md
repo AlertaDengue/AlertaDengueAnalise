@@ -7,7 +7,7 @@ versao 0.2
 
 
 
-**Hoje e' dia 2014-09-12 , SE 201437**
+**Hoje e' dia 2014-10-01 , SE 201440**
 
 
 
@@ -226,6 +226,3 @@ Para cada APS, indica-se as semanas em que houve alerta de temperatura, de Rt e 
 
 
 
-```
-## Error: cannot coerce class ""function"" to a data.frame
-```

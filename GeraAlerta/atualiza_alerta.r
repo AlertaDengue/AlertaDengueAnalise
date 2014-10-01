@@ -6,6 +6,7 @@
 library(knitr)
 library(markdown)
 #library(lubridate)
+library(xts)
 require(foreign)
 rm(list=ls())
 
@@ -28,7 +29,7 @@ rm(list=ls())
 # A1. Ultimos dados de dengue:
 # esse e' o unico que precisa ser nominalmente indicado aqui. O dbf deve estar na pasta indicada no path do novosinan
 #--------------------------
-novosinan <- "dados_brutos/sinan/Dados_dengue_25_08_2014.dbf"
+novosinan <- "dados_brutos/sinan/Dados_dengue_29_09_2014.dbf"
 
 knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
      output="organizaDados/organizasinan2014.md",envir=new.env())
@@ -39,6 +40,9 @@ knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
 #novoclima <- "dados_brutos/clima/galeao_01012010-15062014.csv" # antigo
 # atualmente capta direto da internet galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
 
+# verificar se funciona 
+galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
+  
 knit(input="organizaDados/organizaTemperatura2.rmd",quiet=TRUE,
      output="organizaDados/organizaTemperatura2.md",envir=new.env())
 
@@ -63,6 +67,7 @@ markdownToHTML("organizaDados/juntaTudo.md", "html/html-organizacao/juntaTudo.ht
 dadosAPS<-"dados_limpos/dadosAPS_201435.csv"
 knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
 markdownToHTML("geraAlerta.md",output="Alerta.html", fragment.only = TRUE)  
+
 
 
 
