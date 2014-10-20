@@ -7,7 +7,7 @@ versao 0.2
 
 
 
-**Hoje e' dia 2014-10-01 , SE 201440**
+**Hoje e' dia 2014-10-20 , SE 201443**
 
 
 
@@ -16,18 +16,18 @@ versao 0.2
 
 
 
-Os ultimos dados disponiveis de casos de dengue se referem a'semana 201434:
+Os ultimos dados disponiveis de casos de dengue se referem a'semana 201441:
 
 
 
 ```
 ##         SE  x
-## 239 201430 25
-## 240 201431 38
-## 241 201432 31
-## 242 201433 30
-## 243 201434  5
-## 244 201435 NA
+## 268 201436 48
+## 269 201437 36
+## 270 201438 42
+## 271 201439 41
+## 272 201440 25
+## 273 201441  5
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
@@ -36,22 +36,21 @@ Os ultimos dados disponiveis de casos de dengue se referem a'semana 201434:
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
-
 **Tweet na cidade**
 
 
 
-Os ultimos dados disponiveis de tweet sao da semana 201435:
+Os ultimos dados disponiveis de tweet sao da semana 201441:
 
 
 ```
 ##          SE tweets
-## 2435 201430     55
-## 2436 201431     54
-## 2437 201432     68
-## 2438 201433     47
-## 2439 201434     50
-## 2440 201435     68
+## 2845 201436     53
+## 2846 201437     45
+## 2847 201438     57
+## 2848 201439     80
+## 2849 201440     65
+## 2850 201441    143
 ```
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
@@ -70,18 +69,17 @@ Os ultimos dados disponiveis de temperatura minima sao da semana 201435.
 
 ![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
 
-** Dados de umidade mínima e máxima por APS**
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+
 
 
 Modelo de alerta com 5 indicadores
 ========
 
-- Cli = Temperatura minima semanal > 22 graus por 3 semanas
-- tw1 = crescimento significativo de tweet na ultima semana
-- Rt =  (Rt > 1) por 3 semanas. Se nao houver notificacao, completar com o Rt dos tweets
-- C = Casos > limiar de epidemia (300 por 100.000) 
-- Rm = Mosquitos que aumentam significativamente
+- AlertaCli = Temperatura minima semanal > 22 graus por 3 semanas
+- Alertatweet = crescimento significativo de tweet na ultima semana
+- AlertaRt =  (Rt > 1) por 3 semanas. Se nao houver notificacao, completar com o Rt dos tweets
+- AlertaCasos = Casos > limiar de epidemia (100 por 100.000) 
+- Rm = Mosquitos que aumentam significativamente (a fazer) 
 
 
 
@@ -102,121 +100,143 @@ Modelo de alerta com 5 indicadores
 
 
 
+
+
 **Alerta por APS**
 
 Para cada APS, indica-se as semanas em que houve alerta de temperatura, de Rt e de casos.
 
 ```
 ## [1] "AP1"
-##         SE APS Cli ac.Rtgreat1 alertaCasos
-## 241 201430 AP1   0           0           0
-## 238 201431 AP1   0           0           0
-## 235 201432 AP1   0           0           0
-## 244 201433 AP1   0           0           0
-## 242 201434 AP1   0           0           0
-## 127 201435 AP1   0           0           0
+##         SE APS alertaCli alertaRt alertaCasos
+## 208 201434 AP1         0        0           0
+## 218 201435 AP1         0        0           0
+## 241 201436 AP1        NA        0           0
+## 225 201437 AP1        NA        0           0
+## 265 201438 AP1        NA        0           0
+## 245 201439 AP1        NA        0           0
+## 268 201440 AP1        NA        0           0
+## 239 201441 AP1        NA        0           0
 ```
 
 ```
 ## [1] "AP2.1"
-##         SE   APS Cli ac.Rtgreat1 alertaCasos
-## 471 201430 AP2.1   0           0           0
-## 468 201431 AP2.1   0           0           0
-## 478 201432 AP2.1   0           0           0
-## 475 201433 AP2.1   0           1           0
-## 472 201434 AP2.1   0           1           0
-## 452 201435 AP2.1   0           1           0
+##         SE   APS alertaCli alertaRt alertaCasos
+## 590 201434 AP2.1         0        0           0
+## 487 201435 AP2.1         0        0           0
+## 540 201436 AP2.1        NA        0           0
+## 589 201437 AP2.1        NA        0           0
+## 569 201438 AP2.1        NA        0           0
+## 557 201439 AP2.1        NA        0           0
+## 580 201440 AP2.1        NA        0           0
+## 586 201441 AP2.1        NA        0           0
 ```
 
 ```
 ## [1] "AP2.2"
-##         SE   APS Cli ac.Rtgreat1 alertaCasos
-## 646 201430 AP2.2   0           1           0
-## 656 201431 AP2.2   0           0           0
-## 666 201432 AP2.2   0           0           0
-## 676 201433 AP2.2   0           0           0
-## 686 201434 AP2.2   0           0           0
-## 683 201435 AP2.2   0           0           0
+##         SE   APS alertaCli alertaRt alertaCasos
+## 862 201434 AP2.2         0        0           0
+## 802 201435 AP2.2         0        0           0
+## 798 201436 AP2.2        NA        0           0
+## 899 201437 AP2.2        NA        0           0
+## 889 201438 AP2.2        NA        0           0
+## 829 201439 AP2.2        NA        0           0
+## 812 201440 AP2.2        NA        0           0
+## 878 201441 AP2.2        NA        0           0
 ```
 
 ```
 ## [1] "AP3.1"
-##         SE   APS Cli ac.Rtgreat1 alertaCasos
-## 945 201430 AP3.1   0           0           0
-## 955 201431 AP3.1   0           0           0
-## 965 201432 AP3.1   0           0           0
-## 962 201433 AP3.1   0           0           0
-## 972 201434 AP3.1   0           0           0
-## 926 201435 AP3.1   0           0           0
+##          SE   APS alertaCli alertaRt alertaCasos
+## 1216 201434 AP3.1         0        0           0
+## 1044 201435 AP3.1         0        0           0
+## 1028 201436 AP3.1        NA        0           0
+## 1189 201437 AP3.1        NA        0           0
+## 1180 201438 AP3.1        NA        0           0
+## 1019 201439 AP3.1        NA        0           0
+## 1042 201440 AP3.1        NA        0           0
+## 1203 201441 AP3.1        NA        0           0
 ```
 
 ```
 ## [1] "AP3.2"
-##          SE   APS Cli ac.Rtgreat1 alertaCasos
-## 1216 201430 AP3.2   0           0           0
-## 1213 201431 AP3.2   0           0           0
-## 1214 201432 AP3.2   0           0           0
-## 1211 201433 AP3.2   0           0           0
-## 1208 201434 AP3.2   0           0           0
-## 1184 201435 AP3.2   0           0           0
+##          SE   APS alertaCli alertaRt alertaCasos
+## 1526 201434 AP3.2         0        0           0
+## 1382 201435 AP3.2         0        0           0
+## 1350 201436 AP3.2        NA        0           0
+## 1447 201437 AP3.2        NA        0           0
+## 1404 201438 AP3.2        NA        0           0
+## 1275 201439 AP3.2        NA        0           0
+## 1282 201440 AP3.2        NA        0           0
+## 1487 201441 AP3.2        NA        0           0
 ```
 
 ```
 ## [1] "AP3.3"
-##          SE   APS Cli ac.Rtgreat1 alertaCasos
-## 1450 201430 AP3.3   0           0           0
-## 1460 201431 AP3.3   0           0           0
-## 1464 201432 AP3.3   0           0           0
-## 1454 201433 AP3.3   0           0           0
-## 1451 201434 AP3.3   0           0           0
-## 1457 201435 AP3.3   0           0           0
+##          SE   APS alertaCli alertaRt alertaCasos
+## 1808 201434 AP3.3         0        0           0
+## 1828 201435 AP3.3         0        0           0
+## 1633 201436 AP3.3        NA        0           0
+## 1798 201437 AP3.3        NA        0           0
+## 1716 201438 AP3.3        NA        0           0
+## 1736 201439 AP3.3        NA        1           0
+## 1581 201440 AP3.3        NA        1           0
+## 1812 201441 AP3.3        NA        1           0
 ```
 
 ```
 ## [1] "AP4"
-##          SE APS Cli ac.Rtgreat1 alertaCasos
-## 1677 201430 AP4   0           0           0
-## 1687 201431 AP4   0           0           0
-## 1684 201432 AP4   0           1           0
-## 1694 201433 AP4   0           2           0
-## 1704 201434 AP4   0           2           0
-## 1701 201435 AP4   0           2           0
+##          SE APS alertaCli alertaRt alertaCasos
+## 2112 201434 AP4         0        0           0
+## 2145 201435 AP4         0        0           0
+## 1928 201436 AP4        NA        0           0
+## 2025 201437 AP4        NA        0           0
+## 2050 201438 AP4        NA        0           0
+## 2099 201439 AP4        NA        0           0
+## 1860 201440 AP4        NA        0           0
+## 2052 201441 AP4        NA        0           0
 ```
 
 ```
 ## [1] "AP5.1"
-##          SE   APS Cli ac.Rtgreat1 alertaCasos
-## 1946 201430 AP5.1   0           0           0
-## 1943 201431 AP5.1   0           0           0
-## 1940 201432 AP5.1   0           0           0
-## 1937 201433 AP5.1   0           0           0
-## 1947 201434 AP5.1   0           0           0
-## 1944 201435 AP5.1   0           0           0
+##          SE   APS alertaCli alertaRt alertaCasos
+## 2385 201434 AP5.1         0        0           0
+## 2381 201435 AP5.1         0        0           0
+## 2176 201436 AP5.1        NA        0           0
+## 2389 201437 AP5.1        NA        0           0
+## 2401 201438 AP5.1        NA        0           0
+## 2411 201439 AP5.1        NA        0           0
+## 2170 201440 AP5.1        NA        0           0
+## 2416 201441 AP5.1        NA        0           0
 ```
 
 ```
 ## [1] "AP5.2"
-##          SE   APS Cli ac.Rtgreat1 alertaCasos
-## 2121 201430 AP5.2   0           0           0
-## 2131 201431 AP5.2   0           0           0
-## 2141 201432 AP5.2   0           0           0
-## 2151 201433 AP5.2   0           0           0
-## 2161 201434 AP5.2   0           0           0
-## 2171 201435 AP5.2   0           0           0
+##          SE   APS alertaCli alertaRt alertaCasos
+## 2737 201434 AP5.2         0        0           0
+## 2571 201435 AP5.2         0        0           0
+## 2663 201436 AP5.2        NA        0           0
+## 2686 201437 AP5.2        NA        0           0
+## 2696 201438 AP5.2        NA        0           0
+## 2640 201439 AP5.2        NA        0           0
+## 2677 201440 AP5.2        NA        0           0
+## 2726 201441 AP5.2        NA        0           0
 ```
 
 ```
 ## [1] "AP5.3"
-##          SE   APS Cli ac.Rtgreat1 alertaCasos
-## 2390 201430 AP5.3   0           0           0
-## 2400 201431 AP5.3   0           1           0
-## 2410 201432 AP5.3   0           2           0
-## 2420 201433 AP5.3   0           2           0
-## 2430 201434 AP5.3   0           2           0
-## 2440 201435 AP5.3   0           1           0
+##          SE   APS alertaCli alertaRt alertaCasos
+## 3020 201434 AP5.3         0        1           0
+## 3030 201435 AP5.3         0        1           0
+## 3040 201436 AP5.3        NA        0           0
+## 3050 201437 AP5.3        NA        0           0
+## 3060 201438 AP5.3        NA        0           0
+## 3070 201439 AP5.3        NA        0           0
+## 3080 201440 AP5.3        NA        0           0
+## 3090 201441 AP5.3        NA        0           0
 ```
 
-![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
 
 
 

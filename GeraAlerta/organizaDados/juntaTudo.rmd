@@ -80,12 +80,13 @@ for (i in 2:10) {
 Rt.ap <- yi
 rm(yi)
 
-tail(Rt.ap)
+tail(Rt.ap,n=30)
 ```
 
 
 ```{r echo=FALSE}
 outputfile = paste("../dados_limpos/dadosAPS_",max(d$SE),".csv",sep="")
+outputfile
 ```
 
 

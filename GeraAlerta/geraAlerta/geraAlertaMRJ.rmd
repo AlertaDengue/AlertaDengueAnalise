@@ -135,5 +135,5 @@ outputfile = paste("../alerta/alertaMRJ_",max(df$SE),".csv",sep="")
 - Arquivo de saida: `r outputfile`  
 
 ```{r}
-write.table(df,file=outputfile,row.names=FALSE,sep=",")
+write.table(d,file=outputfile,row.names=FALSE,sep=",")
 ```

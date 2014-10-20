@@ -21,7 +21,7 @@ dant<-read.csv("../dados_limpos/tweets_week_2010-2013.csv")
 **Serie de 2014 de tweets diarios:**
 
 ```r
-comando<-paste("../../pega_tweets.py -i 2014-01-05 -f ",Sys.Date()) # primeira SE de 2014 ate hoje
+comando<-paste("../fun/pega_tweets.py -i 2014-01-05 -f ",Sys.Date()) # primeira SE de 2014 ate hoje
 system(comando)
 d<-read.csv("tweets_teste.csv",header=TRUE)[,1:2]
 names(d)[2]<-"rio"
@@ -60,7 +60,7 @@ A serie tem 7 dias na primeira semana e 2 dias na ultima semana. Serao removidos
 ## 14 201415     76
 ## 15 201416     62
 ## 16 201417     64
-## 17 201418    107
+## 17 201418     88
 ## 18 201419    159
 ## 19 201420    114
 ## 20 201421     92
@@ -69,19 +69,21 @@ A serie tem 7 dias na primeira semana e 2 dias na ultima semana. Serao removidos
 ## 23 201424     62
 ## 24 201425     63
 ## 25 201426     80
-## 26 201427     49
+## 26 201427     44
 ## 27 201428     62
 ## 28 201429     55
 ## 29 201430     60
 ## 30 201431     64
 ## 31 201432     64
 ## 32 201433     42
-## 33 201434     47
+## 33 201434     58
 ## 34 201435     81
-## 35 201436     46
+## 35 201436     53
 ## 36 201437     45
 ## 37 201438     57
-## 38 201439     82
+## 38 201439     80
+## 39 201440     65
+## 40 201441    143
 ```
 
 

@@ -8,27 +8,32 @@ todas as APS
 source("../fun/data2SE.r")
 ```
 
-Abre dados: 
+Abre dados OpenWeather (Oswaldo): 
 -----------
 
 ```{r}
 #novoclima <- novosinan <- paste("../",novoclima,sep="")
 #d<-read.csv2(novoclima)
-galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
-d <- galeao
-tail(d)
-```
+#galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
+#d <- galeao
+#tail(d)
+#d$estacao <- "galeao"
+#Incluir variavel semana epidemiologica
 
-```{r echo=FALSE}
-d$estacao <- "galeao"
-```
-
-Incluir variavel semana epidemiologica
-
-```{r echo=FALSE}
 d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
 #head(d[,c("data","SE")])
+
 ```
+
+
+Abre dados weather underground (Flavio)
+-----------------
+```{r}
+d<-read.csv(file="../dados_brutos/clima/galeao.csv")
+tail(d)
+d$dia<-strsplit(as.character(d$DateUTC,"T"))
+```
+
 
 Acumular por SE e estacao
 ```{r echo=FALSE}
