@@ -5,7 +5,7 @@ todas as APS
 
 
 
-Abre dados OpenWeather (Oswaldo): 
+Abre dados OpenWeather (autor: Oswaldo): 
 -----------
 
 
@@ -18,129 +18,102 @@ Abre dados OpenWeather (Oswaldo):
 #d$estacao <- "galeao"
 #Incluir variavel semana epidemiologica
 
-d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
+#d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
 #head(d[,c("data","SE")])
+
+#Acumular por SE e estacao
+#df<-aggregate(d[,3:10],by=list(estacao=d$estacao,SE=d$SE),FUN=mean,na.rm=TRUE)
+#head(df)
+```
+
 ```
 
 
-Abre dados weather underground (Flavio)
+Abre dados weather underground (autor: Flavio)
 -----------------
 
 ```r
-d<-read.csv(file="../dados_brutos/clima/galeao.csv")
-tail(d)
+gal<-callmongoclima("galeao") 
 ```
 
 ```
-##                   DateUTC Tmin
-## 1748 2014-10-14T00:00:00Z 20.0
-## 1749 2014-10-15T00:00:00Z 21.0
-## 1750 2014-10-16T00:00:00Z 21.0
-## 1751 2014-10-17T00:00:00Z 22.0
-## 1752 2014-10-18T00:00:00Z 22.0
-## 1753 2014-10-19T00:00:00Z 22.0
+## Warning: This fails for most NoSQL data structures. I am working on a new
+## solution
 ```
 
 ```r
-d$dia<-strsplit(as.character(d$DateUTC,"T"))
+std <- callmongoclima("santosdumont")
 ```
 
 ```
-## Error: argumento "split" ausente, sem padrão
+## Warning: This fails for most NoSQL data structures. I am working on a new
+## solution
 ```
 
-
-Acumular por SE e estacao
-
-```
-## Error: undefined columns selected
+```r
+afo <- callmongoclima("afonsos")
 ```
 
 ```
-##                                                   
-## 1 function (x, df1, df2, ncp, log = FALSE)        
-## 2 {                                               
-## 3     if (missing(ncp))                           
-## 4         .External(C_df, x, df1, df2, log)       
-## 5     else .External(C_dnf, x, df1, df2, ncp, log)
-## 6 }
+## Warning: This fails for most NoSQL data structures. I am working on a new
+## solution
 ```
 
-
-```
-## Error: não foi possível encontrar a função "xts"
+```r
+jac <- callmongoclima("jacarepagua")
 ```
 
 ```
-## Error: objeto 'tmin.ts' não encontrado
+## Warning: This fails for most NoSQL data structures. I am working on a new
+## solution
+```
+
+```r
+d<- rbind(gal,std,afo,jac)
+rm(gal,std,afo,jac)
+
+# Atribuir SE
+d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
+
+# Agregar por semana
+df<-aggregate(d[,2:3],by=list(SE=d$SE,estacao=d$estacao),FUN=mean,na.rm=TRUE)
+
+head(df)
 ```
 
 ```
-## Error: plot.new has not been called yet
+##       SE estacao       data  Tmin
+## 1 201001  galeao 2010-01-06 25.17
+## 2 201002  galeao 2010-01-13 24.43
+## 3 201003  galeao 2010-01-20 23.86
+## 4 201004  galeao 2010-01-27 23.71
+## 5 201005  galeao 2010-02-03 25.14
+## 6 201006  galeao 2010-02-10 24.67
+```
+
+```r
+tail(df)
+```
+
+```
+##         SE     estacao       data  Tmin
+## 993 201438 jacarepagua 2014-09-17 20.33
+## 994 201439 jacarepagua 2014-09-24 19.57
+## 995 201440 jacarepagua 2014-10-01 22.33
+## 996 201441 jacarepagua 2014-10-08 18.71
+## 997 201442 jacarepagua 2014-10-15 21.00
+## 998 201443 jacarepagua 2014-10-19 21.00
 ```
 
 
 
-```
-## Error: objeto de tipo 'closure' não possível dividir em subconjuntos
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
 
 Salvar:
 
-```
-## Error: objeto 'dAP' não encontrado
-```
 
 
-```r
-outputfile
-```
-
-```
-## Error: objeto 'outputfile' não encontrado
-```
 
 
 ```r
 write.table(dAP,file="../dados_limpos/climasemanaRJ.csv",sep=",",row.names=FALSE)
-```
-
-```
-## Error: objeto 'dAP' não encontrado
 ```
