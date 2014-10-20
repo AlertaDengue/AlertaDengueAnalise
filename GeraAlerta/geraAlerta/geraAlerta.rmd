@@ -35,32 +35,35 @@ uSE <- max(dc$SE)
 Os ultimos dados disponiveis de casos de dengue se referem a'semana `r uSE`:
 
 
-```{r echo=FALSE}
+```{r echo=FALSE,results='hide'}
 # serie temporal de casos agregados na cidade
 casos <- aggregate(d[,c(4)],by=list(SE=d$SE),FUN=sum)
-tail(casos)
 casos$x = corrigecasos(casos$x) # corrige para atraso de digitacao
+tail(casos)
+
 plot(casos$x, type="l", xlab="",ylab="casos notificados no MRJ",axes=FALSE)
 
 axis(2)
-axis(1,at=seq(1,length(casos$SE),by=6),labels=casos$SE[seq(1,length(casos$SE),by=6)],las=2)
+le = dim(casos)[1]
+axis(1,at=rev(seq(le,1,by=-12)),labels=casos$SE[rev(seq(le,1,by=-12))],las=2)
+
 ```
 
-**Curvas epidemicas da dengue por APS**
 
-```{r echo=FALSE}
+```{r echo=FALSE,results='hide'}
+#**Curvas epidemicas da dengue por APS**
+
 # Grafico das curvas epidemicas por APS
 listaAPS<-unique(d$APS)
 
+#par(mfrow=c(5,2),mar=c(1,1,1,1))
 
-par(mfrow=c(5,2),mar=c(1,1,1,1))
-
-for (j in 1:10) {
-      plot(d$casos[d$APS==listaAPS[(j)]],xlab="",ylab="",axes=FALSE,type="l")
-      axis(2)
-      mtext(listaAPS[(j)],cex=0.8,line=-1)
-      box()
-      }
+#for (j in 1:10) {
+#      plot(d$casos[d$APS==listaAPS[(j)]],xlab="",ylab="",axes=FALSE,type="l")
+#      axis(2)
+#      mtext(listaAPS[(j)],cex=0.8,line=-1)
+#      box()
+#      }
 ```
 
 **Tweet na cidade**
@@ -79,7 +82,8 @@ par(mfrow=c(1,1),mar=c(4,4,1,1))
 tail(d)[,c(1,2)]
 plot(d$tweets[d$APS=="AP1"],type="l",ylab="tweets",axes=FALSE,xlab="")
 axis(2)
-axis(1,at=seq(1,length(casos$SE),by=6),labels=casos$SE[seq(1,length(casos$SE),by=6)],las=2)
+le=dim(d)[1]
+axis(1,at=rev(seq(le,1,by=-12)),labels=d$SE[rev(seq(le,1,by=-12))],las=2)
 ```
 
 ** Dados de temperatura mínima e máxima por APS**
@@ -93,11 +97,22 @@ uSE <- max(dc$SE)
 
 Os ultimos dados disponiveis de temperatura minima sao da semana `r uSE`. 
 
-```{r echo=FALSE}
+```{r echo=FALSE,results='hide'}
 tapply(d$temp.min[d$SE==max(dc$SE)],d$APS[d$SE==max(dc$SE)],unique)
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE,results='hide'}
+# preencher alguns dados faltantes com a media das outras estacoes
+m = which(is.na(d$temp.min))
+length(m)
+for (i in m) d$temp.min[i]<-(mean(d$temp.min[d$SE==d$SE[i]],na.rm=TRUE))
+m = which(is.na(d$temp.min))
+length(m)
+
+```
+
+
+```{r echo=FALSE,results='hide'}
 #dados de clima
 par(mfrow=c(5,2),mar=c(1,2,1,0))
 for (j in 1:10) {
@@ -138,14 +153,11 @@ Modelo de alerta com 5 indicadores
 # data.frame para colocar os resultados
 SE<-d$SE[d$APS=="AP1"]
 d2 <- expand.grid(SE=SE,APS=listaAPS)
-d2<-merge(d2,d[,c("SE","APS","tweets","estacao","casos","temp.min","temp.max",
-                  "umid.min","umid.max")],by=c("SE","APS"),all=TRUE)
+d2<-merge(d2,d[,c("SE","APS","data","tweets","estacao","casos","temp.min")],by=c("SE","APS"))
 # agregar dados de populacao (cuidado, desorganiza tudo!)
 pop<-read.csv(file="../tabelas/populacao2010porAPS_RJ.csv")
 d2<-merge(d2,pop)
 d2<-d2[order(d2$APS,d2$SE),]
-
-#d2[d2$SE==max(d2$SE),]
 ```
 
 
@@ -163,7 +175,6 @@ detcli <- function(temp,tempcrit=22,lag=3){
 
 d2$alertaCli <- NA
 for(i in 1:10) d2$alertaCli[which(d2$APS==listaAPS[i])] <-detcli(d2$temp.min[d2$APS==listaAPS[i]])
-#d2[d2$SE==max(d2$SE),]
 ```
 
 
@@ -252,22 +263,17 @@ for (j in 1:10) {
 fillCasos <- function(casos, Rt){
   casos_est <- casos
   n <- which(is.na(casos_est))
-  if(length(n)>0) casos_est[n]<-casos[(n-2)]*mean(Rt[(n-2):n],na.rm=TRUE)
+  if(length(n)>0) casos_est[n]<-casos[(n-2)]*mean(Rt[(n-2)],na.rm=TRUE)
   casos_est
   }
 # print("mensagem de erro aqui - verificar")
 d2$casos_est<-NA
-for(i in 1:10) d2$casos_est[d2$APS==listaAPS[i]]<-fillCasos((d2$casos[d2$APS==listaAPS[i]]),d2$Rt[d2$APS==listaAPS[i]])
+for(i in 1:10) d2$casos_est[d2$APS==listaAPS[i]]<-fillCasos((d2$casos[d2$APS==listaAPS[i]]),
+                                                            d2$Rt[d2$APS==listaAPS[i]])
 d2$inc <- d2$casos_est/d2$Pop2010*100000
 d2$alertaCasos <- as.numeric(d2$inc>100)
 
 ```
-
-```{r echo=FALSE}
-# incluir informacao de data (a fazer)
-data <- read.csv("../tabelas/SE.csv")[,1:4]
-```
-
 
 **Alerta por APS**
 
@@ -275,24 +281,35 @@ Para cada APS, indica-se as semanas em que houve alerta de temperatura, de Rt e 
 ```{r echo=FALSE}
 
 le = length(d2$temp.min[d2$APS==listaAPS[1]])
-plot.alerta<-function(ap){
+
+plot.alerta2<-function(ap){
       par(mai=c(0,0,0,0),mar=c(4,4,1,1))
-      d2v <- subset(d2,APS==ap)
-      plot(1:le,d2v$casos,type="l",axes=F,ylab="casos",xlab="")
-      abline(v=which(d2v$alertaCli>=3),col="grey",lwd=1)
-      abline(v=which(d2v$alertaRt>=3),col="yellow")
-      lines(1:le,d2v$casos)
+      d2v <- subset(d2,APS==ap)[52:le,]
+      les = dim(d2v)[1]
+      plot(1:les,d2v$casos,type="l",axes=FALSE,ylab="casos",xlab="")
+      abline(v=which(d2v$alertaCli<3 & d2v$alertaRtweet<3 & d2v$alertaRt<3 & d2v$alertaCasos==0),
+             col="darkgreen",lwd=1)
+      abline(v=which(d2v$alertaCli>=3 | d2v$alertaRtweet>=3),col="yellow",lwd=1)
+      abline(v=which(d2v$alertaRt>=3),col="orange")
+      lines(1:les,d2v$casos)
       abline(v=which(d2v$inc>=100),col="red",pch=16)
       title(as.character(ap),cex=1.4)
       axis(2)
-      axis(1,at=seq(1,le,by=6),labels=d2v$SE[seq(1,le,by=6)],las=2)
+      axis(1,at=rev(seq(les,1,by=-12)),labels=d2v$SE[rev(seq(les,1,by=-12))],las=2,cex=0.3)
+      lines(1:les,d2v$casos,lwd=2)
 }
+
 par(mfrow=c(5,2))
 for(i in 1:10) {
       print(as.character(listaAPS[i]))
-      print(tail(d2[d2$APS==listaAPS[i],c("SE","APS","alertaCli","alertaRt","alertaCasos")],n=8))
-      plot.alerta(listaAPS[i])
+      print(tail(d2[d2$APS==listaAPS[i],c("SE","APS","alertaCli","alertaRtweet","alertaRt","alertaCasos")],n=8))
+      plot.alerta2(listaAPS[i])
 }
+
+tiff("alerta.tif",res=200,compression = "lzw",width = 15,height = 22,units="cm")
+  layout(matrix(1:10,nrow = 5),widths = rep(lcm(7),2),heights = rep(lcm(4)))
+  for(i in 1:10) plot.alerta2(listaAPS[i])
+dev.off()
 
 ```
 

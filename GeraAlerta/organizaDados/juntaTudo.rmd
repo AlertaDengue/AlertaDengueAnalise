@@ -25,34 +25,22 @@ tempAP <- read.csv("../dados_limpos/climasemanaRJ.csv")
 ```
 
 
-Tabela a nivel de municipio
----------------------------------
-
 ```{r echo=FALSE}
+#Tabela a nivel de municipio (sem uso)
 # agregar clima pro municipio
-temp<-aggregate(tempAP[,4:11],by=list(SE=tempAP$SE),mean)
+#temp<-aggregate(tempAP[,4:11],by=list(SE=tempAP$SE),mean)
 ```
 
 
 ```{r echo=FALSE}
 # merge
-d<-merge(st,tw,all=TRUE)
-d<-merge(d,temp,all=TRUE)
+#d<-merge(st,tw,all=TRUE)
+#d<-merge(d,temp,all=TRUE)
+#outputfile = paste("../dados_limpos/dadosMRJ_",max(d$SE),".csv",sep="")
 ```
 
 ```{r echo=FALSE}
-tail(d)
-```
- 
-
-```{r echo=FALSE}
-outputfile = paste("../dados_limpos/dadosMRJ_",max(d$SE),".csv",sep="")
-```
-
- 
-
-```{r}
-write.table(d,file=outputfile,row.names=FALSE,sep=",")
+#write.table(d,file=outputfile,row.names=FALSE,sep=",")
 ``` 
 
 Dados por APS
@@ -85,7 +73,7 @@ tail(Rt.ap,n=30)
 
 
 ```{r echo=FALSE}
-outputfile = paste("../dados_limpos/dadosAPS_",max(d$SE),".csv",sep="")
+outputfile = paste("../dados_limpos/dadosAPS_",max(Rt.ap$SE),".csv",sep="")
 outputfile
 ```
 

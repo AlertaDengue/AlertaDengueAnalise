@@ -5,11 +5,9 @@
 # Requer
 library(knitr)
 library(markdown)
-#library(lubridate)
-#library(xts)
 require(foreign)
 rm(list=ls())
-
+source("fun/callmongoclima.r")
 #--------------
 #Etapa inicial:
 #-------------
@@ -46,8 +44,12 @@ knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
 #novoclima <- "dados_brutos/clima/galeao_01012010-15062014.csv" # antigo
 # atualmente capta direto da internet galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
 
-# verificar se funciona 
-galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
+# verificar se funciona (OpenWeather) 
+#galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
+#tail(galeao)  
+
+# verificar se funciona (UndergroundWeather) 
+galeao<-callmongoclima("galeao") 
 tail(galeao)  
 
 #se OK:
@@ -79,8 +81,7 @@ markdownToHTML("organizaDados/juntaTudo.md", "html/juntaTudo.html",fragment.only
 # E. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201441.csv"
-
+dadosAPS<-"dados_limpos/dadosAPS_201443.csv"
 
 knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
 markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE)  
