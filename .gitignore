@@ -2,3 +2,4 @@
 *.html
 .RData
 .Rhistory
+GeraAmerta/figure/*.*
