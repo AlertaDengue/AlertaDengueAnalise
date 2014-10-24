@@ -38,21 +38,20 @@ dim(d)[1]-dim(d2)[1]
 **Serie temporal de casos no municipio todo em 2014**
 
 ```{r echo=FALSE}
-st14 <- aggregate(d$SEM_PRI,by=list(d$SEM_PRI),FUN=length)
+st14 <- aggregate(d$SEM_NOT,by=list(d$SEM_NOT),FUN=length)
 names(st14)<-c("SE","casos")
 st14$SE<-as.numeric(as.character(st14$SE))
 tail(st14)
 ```
 
-**Total de casos no ano**
-
 ```{r echo=FALSE}
 #Cria Serie temporal de casos por APS em 2014
 listaAPS<-unique(baps$APS)
-sem <- unique(d$SEM_PRI)
+sem <- unique(d$SEM_NOT)
 st14.ap <- expand.grid(SE=sem,APS=listaAPS)
 st14.ap$casos <- NA
-for(i in 1:dim(st14.ap)[1]) st14.ap$casos[i]<-length(d2$SEM_PRI[d2$SEM_PRI %in% st14.ap$SE[i] & d2$APS %in% st14.ap$APS[i]])
+for(i in 1:dim(st14.ap)[1]) st14.ap$casos[i]<-length(d2$SEM_NOT[d2$SEM_NOT %in% st14.ap$SE[i] 
+                                                                & d2$APS %in% st14.ap$APS[i]])
 sum(st14.ap$casos)
 st14.ap$SE<-as.numeric(as.character(st14.ap$SE))
 ```
@@ -62,13 +61,15 @@ st14.ap$SE<-as.numeric(as.character(st14.ap$SE))
 # Juntando com dados de anos anteriores
 load("../dados_brutos/sinan/casos2010-2013.Rdata")
 st10.13$SE<-as.numeric(as.character(st10.13$SE))
-st10.13.aps$SE<-as.numeric(as.character(st10.13.aps$semana))
+st10.13.aps$SE<-as.numeric(as.character(st10.13.aps$semana)) # ok
 
 st<-rbind(st10.13,st14)
 st.ap<-rbind(st10.13.aps[,c(4,3,2)],st14.ap) 
 
 st<-st[order(st$SE),]
-st.ap <-st.ap[order(st.ap$SE),]
+st.ap <-st.ap[order(st.ap$APS,st.ap$SE),]
+st <- subset(st,SE>=201001)
+st.ap <- subset(st.ap,SE>=201001)
 ```
 
 

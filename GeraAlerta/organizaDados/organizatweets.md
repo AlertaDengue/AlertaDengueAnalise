@@ -38,7 +38,7 @@ Concatenar as series diarias, preenchendo com NA, se necessario.
 
 
 
-A serie tem 7 dias na primeira semana e 1 dias na ultima semana. Serao removidos.
+A serie tem 7 dias na primeira semana e 2 dias na ultima semana. Serao removidos.
 
 **Tweets/semana**
 
@@ -69,7 +69,7 @@ A serie tem 7 dias na primeira semana e 1 dias na ultima semana. Serao removidos
 ## 23 201424     62
 ## 24 201425     63
 ## 25 201426     80
-## 26 201427     44
+## 26 201427     49
 ## 27 201428     62
 ## 28 201429     55
 ## 29 201430     60
@@ -78,12 +78,12 @@ A serie tem 7 dias na primeira semana e 1 dias na ultima semana. Serao removidos
 ## 32 201433     42
 ## 33 201434     47
 ## 34 201435     81
-## 35 201436     53
+## 35 201436     46
 ## 36 201437     45
-## 37 201438     62
+## 37 201438     57
 ## 38 201439     80
 ## 39 201440     65
-## 40 201441    143
+## 40 201441    134
 ## 41 201442    105
 ```
 
