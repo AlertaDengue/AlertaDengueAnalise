@@ -40,6 +40,7 @@ n1-n2
 ```{r echo=FALSE}
 d$tnotif<-as.numeric(d$DT_NOTIFIC-d$DT_SIN_PRI)
 quantile(d$tnotif,probs=seq(0,1,by=0.05))
+
 ```
 
 **tempo ate digitar** 
@@ -50,12 +51,12 @@ summary(d$diasdigit)
 par(mfrow=c(1,1),mar=c(5,5,3,3))
 d<-na.omit(d)
 range(d$diasdigit)
-freq<-hist(d$tdigit,breaks=seq(0,700,by=7))
+freq<-hist(d$diasdigit,breaks=seq(0,700,by=7))
 freq$counts/sum(freq$counts)
 plot(cumsum(freq$counts)/sum(freq$counts),type="s",ylab="tempo ate digitar",xlab="semana")
 
 cumfreq<-cumsum(freq$counts)/sum(freq$counts)
-cumfreq[1:12]
+cumfreq[1:20]
 
 ```
 
@@ -90,22 +91,24 @@ boxplot(casos~ano,data=dd,ylab="# notificações")
 Analise a partir de 2011
 ```{r}
 ddd<-subset(dd,ano>2010)
-par(mfrow=c(2,1),mar=c(3,5,1,1))
+par(mfrow=c(2,1),mar=c(4,4,1,1))
 boxplot(tdigit~ano,data=ddd,ylab="atraso digitação",ylim=c(0,40))
-boxplot(casos~ano,data=ddd,ylab="# notificações")
+#boxplot(casos~ano,data=ddd,ylab="# notificações")
 
-plot(ddd$casos,ddd$tdigit) # pouca correlacao a quantidade de casos
+plot(ddd$casos,ddd$tdigit,xlab="casos",ylab="tempo até digitar") # pouca correlacao a quantidade de casos
+lines(lowess(ddd$casos,ddd$tdigit))
+summary(lm(ddd$tdigit~ddd$casos))
 tapply(ddd$tdigit,ddd$ano,quantile)
 
 ```
 
 Distribuicao do tempo de atraso
 ```{r}
-par(mfrow=c(2,2))
-plot(density(ddd$tdigit[ddd$ano==2011]),main=2011)
-plot(density(ddd$tdigit[ddd$ano==2012]),main=2012)
-plot(density(ddd$tdigit[ddd$ano==2013]),main=2013)
-plot(density(ddd$tdigit[ddd$ano==2014]),main=2014)
+par(mfrow=c(1,1))
+plot(density(ddd$tdigit[ddd$ano==2011]),col=1,xlab="tempo até digitar",main="")
+lines(density(ddd$tdigit[ddd$ano==2012]),col=2)
+lines(density(ddd$tdigit[ddd$ano==2013]),col=3)
+lines(density(ddd$tdigit[ddd$ano==2014]),col=4)
 ```
 
 ```{r}
@@ -114,9 +117,9 @@ pacf(ddd$tdigit)
 
 **Reconstruindo os dados removendo as digitacoes tardias**
 ```{r}
-d1s <- subset(d,tdigit<8)
-d2s <- subset(d,tdigit<15)
-d3s <- subset(d,tdigit<22)
+d1s <- subset(d,diasdigit<8)
+d2s <- subset(d,diasdigit<15)
+d3s <- subset(d,diasdigit<22)
 
 # apenas os casos com ate uma semana de atraso
 st1 <- aggregate(d1s$SEM_PRI,by=list(d1s$SEM_PRI),FUN=length)
@@ -137,13 +140,13 @@ st3$SE<-as.numeric(as.character(st3$SE))
 tail(st3)
 
 
-par(mfrow=c(1,1))
+par(mfrow=c(1,1),mar=c(3,5,2,1))
 plot(st1$casos,type="l",ylim=c(0,max(st$casos)),ylab="casos notificados",xlab="tempo",col="red")
 lines(st2$casos,col="green")
 lines(st3$casos,col="blue")
 lines(st$casos,col="black",lwd=2)
-legend(150,8000,c("ate 1 semana atraso","2 semanas","3 semanas","todos"),cex=0.8,lty=1,col=c("red","green","blue","black"))
-title("sem correção para atraso de digitação")
+legend(150,8000,c("x=1","x=2","x=3","todos registros"),cex=0.8,lty=1,col=c("red","green","blue","black"))
+title("dados SINAN digitados até x semanas")
 ```
 
 Aplicando a correção
@@ -153,9 +156,9 @@ par(mfrow=c(1,1))
 plot(st1$casos/0.317,type="l",ylim=c(0,max(st$casos)),ylab="casos notificados",xlab="tempo",col="red")
 lines(st2$casos/0.531,col="green")
 lines(st3$casos/0.652,col="blue")
-lines(st$casos,col="black",lty=2,lwd=2)
-legend(150,8000,c("ate 1 semana atraso","2 semanas","3 semanas","todos"),cex=0.8,lty=1,col=c("red","green","blue","black"))
-title("com correção para atraso de digitação")
+lines(st$casos,col="black",lwd=2)
+legend(150,8000,c("x=1","x=2","x=3","todos registros"),cex=0.8,lty=1,col=c("red","green","blue","black"))
+title("dados notificação estimados a partir dos dados digitados")
 
 ```
 
