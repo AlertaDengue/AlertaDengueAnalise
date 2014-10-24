@@ -1,0 +1,69 @@
+Rt de Nishiura, 2010
+===
+
+Dados
+========================
+```{r echo=FALSE}
+source("../GeraAlerta/fun/Rt.r")
+```
+
+```{r}
+d <- read.csv("../GeraAlerta/dados_limpos/dadosAPS_201435.csv")
+d1 <- subset(d,APS=="AP1")
+plot(d1$casos,type="l")
+```
+
+
+Geometric approximation Rt
+==========================
+
+$$E[J_{k+1}\vert J_{k}] = R_k J_k$$
+
+```{r echo=FALSE}
+d1$Rt <- Rt(d1$casos)
+plot(d1$Rt,type="l")
+abline(h=1,col=2)
+```
+
+Estimação de Rt
+====================
+$J_{k+1}$ ~ $Poisson(J_k R_k)$
+
+onde
+
+$J_{k+1}$ é o número de casos na geração $k+1$
+
+$J_{k}$ é o número de casos na geração $k$
+
+$R_{k}$ é o número reprodutivo na geração $k$
+
+$L = const \Prod_k^{K-1} exp(-R_k J_k)$
+
+```{r echo=FALSE}
+likfun <- function(R,J,J1) (R*J)^J1 * exp(-R*J) 
+
+J=d1$casos[2]
+J1=d1$casos[3]
+R = J1/J
+L = rep(NA,length(d1$casos))
+L[1] = likfun(R,J,J1)
+
+K = 200
+
+for(k in 2:K) {
+  R = (d1$casos[k]+1)/(d1$casos[(k-1)]+1)
+  L[k] = L[k-1] * likfun(R,(d1$casos[(k-1)]+1),(d1$casos[k]+1))
+  }
+L
+```{r}
+
+
+```{r}
+
+```
+
+
+
+
+
+
