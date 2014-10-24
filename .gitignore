@@ -1,7 +1,5 @@
-*.png
 *.pyc
 *.html
-*.dbf
-*.csv
 .RData
 .Rhistory
+GeraAmerta/figure/*.*
