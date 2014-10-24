@@ -18,8 +18,8 @@ Dados
 ------
 
 ```{r echo=FALSE}
-st<-read.csv("../dados_limpos/sinansemana_RJ.csv")
-st.ap<-read.csv("../dados_limpos/sinansemanaAP_RJ.csv")
+#st<-read.csv("../dados_limpos/sinansemana_RJ.csv")
+st.ap<-read.csv("../dados_limpos/sinansemanaAP_RJ.csv") # prob
 tw<-read.csv("../dados_limpos/tweetsemanaRJ.csv")
 tempAP <- read.csv("../dados_limpos/climasemanaRJ.csv")
 ```

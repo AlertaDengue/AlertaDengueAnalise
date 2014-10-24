@@ -37,8 +37,7 @@ gal<-callmongoclima("galeao")
 ```
 
 ```
-## Warning: This fails for most NoSQL data structures. I am working on a new
-## solution
+## Error: não foi possível encontrar a função "mongo.create"
 ```
 
 ```r
@@ -46,8 +45,7 @@ std <- callmongoclima("santosdumont")
 ```
 
 ```
-## Warning: This fails for most NoSQL data structures. I am working on a new
-## solution
+## Error: não foi possível encontrar a função "mongo.create"
 ```
 
 ```r
@@ -55,8 +53,7 @@ afo <- callmongoclima("afonsos")
 ```
 
 ```
-## Warning: This fails for most NoSQL data structures. I am working on a new
-## solution
+## Error: não foi possível encontrar a função "mongo.create"
 ```
 
 ```r
@@ -64,31 +61,52 @@ jac <- callmongoclima("jacarepagua")
 ```
 
 ```
-## Warning: This fails for most NoSQL data structures. I am working on a new
-## solution
+## Error: não foi possível encontrar a função "mongo.create"
 ```
 
 ```r
 d<- rbind(gal,std,afo,jac)
-rm(gal,std,afo,jac)
+```
 
+```
+## Error: objeto 'gal' não encontrado
+```
+
+```r
+rm(gal,std,afo,jac)
+```
+
+```
+## Warning: objeto 'gal' não encontrado
+## Warning: objeto 'std' não encontrado
+## Warning: objeto 'afo' não encontrado
+## Warning: objeto 'jac' não encontrado
+```
+
+```r
 # Atribuir SE
 d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
 
 # Agregar por semana
 df<-aggregate(d[,2:3],by=list(SE=d$SE,estacao=d$estacao),FUN=mean,na.rm=TRUE)
+```
 
+```
+## Error: arguments must have same length
+```
+
+```r
 head(df)
 ```
 
 ```
-##       SE estacao       data temp.min
-## 1 201001  galeao 2010-01-06    25.17
-## 2 201002  galeao 2010-01-13    24.43
-## 3 201003  galeao 2010-01-20    23.86
-## 4 201004  galeao 2010-01-27    23.71
-## 5 201005  galeao 2010-02-03    25.14
-## 6 201006  galeao 2010-02-10    24.67
+##                                                   
+## 1 function (x, df1, df2, ncp, log = FALSE)        
+## 2 {                                               
+## 3     if (missing(ncp))                           
+## 4         .External(C_df, x, df1, df2, log)       
+## 5     else .External(C_dnf, x, df1, df2, ncp, log)
+## 6 }
 ```
 
 ```r
@@ -96,17 +114,56 @@ tail(df)
 ```
 
 ```
-##         SE     estacao       data temp.min
-## 993 201438 jacarepagua 2014-09-17    20.33
-## 994 201439 jacarepagua 2014-09-24    19.57
-## 995 201440 jacarepagua 2014-10-01    22.33
-## 996 201441 jacarepagua 2014-10-08    18.71
-## 997 201442 jacarepagua 2014-10-15    21.00
-## 998 201443 jacarepagua 2014-10-19    21.00
+##                                                   
+## 1 function (x, df1, df2, ncp, log = FALSE)        
+## 2 {                                               
+## 3     if (missing(ncp))                           
+## 4         .External(C_df, x, df1, df2, log)       
+## 5     else .External(C_dnf, x, df1, df2, ncp, log)
+## 6 }
 ```
 
 
 
+```
+## Error: objeto de tipo 'closure' não possível dividir em subconjuntos
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
+
+```
+## Error: objeto 'dAP' não encontrado
+```
 
 Salvar:
 
@@ -116,4 +173,8 @@ Salvar:
 
 ```r
 write.table(dAP,file="../dados_limpos/climasemanaRJ.csv",sep=",",row.names=FALSE)
+```
+
+```
+## Error: objeto 'dAP' não encontrado
 ```
