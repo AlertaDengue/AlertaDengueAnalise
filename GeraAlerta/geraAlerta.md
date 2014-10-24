@@ -16,7 +16,7 @@ versao 0.2
 
 
 
-Os ultimos dados disponiveis de casos de dengue se referem a'semana 201441:
+Os ultimos dados disponiveis de casos de dengue se referem a'semana 201442:
 
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
@@ -33,12 +33,12 @@ Os ultimos dados disponiveis de tweet sao da semana 201442:
 
 ```
 ##          SE tweets
-## 2865 201438     62
-## 2866 201439     80
-## 2867 201440     65
-## 2868 201441    143
-## 2869 201442    105
-## 2870 201443     NA
+## 2505 201438     57
+## 2506 201439     80
+## 2507 201440     65
+## 2508 201441    134
+## 2509 201442    105
+## 2510 201443     NA
 ```
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
@@ -88,33 +88,33 @@ Para cada APS, indica-se as semanas em que houve alerta de temperatura, de Rt e 
 
 ```
 ##        APS     SE       data tweets estacao casos casosm temp.min Pop2010
-## 2820 AP5.3 201438 2014-09-17     62 afonsos     3  3.589    18.57  368534
-## 2830 AP5.3 201439 2014-09-24     80 afonsos     1  1.258    17.43  368534
-## 2840 AP5.3 201440 2014-10-01     65 afonsos     1  1.355    19.57  368534
-## 2850 AP5.3 201441 2014-10-08    143 afonsos     0  0.000    16.43  368534
-## 2860 AP5.3 201442 2014-10-15    105 afonsos    NA     NA    19.86  368534
-## 2870 AP5.3 201443 2014-10-19     NA afonsos    NA     NA    20.00  368534
-##      alertaCli    Rtw   ptw1  Rtwlr Rtwur twgreat1 alertaRtweet     Rt
-## 2820         0 0.8939 0.1507 0.7195 1.100        0            1 0.8848
-## 2830         0 1.1687 0.9267 0.9408 1.431        1            1 0.6324
-## 2840         0 1.1070 0.8435 0.9040 1.340        1            2 0.6555
-## 2850         0 1.3913 0.9999 1.1575 1.652        1            3 0.4214
-## 2860         0 1.0868 0.8463 0.9231 1.270        1            4     NA
-## 2870         0     NA     NA     NA    NA       NA           NA     NA
+## 2460 AP5.3 201438 2014-09-17     57 afonsos     4  4.785    18.57  368534
+## 2470 AP5.3 201439 2014-09-24     80 afonsos     2  2.516    17.43  368534
+## 2480 AP5.3 201440 2014-10-01     65 afonsos     1  1.355    19.57  368534
+## 2490 AP5.3 201441 2014-10-08    134 afonsos     0  0.000    16.43  368534
+## 2500 AP5.3 201442 2014-10-15    105 afonsos     0  0.000    19.86  368534
+## 2510 AP5.3 201443 2014-10-19     NA afonsos    NA     NA    20.00  368534
+##      alertaCli    Rtw    ptw1  Rtwlr Rtwur twgreat1 alertaRtweet     Rt
+## 2460         0 0.8605 0.08947 0.6883 1.065        0            1 1.0225
+## 2470         0 1.2297 0.96965 0.9834 1.513        1            1 0.6672
+## 2480         0 1.1099 0.84660 0.9039 1.347        1            2 0.8043
+## 2490         0 1.3812 0.99979 1.1461 1.644        1            3 0.4472
+## 2500         0 1.0896 0.84997 0.9231 1.276        1            4 0.3501
+## 2510         0     NA      NA     NA    NA       NA           NA     NA
 ##         pRt1   Rtlr  Rtur    pRti Rtgreat1 alertaRt casos_est    inc
-## 2820 0.36322 0.4374 1.630 0.36322        0        1    3.0000 0.8140
-## 2830 0.12772 0.2900 1.318 0.12772        0        1    1.0000 0.2713
-## 2840 0.19786 0.2544 1.564 0.19786        0        0    1.0000 0.2713
-## 2850 0.09839 0.1380 1.451 0.09839        0        0    0.0000 0.0000
-## 2860      NA     NA    NA 0.84628        1        1    0.5384 0.1461
-## 2870      NA     NA    NA      NA       NA       NA    0.0000 0.0000
+## 2460 0.52539 0.5004 1.856 0.52539        0        1         4 1.0854
+## 2470 0.14570 0.3156 1.338 0.14570        0        1         2 0.5427
+## 2480 0.31251 0.3340 1.720 0.31251        0        0         1 0.2713
+## 2490 0.07798 0.1644 1.295 0.07798        0        0         0 0.0000
+## 2500 0.10964 0.1022 1.678 0.10964        0        0         0 0.0000
+## 2510      NA     NA    NA      NA       NA       NA         0 0.0000
 ##      alertaCasos cor
-## 2820           0   1
-## 2830           0   1
-## 2840           0   1
-## 2850           0   2
-## 2860           0   2
-## 2870           0  NA
+## 2460           0   1
+## 2470           0   1
+## 2480           0   1
+## 2490           0   2
+## 2500           0   2
+## 2510           0  NA
 ```
 
 ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-201.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-202.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-203.png) 
