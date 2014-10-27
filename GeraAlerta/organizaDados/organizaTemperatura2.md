@@ -37,7 +37,8 @@ gal<-callmongoclima("galeao")
 ```
 
 ```
-## Error: não foi possível encontrar a função "mongo.create"
+## Warning: This fails for most NoSQL data structures. I am working on a new
+## solution
 ```
 
 ```r
@@ -45,7 +46,8 @@ std <- callmongoclima("santosdumont")
 ```
 
 ```
-## Error: não foi possível encontrar a função "mongo.create"
+## Warning: This fails for most NoSQL data structures. I am working on a new
+## solution
 ```
 
 ```r
@@ -53,7 +55,8 @@ afo <- callmongoclima("afonsos")
 ```
 
 ```
-## Error: não foi possível encontrar a função "mongo.create"
+## Warning: This fails for most NoSQL data structures. I am working on a new
+## solution
 ```
 
 ```r
@@ -61,32 +64,23 @@ jac <- callmongoclima("jacarepagua")
 ```
 
 ```
-## Error: não foi possível encontrar a função "mongo.create"
+## Warning: This fails for most NoSQL data structures. I am working on a new
+## solution
 ```
 
 ```r
 d<- rbind(gal,std,afo,jac)
-```
-
-```
-## Error: objeto 'gal' não encontrado
-```
-
-```r
 rm(gal,std,afo,jac)
-```
 
-```
-## Warning: objeto 'gal' não encontrado
-## Warning: objeto 'std' não encontrado
-## Warning: objeto 'afo' não encontrado
-## Warning: objeto 'jac' não encontrado
-```
-
-```r
 # Atribuir SE
 d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
+```
 
+```
+## Error: não foi possível encontrar a função "data2SE"
+```
+
+```r
 # Agregar por semana
 df<-aggregate(d[,2:3],by=list(SE=d$SE,estacao=d$estacao),FUN=mean,na.rm=TRUE)
 ```

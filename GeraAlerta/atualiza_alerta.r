@@ -5,7 +5,8 @@
 # Requer
 library(knitr)
 library(markdown)
-require(foreign)
+library(foreign)
+library(rmongodb)
 rm(list=ls())
 source("fun/callmongoclima.r")
 #--------------
@@ -27,7 +28,7 @@ source("fun/callmongoclima.r")
 # A1. Ultimos dados de dengue:
 # esse e' o unico que precisa ser nominalmente indicado aqui. O dbf deve estar na pasta indicada no path do novosinan
 #--------------------------
-novosinan <- "dados_brutos/sinan/Dengue - Oswaldo 15.10.dbf"
+novosinan <- "dados_brutos/sinan/Dengue2014_27_10_2014.dbf"
 
 # verificar os dados
 d <- read.dbf(novosinan)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI",
@@ -48,7 +49,8 @@ knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
 #galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
 #tail(galeao)  
 
-# verificar se funciona (UndergroundWeather) 
+# verificar se funciona (WundergroundWeather) 
+
 galeao<-callmongoclima("galeao") 
 tail(galeao)  
 
@@ -84,8 +86,7 @@ markdownToHTML("organizaDados/juntaTudo.md", "html/juntaTudo.html",fragment.only
 dadosAPS<-"dados_limpos/dadosAPS_201443.csv"
 
 knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
-markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE)  
-
+markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE) 
 
 
 
