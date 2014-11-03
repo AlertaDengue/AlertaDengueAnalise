@@ -58,14 +58,14 @@ A serie tem 7 dias na primeira semana e 1 dias na ultima semana. Serao removidos
 ## 12 201413     63
 ## 13 201414     65
 ## 14 201415     76
-## 15 201416     66
+## 15 201416     62
 ## 16 201417     64
 ## 17 201418    107
-## 18 201419    146
+## 18 201419    159
 ## 19 201420    114
 ## 20 201421     92
 ## 21 201422     80
-## 22 201423     55
+## 22 201423     61
 ## 23 201424     62
 ## 24 201425     63
 ## 25 201426     80
@@ -76,7 +76,7 @@ A serie tem 7 dias na primeira semana e 1 dias na ultima semana. Serao removidos
 ## 30 201431     64
 ## 31 201432     64
 ## 32 201433     42
-## 33 201434     47
+## 33 201434     58
 ## 34 201435     81
 ## 35 201436     46
 ## 36 201437     45
@@ -86,6 +86,7 @@ A serie tem 7 dias na primeira semana e 1 dias na ultima semana. Serao removidos
 ## 40 201441    143
 ## 41 201442    105
 ## 42 201443     88
+## 43 201444     58
 ```
 
 

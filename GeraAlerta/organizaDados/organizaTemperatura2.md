@@ -74,33 +74,21 @@ rm(gal,std,afo,jac)
 
 # Atribuir SE
 d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
-```
 
-```
-## Error: não foi possível encontrar a função "data2SE"
-```
-
-```r
 # Agregar por semana
 df<-aggregate(d[,2:3],by=list(SE=d$SE,estacao=d$estacao),FUN=mean,na.rm=TRUE)
-```
 
-```
-## Error: arguments must have same length
-```
-
-```r
 head(df)
 ```
 
 ```
-##                                                   
-## 1 function (x, df1, df2, ncp, log = FALSE)        
-## 2 {                                               
-## 3     if (missing(ncp))                           
-## 4         .External(C_df, x, df1, df2, log)       
-## 5     else .External(C_dnf, x, df1, df2, ncp, log)
-## 6 }
+##       SE estacao       data tempmin
+## 1 201001  galeao 2010-01-06   25.17
+## 2 201002  galeao 2010-01-13   24.43
+## 3 201003  galeao 2010-01-20   23.86
+## 4 201004  galeao 2010-01-27   23.71
+## 5 201005  galeao 2010-02-03   25.14
+## 6 201006  galeao 2010-02-10   24.67
 ```
 
 ```r
@@ -108,56 +96,17 @@ tail(df)
 ```
 
 ```
-##                                                   
-## 1 function (x, df1, df2, ncp, log = FALSE)        
-## 2 {                                               
-## 3     if (missing(ncp))                           
-## 4         .External(C_df, x, df1, df2, log)       
-## 5     else .External(C_dnf, x, df1, df2, ncp, log)
-## 6 }
+##          SE     estacao       data tempmin
+## 1001 201440 jacarepagua 2014-10-01   22.33
+## 1002 201441 jacarepagua 2014-10-08   18.71
+## 1003 201442 jacarepagua 2014-10-15   21.00
+## 1004 201443 jacarepagua 2014-10-22   20.14
+## 1005 201444 jacarepagua 2014-10-29   20.50
+## 1006 201445 jacarepagua 2014-11-02   22.00
 ```
 
 
 
-```
-## Error: objeto de tipo 'closure' não possível dividir em subconjuntos
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
 
 Salvar:
 
@@ -167,8 +116,4 @@ Salvar:
 
 ```r
 write.table(dAP,file="../dados_limpos/climasemanaRJ.csv",sep=",",row.names=FALSE)
-```
-
-```
-## Error: objeto 'dAP' não encontrado
 ```

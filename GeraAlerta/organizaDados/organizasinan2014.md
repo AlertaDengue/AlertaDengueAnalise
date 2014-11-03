@@ -16,13 +16,13 @@ novosinan <- paste("../",novosinan,sep="")
 
 
 ```
-##   DT_NOTIFIC SEM_NOT NU_ANO DT_SIN_PRI SEM_PRI     NM_BAIRRO
-## 1 2014-03-19  201412   2014 2014-01-08  201402      ABOLICAO
-## 2 2014-03-03  201410   2014 2014-02-26  201409        GALEAO
-## 3 2014-03-26  201413   2014 2014-03-26  201413    PORTUGUESA
-## 4 2014-04-07  201415   2014 2014-04-02  201414     PACIENCIA
-## 5 2014-03-19  201412   2014 2014-03-12  201411 VILA DA PENHA
-## 6 2014-04-04  201414   2014 2014-04-02  201414      INHOAIBA
+##   DT_NOTIFIC SEM_NOT NU_ANO DT_SIN_PRI SEM_PRI          NM_BAIRRO
+## 1 2014-03-11  201411   2014 2014-03-08  201410   MAGALHAES BASTOS
+## 2 2014-01-13  201403   2014 2014-01-13  201403       BRAS DE PINA
+## 3 2014-03-12  201411   2014 2014-03-12  201411          GUARATIBA
+## 4 2014-01-23  201404   2014 2014-01-20  201404 COMPLEXO DO ALEMAO
+## 5 2014-02-26  201409   2014 2014-02-24  201409           CACHAMBI
+## 6 2014-03-18  201412   2014 2014-03-14  201411         COPACABANA
 ```
 
 
@@ -33,7 +33,7 @@ novosinan <- paste("../",novosinan,sep="")
 Numero de registros sem AP (falha no mapeamento bairro -> APS)
 
 ```
-## [1] 43
+## [1] 41
 ```
 
 
@@ -42,17 +42,17 @@ Numero de registros sem AP (falha no mapeamento bairro -> APS)
 
 ```
 ##        SE casos
-## 38 201438    32
 ## 39 201439    39
-## 40 201440    38
-## 41 201441    36
-## 42 201442    34
-## 43 201443    16
+## 40 201440    39
+## 41 201441    42
+## 42 201442    41
+## 43 201443    30
+## 44 201444    57
 ```
 
 
 ```
-## [1] 2197
+## [1] 2288
 ```
 
 
