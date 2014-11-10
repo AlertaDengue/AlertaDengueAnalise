@@ -97,12 +97,12 @@ tail(df)
 
 ```
 ##          SE     estacao       data tempmin
-## 1001 201440 jacarepagua 2014-10-01   22.33
-## 1002 201441 jacarepagua 2014-10-08   18.71
-## 1003 201442 jacarepagua 2014-10-15   21.00
-## 1004 201443 jacarepagua 2014-10-22   20.14
-## 1005 201444 jacarepagua 2014-10-29   20.50
-## 1006 201445 jacarepagua 2014-11-02   22.00
+## 1005 201441 jacarepagua 2014-10-08   18.71
+## 1006 201442 jacarepagua 2014-10-15   21.00
+## 1007 201443 jacarepagua 2014-10-22   20.14
+## 1008 201444 jacarepagua 2014-10-29   20.50
+## 1009 201445 jacarepagua 2014-11-05   22.71
+## 1010 201446 jacarepagua 2014-11-09   22.00
 ```
 
 

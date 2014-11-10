@@ -34,7 +34,7 @@ Concatenacao
 
 Concatenar as series diarias, preenchendo com NA, se necessario.
 ```{r echo=FALSE}
-d<-concatweet(d1,d2)
+#d<-concatweet(d1,d2)
 d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")   
 ```
 

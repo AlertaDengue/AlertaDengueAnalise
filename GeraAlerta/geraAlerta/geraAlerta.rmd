@@ -380,7 +380,7 @@ outputfile = paste("../alerta/alertaAPS_",max(d2$SE),".csv",sep="")
 write.table(d2,file=outputfile,row.names=FALSE,sep=",")
 ```
 
-
+**Confira o mapa da dengue em alerta.dengue.mat.br**
 
 Notas
 -----

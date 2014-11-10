@@ -9,26 +9,16 @@ library(foreign)
 library(rmongodb)
 rm(list=ls())
 source("fun/callmongoclima.r")
-#--------------
-#Etapa inicial:
-#-------------
-
-#1) Verificar se ha dados novos em: 
-#     sftp://alertadengue@200.20.164.152
-#     senha: Sqv4tRoh8GNayFoR      
-      
-#2) Copiar os dados novos  na subpasta correpondente em /dados_brutos/ 
-
 
 #=============================
-# A. Para organizar os dados novos:
+# A. Organizar os dados novos:
 # ============================
 # Selecione os novos dados:
 
 # A1. Ultimos dados de dengue:
 # esse e' o unico que precisa ser nominalmente indicado aqui. O dbf deve estar na pasta indicada no path do novosinan
 #--------------------------
-novosinan <- "dados_brutos/sinan/Dengue2014_03_11_2014.dbf"
+novosinan <- "dados_brutos/sinan/Dengue2014_10_11_2014.dbf"
 
 # verificar os dados
 d <- read.dbf(novosinan)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI",
@@ -50,10 +40,10 @@ knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
 #tail(galeao)  
 
 # Atualizar os dados de temperatura (no console)
-system(paste("fun/clima.py -i 2014-10-15 -f 2014-11-02 -c SBRJ"))
-system(paste("fun/clima.py -i 2014-10-15 -f 2014-11-02 -c SBJR"))
-system(paste("fun/clima.py -i 2014-10-15 -f 2014-11-02 -c SBAF"))
-system(paste("fun/clima.py -i 2014-10-15 -f 2014-11-02 -c SBGL"))
+system(paste("fun/clima.py -i 2014-10-30 -f 2014-11-10 -c SBRJ"))
+system(paste("fun/clima.py -i 2014-10-30 -f 2014-11-10 -c SBJR"))
+system(paste("fun/clima.py -i 2014-10-30 -f 2014-11-10 -c SBAF"))
+system(paste("fun/clima.py -i 2014-10-30 -f 2014-11-10 -c SBGL"))
 
 # verificar se funciona (WundergroundWeather) 
 
@@ -92,7 +82,7 @@ markdownToHTML("organizaDados/juntaTudo.md", "html/juntaTudo.html",fragment.only
 # E. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201444.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201446.csv"
 
 knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
 markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE) 

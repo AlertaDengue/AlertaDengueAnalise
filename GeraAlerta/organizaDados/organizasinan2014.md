@@ -16,13 +16,13 @@ novosinan <- paste("../",novosinan,sep="")
 
 
 ```
-##   DT_NOTIFIC SEM_NOT NU_ANO DT_SIN_PRI SEM_PRI          NM_BAIRRO
-## 1 2014-03-11  201411   2014 2014-03-08  201410   MAGALHAES BASTOS
-## 2 2014-01-13  201403   2014 2014-01-13  201403       BRAS DE PINA
-## 3 2014-03-12  201411   2014 2014-03-12  201411          GUARATIBA
-## 4 2014-01-23  201404   2014 2014-01-20  201404 COMPLEXO DO ALEMAO
-## 5 2014-02-26  201409   2014 2014-02-24  201409           CACHAMBI
-## 6 2014-03-18  201412   2014 2014-03-14  201411         COPACABANA
+##   DT_NOTIFIC SEM_NOT NU_ANO DT_SIN_PRI SEM_PRI       NM_BAIRRO
+## 1 2014-02-03  201406   2014 2014-01-31  201405 CENTRO MESQUITA
+## 2 2014-02-03  201406   2014 2014-02-01  201405 CENTRO MESQUITA
+## 3 2014-01-22  201404   2014 2014-01-15  201403 CENTRO MESQUITA
+## 4 2014-06-18  201425   2014 2014-05-25  201422    EDSON PASSOS
+## 5 2014-01-31  201405   2014 2014-01-29  201405          CENTRO
+## 6 2014-05-21  201421   2014 2014-05-19  201421            <NA>
 ```
 
 
@@ -33,7 +33,7 @@ novosinan <- paste("../",novosinan,sep="")
 Numero de registros sem AP (falha no mapeamento bairro -> APS)
 
 ```
-## [1] 41
+## [1] 209
 ```
 
 
@@ -42,17 +42,17 @@ Numero de registros sem AP (falha no mapeamento bairro -> APS)
 
 ```
 ##        SE casos
-## 39 201439    39
-## 40 201440    39
-## 41 201441    42
-## 42 201442    41
-## 43 201443    30
-## 44 201444    57
+## 40 201440    57
+## 41 201441    59
+## 42 201442    69
+## 43 201443    52
+## 44 201444    88
+## 45 201445    11
 ```
 
 
 ```
-## [1] 2288
+## [1] 3347
 ```
 
 
