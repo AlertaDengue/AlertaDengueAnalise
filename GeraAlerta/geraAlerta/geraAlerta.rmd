@@ -373,7 +373,8 @@ for(i in 1:10) {
 ```
 
 ```{r echo=FALSE}
-outputfile = paste("../alerta/alertaAPS_",max(d2$SE),".csv",sep="")
+#outputfile = paste("../alerta/alertaAPS_",max(d2$SE),".csv",sep="")
+outputfile="alertaRio.csv"
 ```
 
 ```{r echo=FALSE}
