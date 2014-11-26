@@ -9,15 +9,14 @@ callmongoclima<-function(estacao){
   
   mongo<-mongo.create()
   query = mongo.bson.empty()
-  clima<-mongo.find.all(mongo,db,query, 
-                                      sort=list(DateUTC=1), fields=list(DateUTC=1L, Tmin=1L),  )
-  n = dim(clima)[1]
+  clima<-mongo.find.all(mongo,db,query, sort=list(DateUTC=1), fields=list(DateUTC=1L, Tmin=1L),  )
+  n = length(clima)
   
-  data <- as.Date(clima[1,2][[1]])
-  for (i in 2:n) data = c(data,as.Date(clima[i,2][[1]]))
+  data <- as.Date(clima[[1]]$DateUTC)
+  for (i in 2:n) data = c(data,as.Date(clima[[i]]$DateUTC))
   
-  Tmin<-clima[1,3][[1]]
-  for (i in 2:n) Tmin = c(Tmin,clima[i,3][[1]])
+  Tmin<-clima[[1]]$Tmin
+  for (i in 2:n) Tmin = c(Tmin,clima[[i]]$Tmin)
   
   d <- data.frame(estacao=estacao,data=data,tempmin=Tmin)
   d$tempmin[d$tempmin==-9999]<-NA
@@ -26,5 +25,7 @@ callmongoclima<-function(estacao){
   d 
 }
 
+#TESTE
 #d<-callmongoclima("galeao")
 #head(d)
+#tail(d)
