@@ -1,235 +1,375 @@
-Gera Relatorio
-========================================================
-Ainda em fase preliminar
+---
+title: "Alerta Dengue Rio"
+author: "Relatório de situação"
+output: pdf_document
+---
 
 
 
-Alerta MRJ
-----------
-
-```
-##         SE casos tweets  temp     Rt temp.1 temp_crit casos_crit alertaRt1
-## 164 201418    29    105 17.29 0.9324  17.29        22       4371         0
-## 165 201419    21    159 20.14 1.0000  20.14        22       4371         1
-## 166 201420    12    105 17.00 0.8986  17.00        22       4371         0
-## 167 201421    20     41 20.00 0.8548  20.00        22       4371         0
-## 168 201422    16     80 18.43 0.9057  18.43        22       4371         0
-## 169 201423    16     54 18.71 1.0833  18.71        22       4371         0
-##     alertaTemp alertaCasos
-## 164          0           0
-## 165          0           0
-## 166          0           0
-## 167          0           0
-## 168          0           0
-## 169          0           0
-```
-
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
-
-APS
------------
 
 
 
+**Rio de Janeiro, 2014-12-23  (SE 201452)**
 
 
 ```
-## [1] "AP1"
-##         SE APS casos tweets  temp    Rt casos_est Rt_est temp_crit
-## 164 201418 AP1     1    105 17.29 0.000    0.0000 0.9567        22
-## 165 201419 AP1     1    159 20.14 2.000    1.1935 1.1935        22
-## 166 201420 AP1     1    105 17.00 1.500    0.8973 0.8973        22
-## 167 201421 AP1     2     41 20.00 1.333    0.8295 0.8295        22
-## 168 201422 AP1     1     80 18.43 1.000    1.7991 0.8995        22
-## 169 201423 AP1     0     54 18.71 0.750    0.9755 0.9755        22
-##     casos_crit alertaRt1 alertaTemp alertaCasos
-## 164      204.7         0          0           0
-## 165      204.7         1          0           0
-## 166      204.7         0          0           0
-## 167      204.7         0          0           0
-## 168      204.7         0          0           0
-## 169      204.7         0          0           0
+## Error in paste("../", alerta, sep = ""): objeto 'alerta' não encontrado
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-51.png) 
-
 ```
-## [1] "AP2.1"
-##         SE   APS casos tweets  temp     Rt casos_est Rt_est temp_crit
-## 333 201418 AP2.1     2    105 17.29 0.8571    2.8664 0.9555        22
-## 334 201419 AP2.1     1    159 20.14 1.0000    2.3140 1.1570        22
-## 335 201420 AP2.1     0    105 17.00 0.5000    0.8686 0.8686        22
-## 336 201421 AP2.1     0     41 20.00 0.3333    0.0000 0.8007        22
-## 337 201422 AP2.1     0     80 18.43 0.0000    0.0000 0.8621        22
-## 338 201423 AP2.1     1     54 18.71 0.0000    0.0000 0.9494        22
-##     casos_crit alertaRt1 alertaTemp alertaCasos
-## 333      472.6         0          0           0
-## 334      472.6         1          0           0
-## 335      472.6         0          0           0
-## 336      472.6         0          0           0
-## 337      472.6         0          0           0
-## 338      472.6         0          0           0
+## Error in read.table(file = file, header = header, sep = sep, quote = quote, : objeto 'nalerta' não encontrado
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-52.png) 
 
-```
-## [1] "AP2.2"
-##         SE   APS casos tweets  temp     Rt casos_est Rt_est temp_crit
-## 502 201418 AP2.2     0    105 17.29 1.0000     0.000 1.0745        22
-## 503 201419 AP2.2     3    159 20.14 1.0000     0.000 1.2925        22
-## 504 201420 AP2.2     3    105 17.00 2.0000     2.756 0.9188        22
-## 505 201421 AP2.2     0     41 20.00 1.0000     2.378 0.7925        22
-## 506 201422 AP2.2     2     80 18.43 0.8333     0.000 0.8849        22
-## 507 201423 AP2.2     1     54 18.71 0.6000     2.042 1.0212        22
-##     casos_crit alertaRt1 alertaTemp alertaCasos
-## 502      230.3         1          0           0
-## 503      230.3         1          0           0
-## 504      230.3         0          0           0
-## 505      230.3         0          0           0
-## 506      230.3         0          0           0
-## 507      230.3         1          0           0
-```
+* [Na cidade](#tab1)
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-53.png) 
+* [Por APS](#tab2)
 
-```
-## [1] "AP3.1"
-##         SE   APS casos tweets  temp     Rt casos_est Rt_est temp_crit
-## 671 201418 AP3.1     2    105 17.29 1.0000    2.8049 0.9350        22
-## 672 201419 AP3.1     2    159 20.14 1.4000    2.3029 1.1515        22
-## 673 201420 AP3.1     0    105 17.00 0.5714    1.7533 0.8767        22
-## 674 201421 AP3.1     4     41 20.00 1.5000    0.0000 0.8841        22
-## 675 201422 AP3.1     1     80 18.43 0.8333    3.6105 0.9026        22
-## 676 201423 AP3.1     0     54 18.71 1.0000    0.9677 0.9677        22
-##     casos_crit alertaRt1 alertaTemp alertaCasos
-## 671      343.3         0          0           0
-## 672      343.3         1          0           0
-## 673      343.3         0          0           0
-## 674      343.3         0          0           0
-## 675      343.3         0          0           0
-## 676      343.3         0          0           0
-```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-54.png) 
+<br> </br>
 
-```
-## [1] "AP3.2"
-##         SE   APS casos tweets  temp     Rt casos_est Rt_est temp_crit
-## 838 201417 AP3.2     2     64 21.57 1.0000    3.9408 0.9852        22
-## 839 201418 AP3.2     3    105 17.29 1.2857    1.9850 0.9925        22
-## 840 201419 AP3.2     1    159 20.14 0.6667    3.5848 1.1949        22
-## 841 201420 AP3.2     0    105 17.00 0.6667    0.8886 0.8886        22
-## 842 201421 AP3.2     0     41 20.00 0.2500    0.0000 0.8086        22
-## 843 201422 AP3.2     0     80 18.43 0.0000    0.0000 0.8757        22
-##     casos_crit alertaRt1 alertaTemp alertaCasos
-## 838      402.7         0          0           0
-## 839      402.7         0          0           0
-## 840      402.7         1          0           0
-## 841      402.7         0          0           0
-## 842      402.7         0          0           0
-## 843      402.7         0          0           0
-```
+### <a name="tab1"></a> Situação na cidade do Rio de Janeiro
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-55.png) 
 
-```
-## [1] "AP3.3"
-##          SE   APS casos tweets  temp     Rt casos_est Rt_est temp_crit
-## 1007 201418 AP3.3     7    105 17.29 1.2500    1.8479 0.9239        22
-## 1008 201419 AP3.3     4    159 20.14 0.8667    8.0338 1.1477        22
-## 1009 201420 AP3.3     0    105 17.00 0.8462    3.4671 0.8668        22
-## 1010 201421 AP3.3     3     41 20.00 0.6364    0.0000 0.8623        22
-## 1011 201422 AP3.3     1     80 18.43 0.5714    2.6692 0.8897        22
-## 1012 201423 AP3.3     5     54 18.71 2.2500    0.9563 0.9563        22
-##      casos_crit alertaRt1 alertaTemp alertaCasos
-## 1007      799.7         0          0           0
-## 1008      799.7         1          0           0
-## 1009      799.7         0          0           0
-## 1010      799.7         0          0           0
-## 1011      799.7         0          0           0
-## 1012      799.7         0          0           0
-```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-56.png) 
 
-```
-## [1] "AP4"
-##          SE APS casos tweets  temp    Rt casos_est Rt_est temp_crit
-## 1176 201418 AP4     5    105 17.29 0.875    0.9127 0.9127        22
-## 1177 201419 AP4     2    159 20.14 1.143    5.6339 1.1268        22
-## 1178 201420 AP4     3    105 17.00 1.250    1.7415 0.8707        22
-## 1179 201421 AP4     0     41 20.00 0.500    2.6009 0.8670        22
-## 1180 201422 AP4     3     80 18.43 1.200    0.0000 0.8946        22
-## 1181 201423 AP4     0     54 18.71 0.500    2.8519 0.9506        22
-##      casos_crit alertaRt1 alertaTemp alertaCasos
-## 1176      431.7         0          0           0
-## 1177      431.7         1          0           0
-## 1178      431.7         0          0           0
-## 1179      431.7         0          0           0
-## 1180      431.7         0          0           0
-## 1181      431.7         0          0           0
-```
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png) 
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-57.png) 
+\pagebreak
 
-```
-## [1] "AP5.1"
-##          SE   APS casos tweets  temp     Rt casos_est Rt_est temp_crit
-## 1345 201418 AP5.1     5    105 17.29 0.6471    2.4815 0.8272        22
-## 1346 201419 AP5.1     3    159 20.14 1.0000    5.4999 1.1000        22
-## 1347 201420 AP5.1     1    105 17.00 0.8182    2.5417 0.8472        22
-## 1348 201421 AP5.1     2     41 20.00 0.6667    0.8785 0.8785        22
-## 1349 201422 AP5.1     4     80 18.43 1.1667    1.8004 0.9002        22
-## 1350 201423 AP5.1     4     54 18.71 1.4286    3.6972 0.9243        22
-##      casos_crit alertaRt1 alertaTemp alertaCasos
-## 1345      973.6         0          0           0
-## 1346      973.6         1          0           0
-## 1347      973.6         0          0           0
-## 1348      973.6         0          0           0
-## 1349      973.6         0          0           0
-## 1350      973.6         0          0           0
-```
+Últimas 6 semanas:
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-58.png) 
 
-```
-## [1] "AP5.2"
-##          SE   APS casos tweets  temp     Rt casos_est Rt_est temp_crit
-## 1513 201417 AP5.2     0     64 21.57 0.6000    0.9385 0.9385        22
-## 1514 201418 AP5.2     0    105 17.29 0.3333    0.0000 0.8864        22
-## 1515 201419 AP5.2     0    159 20.14 0.0000    0.0000 1.1514        22
-## 1516 201421 AP5.2     6     41 20.00 0.0000    0.0000 0.7798        22
-## 1517 201422 AP5.2     1     80 18.43 1.1667    5.1666 0.8611        22
-## 1518 201423 AP5.2     4     54 18.71 1.5714    0.9260 0.9260        22
-##      casos_crit alertaRt1 alertaTemp alertaCasos
-## 1513        559         0          0           0
-## 1514        559         0          0           0
-## 1515        559         1          0           0
-## 1516        559         0          0           0
-## 1517        559         0          0           0
-## 1518        559         0          0           0
-```
+-----------------------------------------------------------
+ &nbsp;     SE    casos   casos_corrigidos   tweets   Tmin 
+--------- ------ ------- ------------------ -------- ------
+ **254**  201446   32          38.28           47    20.46 
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-59.png) 
+ **255**  201447   45           56.6           50    18.89 
 
-```
-## [1] "AP5.3"
-##          SE   APS casos tweets  temp     Rt casos_est Rt_est temp_crit
-## 1682 201418 AP5.3     3    105 17.29 0.9091     4.458 0.8916        22
-## 1683 201419 AP5.3     3    159 20.14 1.1000     3.405 1.1351        22
-## 1684 201420 AP5.3     3    105 17.00 0.8182     2.474 0.8248        22
-## 1685 201421 AP5.3     3     41 20.00 1.0000     2.661 0.8870        22
-## 1686 201422 AP5.3     3     80 18.43 1.0000     2.618 0.8728        22
-## 1687 201423 AP5.3     1     54 18.71 0.7778     2.824 0.9414        22
-##      casos_crit alertaRt1 alertaTemp alertaCasos
-## 1682        234         0          0           0
-## 1683        234         1          0           0
-## 1684        234         0          0           0
-## 1685        234         0          0           0
-## 1686        234         0          0           0
-## 1687        234         0          0           0
-```
+ **256**  201448   29           39.3           46    22.34 
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-510.png) 
+ **257**  201449   36          55.21           40    21.48 
+
+ **258**  201450   14          26.37           46    22.91 
+
+ **259**  201451   NA            NA            28    21.87 
+-----------------------------------------------------------
+
+Legenda:
+
+- SE: semana epidemiológica
+- casos: nímero de casos de dengue no SINAN
+- casos_corrigidos: estimativa do número de casos notificados (ver [Notas](#notas))
+- tweets: número de tweets relatando sintomas de dengue (ver [Notas](#notas))
+- Tmin: média das temperaturas mínimas da semana
+
+
+
+<br> </br>
+<br> </br>
+
+
+
+
+**Alerta por APS**
+
+Código:
+
+*Verde (atividade baixa)*
+   temperatura < 22 graus por 3 semanas 
+   atividade de tweet normal (não aumentada)
+   ausência de transmissão sustentada
+
+*Amarelo (Alerta)*
+   temperatura > 22C por mais de 3 semanas
+   ou atividade de tweet aumentada
+
+*Laranja (Transmissão sustentada)*
+  número reprodutivo >1 por 3 semanas
+
+*Vermelho (atividade alta)*
+ incidência > 100:100.000
+
+
+
+
+### <a name="ap1"></a> Alerta APS 1
+
+
+
+![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26-1.png) 
+
+<br> </br>
+
+Histórico da APS 1
+
+-----------------------------------------------------------------------------------
+ &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+--------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **214**  201446 20.67     2    0.8812    0        0         0        0      verde 
+
+ **224**  201447 20.17     4    1.762     0        0         0        0      verde 
+
+ **125**  201448   22      2    0.8812    0        0         0        0      verde 
+
+ **135**  201449 22.14     0      0       0        0         0        0      verde 
+
+ **145**  201450 22.86     1    0.4406    1        0         0        0     amarelo
+
+ **155**  201451 22.71     0      0       1        0         0        0     amarelo
+-----------------------------------------------------------------------------------
+
+
+
+### <a name="ap21"></a> Alerta APS 2.1
+
+![plot of chunk unnamed-chunk-29](figure/unnamed-chunk-29-1.png) 
+
+<br> </br>
+
+Histórico da AP2.1
+
+-----------------------------------------------------------------------------------
+ &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+--------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **512**  201446 20.67     3    0.5428    0        0         0        0      verde 
+
+ **517**  201447 20.17     2    0.3619    0        0         0        0      verde 
+
+ **368**  201448   22      6    1.086     0        0         0        0      verde 
+
+ **378**  201449 22.14     5    0.9047    0        0         0        0      verde 
+
+ **388**  201450 22.86     4    0.7237    1        0         0        0     amarelo
+
+ **398**  201451 22.71   6.433  1.164     1        0         0        0     amarelo
+-----------------------------------------------------------------------------------
+
+
+
+### <a name="ap22"></a> Alerta APS 2.2
+
+![plot of chunk unnamed-chunk-32](figure/unnamed-chunk-32-1.png) 
+
+<br> </br>
+
+Histórico da AP2.2
+
+----------------------------------------------------------------------------------
+ &nbsp;     SE    temp   casos   inc   AClima   ATweet   ATransm   ACasos   nivel 
+--------- ------ ------ ------- ----- -------- -------- --------- -------- -------
+ **770**  201446 20.67     6    1.617    0        0         0        0      verde 
+
+ **767**  201447 20.17     7    1.886    0        0         0        0      verde 
+
+ **612**  201448   22      0      0      0        0         0        0      verde 
+
+ **622**  201449 22.14     9    2.425    0        0         0        0      verde 
+
+ **632**  201450 22.86     0      0      1        0         0        0     amarelo
+
+ **642**  201451 22.71   12.73  3.431    1        0         0        0     amarelo
+----------------------------------------------------------------------------------
+
+
+
+### <a name="ap31"></a> Alerta APS 3.1
+
+![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35-1.png) 
+
+<br> </br>
+
+Histórico da AP3.1
+
+------------------------------------------------------------------------------------
+  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **1026**  201446 20.71     3    0.4077    0        0         0        0      verde 
+
+ **1023**  201447 19.43     1    0.1359    0        0         0        0      verde 
+
+ **855**   201448 22.67     3    0.4077    0        0         0        0      verde 
+
+ **865**   201449 21.86     0      0       0        0         0        0      verde 
+
+ **875**   201450 23.33     0      0       0        0         0        0      verde 
+
+ **885**   201451 22.29     0      0       0        0         0        0      verde 
+------------------------------------------------------------------------------------
+
+
+
+### <a name="ap32"></a> Alerta APS 3.2
+
+![plot of chunk unnamed-chunk-38](figure/unnamed-chunk-38-1.png) 
+
+<br> </br>
+
+Histórico da AP3.2
+
+------------------------------------------------------------------------------------
+  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **1271**  201446 20.71     1    0.2042    0        0         0        0      verde 
+
+ **1281**  201447 19.43     4    0.8168    0        0         0        0      verde 
+
+ **1208**  201448 22.67     1    0.2042    0        0         0        0      verde 
+
+ **1218**  201449 21.86     2    0.4084    0        0         0        0      verde 
+
+ **1228**  201450 23.33     2    0.4084    0        0         0        0      verde 
+
+ **1238**  201451 22.29   2.494  0.5092    0        0         0        0      verde 
+------------------------------------------------------------------------------------
+
+
+
+### <a name="ap33"></a> Alerta APS 3.3
+
+![plot of chunk unnamed-chunk-41](figure/unnamed-chunk-41-1.png) 
+
+<br> </br>
+
+Histórico da AP3.3
+
+------------------------------------------------------------------------------------
+  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **1552**  201446 20.71     0      0       0        0         0        0      verde 
+
+ **1553**  201447 19.43     6    0.6491    0        0         0        0      verde 
+
+ **1464**  201448 22.67     0      0       0        0         0        0      verde 
+
+ **1474**  201449 21.86     3    0.3245    0        0         0        0      verde 
+
+ **1484**  201450 23.33     0      0       0        0         0        0      verde 
+
+ **1494**  201451 22.29   4.829  0.5224    0        0         0        0      verde 
+------------------------------------------------------------------------------------
+
+
+
+### <a name="ap4"></a> Alerta APS 4
+
+![plot of chunk unnamed-chunk-44](figure/unnamed-chunk-44-1.png) 
+
+<br> </br>
+
+Histórico da AP4
+
+------------------------------------------------------------------------------------
+  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **1812**  201446 20.86     8    0.9537    0        0         0        0      verde 
+
+ **1811**  201447 18.29    14    1.669     0        0         0        0      verde 
+
+ **1708**  201448   23     10    1.192     0        0         0        0      verde 
+
+ **1718**  201449 21.29     7    0.8345    0        0         0        0      verde 
+
+ **1728**  201450   22      4    0.4768    0        0         0        0      verde 
+
+ **1738**  201451 21.57   7.201  0.8584    0        0         0        0      verde 
+------------------------------------------------------------------------------------
+
+
+
+### <a name="ap51"></a> Alerta APS 5.1
+
+![plot of chunk unnamed-chunk-47](figure/unnamed-chunk-47-1.png) 
+
+<br> </br>
+
+Histórico da AP5.1
+
+------------------------------------------------------------------------------------
+  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **2069**  201446 19.86     5    0.7623    0        0         0        0      verde 
+
+ **2067**  201447 17.29     4    0.6099    0        0         0        0      verde 
+
+ **1951**  201448 22.14     2    0.3049    0        0         0        0      verde 
+
+ **1961**  201449  20.5     3    0.4574    0        0         0        0      verde 
+
+ **1971**  201450 22.83     1    0.1525    0        0         0        0      verde 
+
+ **1981**  201451 20.71   2.698  0.4114    0        0         0        0      verde 
+------------------------------------------------------------------------------------
+
+
+
+### <a name="ap52"></a> Alerta APS 5.2
+
+![plot of chunk unnamed-chunk-50](figure/unnamed-chunk-50-1.png) 
+
+<br> </br>
+
+Histórico da AP5.2
+
+------------------------------------------------------------------------------------
+  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **2271**  201446 19.86     3    0.451     0        0         0        0      verde 
+
+ **2281**  201447 17.29     3    0.451     0        0         0        0      verde 
+
+ **2291**  201448 22.14     4    0.6013    0        0         0        0      verde 
+
+ **2301**  201449  20.5     4    0.6013    0        0         0        0      verde 
+
+ **2311**  201450 22.83     1    0.1503    0        0         0        0      verde 
+
+ **2321**  201451 20.71   4.797  0.7211    0        0         0        0      verde 
+------------------------------------------------------------------------------------
+
+
+
+### <a name="ap53"></a> Alerta APS 5.3
+
+![plot of chunk unnamed-chunk-53](figure/unnamed-chunk-53-1.png) 
+
+<br> </br>
+
+Histórico da AP5.3
+
+------------------------------------------------------------------------------------
+  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
+---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
+ **2540**  201446 19.86     1    0.2713    0        0         0        0      verde 
+
+ **2550**  201447 17.29     0      0       0        0         0        0      verde 
+
+ **2560**  201448 22.14     1    0.2713    0        0         0        0      verde 
+
+ **2570**  201449  20.5     3    0.814     0        0         0        0      verde 
+
+ **2580**  201450 22.83     1    0.2713    0        0         0        0      verde 
+
+ **2590**  201451 20.71   7.004   1.9      0        0         0        0      verde 
+------------------------------------------------------------------------------------
+
+
+
+
+
+### <a name="notas"></a> Notas
+
+
+- Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos
+notificados considerando o tempo ate os casos serem digitados.
+- Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue
+- Algumas vezes, os casos da última semana ainda não estao disponiveis, nesse caso, usa-se uma estimação com base na tendência de variação da serie 
+
+Créditos
+------
+Esse e um projeto desenvolvido em parceria pela Fiocruz, FGV e Prefeitura do Rio de Janeiro, com apoio da SVS/MS
+
+Mais detalhes, ver: www.dengue.mat.br
+
 

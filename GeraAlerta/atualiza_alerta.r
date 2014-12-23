@@ -18,7 +18,7 @@ source("fun/callmongoclima.r")
 # A1. Ultimos dados de dengue:
 # esse e' o unico que precisa ser nominalmente indicado aqui. O dbf deve estar na pasta indicada no path do novosinan
 #--------------------------
-novosinan <- "dados_brutos/sinan/DENGON2014_24_11_2014_ogc.dbf"
+novosinan <- "dados_brutos/sinan/DENGON2014_15_12_2014.dbf"
 
 # verificar os dados
 d <- read.dbf(novosinan)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI",
@@ -39,11 +39,12 @@ knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
 #galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
 #tail(galeao)  
 
-# Atualizar os dados de temperatura (no console) - sempre colocar o domingo como data final
-system(paste("fun/clima.py -i 2014-11-13 -f 2014-11-23 -c SBRJ"))
-system(paste("fun/clima.py -i 2014-11-13 -f 2014-11-23 -c SBJR"))
-system(paste("fun/clima.py -i 2014-11-13 -f 2014-11-23 -c SBAF"))
-system(paste("fun/clima.py -i 2014-11-13 -f 2014-11-23 -c SBGL"))
+# Atualizar os dados de temperatura (data final = domingo)
+
+system(paste("fun/clima.py -i 2014-12-13 -f 2014-12-21 -c SBRJ"))
+system(paste("fun/clima.py -i 2014-12-13 -f 2014-12-21 -c SBJR"))
+system(paste("fun/clima.py -i 2014-12-03 -f 2014-12-21 -c SBAF"))
+system(paste("fun/clima.py -i 2014-12-03 -f 2014-12-21 -c SBGL"))
 
 # verificar se funciona (WundergroundWeather) 
 
@@ -82,10 +83,13 @@ markdownToHTML("organizaDados/juntaTudo.md", "html/juntaTudo.html",fragment.only
 # E. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201447.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201451.csv"
 
 knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
 markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE) 
+
+alerta<-"alerta/alertaAPS_201451.csv"
+knit(input="geraAlerta/relatorio.rmd",quiet=TRUE,envir=new.env())
 
 
 #wkhtmltopdf Alerta.html Alerta.pdf

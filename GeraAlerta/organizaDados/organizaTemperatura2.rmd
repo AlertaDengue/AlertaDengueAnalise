@@ -5,7 +5,7 @@ todas as APS
 
 ```{r include=FALSE}
 #library("lubridate")
-#source("../fun/data2SE.r")
+source("../fun/data2SE.r")
 #source("../fun/callmongoclima.r")
 ```
 

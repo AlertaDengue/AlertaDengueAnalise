@@ -18,8 +18,8 @@ callmongoclima<-function(estacao){
   Tmin<-clima[[1]]$Tmin
   for (i in 2:n) Tmin = c(Tmin,clima[[i]]$Tmin)
   
-  d <- data.frame(estacao=estacao,data=data,tempmin=Tmin)
-  d$tempmin[d$tempmin==-9999]<-NA
+  d <- data.frame(estacao=estacao,data=data,Tmin=Tmin)
+  d$Tmin[d$Tmin==-9999]<-NA
   
   mongo.disconnect(mongo)
   d 

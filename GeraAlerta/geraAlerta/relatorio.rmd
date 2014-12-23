@@ -1,11 +1,12 @@
 ---
 title: "Alerta Dengue Rio"
 author: "Relatório de situação"
-output: html_document
+output: pdf_document
 ---
 
-===========================================================
-### <a name="voltaini"></a>
+```{r echo=FALSE}
+# <a name="voltaini"></a>
+```
 
 
 ```{r echo=FALSE}
@@ -16,8 +17,9 @@ SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
 **Rio de Janeiro, `r as.character(hoje)`  (SE `r as.character(SEhoje)`)**
 
 ```{r echo=FALSE}
-# Abre os dados mais recentes
-d2 <- read.csv(file="../alerta/alertaAPS_201447.csv")
+# Abre os dados mais recentes (se chamado por geraAlerta, nao precisa)
+nalerta <- paste("../",alerta,sep="")
+d2 <- read.csv(file=nalerta)
 ```
 
 
@@ -36,9 +38,9 @@ casos <- aggregate(d2[,"casos"],by=list(SE=d2$SE),FUN=sum) # casos brutos
 casosm <- aggregate(d2[,"casosm"],by=list(SE=d2$SE),FUN=sum) # casos corrigidos
 cidade<- merge(casos,casosm,by="SE")
 names(cidade)<-c("SE","casos","casos_corrigidos")
-dt<-subset(d2,APS=="AP1")[,c("SE","tweets")]  #tweets
-dc <- aggregate(d2[,"tempmin"],by=list(SE=d2$SE),FUN=mean,na.rm=TRUE) #clima
-names(dc)[2]<-"tempmin"
+dt<-subset(d2,APS=="AP1")[,c("SE","tweets")]  # tweets
+dc <- aggregate(d2[,"Tmin"],by=list(SE=d2$SE),FUN=mean,na.rm=TRUE) #clima
+names(dc)[2]<-"Tmin"
 cidade<- merge(cidade,dt,by="SE")
 cidade<- merge(cidade,dc,by="SE")
 ```
@@ -58,21 +60,21 @@ plot(cidade$casos, type="l", xlab="",ylab="casos notificados no MRJ",axes=FALSE,
 axis(2)
 #axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
 
-plot(cidade$tempmin,type="l",ylab="temperatura",axes=FALSE,xlab="",main="Temperatura mínima")
+plot(cidade$Tmin,type="l",ylab="temperatura",axes=FALSE,xlab="",main="Temperatura mínima")
 axis(2)
 le=dim(cidade)[1]
 axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
 
 ```
 
-<br> </br>
+\pagebreak
 
-Últimas 12 semanas:
+Últimas 6 semanas:
 
 ```{r echo=FALSE}
 library(pander)
 panderOptions('table.split.table', Inf)
-pander(tail(cidade,n=12),compact=TRUE,)
+pander(tail(cidade,n=6),compact=TRUE,)
 
 ```
 
@@ -82,16 +84,24 @@ Legenda:
 - casos: nímero de casos de dengue no SINAN
 - casos_corrigidos: estimativa do número de casos notificados (ver [Notas](#notas))
 - tweets: número de tweets relatando sintomas de dengue (ver [Notas](#notas))
-- tempmin: média das temperaturas mínimas da semana
+- Tmin: média das temperaturas mínimas da semana
 
-[volta para o início](#voltaini)
+```{r echo=FALSE}
+#[volta para o início](#voltaini)
+```
 
 <br> </br>
 <br> </br>
+
+```{r echo=FALSE}
 
 ### <a name="volta"></a>
 
 ### <a name="tab2"></a> Alerta por APS
+```
+
+
+**Alerta por APS**
 
 Código:
 
@@ -110,20 +120,20 @@ Código:
 *Vermelho (atividade alta)*
  incidência > 100:100.000
 
+```{r echo=FALSE}
 
-**Selecione a APS desejada**
+#* [APS 1](#ap1)
+#* [APS 2.1](#ap21)
+#* [APS 2.2](#ap22)
+#* [APS 3.1](#ap31)
+#* [APS 3.2](#ap32)
+#* [APS 3.3](#ap33)
+#* [APS 4](#ap4)
+#* [APS 5.1](#ap51)
+#* [APS 5.2](#ap52)
+#* [APS 5.3](#ap53)
 
-* [APS 1](#ap1)
-* [APS 2.1](#ap21)
-* [APS 2.2](#ap22)
-* [APS 3.1](#ap31)
-* [APS 3.2](#ap32)
-* [APS 3.3](#ap33)
-* [APS 4](#ap4)
-* [APS 5.1](#ap51)
-* [APS 5.2](#ap52)
-* [APS 5.3](#ap53)
-
+```
 
 
 ### <a name="ap1"></a> Alerta APS 1
@@ -131,8 +141,10 @@ Código:
 ```{r echo=FALSE}
 plot.alerta2<-function(ap){
       par(mai=c(0,0,0,0),mar=c(4,1,1,1))
-      d2v <- subset(d2,APS==ap)[52:le,]
+      d2v <- subset(d2,APS==ap)
       les = dim(d2v)[1]
+      d2v <- d2v[c(52:les),]
+      les <- dim(d2v)[1]
       plot(1:les,d2v$casos,type="l",axes=FALSE,ylab="",xlab="")
       abline(v=which(d2v$cor==1),col="darkgreen",lwd=2)
       abline(v=which(d2v$cor==2),col="yellow",lwd=2)
@@ -151,24 +163,28 @@ panderOptions('table.split.table', Inf)
 
 par(mfrow=c(1,1))
 plot.alerta2("AP1")
-tab<-tail(d2[d2$APS=="AP1",c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS=="AP1",c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
 
-Histórico da 1
+Histórico da APS 1
 ```{r echo=FALSE}
 pander(tab)
 ```
 
-[volta](#volta)
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap21"></a> Alerta APS 2.1
 
 ```{r echo=FALSE}
 ap = "AP2.1"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -178,14 +194,17 @@ Histórico da `r ap`
 pander(tab)
 ```
 
-[volta](#volta)
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap22"></a> Alerta APS 2.2
 
 ```{r echo=FALSE}
 ap = "AP2.2"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -194,14 +213,18 @@ Histórico da `r ap`
 ```{r echo=FALSE}
 pander(tab)
 ```
-[volta](#volta)
+
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap31"></a> Alerta APS 3.1
 
 ```{r echo=FALSE}
 ap = "AP3.1"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -210,14 +233,18 @@ Histórico da `r ap`
 ```{r echo=FALSE}
 pander(tab)
 ```
-[volta](#volta)
+
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap32"></a> Alerta APS 3.2
 
 ```{r echo=FALSE}
 ap = "AP3.2"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -226,14 +253,18 @@ Histórico da `r ap`
 ```{r echo=FALSE}
 pander(tab)
 ```
-[volta](#volta)
+
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap33"></a> Alerta APS 3.3
 
 ```{r echo=FALSE}
 ap = "AP3.3"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -242,14 +273,18 @@ Histórico da `r ap`
 ```{r echo=FALSE}
 pander(tab)
 ```
-[volta](#volta)
+
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap4"></a> Alerta APS 4
 
 ```{r echo=FALSE}
 ap = "AP4"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -258,14 +293,18 @@ Histórico da `r ap`
 ```{r echo=FALSE}
 pander(tab)
 ```
-[volta](#volta)
+
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap51"></a> Alerta APS 5.1
 
 ```{r echo=FALSE}
 ap = "AP5.1"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -274,14 +313,18 @@ Histórico da `r ap`
 ```{r echo=FALSE}
 pander(tab)
 ```
-[volta](#volta)
+
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap52"></a> Alerta APS 5.2
 
 ```{r echo=FALSE}
 ap = "AP5.2"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -290,14 +333,18 @@ Histórico da `r ap`
 ```{r echo=FALSE}
 pander(tab)
 ```
-[volta](#volta)
+
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 ### <a name="ap53"></a> Alerta APS 5.3
 
 ```{r echo=FALSE}
 ap = "AP5.3"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8)
+tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
 <br> </br>
@@ -306,7 +353,10 @@ Histórico da `r ap`
 ```{r echo=FALSE}
 pander(tab)
 ```
-[volta](#volta)
+
+```{r echo=FALSE}
+#[volta](#volta)
+```
 
 
 
@@ -324,4 +374,6 @@ Esse e um projeto desenvolvido em parceria pela Fiocruz, FGV e Prefeitura do Rio
 
 Mais detalhes, ver: www.dengue.mat.br
 
-[volta para o início](#voltaini)
+```{r echo=FALSE}
+#[volta](#volta)
+```

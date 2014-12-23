@@ -9,13 +9,6 @@ source("../fun/corrigecasos.r")
 
 
 ```{r echo=FALSE}
-hoje <- Sys.Date()
-SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
-```
-
-**Rio de Janeiro, `r as.character(hoje)`  (SE `r as.character(SEhoje)`)**
-
-```{r echo=FALSE}
 # Abre os dados mais recentes
 dadosAPS <- paste("../",dadosAPS,sep="")
 d<-read.csv(dadosAPS)
@@ -40,60 +33,24 @@ Dados das ultimas 12 semanas:
 
 ```{r echo=FALSE}
 # serie temporal de casos agregados na cidade
-casos <- aggregate(d[,"casos"],by=list(SE=d$SE),FUN=sum) # casos brutos
-casosm <- aggregate(d[,"casosm"],by=list(SE=d$SE),FUN=sum) # casos corrigidos
-cidade<- merge(casos,casosm,by="SE")
-names(cidade)<-c("SE","casos","casos_corrigidos")
-dt<-subset(d,APS=="AP1")[,c("SE","tweets")]  #tweets
-dc <- aggregate(d[,"tempmin"],by=list(SE=d$SE),FUN=mean,na.rm=TRUE) #clima
-names(dc)[2]<-"tempmin"
-cidade<- merge(cidade,dt,by="SE")
-cidade<- merge(cidade,dc,by="SE")
-tail(cidade,n=12)
+#casos <- aggregate(d[,"casos"],by=list(SE=d$SE),FUN=sum) # casos brutos
+#casosm <- aggregate(d[,"casosm"],by=list(SE=d$SE),FUN=sum) # casos corrigidos
+#cidade<- merge(casos,casosm,by="SE")
+#names(cidade)<-c("SE","casos","casos_corrigidos")
+#dt<-subset(d,APS=="AP1")[,c("SE","tweets")]  #tweets
+#dc <- aggregate(d[,"Tmin"],by=list(SE=d$SE),FUN=mean,na.rm=TRUE) #clima
+#names(dc)[2]<-"Tmin"
+#cidade<- merge(cidade,dt,by="SE")
+#cidade<- merge(cidade,dc,by="SE")
+#tab <- tail(cidade,n=12)
 ```
-
-Legenda:
-
-- SE: semana epidemiologica
-- casos: numero de casos de dengue no SINAN
-- casos_corrigidos: estimativa do numero de casos notificados (1)
-- tweets: numero de tweets relatando sintomas de dengue (2)
-- tempmin: media das temperaturas minimas da semana
-
-
-```{r echo=FALSE}
-cidade <- subset(cidade,SE>=201101)
-par(mfrow=c(1,1),mar=c(4,4,1,1))
-plot(cidade$tweets,type="l",ylab="tweets",axes=FALSE,xlab="",main="Tweets sobre dengue")
-axis(2)
-le=dim(cidade)[1]
-axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
-```
-
-
-```{r echo=FALSE}
-plot(cidade$casos, type="l", xlab="",ylab="casos notificados no MRJ",axes=FALSE,main="casos de dengue")
-#lines(cidade$casos_corrigidos, col=2)
-#legend((len-12),max(cidade$casos_corrigidos[(len-22):(len)],na.rm=TRUE),c("digitado","notificado estimado"),lty=1,col=1:2)
-axis(2)
-axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
-```
-
-```{r echo=FALSE}
-par(mfrow=c(1,1),mar=c(4,4,1,1))
-plot(cidade$tempmin,type="l",ylab="temperatura",axes=FALSE,xlab="",main="Temperatura mínima")
-axis(2)
-le=dim(cidade)[1]
-axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
-```
-
 
 
 ```{r echo=FALSE,results='hide'}
 # preencher alguns dados faltantes com a media das outras estacoes
-m = which(is.na(d$tempmin))
-for (i in m) d$tempmin[i]<-(mean(d$tempmin[d$SE==d$SE[i]],na.rm=TRUE))
-m = which(is.na(d$tempmin))
+m = which(is.na(d$Tmin))
+for (i in m) d$Tmin[i]<-(mean(d$Tmin[d$SE==d$SE[i]],na.rm=TRUE))
+m = which(is.na(d$Tmin))
 ```
 
 Alerta por APS em 4 niveis
@@ -119,7 +76,7 @@ Alerta por APS em 4 niveis
 # data.frame para colocar os resultados
 SE<-d$SE[d$APS=="AP1"]
 d2 <- expand.grid(SE=SE,APS=listaAPS)
-d2<-merge(d2,d[,c("SE","APS","data","tweets","estacao","casos","casosm","tempmin")],by=c("SE","APS"))
+d2<-merge(d2,d[,c("SE","APS","data","tweets","estacao","casos","casosm","Tmin")],by=c("SE","APS"))
 # agregar dados de populacao (cuidado, desorganiza tudo!)
 pop<-read.csv(file="../tabelas/populacao2010porAPS_RJ.csv")
 d2<-merge(d2,pop)
@@ -132,7 +89,7 @@ d2<-d2[order(d2$APS,d2$SE),]
 
 #Temperatura > Tcrit
 detcli <- function(temp,tempcrit=22,lag=3){
-    t1<-as.numeric(temp>tempcrit)
+    t1<-as.numeric(temp>=tempcrit)
     le <- length(t1)
     ac <- t1[lag:le]
     for(i in 1:(lag-1)) ac <- ac+t1[(lag-i):(le-i)]
@@ -140,7 +97,7 @@ detcli <- function(temp,tempcrit=22,lag=3){
 }
 
 d2$alertaCli <- NA
-for(i in 1:10) d2$alertaCli[which(d2$APS==listaAPS[i])] <-detcli(d2$tempmin[d2$APS==listaAPS[i]])
+for(i in 1:10) d2$alertaCli[which(d2$APS==listaAPS[i])] <-detcli(d2$Tmin[d2$APS==listaAPS[i]])
 ```
 
 
@@ -244,7 +201,7 @@ Resultado
 - SE : semana epidemiologica
 - data: data de inicio da SE
 - APS: area programatica da saude
-- tempmin: media das temperaturas minimas da semana
+- Tmin: media das temperaturas minimas da semana
 - casos_est: numero de casos estimados na semana (3)
 - inc: casos por 100.000 habitantes
 - alertaClima = 1, se temperatura > 22C por mais de 3 semanas
@@ -256,7 +213,7 @@ Resultado
 
 ```{r echo=FALSE}
 
-le = length(d2$tempmin[d2$APS==listaAPS[1]])
+le = length(d2$Tmin[d2$APS==listaAPS[1]])
 
 def.cor<-function(d2v){
 # d2v = dados de uma ap
@@ -279,45 +236,6 @@ def.cor<-function(d2v){
 d2$cor<-NA
 for(i in 1:10) d2[d2$APS==listaAPS[i],]<-def.cor(d2[d2$APS==listaAPS[i],])
 
-plot.alerta<-function(ap){
-      par(mai=c(0,0,0,0),mar=c(4,1,1,1))
-      d2v <- subset(d2,APS==ap)[52:le,]
-      les = dim(d2v)[1]
-      plot(1:les,d2v$casos,type="l",axes=FALSE,ylab="",xlab="")
-      abline(v=which(d2v$alertaCli<3 & d2v$alertaRtweet<3 & d2v$alertaRt<3 & d2v$alertaCasos==0),
-             col="darkgreen",lwd=2)
-      abline(v=which(d2v$alertaCli>=3 | d2v$alertaRtweet>=3),col="yellow",lwd=2)
-      vl = which(d2v$alertaRt>=3)
-      abline(v=vl,col="orange",lwd=2)
-      abline(v=(vl+1),col="orange",lwd=2)
-      abline(v=(vl+2),col="orange",lwd=2)
-      abline(v=(vl+3),col="orange",lwd=2)
-      lines(1:les,d2v$casos)
-      v=which(d2v$alertaCasos==1)
-      abline(v=v,col="red",pch=16,lwd=2)
-      abline(v=(v+1),col="red",pch=16,lwd=2)
-      abline(v=(v+2),col="red",pch=16,lwd=2)
-      title(as.character(ap),cex=1.4)
-      axis(2)
-      axis(1,at=rev(seq(les,1,by=-16)),labels=d2v$SE[rev(seq(les,1,by=-16))],las=2,cex=0.3)
-      lines(1:les,d2v$casos,lwd=2)
-}
-
-plot.alerta2<-function(ap){
-      par(mai=c(0,0,0,0),mar=c(4,1,1,1))
-      d2v <- subset(d2,APS==ap)[52:le,]
-      les = dim(d2v)[1]
-      plot(1:les,d2v$casos,type="l",axes=FALSE,ylab="",xlab="")
-      abline(v=which(d2v$cor==1),col="darkgreen",lwd=2)
-      abline(v=which(d2v$cor==2),col="yellow",lwd=2)
-      abline(v=which(d2v$cor==3),col="orange",lwd=2)
-      abline(v=which(d2v$cor==4),col="red",lwd=2)
-      title(as.character(ap),cex=1.4)
-      axis(2)
-      axis(1,at=rev(seq(les,1,by=-16)),labels=d2v$SE[rev(seq(les,1,by=-16))],las=2,cex=0.3)
-      lines(1:les,d2v$casos,lwd=2)
-}
-
 # codificacao para o relatorio
 d2$alertaTweet <- ifelse(d2$alertaRtweet>=3,1,0)
 d2$alertaClima <- ifelse(d2$alertaCli>=3,1,0)
@@ -327,14 +245,6 @@ d2$nivel[d2$cor==1]<-"verde"
 d2$nivel[d2$cor==2]<-"amarelo"
 d2$nivel[d2$cor==3]<-"laranja"
 d2$nivel[d2$cor==4]<-"vermelho"
-
-par(mfrow=c(1,1))
-for(i in 1:10) {
-      print(as.character(listaAPS[i]))
-      print(tail(d2[d2$APS==listaAPS[i],c("SE","data","APS","tempmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=8))
-      plot.alerta2(listaAPS[i])
-}
-
 
 #tiff("alerta.tif",res=200,compression = "lzw",width = 22,height = 15,units="cm")
 #  layout(matrix(1:10,nrow = 2),widths = rep(lcm(4),5),heights = rep(lcm(7),2))
@@ -362,36 +272,13 @@ for(i in 1:10) {
 
 ```
 
-
-
-
 ```{r echo=FALSE}
-#Primeiro, cortar a parte final que nao tenha os 3 alertas:
-      
-#d2$test<- with(d4, alertaRt1+alertaTemp)
-#df <- d4[is.na(d4$test)==FALSE,c("SE","APS","casos","tweets","temp","Rt","casos_est","temp_crit","casos_crit","alertaRt1","alertaTemp","alertaCasos")]
-```
-
-```{r echo=FALSE}
-#outputfile = paste("../alerta/alertaAPS_",max(d2$SE),".csv",sep="")
-outputfile="alertaRio.csv"
+outputfile = paste("../alerta/alertaAPS_",max(d2$SE),".csv",sep="")
 ```
 
 ```{r echo=FALSE}
 write.table(d2,file=outputfile,row.names=FALSE,sep=",")
+
+knit(input="relatorio.rmd",quiet=TRUE,envir=new.env())
 ```
 
-**Confira o mapa da dengue em alerta.dengue.mat.br**
-
-Notas
------
-- (1) Os dados do sinan mais recentes ainda nao foram totalmente digitados. Estimamos o numero esperado de casos
-notificados considerando o tempo ate os casos serem digitados.
-- (2) Os dados de tweets sao gerados pelo Observatorio de Dengue (UFMG). Os tweets sao processados para exclusao de informes e outros temas relacionados a dengue
-- (3) Algumas vezes, os casos da ultima semana ainda nao estao disponiveis, nesse caso, usa-se uma estimacao com base na tendencia de variacao da serie 
-
-Creditos
-------
-Esse e um projeto desenvolvido em parceria pela Fiocruz, FGV e Prefeitura do Rio de Janeiro, com apoio da SVS/MS
-
-Mais detalhes, ver: www.dengue.mat.br

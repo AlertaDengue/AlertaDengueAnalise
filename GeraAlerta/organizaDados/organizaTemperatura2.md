@@ -34,73 +34,30 @@ Abre dados weather underground (autor: Flavio)
 
 ```r
 gal<-callmongoclima("galeao") 
-```
-
-```
-## Warning: This fails for most NoSQL data structures. I am working on a new
-## solution
-```
-
-```r
 std <- callmongoclima("santosdumont")
-```
-
-```
-## Warning: This fails for most NoSQL data structures. I am working on a new
-## solution
-```
-
-```r
 afo <- callmongoclima("afonsos")
-```
-
-```
-## Warning: This fails for most NoSQL data structures. I am working on a new
-## solution
-```
-
-```r
 jac <- callmongoclima("jacarepagua")
-```
 
-```
-## Warning: This fails for most NoSQL data structures. I am working on a new
-## solution
-```
-
-```r
 d<- rbind(gal,std,afo,jac)
 rm(gal,std,afo,jac)
 
 # Atribuir SE
 d$SE<-data2SE(d$data,file="../tabelas/SE.csv",format="%Y-%m-%d")
-```
 
-```
-## Error: não foi possível encontrar a função "data2SE"
-```
-
-```r
 # Agregar por semana
 df<-aggregate(d[,2:3],by=list(SE=d$SE,estacao=d$estacao),FUN=mean,na.rm=TRUE)
-```
 
-```
-## Error: arguments must have same length
-```
-
-```r
 head(df)
 ```
 
 ```
-##                                                   
-## 1 function (x, df1, df2, ncp, log = FALSE)        
-## 2 {                                               
-## 3     if (missing(ncp))                           
-## 4         .External(C_df, x, df1, df2, log)       
-## 5     else .External(C_dnf, x, df1, df2, ncp, log)
-## 6 }
+##       SE estacao       data     Tmin
+## 1 201001  galeao 2010-01-06 25.16667
+## 2 201002  galeao 2010-01-13 24.42857
+## 3 201003  galeao 2010-01-20 23.85714
+## 4 201004  galeao 2010-01-27 23.71429
+## 5 201005  galeao 2010-02-03 25.14286
+## 6 201006  galeao 2010-02-10 24.66667
 ```
 
 ```r
@@ -108,56 +65,17 @@ tail(df)
 ```
 
 ```
-##                                                   
-## 1 function (x, df1, df2, ncp, log = FALSE)        
-## 2 {                                               
-## 3     if (missing(ncp))                           
-## 4         .External(C_df, x, df1, df2, log)       
-## 5     else .External(C_dnf, x, df1, df2, ncp, log)
-## 6 }
+##          SE     estacao       data     Tmin
+## 1025 201446 jacarepagua 2014-11-12 20.85714
+## 1026 201447 jacarepagua 2014-11-19 18.28571
+## 1027 201448 jacarepagua 2014-11-26 23.00000
+## 1028 201449 jacarepagua 2014-12-03 21.28571
+## 1029 201450 jacarepagua 2014-12-10 22.00000
+## 1030 201451 jacarepagua 2014-12-17 21.57143
 ```
 
 
 
-```
-## Error: objeto de tipo 'closure' não possível dividir em subconjuntos
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
-
-```
-## Error: objeto 'dAP' não encontrado
-```
 
 Salvar:
 
@@ -167,8 +85,4 @@ Salvar:
 
 ```r
 write.table(dAP,file="../dados_limpos/climasemanaRJ.csv",sep=",",row.names=FALSE)
-```
-
-```
-## Error: objeto 'dAP' não encontrado
 ```
