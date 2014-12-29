@@ -16,11 +16,11 @@ source("fun/callmongoclima.r")
 # Selecione os novos dados:
 
 # A1. Ultimos dados de dengue:
-# esse e' o unico que precisa ser nominalmente indicado aqui. O dbf deve estar na pasta indicada no path do novosinan
+# esse e' o unico que precisa ser nominalmente indicado aqui. O dbf deve estar na pasta indicada no path dados_brutos/sinan/
 #--------------------------
-novosinan <- "dados_brutos/sinan/DENGON2014_15_12_2014.dbf"
+novosinan <- "dados_brutos/sinan/Dengue_29-12-2014.dbf"
 
-# verificar os dados
+# verificar os dados do sinan, se abre direitinbo
 d <- read.dbf(novosinan)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI",
                             "SEM_PRI","NM_BAIRRO")]
 tail(d)
@@ -31,7 +31,7 @@ knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
 
 # A2. Ultimos dados de temperatura:
 #-----------------------------
-#(atualmente so uma estacao - galeao)
+
 #novoclima <- "dados_brutos/clima/galeao_01012010-15062014.csv" # antigo
 # atualmente capta direto da internet galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
 
@@ -40,11 +40,12 @@ knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
 #tail(galeao)  
 
 # Atualizar os dados de temperatura (data final = domingo)
-
-system(paste("fun/clima.py -i 2014-12-13 -f 2014-12-21 -c SBRJ"))
-system(paste("fun/clima.py -i 2014-12-13 -f 2014-12-21 -c SBJR"))
-system(paste("fun/clima.py -i 2014-12-03 -f 2014-12-21 -c SBAF"))
-system(paste("fun/clima.py -i 2014-12-03 -f 2014-12-21 -c SBGL"))
+dom = Sys.Date()-1  # ultimo domingo
+dom1 = dom-8
+system(paste("fun/clima.py -i", dom1,"-f ",dom, "-c SBRJ"))
+system(paste("fun/clima.py -i", dom1," -f",dom, " -c SBJR"))
+system(paste("fun/clima.py -i", dom1," -f",dom, " -c SBAF"))
+system(paste("fun/clima.py -i", dom1," -f",dom, " -c SBGL"))
 
 # verificar se funciona (WundergroundWeather) 
 
@@ -83,12 +84,12 @@ markdownToHTML("organizaDados/juntaTudo.md", "html/juntaTudo.html",fragment.only
 # E. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201451.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201452.csv"
 
 knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
-markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE) 
+#markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE) 
 
-alerta<-"alerta/alertaAPS_201451.csv"
+alerta<-"alerta/alertaAPS_201452.csv"
 knit(input="geraAlerta/relatorio.rmd",quiet=TRUE,envir=new.env())
 
 
