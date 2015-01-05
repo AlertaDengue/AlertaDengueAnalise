@@ -38,8 +38,8 @@ Dados das ultimas 12 semanas:
 #cidade<- merge(casos,casosm,by="SE")
 #names(cidade)<-c("SE","casos","casos_corrigidos")
 #dt<-subset(d,APS=="AP1")[,c("SE","tweets")]  #tweets
-#dc <- aggregate(d[,"Tmin"],by=list(SE=d$SE),FUN=mean,na.rm=TRUE) #clima
-#names(dc)[2]<-"Tmin"
+#dc <- aggregate(d[,"tmin"],by=list(SE=d$SE),FUN=mean,na.rm=TRUE) #clima
+#names(dc)[2]<-"tmin"
 #cidade<- merge(cidade,dt,by="SE")
 #cidade<- merge(cidade,dc,by="SE")
 #tab <- tail(cidade,n=12)
@@ -48,9 +48,9 @@ Dados das ultimas 12 semanas:
 
 ```{r echo=FALSE,results='hide'}
 # preencher alguns dados faltantes com a media das outras estacoes
-m = which(is.na(d$Tmin))
-for (i in m) d$Tmin[i]<-(mean(d$Tmin[d$SE==d$SE[i]],na.rm=TRUE))
-m = which(is.na(d$Tmin))
+m = which(is.na(d$tmin))
+for (i in m) d$tmin[i]<-(mean(d$tmin[d$SE==d$SE[i]],na.rm=TRUE))
+m = which(is.na(d$tmin))
 ```
 
 Alerta por APS em 4 niveis
@@ -76,7 +76,7 @@ Alerta por APS em 4 niveis
 # data.frame para colocar os resultados
 SE<-d$SE[d$APS=="AP1"]
 d2 <- expand.grid(SE=SE,APS=listaAPS)
-d2<-merge(d2,d[,c("SE","APS","data","tweets","estacao","casos","casosm","Tmin")],by=c("SE","APS"))
+d2<-merge(d2,d[,c("SE","APS","data","tweets","estacao","casos","casosm","tmin")],by=c("SE","APS"))
 # agregar dados de populacao (cuidado, desorganiza tudo!)
 pop<-read.csv(file="../tabelas/populacao2010porAPS_RJ.csv")
 d2<-merge(d2,pop)
@@ -97,7 +97,7 @@ detcli <- function(temp,tempcrit=22,lag=3){
 }
 
 d2$alertaCli <- NA
-for(i in 1:10) d2$alertaCli[which(d2$APS==listaAPS[i])] <-detcli(d2$Tmin[d2$APS==listaAPS[i]])
+for(i in 1:10) d2$alertaCli[which(d2$APS==listaAPS[i])] <-detcli(d2$tmin[d2$APS==listaAPS[i]])
 ```
 
 
@@ -201,7 +201,7 @@ Resultado
 - SE : semana epidemiologica
 - data: data de inicio da SE
 - APS: area programatica da saude
-- Tmin: media das temperaturas minimas da semana
+- tmin: media das temperaturas minimas da semana
 - casos_est: numero de casos estimados na semana (3)
 - inc: casos por 100.000 habitantes
 - alertaClima = 1, se temperatura > 22C por mais de 3 semanas
@@ -213,7 +213,7 @@ Resultado
 
 ```{r echo=FALSE}
 
-le = length(d2$Tmin[d2$APS==listaAPS[1]])
+le = length(d2$tmin[d2$APS==listaAPS[1]])
 
 def.cor<-function(d2v){
 # d2v = dados de uma ap

@@ -84,12 +84,12 @@ markdownToHTML("organizaDados/juntaTudo.md", "html/juntaTudo.html",fragment.only
 # E. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201452.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201453.csv"
 
 knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
 #markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE) 
 
-alerta<-"alerta/alertaAPS_201452.csv"
+alerta<-"alerta/alertaAPS_201453.csv"
 knit(input="geraAlerta/relatorio.rmd",quiet=TRUE,envir=new.env())
 
 

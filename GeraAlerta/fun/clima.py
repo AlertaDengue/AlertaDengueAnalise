@@ -15,33 +15,49 @@ import argparse
 import datetime
 from dateutil.parser import parse
 import time
+import logging
 import numpy as np
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import DuplicateKeyError
 
-codes = ['SBRJ', # santos dumont
-         'SBJR', # Jacarepagua
-         'SBGL', # Galeão
-         'IRIODEJA30', # Cachambi, Meier
-         'IRIODEJA14', # Pepino
-         'SBAF', # Campo dos Afonsos
-         'IRIODEJA5', # Recreio 
-         ] 
- 
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+
+codes = ['SBRJ',  # santos dumont
+         'SBJR',  # Jacarepagua
+         'SBGL',  # Galeão
+         'IRIODEJA30',  # Cachambi, Meier
+         'IRIODEJA14',  # Pepino
+         'SBAF',  # Campo dos Afonsos
+         'IRIODEJA5',  # Recreio
+         ]
+
 
 
 def parse_page(url):
     """
-    Parses the resulting CSV and 
+    Parses the resulting CSV and
     """
     page = requests.get(url)
     csv = re.subn("<br />", "", page.content)[0]
+    print csv
     csvf = StringIO(csv)
     #print csvf.readline()
-    df = pd.read_csv(csvf, sep=',', header=0, skiprows=1, parse_dates=True)
+    df = pd.read_csv(csvf, sep=',', header=0, skiprows=0, parse_dates=True, na_values=["N/A",'-9999'])
+
+    if 'TemperatureF' in df.columns:
+        df['TemperatureC'] = FtoC(df.TemperatureF)
+    print df
     summary = df.describe()
     return df, summary
-    
+
+def FtoC(F):
+    """
+    Converts temperture from Fahrenheit to Celsius
+    """
+    c = ((F-32)/9.)*5
+    return c
+
 
 def captura(start, end, code):
     """
@@ -51,18 +67,22 @@ def captura(start, end, code):
     db = mongo.clima
     coll = db[code]
     coll.create_index([("DateUTC", ASCENDING),], unique=True, dropDups=True)
-    
-    
+
+
     while start != end:
         data = {}
+
         start = datetime.datetime.fromordinal(start.toordinal())
         if coll.find({"DateUTC":start}).count() > 0:
             start = start + datetime.timedelta(1)
             continue
+        print "Fetching data from {} on {}.".format(code, start)
         y,m,d = start.year, start.month, start.day
         # Open wunderground.com url
         url = "http://www.wunderground.com/history/airport/{}/{}/{}/{}/DailyHistory.html??format=1&format=1".format(code,y,m,d)
         df, summ = parse_page(url)
+        #print df
+
         try:
             dateutc = parse(df.DateUTC[0]).date()
             dateutc = datetime.datetime.fromordinal(dateutc.toordinal())
@@ -73,18 +93,22 @@ def captura(start, end, code):
         try:
             data["DateUTC"] = dateutc
         except AttributeError:
+            logger.error("failed storing date")
             data["DateUTC"] = np.nan
         try:
             data["Tmin"] = summ.TemperatureC.ix['min']
-        except AttributeError:
+        except AttributeError as e:
+            logger.error("failed storing Tmin: {}".format(e))
             data["Tmin"] = np.nan
         try:
             data["Tmed"] = summ.TemperatureC.ix['mean']
-        except AttributeError:
+        except AttributeError as e:
+            logger.error("failed storing Tmed: {}".format(e))
             data["Tmed"] = np.nan
         try:
             data["Tmax"] = summ.TemperatureC.ix['max']
-        except AttributeError:
+        except AttributeError as e:
+            logger.error("failed storing Tmax: {}".format(e))
             data["Tmax"] = np.nan
         try:
             data["Umid_min"] = summ.Humidity.ix['min']
@@ -129,4 +153,4 @@ if __name__=="__main__":
     fim = datetime.datetime.strptime(args.fim, "%Y-%m-%d")
 
     captura(ini, fim, args.codigo)
-    
+

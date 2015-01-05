@@ -9,14 +9,14 @@ callmongoclima<-function(estacao){
   
   mongo<-mongo.create()
   query = mongo.bson.empty()
-  clima<-mongo.find.all(mongo,db,query, sort=list(DateUTC=1), fields=list(DateUTC=1L, tmin=1L),  )
+  clima<-mongo.find.all(mongo,db,query, sort=list(DateUTC=1), fields=list(DateUTC=1L, Tmin=1L),  )
   n = length(clima)
   
   data <- as.Date(clima[[1]]$DateUTC)
   for (i in 2:n) data = c(data,as.Date(clima[[i]]$DateUTC))
   
-  tmin<-clima[[1]]$tmin
-  for (i in 2:n) tmin = c(tmin,clima[[i]]$tmin)
+  tmin<-clima[[1]]$Tmin
+  for (i in 2:n) tmin = c(tmin,clima[[i]]$Tmin)
   
   d <- data.frame(estacao=estacao,data=data,tmin=tmin)
   d$tmin[d$tmin==-9999]<-NA

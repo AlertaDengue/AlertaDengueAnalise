@@ -39,8 +39,8 @@ casosm <- aggregate(d2[,"casosm"],by=list(SE=d2$SE),FUN=sum) # casos corrigidos
 cidade<- merge(casos,casosm,by="SE")
 names(cidade)<-c("SE","casos","casos_corrigidos")
 dt<-subset(d2,APS=="AP1")[,c("SE","tweets")]  # tweets
-dc <- aggregate(d2[,"Tmin"],by=list(SE=d2$SE),FUN=mean,na.rm=TRUE) #clima
-names(dc)[2]<-"Tmin"
+dc <- aggregate(d2[,"tmin"],by=list(SE=d2$SE),FUN=mean,na.rm=TRUE) #clima
+names(dc)[2]<-"tmin"
 cidade<- merge(cidade,dt,by="SE")
 cidade<- merge(cidade,dc,by="SE")
 ```
@@ -60,7 +60,7 @@ plot(cidade$casos, type="l", xlab="",ylab="casos notificados no MRJ",axes=FALSE,
 axis(2)
 #axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
 
-plot(cidade$Tmin,type="l",ylab="temperatura",axes=FALSE,xlab="",main="Temperatura mínima")
+plot(cidade$tmin,type="l",ylab="temperatura",axes=FALSE,xlab="",main="Temperatura mínima")
 axis(2)
 le=dim(cidade)[1]
 axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
@@ -84,7 +84,7 @@ Legenda:
 - casos: nímero de casos de dengue no SINAN
 - casos_corrigidos: estimativa do número de casos notificados (ver [Notas](#notas))
 - tweets: número de tweets relatando sintomas de dengue (ver [Notas](#notas))
-- Tmin: média das temperaturas mínimas da semana
+- tmin: média das temperaturas mínimas da semana
 
 ```{r echo=FALSE}
 #[volta para o início](#voltaini)
@@ -163,7 +163,7 @@ panderOptions('table.split.table', Inf)
 
 par(mfrow=c(1,1))
 plot.alerta2("AP1")
-tab<-tail(d2[d2$APS=="AP1",c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -183,7 +183,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP2.1"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -203,7 +203,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP2.2"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -223,7 +223,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.1"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -243,7 +243,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.2"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -263,7 +263,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.3"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -283,7 +283,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP4"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -303,7 +303,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.1"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -323,7 +323,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.2"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 
@@ -343,7 +343,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.3"
 plot.alerta2(ap)
-tab<-tail(d2[d2$APS==ap,c("SE","Tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=6)
 names(tab)<-c("SE","temp","casos","inc","AClima","ATweet","ATransm","ACasos","nivel")
 ```
 

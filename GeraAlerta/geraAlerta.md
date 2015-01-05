@@ -61,7 +61,7 @@ Resultado
 - SE : semana epidemiologica
 - data: data de inicio da SE
 - APS: area programatica da saude
-- Tmin: media das temperaturas minimas da semana
+- tmin: media das temperaturas minimas da semana
 - casos_est: numero de casos estimados na semana (3)
 - inc: casos por 100.000 habitantes
 - alertaClima = 1, se temperatura > 22C por mais de 3 semanas

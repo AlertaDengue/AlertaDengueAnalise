@@ -51,7 +51,7 @@ head(df)
 ```
 
 ```
-##       SE estacao       data     Tmin
+##       SE estacao       data     tmin
 ## 1 201001  galeao 2010-01-06 25.16667
 ## 2 201002  galeao 2010-01-13 24.42857
 ## 3 201003  galeao 2010-01-20 23.85714
@@ -65,13 +65,13 @@ tail(df)
 ```
 
 ```
-##          SE     estacao       data     Tmin
-## 1029 201447 jacarepagua 2014-11-19 18.28571
-## 1030 201448 jacarepagua 2014-11-26 23.00000
-## 1031 201449 jacarepagua 2014-12-03 21.28571
-## 1032 201450 jacarepagua 2014-12-10 22.00000
-## 1033 201451 jacarepagua 2014-12-17 21.57143
-## 1034 201452 jacarepagua 2014-12-24 25.42857
+##          SE     estacao       data     tmin
+## 1033 201448 jacarepagua 2014-11-26 23.00000
+## 1034 201449 jacarepagua 2014-12-03 21.28571
+## 1035 201450 jacarepagua 2014-12-10 22.00000
+## 1036 201451 jacarepagua 2014-12-17 21.57143
+## 1037 201452 jacarepagua 2014-12-24 25.42857
+## 1038 201453 jacarepagua 2014-12-31 25.42857
 ```
 
 
