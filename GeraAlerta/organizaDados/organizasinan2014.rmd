@@ -2,7 +2,7 @@
 
 Organização dos dados do SINAN para o Alerta dengue
 ====================================================
-A serie temporal 2010-13 ja esta pronta. Esse script agrega com a serie de 2014
+A serie temporal 2010-13 ja esta pronta. Esse script agrega com a serie de 2014 em diante
 
 ```{r, echo=FALSE}
 #require(foreign)
@@ -18,7 +18,7 @@ novosinan <- paste("../",novosinan,sep="")
 ```{r echo=FALSE}
 d <- read.dbf(novosinan)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI",
                           "SEM_PRI","NM_BAIRRO")]
-head(d)
+print(tail(d,n=7))
 ```
 
 

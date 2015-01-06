@@ -2,7 +2,7 @@
 
 Organização dos dados do SINAN para o Alerta dengue
 ====================================================
-A serie temporal 2010-13 ja esta pronta. Esse script agrega com a serie de 2014
+A serie temporal 2010-13 ja esta pronta. Esse script agrega com a serie de 2014 em diante
 
 
 
@@ -16,13 +16,14 @@ novosinan <- paste("../",novosinan,sep="")
 
 
 ```
-##   DT_NOTIFIC SEM_NOT NU_ANO DT_SIN_PRI SEM_PRI       NM_BAIRRO
-## 1 2014-09-04  201436   2014 2014-09-03  201436       PACIENCIA
-## 2 2014-09-08  201437   2014 2014-08-23  201434    DEL CASTILHO
-## 3 2014-01-11  201402   2014 2014-01-09  201402          MONERO
-## 4 2014-03-19  201412   2014 2014-03-15  201411 MARECHAL HERMES
-## 5 2014-04-05  201414   2014 2014-04-02  201414           MEIER
-## 6 2014-01-15  201403   2014 2014-01-11  201402          TIJUCA
+##      DT_NOTIFIC SEM_NOT NU_ANO DT_SIN_PRI SEM_PRI      NM_BAIRRO
+## 3810 2014-02-06  201406   2014 2014-02-02  201406       CURICICA
+## 3811 2014-02-07  201406   2014 2014-02-06  201406          MEIER
+## 3812 2014-01-21  201404   2014 2014-01-07  201402         CENTRO
+## 3813 2014-01-23  201404   2014 2014-01-19  201404    VILA ISABEL
+## 3814 2014-02-16  201408   2014 2014-02-14  201407 VILA VALQUEIRE
+## 3815 2014-02-04  201406   2014 2014-02-02  201406   PADRE MIGUEL
+## 3816 2014-01-10  201402   2014 2013-12-29  201401    COELHO NETO
 ```
 
 

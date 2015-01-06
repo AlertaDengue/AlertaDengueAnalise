@@ -21,8 +21,11 @@ callmongoclima<-function(estacao){
   d <- data.frame(estacao=estacao,data=data,tmin=tmin)
   d$tmin[d$tmin==-9999]<-NA
   
+  message("dados de clima:")
+  print(tail(d,n=7))
+  
   mongo.disconnect(mongo)
-  d 
+  d
 }
 
 #TESTE

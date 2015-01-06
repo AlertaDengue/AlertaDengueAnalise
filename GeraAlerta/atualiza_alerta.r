@@ -1,92 +1,40 @@
 #=============================
 # Script para atualizar dados
 #=============================
+rm(list=ls())
 
 # Requer
 library(knitr)
 library(markdown)
 library(foreign)
 library(rmongodb)
-rm(list=ls())
 source("fun/callmongoclima.r")
 
 #=============================
 # A. Organizar os dados novos:
 # ============================
-# Selecione os novos dados:
+# A1. Atualizar dados de dengue:
+# esse e' o unico que precisa ser nominalmente indicado aqui. 
+# O dbf deve estar na pasta indicada no path dados_brutos/sinan/
+novosinan <- "dados_brutos/sinan/DENGON2014_02_01_2015.dbf"
+source("organizaDados/organizasinan.r")
 
-# A1. Ultimos dados de dengue:
-# esse e' o unico que precisa ser nominalmente indicado aqui. O dbf deve estar na pasta indicada no path dados_brutos/sinan/
-#--------------------------
-novosinan <- "dados_brutos/sinan/Dengue_29-12-2014.dbf"
+# A2. Atualizar dados de temperatura:
+source("organizaDados/organizaTemperatura.r")
 
-# verificar os dados do sinan, se abre direitinbo
-d <- read.dbf(novosinan)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI",
-                            "SEM_PRI","NM_BAIRRO")]
-tail(d)
+# A3. Atualizar dados de tweet:
+source("organizaDados//organizatweets.r")
 
-# se OK,
-knit(input="organizaDados/organizasinan2014.rmd",quiet=TRUE,
-     output="organizaDados/organizasinan2014.md",envir=new.env())
-
-# A2. Ultimos dados de temperatura:
-#-----------------------------
-
-#novoclima <- "dados_brutos/clima/galeao_01012010-15062014.csv" # antigo
-# atualmente capta direto da internet galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
-
-# verificar se funciona (OpenWeather) 
-#galeao<- read.csv2("http://gtsinan.no-ip.biz:8081/alerta/galeao.csv")
-#tail(galeao)  
-
-# Atualizar os dados de temperatura (data final = domingo)
-dom = Sys.Date()-1  # ultimo domingo
-dom1 = dom-8
-system(paste("fun/clima.py -i", dom1,"-f ",dom, "-c SBRJ"))
-system(paste("fun/clima.py -i", dom1," -f",dom, " -c SBJR"))
-system(paste("fun/clima.py -i", dom1," -f",dom, " -c SBAF"))
-system(paste("fun/clima.py -i", dom1," -f",dom, " -c SBGL"))
-
-# verificar se funciona (WundergroundWeather) 
-
-tail(callmongoclima("galeao") )
-tail(callmongoclima("jacarepagua") )
-tail(callmongoclima("afonsos") )
-tail(callmongoclima("santosdumont") )
-
-
-#se OK:
-knit(input="organizaDados/organizaTemperatura2.rmd",quiet=TRUE,
-     output="organizaDados/organizaTemperatura2.md",envir=new.env())
-
-# A3. Ultimos dados de tweet:
-#-----------------------
-# os dados sao capturados diretamente da API do Observatorio da dengue na UFMG ate a ultima data disponivel
-
-# verificando os dados
-system(paste("fun/pega_tweets.py -i 2014-01-05 -f ",Sys.Date())) # primeira SE de 2014 ate hoje
-d<-read.csv("tweets_teste.csv",header=TRUE)[,1:2]
-tail(d)
-
-#Se OK:
-knit(input="organizaDados/organizatweets.rmd",quiet=TRUE,
-     output="organizaDados/organizatweets.md",envir=new.env())
-
-
-# A4. Juntando os dados numa unica tabela (Nao mexer no comando!)
-
-knit(input="organizaDados/juntaTudo.rmd",output="organizaDados/juntaTudo.md",quiet=FALSE, envir=new.env())
-markdownToHTML("organizaDados/juntaTudo.md", "html/juntaTudo.html",fragment.only = TRUE)     
- 
-# Vale a pena conferir os dados em html/juntaTudo.html antes de prosseguir 
+# A4. Juntar todos os dados numa unica tabela
+source("organizaDados//juntaTudo.r")
 
 # =======================================
-# E. Alerta: Para ajustar o modelo de alerta:
+# B. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
 dadosAPS<-"dados_limpos/dadosAPS_201453.csv"
 
-knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env())
+knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env()) # migrar para o .r
 #markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE) 
 
 alerta<-"alerta/alertaAPS_201453.csv"
