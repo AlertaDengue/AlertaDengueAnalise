@@ -19,7 +19,7 @@ source("fun/callmongoclima.r")
 novosinan <- "dados_brutos/sinan/DENGON2014_02_01_2015.dbf"
 source("organizaDados/organizasinan.r")
 
-# A2. Atualizar dados de temperatura:
+# A2. Atualizar dados de temperatura: (Flavio, tirar alguns prints)
 source("organizaDados/organizaTemperatura.r")
 
 # A3. Atualizar dados de tweet:

@@ -40,14 +40,14 @@ def parse_page(url):
     """
     page = requests.get(url)
     csv = re.subn("<br />", "", page.content)[0]
-    print csv
+    #print csv
     csvf = StringIO(csv)
     #print csvf.readline()
     df = pd.read_csv(csvf, sep=',', header=0, skiprows=0, parse_dates=True, na_values=["N/A",'-9999'])
 
     if 'TemperatureF' in df.columns:
         df['TemperatureC'] = FtoC(df.TemperatureF)
-    print df
+    #print df
     summary = df.describe()
     return df, summary
 
