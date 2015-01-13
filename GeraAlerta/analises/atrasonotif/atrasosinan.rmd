@@ -11,7 +11,7 @@ d10 <- read.dbf(file="../../dados_brutos/sinan/old/Dengue2010_BancoSINAN16_04_20
 d11 <- read.dbf(file="../../dados_brutos/sinan/old/Dengue2011_BancoSINAN14_10_2013_v09012014.dbf")[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA","SEM_PRI")]
 d12 <- read.dbf(file="../../dados_brutos/sinan/old/Dengue2012_BancoSINAN09_09_2013_v09012014.dbf")[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA","SEM_PRI")]
 d13 <- read.dbf(file="../../dados_brutos/sinan/old/Dengue2013_BancoSINAN30_12_2013.dbf")[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA","SEM_PRI")]
-d14 <- read.dbf(file="../../dados_brutos/sinan/Dengue - Oswaldo 15.10.dbf")[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA","SEM_PRI")]
+d14 <- read.dbf(file="../../dados_brutos/sinan/old/DENGON2014_02_01_2015.dbf")[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA","SEM_PRI")]
 
 d<-rbind(d10,d11,d12,d13,d14)
 rm(d10,d11,d12,d13,d14)
@@ -60,6 +60,85 @@ cumfreq[1:20]
 
 ```
 
+Em 5 meses, 99% dos casos foram digitados
+
+Correção por ajuste de modelo lognormal
+----------------------------------------
+
+** Por Analise de sobrevivencia**
+```{r}
+library("survival")
+d$ini<-as.numeric(d$DT_NOTIFIC - as.Date("2011-01-01"))
+ds <- subset(d, d$ini>0)
+ds$fim<-as.numeric(ds$DT_DIGITA - as.Date("2011-01-01"))
+ds$tempo<- ds$fim-ds$ini
+ds <- subset(ds,ds$tempo>0)
+ds$status<-TRUE
+y <- Surv(time=ds$ini,time2=ds$fim,event=ds$status==TRUE)
+y <- Surv(time=ds$tempo,event=ds$status==TRUE)
+
+km <- survfit(y~1)
+km
+plot(km,xlim=c(0,80),xlab="days",ylab="time to digitation")
+ds$ano <- as.factor(as.numeric(as.character(ds$NU_ANO)))
+kmano<-survfit(y~ds$ano)
+kmano
+plot(kmano,xlim=c(0,60),xlab="days",ylab="time to digitation",col=1:4)
+legend(40,1,c("2011","2012","2013","2014"),col=1:4,lty=1)
+survdiff(y~ds$ano,)
+
+# fit com dados de 2013 em diante
+dss<-subset(ds,(ano=="2013"|ano=="2014"))
+y <- Surv(time=dss$tempo,event=dss$status==TRUE)
+km <- survfit(y~1)
+km
+
+mexp<-survreg(y~1,dist="exp")
+mweib<-survreg(y~1,dist="weib")
+mgaus<-survreg(y~1,dist="gaussian")
+mlogi<-survreg(y~1,dist="logistic")
+mlognorm<-survreg(y~1,dist="lognormal",x=TRUE,y=TRUE,model=TRUE)
+mloglog<-survreg(y~1,dist="loglogistic")
+AIC(mexp,mweib,mgaus,mlogi,mlognorm,mloglog)
+
+summary(mlognorm)
+# parametros: meanlog = intercept; sdlog=exp(scale)
+meanlog=mlognorm$icoef[1]
+sdlog=exp(mlognorm$icoef[2])
+
+# outra forma de ajustar diretamente a lognormal:
+library(MASS)
+fit<-fitdistr(dss$tempo,"log-normal")$estimate
+fit
+
+# grafico do modelo ajustado
+plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days")
+lines(0:60,(1-plnorm(0:60,fit[1],fit[2])), lwd=3,col=2)
+lines(0:60,(1-plnorm(0:60,meanlog,sdlog)), lwd=3,col=3)
+
+```
+
+```{r}
+# funcao para plotar survreg (equivalente ao grafico acima)
+survreg.curve <- function(model,col=1,seq.quantiles=seq(0,1,by =0.01)){
+  newdata=dss[1,]#newdata=ds[seq(1,dim(ds)[2],by=10)]
+  lines(x=predict(model,
+  newdata=newdata,
+  type="quantile",p=seq.quantiles),
+  y = (1-seq.quantiles),
+  col=col, lty=1,lwd=2)
+                    }
+  
+plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days")
+survreg.curve(mexp,col=2)
+survreg.curve(mweib,col=3)
+survreg.curve(mlognorm,col=4)
+legend(35,1,c("kaplan-meyer","exp","weib","lognormal"),col=1:4,lty=1)
+
+
+```
+
+
 **Serie temporal **
 
 ```{r echo=FALSE}
@@ -88,9 +167,11 @@ boxplot(casos~ano,data=dd,ylab="# notificações")
 ```
 
 
-Analise a partir de 2011
+Correção naive
+--------------
+Analise a partir de 2011 mas até 5 meses atras
 ```{r}
-ddd<-subset(dd,ano>2010)
+ddd<-subset(dd, (ano>2010 & SE<201433)) # tirar dados potencialmente truncados
 par(mfrow=c(2,1),mar=c(4,4,1,1))
 boxplot(tdigit~ano,data=ddd,ylab="atraso digitação",ylim=c(0,40))
 #boxplot(casos~ano,data=ddd,ylab="# notificações")
@@ -114,6 +195,7 @@ lines(density(ddd$tdigit[ddd$ano==2014]),col=4)
 ```{r}
 pacf(ddd$tdigit)
 ```
+
 
 **Reconstruindo os dados removendo as digitacoes tardias**
 ```{r}
@@ -149,7 +231,7 @@ legend(150,8000,c("x=1","x=2","x=3","todos registros"),cex=0.8,lty=1,col=c("red"
 title("dados SINAN digitados até x semanas")
 ```
 
-Aplicando a correção
+Aplicando a correção naive
 
 ```{r}
 par(mfrow=c(1,1))
@@ -162,4 +244,19 @@ title("dados notificação estimados a partir dos dados digitados")
 
 ```
 
+Aplicando a correção via modelo lognormal (bom para 2013 e 2014)
+
+```{r}
+par(mfrow=c(1,1))
+c1 <- plnorm(7,meanlog,sdlog)
+plot(st1$casos/c1,type="l",ylim=c(0,max(st$casos)),ylab="casos notificados",xlab="tempo",col="red")
+c2 <- plnorm(14,meanlog,sdlog)
+lines(st2$casos/c2,col="green")
+c3 <- plnorm(21,meanlog,sdlog)
+lines(st3$casos/c3,col="blue")
+lines(st$casos,col="black",lwd=2)
+legend(150,8000,c("x=1","x=2","x=3","todos registros"),cex=0.8,lty=1,col=c("red","green","blue","black"))
+title("dados notificação estimados a partir dos dados digitados")
+
+```
 

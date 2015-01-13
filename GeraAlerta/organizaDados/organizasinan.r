@@ -4,34 +4,57 @@
 
 #require(foreign)
 
-#Dados do SINAN 2014
+###Dados do SINAN 2014 e 2015
 #--------------------
 
-#novosinan <- paste("../",novosinan,sep="")
-d <- read.dbf(novosinan)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI",
+d14 <- read.dbf(novosinan2014)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA",
                           "SEM_PRI","NM_BAIRRO")]
-print(tail(d,n=7))
+d15 <- read.dbf(novosinan2015)[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA",
+                                  "SEM_PRI","NM_BAIRRO")]
+d<-rbind(d14,d15)
+#print(tail(d,n=7))
+d$atraso<-as.numeric(d$DT_DIGITA-d$DT_SIN_PRI)
 
-
-#Criar variavel APS
+###Criar variavel APS
+# -----------------
 baps<-read.csv("tabelas/bairro2AP.csv")
 d2<-merge(d,baps,by.x="NM_BAIRRO",by.y="bairro")
 
-#Numero de registros sem AP (falha no mapeamento bairro -> APS)
-falha=dim(d)[1]-dim(d2)[1]
-message("numero de registros com info de bairro: ",dim(d2)[1])
-message("numero de registros sem info de bairro: ",falha)
+# identificar os casos nos quais nao foram identificados a APS.
+d3<-merge(d,baps,by.x="NM_BAIRRO",by.y="bairro",all.x=TRUE,sort=FALSE)
+nad3 <- d3[which(is.na(d3$APS)),] 
+nad3$SEM_NOT <- as.numeric(as.character(nad3$SEM_NOT))
 
-#Serie temporal de casos no municipio todo em 2014
+message("casos perdidos por não geolocalização no MRJ na ultima semana: ",tail(tapply(nad3$SEM_NOT,nad3$SEM_NOT,length),1))
+if(tail(tapply(nad3$SEM_NOT,nad3$SEM_NOT,length),1)>0) print(nad3[nad3$SEM_NOT==max(nad3$SEM_NOT),])
+
+#Numero de registros sem AP (falha no mapeamento bairro -> APS), em quase todas as vezes deve-se a 
+# localizacao fora do Rio de Janeiro
+# falha=(dim(d)[1]-dim(d2)[1])/dim(d)[1]*100
+#message("% de registros sem geolocalizacao no RJ desde 2014: ",falha," %")
+rm(d3,nad3)
+
+###Serie temporal de casos no municipio todo em 2014
+# ---------------------------------------------------
 st14 <- aggregate(d$SEM_NOT,by=list(d$SEM_NOT),FUN=length)
 names(st14)<-c("SE","casos")
 st14$SE<-as.numeric(as.character(st14$SE))
 message("serie temporal da cidade:")
 print(tail(st14))
 
+### Atraso de digitacao - A fazer 
+#at14 <- aggregate(d$atraso,by=list(d$SEM_NOT),FUN=median)
+#names(at14)<-c("SE","medianatraso")
+#st14$SE<-as.numeric(as.character(st14$SE))
+#message("serie temporal da cidade:")
+#print(tail(st14))
 
-#Cria Serie temporal de casos por APS em 2014
+
+###Cria Serie temporal de casos por APS 
+# ----------------------------------------------
 listaAPS<-unique(baps$APS)
+
+# primeiro s´o 2014 em diante
 sem <- unique(d$SEM_NOT)
 st14.ap <- expand.grid(SE=sem,APS=listaAPS)
 st14.ap$casos <- NA

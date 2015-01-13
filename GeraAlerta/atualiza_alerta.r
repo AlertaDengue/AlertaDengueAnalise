@@ -16,10 +16,11 @@ source("fun/callmongoclima.r")
 # A1. Atualizar dados de dengue:
 # esse e' o unico que precisa ser nominalmente indicado aqui. 
 # O dbf deve estar na pasta indicada no path dados_brutos/sinan/
-novosinan <- "dados_brutos/sinan/DENGON2014_02_01_2015.dbf"
+novosinan2014 <- "dados_brutos/sinan/Dengue2014_12_01_2014.dbf"
+novosinan2015 <- "dados_brutos/sinan/Dengue2015_12_01_2014.dbf"
 source("organizaDados/organizasinan.r")
 
-# A2. Atualizar dados de temperatura: (Flavio, tirar alguns prints)
+# A2. Atualizar dados de temperatura: 
 source("organizaDados/organizaTemperatura.r")
 
 # A3. Atualizar dados de tweet:
@@ -32,15 +33,18 @@ source("organizaDados//juntaTudo.r")
 # B. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201453.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201501.csv"
+source("geraAlerta/geraAlerta.r")
 
-knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env()) # migrar para o .r
+
+
+
+## OLD ################################################
+
+
+
+#knit(input="geraAlerta/geraAlerta.rmd",quiet=TRUE,envir=new.env()) # 
 #markdownToHTML("geraAlerta.md",output="html/Alerta.html", fragment.only = TRUE) 
-
-alerta<-"alerta/alertaAPS_201453.csv"
-knit(input="geraAlerta/relatorio.rmd",quiet=TRUE,envir=new.env())
-
-
+#alerta<-"alerta/alertaAPS_201453.csv"
+#knit(input="geraAlerta/relatorio.rmd",quiet=TRUE,envir=new.env())
 #wkhtmltopdf Alerta.html Alerta.pdf
-
-

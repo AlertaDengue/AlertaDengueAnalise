@@ -18,8 +18,8 @@ SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
 
 ```{r echo=FALSE}
 # Abre os dados mais recentes (se chamado por geraAlerta, nao precisa)
-nalerta <- paste("../",alerta,sep="")
-d2 <- read.csv(file=nalerta)
+bdalerta <- paste("../",nalerta,sep="")
+d2 <- read.csv(file=bdalerta)
 ```
 
 
