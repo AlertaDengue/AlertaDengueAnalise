@@ -6,7 +6,7 @@ require(foreign)
 ```
 
 Dados de 2010 a 2013
-```{r}
+```{r, echo=FALSE,results='hide'}
 d10 <- read.dbf(file="../../dados_brutos/sinan/old/Dengue2010_BancoSINAN16_04_2012_v09012014.dbf")[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA","SEM_PRI")]
 d11 <- read.dbf(file="../../dados_brutos/sinan/old/Dengue2011_BancoSINAN14_10_2013_v09012014.dbf")[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA","SEM_PRI")]
 d12 <- read.dbf(file="../../dados_brutos/sinan/old/Dengue2012_BancoSINAN09_09_2013_v09012014.dbf")[,c("DT_NOTIFIC","SEM_NOT","NU_ANO","DT_SIN_PRI","DT_DIGITA","SEM_PRI")]
@@ -20,8 +20,8 @@ n1<-dim(d)[1]
 
 
 
-**Variaveis de tempo**
-```{r}
+```{r , echo=FALSE,results='hide'}
+#Variaveis de tempo**
 summary(d$DT_NOTIFIC)
 summary(d$DT_SIN_PRI)
 summary(d$DT_DIGITA)
@@ -36,25 +36,25 @@ n1-n2
 ```
 
 
-**tempo ate notificar** 
-```{r echo=FALSE}
+```{r echo=FALSE,results='hide'}
+#**Distribuição do tempo ate notificar** 
 d$tnotif<-as.numeric(d$DT_NOTIFIC-d$DT_SIN_PRI)
-quantile(d$tnotif,probs=seq(0,1,by=0.05))
+quantile(d$tnotif)
 
 ```
 
-**tempo ate digitar** 
+**Distribuicao do tempo ate digitar** 
 ```{r echo=FALSE}
 d$diasdigit<-as.numeric(d$DT_DIGITA-d$DT_NOTIFIC)
 summary(d$diasdigit)
 
 par(mfrow=c(1,1),mar=c(5,5,3,3))
 d<-na.omit(d)
-range(d$diasdigit)
+#range(d$diasdigit)
 freq<-hist(d$diasdigit,breaks=seq(0,700,by=7))
-freq$counts/sum(freq$counts)
-plot(cumsum(freq$counts)/sum(freq$counts),type="s",ylab="tempo ate digitar",xlab="semana")
-
+#freq$counts/sum(freq$counts)
+plot(cumsum(freq$counts)/sum(freq$counts),type="s",ylab="tempo ate digitar",xlab="semana",main="")
+abline(h=0.99,col="red",lty=2)
 cumfreq<-cumsum(freq$counts)/sum(freq$counts)
 cumfreq[1:20]
 
@@ -65,18 +65,19 @@ Em 5 meses, 99% dos casos foram digitados
 Correção por ajuste de modelo lognormal
 ----------------------------------------
 
-** Por Analise de sobrevivencia**
-```{r}
+```{r, echo=FALSE,results='hide'}
 library("survival")
 d$ini<-as.numeric(d$DT_NOTIFIC - as.Date("2011-01-01"))
 ds <- subset(d, d$ini>0)
 ds$fim<-as.numeric(ds$DT_DIGITA - as.Date("2011-01-01"))
 ds$tempo<- ds$fim-ds$ini
-ds <- subset(ds,ds$tempo>0)
+dxs <- subset(ds,ds$tempo>0)
 ds$status<-TRUE
-y <- Surv(time=ds$ini,time2=ds$fim,event=ds$status==TRUE)
+#y <- Surv(time=ds$ini,time2=ds$fim,event=ds$status==TRUE)
 y <- Surv(time=ds$tempo,event=ds$status==TRUE)
+```
 
+```{r}
 km <- survfit(y~1)
 km
 plot(km,xlim=c(0,80),xlab="days",ylab="time to digitation")
@@ -86,6 +87,10 @@ kmano
 plot(kmano,xlim=c(0,60),xlab="days",ylab="time to digitation",col=1:4)
 legend(40,1,c("2011","2012","2013","2014"),col=1:4,lty=1)
 survdiff(y~ds$ano,)
+
+```
+
+```{r}
 
 # fit com dados de 2013 em diante
 dss<-subset(ds,(ano=="2013"|ano=="2014"))

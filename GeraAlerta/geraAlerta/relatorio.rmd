@@ -1,5 +1,5 @@
 ---
-title: "Alerta Dengue Rio"
+title: "Info Dengue Rio"
 author: "Relatório de situação"
 output: pdf_document
 ---
@@ -139,6 +139,12 @@ Código:
 ### <a name="ap1"></a> Alerta APS 1
 
 ```{r echo=FALSE}
+cores <- c("green","yellow","orange","red")
+cores <- c("#0D6B0D","#BFEE63","#E2EE63","#EE9263")
+cores <- c("#0D6B0D","yellow3","orange","orangered")
+cores <- c("#0D6B0D","#C8D20F","orange","red")
+
+
 plot.alerta2<-function(ap){
       par(mai=c(0,0,0,0),mar=c(4,1,1,1))
       d2v <- subset(d2,APS==ap)
@@ -146,10 +152,10 @@ plot.alerta2<-function(ap){
       d2v <- d2v[c(52:les),]
       les <- dim(d2v)[1]
       plot(1:les,d2v$casos,type="l",axes=FALSE,ylab="",xlab="")
-      abline(v=which(d2v$cor==1),col="darkgreen",lwd=2)
-      abline(v=which(d2v$cor==2),col="yellow",lwd=2)
-      abline(v=which(d2v$cor==3),col="orange",lwd=2)
-      abline(v=which(d2v$cor==4),col="red",lwd=2)
+      abline(v=which(d2v$cor==1),col=cores[1],lwd=2)
+      abline(v=which(d2v$cor==2),col=cores[2],lwd=2)
+      abline(v=which(d2v$cor==3),col=cores[3],lwd=2)
+      abline(v=which(d2v$cor==4),col=cores[4],lwd=2)
       title(as.character(ap),cex=1.4)
       axis(2)
       axis(1,at=rev(seq(les,1,by=-16)),labels=d2v$SE[rev(seq(les,1,by=-16))],las=2,cex=0.3)
