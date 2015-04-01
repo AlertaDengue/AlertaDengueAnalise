@@ -21,6 +21,7 @@ for (i in 2:10) {
 Rt.ap <- yi
 rm(yi)
 
+Rt.ap <- subset(Rt.ap,SE<=SEvez)
 message("dados completos para analise")
 print(tail(Rt.ap,n=7))
 

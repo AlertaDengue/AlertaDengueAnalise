@@ -14,17 +14,17 @@ source("fun/callmongoclima.r")
 # A. Organizar os dados novos:
 # ============================
 
-# A1. Atualizar dados de temperatura: 
+# A1. Atualizar dados de temperatura (verificar se tem conexão internet): 
 source("organizaDados/organizaTemperatura.r")
 
 # A2. Atualizar dados de tweet:
 source("organizaDados//organizatweets.r")
 
- # A3. Atualizar dados de dengue:
+# A3. Atualizar dados de dengue:
 # esse e' o unico que precisa ser nominalmente indicado aqui. 
 # O dbf deve estar na pasta indicada no path dados_brutos/sinan/
-novosinan2014 <- "dados_brutos/sinan/Dengue2014_26_01_2015.dbf"
-novosinan2015 <- "dados_brutos/sinan/Dengue2015_26_01_2015.dbf"
+novosinan2014 <- "dados_brutos/sinan/Dengue2014_23_03_2015.dbf" # manter sempre esse
+novosinan2015 <- "dados_brutos/sinan/Dengue2015_23_03_2015.dbf"
 source("organizaDados/organizasinan.r")
 
 
@@ -35,7 +35,7 @@ source("organizaDados//juntaTudo.r")
 # B. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201504.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201512.csv"
 source("geraAlerta/geraAlerta.r")
 
 

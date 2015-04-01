@@ -25,7 +25,7 @@ if(fonte == "Wunder"){
   
   # Captura os dados para o mongo
   dom = Sys.Date()-1  # ultimo domingo
-  dom1 = dom-8
+  dom1 = dom-50
   system(paste("fun/clima.py -i", dom1,"-f ",dom, "-c SBRJ"))
   system(paste("fun/clima.py -i", dom1," -f",dom, " -c SBJR"))
   system(paste("fun/clima.py -i", dom1," -f",dom, " -c SBAF"))
@@ -50,7 +50,8 @@ if(fonte == "Wunder"){
   d$SE<-data2SE(d$data,file="tabelas/SE.csv",format="%Y-%m-%d")
   
   # Agregar por semana
-  df<-aggregate(d[,2:3],by=list(SE=d$SE,estacao=d$estacao),FUN=mean,na.rm=TRUE)
+  n = dim(d)[2]-1
+  df<-aggregate(d[,2:n],by=list(SE=d$SE,estacao=d$estacao),FUN=mean,na.rm=TRUE)
 }
 
 
