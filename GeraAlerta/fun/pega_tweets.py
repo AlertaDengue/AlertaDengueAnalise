@@ -13,10 +13,11 @@ token = "XXXXX"
 
 
 
-def faz_request(inicio, fim, cidades=['330455', '310620','410690']):
+def faz_request(inicio, fim, cidades=None):
     """
     Faz a consulta
     """
+    cidades = [str(c) for c in cidades]
     params = "cidade=" + "&cidade=".join(cidades) + "&inicio="+str(inicio) + "&fim=" + str(fim) + "&token=" + token
     resp = requests.get('?'.join([base_url, params]))
     return resp
@@ -30,15 +31,16 @@ def salva(fname, data):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Pega séries de Tweets do servidor da UFMG em um periodo determinado")
-    parser.add_argument("--inicio", "-i", help="Data inicial de captura: yyyy-mm-dd")
-    parser.add_argument("--fim", "-f", help="Data final de captura: yyyy-mm-dd")
+    parser.add_argument("--inicio", "-i", required=True, help="Data inicial de captura: yyyy-mm-dd")
+    parser.add_argument("--fim", "-f",required=True, help="Data final de captura: yyyy-mm-dd")
+    parser.add_argument("cidades", metavar="xxxxxx", type=int, nargs='+',help="Geocodigos adicionais separados por espaço")
     args = parser.parse_args()
     ini = datetime.datetime.strptime(args.inicio, "%Y-%m-%d").date()
     fim = datetime.datetime.strptime(args.fim, "%Y-%m-%d").date()
-
-    response = faz_request(inicio=ini, fim=fim)
+    cidades=['330455', '310620', '410690']
+    cidades += args.cidades
+    response = faz_request(inicio=ini, fim=fim, cidades=list(set(cidades)))
     print ("==> Solicitando: ", response.url)
     # print(response.text)
     salva("tweets_teste.csv",response.text)
-
 
