@@ -13,7 +13,7 @@ token = "XXXXX"
 
 
 
-def faz_request(inicio, fim, cidades=['330455', '310620', '410690']):
+def faz_request(inicio, fim, cidades=['330455', '310620','410690']):
     """
     Faz a consulta
     """
@@ -40,4 +40,5 @@ if __name__ == "__main__":
     print ("==> Solicitando: ", response.url)
     # print(response.text)
     salva("tweets_teste.csv",response.text)
+
 

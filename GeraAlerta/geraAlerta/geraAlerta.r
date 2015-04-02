@@ -14,7 +14,7 @@ listaAPS<-unique(d$APS)
 
 # Correcoes
 # =====================================================================
-# corrige casos pelo atraso de digitacao (tem muito o que melhorar aqui)
+# corrige casos pelo atraso de digitacao (usando modelo sobrevida lognormal)
 for(i in 1:10) d$casosm[d$APS==listaAPS[i]] <-corrigecasos(d$casos[d$APS==listaAPS[i]])
 
 tot<-aggregate(d$casosm,by=list(d$SE),sum)
@@ -82,10 +82,10 @@ for(i in 1:10) d2[d2$APS==listaAPS[i],c("Rtw","ptw1","Rtwlr","Rtwur")] <- Rt.bet
 
 Rtgreat1 <- function(p1,pcrit=0.8,lag=0){
     t1<-as.numeric(p1>pcrit)
-    ac<-t1
+    le <- length(t1)
+    if (lag==0) ac<-t1[1:le]
     if (lag>0) {
-          le <- length(t1)
-          ini <- (lag+1)
+          ini <- lag # ini <- (lag+1)
           ac <- t1[ini:le]
           for(i in 1:(ini-1)) ac <- ac+t1[(ini-i):(le-i)]
           ac<-c(rep(NA,(ini-1)),ac)
@@ -95,10 +95,10 @@ Rtgreat1 <- function(p1,pcrit=0.8,lag=0){
 
 
 # Rt(tweet) > 1 se Pr>0.9 
-for(i in 1:10) d2$twgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$ptw1[d2$APS==listaAPS[i]],pcrit=0.90,lag=0)
+for(i in 1:10) d2$twgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$ptw1[d2$APS==listaAPS[i]],pcrit=0.85,lag=0)
 
 # alertaRtweet = acumulado de Rt>1 por 3 vezes
-for(i in 1:10) d2$alertaRtweet[d2$APS==listaAPS[i]] <-Rtgreat1(d2$ptw1[d2$APS==listaAPS[i]],pcrit=0.90,lag=3)
+for(i in 1:10) d2$alertaRtweet[d2$APS==listaAPS[i]] <-Rtgreat1(d2$ptw1[d2$APS==listaAPS[i]],pcrit=0.85,lag=3)
 
 # calculo do Rt de dengue**
 
@@ -116,11 +116,11 @@ d2$pRti[is.na(d2$pRt1)]<-d2$ptw1[is.na(d2$pRt1)]
 #d2$Rti[is.na(d2$Rt)]<-d2$Rtw[is.na(d2$Rt)]
 
 
-# Rt(dengue) > 1 se Pr>0.8 
-for(i in 1:10) d2$Rtgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==listaAPS[i]],pcrit=0.90,lag=0)
+# Rt(dengue) > 1 se Pr>0.9 
+for(i in 1:10) d2$Rtgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==listaAPS[i]],pcrit=0.85,lag=0)
 
 # alertaRt = acumulado de Rt>1 por 3 vezes
-for(i in 1:10) d2$alertaRt[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==listaAPS[i]],pcrit=0.90,lag=3)
+for(i in 1:10) d2$alertaRt[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==listaAPS[i]],pcrit=0.85,lag=3)
 
 
 
@@ -159,22 +159,58 @@ d2$alertaCasos <- as.numeric(d2$inc>100)
  
 le = length(d2$tmin[d2$APS==listaAPS[1]])
 
+
+
 def.cor<-function(d2v){
 # d2v = dados de uma ap
       # 1 = verde, 2=amarelo, 3 =laranja, 4 = vermelho
       les = dim(d2v)[1]
-      d2v$cor <-NA
+      d2v$cor <-1
       d2v$cor[intersect(6:les,which(d2v$alertaCli<3 & d2v$alertaRtweet<3 & d2v$alertaRt<3 & d2v$alertaCasos==0))]<-1
       d2v$cor[intersect(6:les,which(d2v$alertaCli>=3 | d2v$alertaRtweet>=3))]<-2
+      d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+1)]<-2 # inercia para desligar
+      d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+2)]<-2 # inercia para desligar
+      d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+3)]<-2 # inercia para desligar
       d2v$cor[intersect(6:les,which(d2v$alertaRt>=3))]<-3
-      d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+1)]<-3 # inercia para desligar
-      d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+2)]<-3 # inercia para desligar
-      d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+3)]<-3 # inercia para desligar
+      #d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+1)]<-3 # inercia para desligar
+      for (t in 1:6) d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+1),which(d2v$Rt>=1))]<-3 # manter laranja de Rt>1
+      d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+1),which(d2v$alertaRt>=1))]<-3
+      d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+1),which(d2v$alertaRt>=1)+1)]<-3
+    #  for (t in 1:6) d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+1),which(d2v$Rt>=1)+1)]<-3 # manter laranja de Rt>1
+     # for (t in 1:6) d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+1),which(d2v$Rt>=1)+2)]<-3 # manter laranja de Rt>1
+      #d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+2),which(d2v$Rt>1))]<-3
+      #d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+2)]<-3 # inercia para desligar     
+          #d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+1),which(d2v$alertaRt>=1))]<-3
+      #d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+2),which(d2v$alertaRt>=1))]<-3      
+      #d2v$cor[intersect(intersect(6:les,which(d2v$cor==3)+3),which(d2v$alertaRt>=1))]<-3      
+      
+     # d2v$cor[intersect(intersect(6:les,which(d2v$alertaRt>=3)+6),which(d2v$alertaRt>=1))]<-3 
       d2v$cor[intersect(6:les,which(d2v$alertaCasos==1))]<-4
       d2v$cor[intersect(6:les,which(d2v$alertaCasos==1)+1)]<-4  # inercia para desligar
       d2v$cor[intersect(6:les,which(d2v$alertaCasos==1)+2)]<-4   # inercia para desligar
       d2v$cor[intersect(6:les,which(d2v$alertaCasos==1)+3)]<-4
       d2v
+}
+
+def.cor<-function(d2v){
+  # d2v = dados de uma ap
+  # 1 = verde, 2=amarelo, 3 =laranja, 4 = vermelho
+  les = dim(d2v)[1]
+  d2v$cor <-NA
+  d2v$cor[intersect(6:les,which(d2v$alertaCli<3 & d2v$alertaRtweet<3 & d2v$alertaRt<3 & d2v$alertaCasos==0))]<-1
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3 | d2v$alertaRtweet>=3))]<-2
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+1)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+2)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+3)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaRt>=3))]<-3
+  d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+1)]<-3 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+2)]<-3 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+3)]<-3 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCasos==1))]<-4
+  d2v$cor[intersect(6:les,which(d2v$alertaCasos==1)+1)]<-4  # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCasos==1)+2)]<-4   # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCasos==1)+3)]<-4
+  d2v
 }
 
 d2$cor<-NA
