@@ -23,11 +23,11 @@ source("organizaDados//organizatweets.r")
  # A3. Atualizar dados de dengue:
 # esse e' o unico que precisa ser nominalmente indicado aqui. 
 # O dbf deve estar na pasta indicada no path dados_brutos/sinan/
-novosinan2014 <- "dados_brutos/sinan/DENGON2014_03_02_2015.dbf"
-novosinan2015 <- "dados_brutos/sinan/DENGON262672_00.dbf"
+novosinan2014 <- "dados_brutos/sinan/Dengue2014_23_03_2015.dbf"
+novosinan2015 <- "dados_brutos/sinan/Dengue2015_06_04_2015.dbf"
 source("organizaDados/organizasinan.r")
 
-
+# obs
 # A4. Juntar todos os dados numa unica tabela
 source("organizaDados//juntaTudo.r")
 
@@ -35,7 +35,7 @@ source("organizaDados//juntaTudo.r")
 # B. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201507.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201513.csv"
 source("geraAlerta/geraAlerta.r")
 
 
