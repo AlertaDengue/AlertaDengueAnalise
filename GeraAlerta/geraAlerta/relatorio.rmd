@@ -54,7 +54,7 @@ axis(2)
 le=dim(cidade)[1]
 #axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
 
-plot(cidade$casos, type="l", xlab="",ylab="casos notificados no MRJ",axes=FALSE,main="casos de dengue")
+plot(cidade$casos, type="l", xlab="",ylab="casos notificados no RJ",axes=FALSE,main="casos de dengue")
 #lines(cidade$casos_corrigidos, col=2)
 #legend((len-12),max(cidade$casos_corrigidos[(len-22):(len)],na.rm=TRUE),c("digitado","notificado estimado"),lty=1,col=1:2)
 axis(2)

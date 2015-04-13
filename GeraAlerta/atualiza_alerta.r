@@ -23,11 +23,11 @@ source("organizaDados/organizatweets.r")
 # A3. Atualizar dados de dengue:
 # esse e' o unico que precisa ser nominalmente indicado aqui. 
 # O dbf deve estar na pasta indicada no path dados_brutos/sinan/
-novosinan2014 <- "dados_brutos/sinan/Dengue2014_23_03_2015.dbf" # manter sempre esse
-novosinan2015 <- "dados_brutos/sinan/DENGON2015_31_03.dbf"
+novosinan2014 <- "dados_brutos/sinan/Dengue2014_23_03_2015.dbf"
+novosinan2015 <- "dados_brutos/sinan/Dengue2015_06_04_2015.dbf"
 source("organizaDados/organizasinan.r")
 
-
+# obs
 # A4. Juntar todos os dados numa unica tabela
 source("organizaDados//juntaTudo.r")
 

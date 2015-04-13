@@ -11,9 +11,9 @@ source("fun/concatweet.r")
 dant<-read.csv("dados_limpos/tweets_week_2010-2013.csv")
 
 #Serie de 2014 de tweets diarios
-comando<-paste("fun/pega_tweets.py -i 2014-01-05 -f ",Sys.Date()) # primeira SE de 2014 ate hoje
+comando<-paste("fun/pega_tweets.py -i 2014-01-05 -f ",Sys.Date(),410480) # primeira SE de 2014 ate hoje
 system(comando)
-d<-read.csv("tweets_teste.csv",header=TRUE)[,1:2]
+d<-read.csv("tweets_teste.csv",header=TRUE)[,c("data","X330455")]
 names(d)[2]<-"rio"
 
 message("ultimos tweets:")
