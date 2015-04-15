@@ -27,13 +27,16 @@ d$diasdigit<-as.numeric(d$DT_DIGITA-d$DT_NOTIFIC)
 par(mfrow=c(1,2),mar=c(5,5,3,3))
 d<-na.omit(d)
 #range(d$diasdigit)
-freq<-hist(d$diasdigit,breaks=seq(0,700,by=7))
+freq<-hist(d$diasdigit,breaks=seq(0,700,by=7),plot = FALSE)
+boxplot(d$diasdigit,ylim=c(0,50))
 plot(cumsum(freq$counts)/sum(freq$counts),type="s",ylab="tempo ate digitar",xlab="semana",main="")
 abline(h=0.99,col="red",lty=2)
 cumfreq<-cumsum(freq$counts)/sum(freq$counts)
 cumfreq[1:20]
-
+quantile(d$diasdigit,na.rm=TRUE)
 ```
+
+
 
 Tempo até digitar caso
 ==================
@@ -53,77 +56,7 @@ ds$status<-TRUE
 y <- Surv(time=ds$tempo,event=ds$status==TRUE)
 km <- survfit(y~1)
 km
-plot(km,xlim=c(0,80),xlab="days",ylab="time to digitation")
-
-```
-
-Anos 2013 e 2014 parecidos
-==============================
-
-```{r, echo=FALSE,results="hide"}
-ds$ano <- as.factor(as.numeric(as.character(ds$NU_ANO)))
-kmano<-survfit(y~ds$ano)
-kmano
-plot(kmano,xlim=c(0,60),xlab="days",ylab="time to digitation",col=1:4)
-legend(40,1,c("2011","2012","2013","2014"),col=1:4,lty=1)
-survdiff(y~ds$ano,)
-
-```
-
- fit com dados de 2013 em diante
-=============================
-
-```{r, results="hide"}
-dss<-subset(ds,(ano=="2013"|ano=="2014"))
-y <- Surv(time=dss$tempo,event=dss$status==TRUE)
-km <- survfit(y~1)
-
-mexp<-survreg(y~1,dist="exp")
-mweib<-survreg(y~1,dist="weib")
-mgaus<-survreg(y~1,dist="gaussian")
-mlogi<-survreg(y~1,dist="logistic")
-mlognorm<-survreg(y~1,dist="lognormal",x=TRUE,y=TRUE,model=TRUE)
-mloglog<-survreg(y~1,dist="loglogistic")
-```
-
-======================================
-```{r}
-AIC(mexp,mweib,mgaus,mlogi,mlognorm,mloglog)
-```
-
-======================================
-```{r, echo=FALSE,results="hide"}
-# funcao para plotar survreg (equivalente ao grafico acima)
-
-survreg.curve <- function(model,col=1,seq.quantiles=seq(0,1,by =0.01)){
-  newdata=dss[1,]#newdata=ds[seq(1,dim(ds)[2],by=10)]
-  lines(x=predict(model,
-  newdata=newdata,
-  type="quantile",p=seq.quantiles),
-  y = (1-seq.quantiles),
-  col=col, lty=1,lwd=2)
-                    }
-  
-plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days")
-survreg.curve(mexp,col=2)
-survreg.curve(mweib,col=3)
-survreg.curve(mlognorm,col=4)
-legend(35,1,c("kaplan-meyer","exp","weib","lognormal"),col=1:4,lty=1)
-```
-
-Modelo lognormal
-===========================
-```{r}
-summary(mlognorm)
-# parametros: meanlog = intercept; sdlog=exp(scale)
-```
-
-=============================
-```{r, echo=FALSE}
-meanlog=mlognorm$icoef[1]
-sdlog=exp(mlognorm$icoef[2])
-plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days")
-lines(0:60,(1-plnorm(0:60,meanlog,sdlog)), lwd=3,col=3)
+#plot(km,xlim=c(0,80),xlab="days",ylab="time to digitation")
 
 ```
 
@@ -159,16 +92,98 @@ legend(150,8000,c("x=1","x=2","x=3","todos registros"),cex=0.8,lty=1,col=c("red"
 title("dados SINAN digitados até x semanas")
 ```
 
+
+Curva de sobrevivência (Kaplan-Meyer)
+==============================
+
+```{r, echo=FALSE,results="hide"}
+ds$ano <- as.factor(as.numeric(as.character(ds$NU_ANO)))
+kmano<-survfit(y~ds$ano)
+kmano
+plot(kmano,xlim=c(0,60),xlab="days",ylab="time to digitation",col=1:4)
+legend(40,1,c("2011","2012","2013","2014"),col=1:4,lty=1)
+survdiff(y~ds$ano,)
+
+```
+
+ fit com dados de 2013 em diante
+=============================
+
+```{r, echo=FALSE}
+dss<-subset(ds,(ano=="2013"|ano=="2014"))
+y <- Surv(time=dss$tempo,event=dss$status==TRUE)
+km <- survfit(y~1)
+
+mexp<-survreg(y~1,dist="exp")
+mweib<-survreg(y~1,dist="weib")
+mgaus<-survreg(y~1,dist="gaussian")
+mlogi<-survreg(y~1,dist="logistic")
+mlognorm<-survreg(y~1,dist="lognormal",x=TRUE,y=TRUE,model=TRUE)
+mloglog<-survreg(y~1,dist="loglogistic")
+```
+
+======================================
+```{r}
+AIC(mexp,mweib,mgaus,mlogi,mlognorm,mloglog)
+```
+
+======================================
+```{r, echo=FALSE,results="hide"}
+# funcao para plotar survreg (equivalente ao grafico acima)
+
+
+survreg.curve <- function(model,col=1,seq.quantiles=seq(0,1,by =0.01)){
+  newdata=dss[1,]#newdata=ds[seq(1,dim(ds)[2],by=10)]
+  lines(x=predict(model,
+  newdata=newdata,
+  type="quantile",p=seq.quantiles),
+  y = (1-seq.quantiles),
+  col=col, lty=1,lwd=2)
+                    }
+```
+
+```{r, echo=FALSE}
+  
+plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days")
+survreg.curve(mexp,col=2)
+survreg.curve(mweib,col=3)
+survreg.curve(mlognorm,col=4)
+legend(35,1,c("kaplan-meyer","exp","weib","lognormal"),col=1:4,lty=1)
+```
+
+#Modelo lognormal
+#===========================
+```{r, echo=FALSE}
+summary(mlognorm)
+# parametros: meanlog = intercept; sdlog=exp(scale)
+```
+
+Modelo lognormal
+=============================
+```{r, echo=FALSE}
+meanlog=mlognorm$icoef[1]
+sdlog=exp(mlognorm$icoef[2])
+meanlog
+sdlog
+plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days")
+lines(0:60,(1-plnorm(0:60,meanlog,sdlog)), lwd=3,col=3)
+
+```
+
+
 Série temporal com correção
 ===========================
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,1))
 c1 <- plnorm(7,meanlog,sdlog)
+c1
 plot(st1$casos/c1,type="l",ylim=c(0,max(st$casos)),ylab="casos notificados",xlab="tempo",col="red")
 c2 <- plnorm(14,meanlog,sdlog)
+c2
 lines(st2$casos/c2,col="green")
 c3 <- plnorm(21,meanlog,sdlog)
+c3
 lines(st3$casos/c3,col="blue")
 lines(st$casos,col="black",lwd=2)
 legend(150,8000,c("x=1","x=2","x=3","todos registros"),cex=0.8,lty=1,col=c("red","green","blue","black"))
