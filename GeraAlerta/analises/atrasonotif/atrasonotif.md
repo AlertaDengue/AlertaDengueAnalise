@@ -8,6 +8,8 @@ Problema - tempo até digitar caso
 
 ![plot of chunk unnamed-chunk-1](atrasonotif-figure/unnamed-chunk-1-1.png) 
 
+
+
 Tempo até digitar caso
 ==================
 
@@ -16,29 +18,22 @@ Tempo até digitar caso
    0.00    6.00   13.00   25.13   30.00  614.00 
 ```
 
-![plot of chunk unnamed-chunk-3](atrasonotif-figure/unnamed-chunk-3-1.png) 
 
-Anos 2013 e 2014 parecidos
+
+Série temporal sem correção
+========================================================
+![plot of chunk unnamed-chunk-4](atrasonotif-figure/unnamed-chunk-4-1.png) 
+
+
+Curva de sobrevivência (Kaplan-Meyer)
 ==============================
 
-![plot of chunk unnamed-chunk-4](atrasonotif-figure/unnamed-chunk-4-1.png) 
+![plot of chunk unnamed-chunk-5](atrasonotif-figure/unnamed-chunk-5-1.png) 
 
  fit com dados de 2013 em diante
 =============================
 
 
-```r
-dss<-subset(ds,(ano=="2013"|ano=="2014"))
-y <- Surv(time=dss$tempo,event=dss$status==TRUE)
-km <- survfit(y~1)
-
-mexp<-survreg(y~1,dist="exp")
-mweib<-survreg(y~1,dist="weib")
-mgaus<-survreg(y~1,dist="gaussian")
-mlogi<-survreg(y~1,dist="logistic")
-mlognorm<-survreg(y~1,dist="lognormal",x=TRUE,y=TRUE,model=TRUE)
-mloglog<-survreg(y~1,dist="loglogistic")
-```
 
 ======================================
 
@@ -57,14 +52,12 @@ mloglog   2 439298.0
 ```
 
 ======================================
-![plot of chunk unnamed-chunk-7](atrasonotif-figure/unnamed-chunk-7-1.png) 
 
-Modelo lognormal
-===========================
 
-```r
-summary(mlognorm)
-```
+![plot of chunk unnamed-chunk-9](atrasonotif-figure/unnamed-chunk-9-1.png) 
+
+#Modelo lognormal
+#===========================
 
 ```
 
@@ -83,19 +76,37 @@ Number of Newton-Raphson Iterations: 5
 n= 54492 
 ```
 
-```r
-# parametros: meanlog = intercept; sdlog=exp(scale)
+Modelo lognormal
+=============================
+
+```
+(Intercept) 
+    2.50164 
 ```
 
-=============================
-![plot of chunk unnamed-chunk-9](atrasonotif-figure/unnamed-chunk-9-1.png) 
+```
+Log(scale) 
+  1.101342 
+```
 
-Série temporal sem correção
-========================================================
-![plot of chunk unnamed-chunk-10](atrasonotif-figure/unnamed-chunk-10-1.png) 
+![plot of chunk unnamed-chunk-11](atrasonotif-figure/unnamed-chunk-11-1.png) 
+
 
 Série temporal com correção
 ===========================
 
-![plot of chunk unnamed-chunk-11](atrasonotif-figure/unnamed-chunk-11-1.png) 
+
+```
+[1] 0.3069223
+```
+
+```
+[1] 0.5496483
+```
+
+```
+[1] 0.6889684
+```
+
+![plot of chunk unnamed-chunk-12](atrasonotif-figure/unnamed-chunk-12-1.png) 
 
