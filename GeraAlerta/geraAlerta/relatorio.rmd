@@ -151,7 +151,7 @@ plot.alerta2<-function(ap){
       les = dim(d2v)[1]
       d2v <- d2v[c(52:les),]
       les <- dim(d2v)[1]
-      plot(1:les,d2v$casosm,type="l",axes=FALSE,ylab="",xlab="")
+      plot(1:les,d2v$casos,type="l",axes=FALSE,ylab="",xlab="")
       abline(v=which(d2v$cor==1),col=cores[1],lwd=2)
       abline(v=which(d2v$cor==2),col=cores[2],lwd=2)
       abline(v=which(d2v$cor==3),col=cores[3],lwd=2)
@@ -160,7 +160,8 @@ plot.alerta2<-function(ap){
       axis(2)
       axis(1,at=rev(seq(les,1,by=-16)),labels=d2v$SE[rev(seq(les,1,by=-16))],las=2,cex=0.3)
       lines(1:les,d2v$casos,lwd=2)
-}
+      lines(1:les,d2v$casosm,lwd=2,lty=2)
+      }
 
 ```
 

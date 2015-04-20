@@ -37,7 +37,7 @@ source("organizaDados//juntaTudo.r")
 # B. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201514.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201515.csv"
 source("geraAlerta/geraAlerta.r")
 
 

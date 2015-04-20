@@ -7,6 +7,9 @@ st.ap<-read.csv("dados_limpos/sinansemanaAP_RJ.csv") # prob
 tw<-read.csv("dados_limpos/tweetsemanaRJ.csv")
 tempAP <- read.csv("dados_limpos/climasemanaRJ.csv")
 
+semanapassada <- Sys.Date()-3
+SEvez <- data2SE(semanapassada,file="tabelas/SE.csv",format="%Y-%m-%d")
+
 listaAPS<-unique(st.ap$APS)
 # sinan + temperatura
 Rt.ap<-merge(st.ap,tempAP,by=c(SE="SE",APS="APS"),all=TRUE)
