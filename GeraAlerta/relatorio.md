@@ -1,7 +1,9 @@
 ---
 title: "Info Dengue Rio"
-author: "Relatório de situação"
+author: "Relatório de situação da dengue na cidade do Rio de Janeiro"
 output: pdf_document
+geometry: margin=0.5in
+fontsize: 12pt
 ---
 
 
@@ -9,50 +11,69 @@ output: pdf_document
 
 
 
-**Rio de Janeiro, 2015-04-20  (SE 201516)**
+**Rio de Janeiro, 2015-04-27  (SE 201517)**
 
+<br> </br>
+------------
+<br> </br>
 
+Confira a situação da dengue na cidade do Rio de Janeiro. Mais detalhes, ver: [www.dengue.mat.br](www.dengue.mat.br) 
 
-
+## Índice {#top}
 * [Na cidade](#tab1)
+* [APS 1](#ap1)
+* [APS 2.1](#ap21)
+* [APS 2.2](#ap22)
+* [APS 3.1](#ap31)
+* [APS 3.2](#ap32)
+* [APS 3.3](#ap33)
+* [APS 4](#ap4)
+* [APS 5.1](#ap51)
+* [APS 5.2](#ap52)
+* [APS 5.3](#ap53)
 
-* [Por APS](#tab2)
+* [Mapa](#mapa)
+* [Notas](#notas)
+
+\newpage
+
 
 
 <br> </br>
 
-### <a name="tab1"></a> Situação na cidade do Rio de Janeiro
+### <a name="tab1"></a> Situação da dengue na cidade do Rio de Janeiro
 
 
 
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
 
-\pagebreak
+
+\newpage
 
 Últimas 6 semanas:
 
 
------------------------------------------------------------
- &nbsp;     SE    casos   casos_corrigidos   tweets   tmin 
---------- ------ ------- ------------------ -------- ------
- **271**  201510   125         143.8          129    23.69 
+-------------------------------------------------
+  SE    casos   casos_corrigidos   tweets   tmin 
+------ ------- ------------------ -------- ------
+201511   158         181.8          137    22.86 
 
- **272**  201511   155         186.6          137    22.86 
+201512   223         268.5          146    21.71 
 
- **273**  201512   220          284           146    21.71 
+201513   214         276.3          141     22.3 
 
- **274**  201513   213         309.2          141     22.3 
+201514   294         426.7          187    20.64 
 
- **275**  201514   249          453           187    20.64 
+201515   398         724.1          349    21.69 
 
- **276**  201515   249         811.3          349    21.69 
------------------------------------------------------------
+201516   145         472.4          208    22.64 
+-------------------------------------------------
 
 Legenda:
 
 - SE: semana epidemiológica
-- casos: nímero de casos de dengue no SINAN
+- casos: número de casos de dengue no SINAN
 - casos_corrigidos: estimativa do número de casos notificados (ver [Notas](#notas))
 - tweets: número de tweets relatando sintomas de dengue (ver [Notas](#notas))
 - tmin: média das temperaturas mínimas da semana
@@ -65,9 +86,8 @@ Legenda:
 
 
 
-**Alerta por APS**
+**Código de Cores do Alerta por APS**
 
-Código:
 
 *Verde (atividade baixa)*
    temperatura < 22 graus por 3 semanas 
@@ -87,271 +107,232 @@ Código:
 
 
 
-### <a name="ap1"></a> Alerta APS 1
+\newpage
+
+### Alerta APS 1 {#ap1}
 
 
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png) 
+
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
 
 <br> </br>
 
 Histórico da APS 1
 
------------------------------------------------------------------------------------
- &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
- **271**  201510 24.43     6    2.644     1        0         0        0     amarelo
+---------------------------------------------------------------------
+  SE    temp   casos   inc    Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ------ ------- ------- -------- ------- -------
+201514   22      3    1.322     1       0       0        0    amarelo
 
- **272**  201511   24      5    2.203     1        1         0        0     amarelo
+201515 22.86     9    3.965     1       0       0        0    amarelo
 
- **273**  201512   23      4    1.762     1        1         0        0     amarelo
-
- **274**  201513 23.71     4    1.762     1        0         0        0     amarelo
-
- **275**  201514   22      2    0.8812    1        0         0        0     amarelo
-
- **276**  201515 22.86     1    0.4406    1        0         0        0     amarelo
------------------------------------------------------------------------------------
+201516 23.43     2    0.8812    1       1       0        0    amarelo
+---------------------------------------------------------------------
+[volta](#top)
 
 
+\newpage
 
-### <a name="ap21"></a> Alerta APS 2.1
+### Alerta APS 2.1 {#ap21}
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png) 
 
 <br> </br>
 
 Histórico da AP2.1
 
-----------------------------------------------------------------------------------
- &nbsp;     SE    temp   casos   inc   AClima   ATweet   ATransm   ACasos   nivel 
---------- ------ ------ ------- ----- -------- -------- --------- -------- -------
- **547**  201510 24.43    12    2.171    1        0         0        0     amarelo
+--------------------------------------------------------------------
+  SE    temp   casos   inc   Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ----- ------- ------- -------- ------- -------
+201514   22     26    4.704    1       0       1        0    laranja
 
- **548**  201511   24     16    2.895    1        1         0        0     amarelo
+201515 22.86    49    8.866    1       0       1        0    laranja
 
- **549**  201512   23     19    3.438    1        1         1        0     laranja
+201516 23.43     6    1.086    1       1       0        0    laranja
+--------------------------------------------------------------------
+[volta](#top)
 
- **550**  201513 23.71    23    4.161    1        0         1        0     laranja
+\newpage
 
- **551**  201514   22     23    4.161    1        0         1        0     laranja
+### Alerta APS 2.1 {#ap22}
 
- **552**  201515 22.86    35    6.333    1        0         1        0     laranja
-----------------------------------------------------------------------------------
-
-
-
-### <a name="ap22"></a> Alerta APS 2.2
-
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png) 
 
 <br> </br>
 
 Histórico da AP2.2
 
------------------------------------------------------------------------------------
- &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
---------- ------ ------ ------- ------ -------- -------- --------- -------- -------
- **823**  201510 24.43    10    2.695     1        0         0        0     amarelo
+---------------------------------------------------------------------
+  SE    temp   casos   inc    Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ------ ------- ------- -------- ------- -------
+201514   22     15    4.042     1       0       0        0    amarelo
 
- **824**  201511   24      3    0.8084    1        1         0        0     amarelo
+201515 22.86    11    2.964     1       0       0        0    amarelo
 
- **825**  201512   23     14    3.772     1        1         0        0     amarelo
-
- **826**  201513 23.71    10    2.695     1        0         0        0     amarelo
-
- **827**  201514   22     15    4.042     1        0         0        0     amarelo
-
- **828**  201515 22.86     9    2.425     1        0         0        0     amarelo
------------------------------------------------------------------------------------
+201516 23.43     2    0.5389    1       1       0        0    amarelo
+---------------------------------------------------------------------
+[volta](#top)
 
 
+\newpage
 
-### <a name="ap31"></a> Alerta APS 3.1
+### Alerta APS 3.1 {#ap31}
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png) 
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png) 
 
 <br> </br>
 
 Histórico da AP3.1
 
------------------------------------------------------------------------------------
-  &nbsp;     SE    temp   casos   inc   AClima   ATweet   ATransm   ACasos   nivel 
----------- ------ ------ ------- ----- -------- -------- --------- -------- -------
- **1099**  201510   24     16    2.175    1        0         0        0     amarelo
+--------------------------------------------------------------------
+  SE    temp   casos   inc   Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ----- ------- ------- -------- ------- -------
+201514 20.71    31    4.213    0       0       1        0    laranja
 
- **1100**  201511 22.86    20    2.718    1        1         1        0     laranja
+201515   22     50    6.795    0       0       1        0    laranja
 
- **1101**  201512 21.71    27    3.67     0        1         1        0     laranja
-
- **1102**  201513 22.43    42    5.708    0        0         1        0     laranja
-
- **1103**  201514 20.71    20    2.718    0        0         0        0     laranja
-
- **1104**  201515   22     35    4.757    0        0         0        0     laranja
------------------------------------------------------------------------------------
+201516 22.86    23    3.126    0       1       0        0    laranja
+--------------------------------------------------------------------
+[volta](#top)
 
 
+### Alerta APS 3.2 {#ap32}
 
-### <a name="ap32"></a> Alerta APS 3.2
-
-![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-23-1.png) 
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png) 
 
 <br> </br>
 
 Histórico da AP3.2
 
-------------------------------------------------------------------------------------
-  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
----------- ------ ------ ------- ------ -------- -------- --------- -------- -------
- **1375**  201510   24      4    0.8168    1        0         0        0     amarelo
+--------------------------------------------------------------------
+  SE    temp   casos   inc   Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ----- ------- ------- -------- ------- -------
+201514 20.71    16    3.267    0       0       1        0    laranja
 
- **1376**  201511 22.86     8    1.634     1        1         0        0     amarelo
+201515   22     16    3.267    0       0       0        0    laranja
 
- **1377**  201512 21.71    24    4.901     0        1         0        0     amarelo
-
- **1378**  201513 22.43    13    2.655     0        0         0        0     amarelo
-
- **1379**  201514 20.71    15    3.063     0        0         1        0     laranja
-
- **1380**  201515   22      8    1.634     0        0         0        0     laranja
-------------------------------------------------------------------------------------
+201516 22.86    15    3.063    0       1       0        0    laranja
+--------------------------------------------------------------------
+[volta](#top)
 
 
+### Alerta APS 3.3 {#ap33}
 
-### <a name="ap33"></a> Alerta APS 3.3
-
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26-1.png) 
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png) 
 
 <br> </br>
 
 Histórico da AP3.3
 
------------------------------------------------------------------------------------
-  &nbsp;     SE    temp   casos   inc   AClima   ATweet   ATransm   ACasos   nivel 
----------- ------ ------ ------- ----- -------- -------- --------- -------- -------
- **1651**  201510   24     15    1.623    1        0         0        0     amarelo
+--------------------------------------------------------------------
+  SE    temp   casos   inc   Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ----- ------- ------- -------- ------- -------
+201514 20.71    51    5.517    0       0       0        0    laranja
 
- **1652**  201511 22.86    21    2.272    1        1         0        0     amarelo
+201515   22     66    7.14     0       0       0        0    laranja
 
- **1653**  201512 21.71    25    2.705    0        1         1        0     laranja
+201516 22.86    38    4.111    0       1       1        0    laranja
+--------------------------------------------------------------------
+[volta](#top)
 
- **1654**  201513 22.43    18    1.947    0        0         0        0     laranja
+### Alerta APS 4  {#ap4}
 
- **1655**  201514 20.71    42    4.544    0        0         0        0     laranja
-
- **1656**  201515   22     40    4.327    0        0         0        0     laranja
------------------------------------------------------------------------------------
-
-
-
-### <a name="ap4"></a> Alerta APS 4
-
-![plot of chunk unnamed-chunk-29](figure/unnamed-chunk-29-1.png) 
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22-1.png) 
 
 <br> </br>
 
 Histórico da AP4
 
------------------------------------------------------------------------------------
-  &nbsp;     SE    temp   casos   inc   AClima   ATweet   ATransm   ACasos   nivel 
----------- ------ ------ ------- ----- -------- -------- --------- -------- -------
- **1927**  201510 25.14    15    1.788    1        0         0        0     amarelo
+--------------------------------------------------------------------
+  SE    temp   casos   inc   Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ----- ------- ------- -------- ------- -------
+201514 20.43    42    5.007    0       0       1        0    laranja
 
- **1928**  201511 23.29    15    1.788    1        1         0        0     amarelo
+201515   21     81    9.656    0       0       1        0    laranja
 
- **1929**  201512 22.57    31    3.696    1        1         0        0     amarelo
-
- **1930**  201513 23.29    28    3.338    1        0         0        0     amarelo
-
- **1931**  201514 20.43    26    3.099    0        0         1        0     laranja
-
- **1932**  201515   21     40    4.768    0        0         1        0     laranja
------------------------------------------------------------------------------------
+201516 23.71    28    3.338    0       1       1        0    laranja
+--------------------------------------------------------------------
+[volta](#top)
 
 
+### Alerta APS 5.1 {#ap51}
 
-### <a name="ap51"></a> Alerta APS 5.1
-
-![plot of chunk unnamed-chunk-32](figure/unnamed-chunk-32-1.png) 
+![plot of chunk unnamed-chunk-24](figure/unnamed-chunk-24-1.png) 
 
 <br> </br>
 
 Histórico da AP5.1
 
------------------------------------------------------------------------------------
-  &nbsp;     SE    temp   casos   inc   AClima   ATweet   ATransm   ACasos   nivel 
----------- ------ ------ ------- ----- -------- -------- --------- -------- -------
- **2203**  201510 22.14    25    3.812    1        0         0        0     amarelo
+--------------------------------------------------------------------
+  SE    temp   casos   inc   Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ----- ------- ------- -------- ------- -------
+201514 19.29    55    8.386    0       0       1        0    laranja
 
- **2204**  201511 21.57    36    5.489    0        1         0        0     amarelo
+201515 20.43    40    6.099    0       0       1        0    laranja
 
- **2205**  201512 20.14    38    5.794    0        1         1        0     laranja
-
- **2206**  201513 20.43    40    6.099    0        0         1        0     laranja
-
- **2207**  201514 19.29    50    7.623    0        0         1        0     laranja
-
- **2208**  201515 20.43    31    4.727    0        0         1        0     laranja
------------------------------------------------------------------------------------
+201516 21.29    10    1.525    0       1       0        0    laranja
+--------------------------------------------------------------------
+[volta](#top)
 
 
+### Alerta APS 5.2 {#ap52}
 
-### <a name="ap52"></a> Alerta APS 5.2
-
-![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35-1.png) 
+![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26-1.png) 
 
 <br> </br>
 
 Histórico da AP5.2
 
------------------------------------------------------------------------------------
-  &nbsp;     SE    temp   casos   inc   AClima   ATweet   ATransm   ACasos   nivel 
----------- ------ ------ ------- ----- -------- -------- --------- -------- -------
- **2479**  201510 22.14    20    3.007    1        0         0        0     amarelo
+--------------------------------------------------------------------
+  SE    temp   casos   inc   Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ----- ------- ------- -------- ------- -------
+201514 19.29    48    7.216    0       0       1        0    laranja
 
- **2480**  201511 21.57    27    4.059    0        1         1        0     laranja
+201515 20.43    67    10.07    0       0       1        0    laranja
 
- **2481**  201512 20.14    26    3.909    0        1         1        0     laranja
+201516 21.29    19    2.856    0       1       0        0    laranja
+--------------------------------------------------------------------
+[volta](#top)
 
- **2482**  201513 20.43    31    4.66     0        0         1        0     laranja
+### Alerta APS 5.3 {#ap53}
 
- **2483**  201514 19.29    49    7.366    0        0         1        0     laranja
-
- **2484**  201515 20.43    48    7.216    0        0         1        0     laranja
------------------------------------------------------------------------------------
-
-
-
-### <a name="ap53"></a> Alerta APS 5.3
-
-![plot of chunk unnamed-chunk-38](figure/unnamed-chunk-38-1.png) 
+![plot of chunk unnamed-chunk-28](figure/unnamed-chunk-28-1.png) 
 
 <br> </br>
 
 Histórico da AP5.3
 
-------------------------------------------------------------------------------------
-  &nbsp;     SE    temp   casos   inc    AClima   ATweet   ATransm   ACasos   nivel 
----------- ------ ------ ------- ------ -------- -------- --------- -------- -------
- **2755**  201510 22.14     2    0.5427    1        0         0        0     amarelo
+---------------------------------------------------------------------
+  SE    temp   casos   inc    Clima   Tweet   Transm   Casos   nivel 
+------ ------ ------- ------ ------- ------- -------- ------- -------
+201514 19.29     7    1.899     0       0       0        0    amarelo
 
- **2756**  201511 21.57     4    1.085     0        1         0        0     amarelo
+201515 20.43     9    2.442     0       0       0        0    amarelo
 
- **2757**  201512 20.14    12    3.256     0        1         0        0     amarelo
+201516 21.29     2    0.5427    0       1       0        0    amarelo
+---------------------------------------------------------------------
+[volta](#top)
 
- **2758**  201513 20.43     4    1.085     0        0         0        0     amarelo
+<br> </br>
 
- **2759**  201514 19.29     7    1.899     0        0         0        0     amarelo
-
- **2760**  201515 20.43     2    0.5427    0        0         0        0     amarelo
-------------------------------------------------------------------------------------
-
+\newpage
 
 
+### Mapa APs {#mapa}
 
+<img src="figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" />
 
-### <a name="notas"></a> Notas
+<br> </br>
+
+veja o mapa interativo em [Alerta Dengue](http://alerta.dengue.mat.br)
+<br> </br>
+<p> </p>
+[volta](#top)
+
+\newpage
+
+### Notas {#notas}
 
 
 - Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos
@@ -363,6 +344,13 @@ Créditos
 ------
 Esse e um projeto desenvolvido em parceria pela Fiocruz, FGV e Prefeitura do Rio de Janeiro, com apoio da SVS/MS
 
-Mais detalhes, ver: www.dengue.mat.br
+Mais detalhes do projeto , ver: [www.dengue.mat.br](www.dengue.mat.br) 
+
+<br> </br>
+------------
+<br> </br>
 
 
+![logo](logo.png)
+
+[volta](#top)
