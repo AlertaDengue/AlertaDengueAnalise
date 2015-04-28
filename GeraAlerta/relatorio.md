@@ -11,7 +11,7 @@ fontsize: 12pt
 
 
 
-**Rio de Janeiro, 2015-04-27  (SE 201517)**
+**Rio de Janeiro, 2015-04-28  (SE 201517)**
 
 <br> </br>
 ------------
@@ -321,7 +321,8 @@ Histórico da AP5.3
 
 ### Mapa APs {#mapa}
 
-<img src="figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" />
+![plot of chunk unnamed-chunk-28](figure/unnamed-chunk-30-1.png) 
+#<img src="figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="; margin: auto;" />
 
 <br> </br>
 

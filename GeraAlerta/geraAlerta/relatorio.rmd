@@ -159,7 +159,7 @@ cores <- c("#0D6B0D","#C8D20F","orange","red")
 
 
 plot.alerta2<-function(d2=d2,ap){
-  par(mai=c(0,0,0,0),mar=c(4,1,1,1))
+  par(mai=c(0,0,0,0),mar=c(4,4,1,1))
   d2v <- subset(d2,APS==ap)
   
   cores <- c("#0D6B0D","#C8D20F","orange","red")
