@@ -14,7 +14,7 @@ fontsize: 12pt
 ```{r echo=FALSE}
 hoje <- Sys.Date()
 SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
-#SEhoje <-"201515"   # Oswaldo, deixei fixo aqui para facilitar
+
 ```
 
 **Rio de Janeiro, `r as.character(hoje)`  (SE `r as.character(SEhoje)`)**
@@ -23,7 +23,7 @@ SEhoje <- data2SE(hoje,file="../tabelas/SE.csv",format="%Y-%m-%d")
 ------------
 <br> </br>
 
-Confira a situação da dengue na cidade do Rio de Janeiro. Mais detalhes, ver: [www.dengue.mat.br](www.dengue.mat.br) 
+Confira a situação da dengue na cidade do Rio de Janeiro. Mais detalhes, ver: [info.dengue.mat.br](info.dengue.mat.br) 
 
 ## Índice {#top}
 * [Na cidade](#tab1)
