@@ -2,4 +2,6 @@
 *.html
 .RData
 .Rhistory
-GeraAmerta/figure/*.*
+GeraAlerta/figure/*.*
+*,png
+*.pdf
