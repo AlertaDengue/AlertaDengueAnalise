@@ -10,6 +10,7 @@ library(foreign)
 library(rmongodb)
 library(rgeos)
 library(maptools)
+library(ggplot2)
 source("fun/callmongoclima.r")
 
 #=============================
@@ -33,13 +34,17 @@ source("organizaDados/organizasinan.r")
 
 
 # A4. Juntar todos os dados numa unica tabela
-source("organizaDados//juntaTudo.r")
+source("organizaDados/juntaTudo.r")
+
+# A5. Dados das ovitrampas (ainda nao integrado ao resto)
+ovifile <- "dados_brutos/ovitrampa/IPOMar2015.csv"
+ovi<-read.csv(ovifile,sep=";")
 
 # =======================================
 # B. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201517.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201518.csv"
 source("geraAlerta/geraAlerta.r")
 
 
