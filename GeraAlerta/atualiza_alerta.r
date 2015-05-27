@@ -38,13 +38,13 @@ source("organizaDados/juntaTudo.r")
 
 # A5. Dados das ovitrampas (ainda nao integrado ao resto)
 ovifile <- "dados_brutos/ovitrampa/IPOMar2015.csv"
-ovi<-read.csv(ovifile,sep=";")
+ovi<-read.csv(ovifile,sep=";",dec=",")
 
 # =======================================
 # B. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201518.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201520.csv"
 source("geraAlerta/geraAlerta.r")
 
 

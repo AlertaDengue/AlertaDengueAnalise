@@ -18,7 +18,7 @@ listaAPS<-unique(d$APS)
 for(i in 1:10) d$casosm[d$APS==listaAPS[i]] <-corrigecasos(d$casos[d$APS==listaAPS[i]])
 
 tot<-aggregate(d$casosm,by=list(d$SE),sum)
-names(tot)<-c("SE","casosestimados")
+names(tot)<-c("SE","casos.sem.atraso")
 message("correcao da incidencia pelo atraso de notificacao")
 print(tail(tot))
 
@@ -107,20 +107,30 @@ d2$pRt1 <-NA
 d2$Rtlr <-NA
 d2$Rtur <-NA
 
-for(i in 1:10) d2[d2$APS==listaAPS[i],c("Rt","pRt1","Rtlr","Rtur")] <- Rt.beta((d2$casosm[d2$APS==listaAPS[i]]))
+for(i in 1:10) d2[d2$APS==listaAPS[i],c("Rt","pRt1","Rtlr","Rtur")] <- 
+  Rt.beta((d2$casosm[d2$APS==listaAPS[i]]))
 
-#  imputa os P(Rt) faltantes com p(Rtw)
-d2$pRti <- d2$pRt1
-d2$pRti[is.na(d2$pRt1)]<-d2$ptw1[is.na(d2$pRt1)]
+missing <- is.na(tail(d2$Rt)[6]) # TRUE se dado de sinan da ultima semana esta faltando
+
+if(missing==TRUE){  # se nao tem Rt (pq nao tem casos), usar Rtw (do tweet), assume mapeamento direto, pode ser melhorado
+  d2$Rt[is.na(d2$Rt)]<-d2$Rtw[is.na(d2$Rt)]
+  d2$pRt1[is.na(d2$pRt1)]<-d2$ptw1[is.na(d2$pRt1)]
+  d2$Rtlr[is.na(d2$Rtlr)]<-d2$Rtwlr[is.na(d2$Rtlr)]
+  d2$Rtur[is.na(d2$Rtur)]<-d2$Rtwur[is.na(d2$Rtur)]
+}
+
+#  imputa os P(Rt) faltantes com p(Rtw) #eliminei a variavel pRti para simplificar. Toda a imputacao
+# ´e feita diretamente na variavel pRT
+#d2$pRti <- d2$pRt1
+#d2$pRti[is.na(d2$pRt1)]<-d2$ptw1[is.na(d2$pRt1)]
 #d2$Rti <- d2$Rt1
 #d2$Rti[is.na(d2$Rt)]<-d2$Rtw[is.na(d2$Rt)]
 
-
 # Rt(dengue) > 1 se Pr>0.9 
-for(i in 1:10) d2$Rtgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==listaAPS[i]],pcrit=0.85,lag=0)
+for(i in 1:10) d2$Rtgreat1[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRt[d2$APS==listaAPS[i]],pcrit=0.85,lag=0)
 
 # alertaRt = acumulado de Rt>1 por 3 vezes
-for(i in 1:10) d2$alertaRt[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==listaAPS[i]],pcrit=0.85,lag=3)
+for(i in 1:10) d2$alertaRt[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRt[d2$APS==listaAPS[i]],pcrit=0.85,lag=3)
 
 
 
@@ -131,12 +141,13 @@ for(i in 1:10) d2$alertaRt[d2$APS==listaAPS[i]] <-Rtgreat1(d2$pRti[d2$APS==lista
 fillCasos <- function(casos, Rt){
   casos_est <- casos
   n <- which(is.na(casos_est))
-  if(length(n)>0) casos_est[n]<-casos[(n-2)]*mean(Rt[(n-2)],na.rm=TRUE)
+  if(length(n)>0) casos_est[n]<-casos[(n-1)]*mean(Rt[(n-2)],na.rm=TRUE)
   casos_est
   }
 d2$casos_est<-NA
-for(i in 1:10) d2$casos_est[d2$APS==listaAPS[i]]<-fillCasos((d2$casos[d2$APS==listaAPS[i]]),
-                                                            d2$Rt[d2$APS==listaAPS[i]])
+for(i in 1:10) d2$casos_est[d2$APS==listaAPS[i]]<-fillCasos((d2$casosm[d2$APS==listaAPS[i]]),
+                                                            d2$Rtw[d2$APS==listaAPS[i]])
+
 d2$inc <- d2$casos_est/d2$Pop2010*100000
 d2$alertaCasos <- as.numeric(d2$inc>100)
 
@@ -244,7 +255,9 @@ d2$nivel[d2$cor==4]<-"vermelho"
 options(digits = 2)
 for(i in 1:10) {
   message(paste ("Estado do Alerta de ",listaAPS[i]))
-  print(tail(d2[d2$APS==listaAPS[i],c(1,2,6,7,8,10,11,12,16,17,18,23,25,26,31)],n=4))
+  #print(tail(d2[d2$APS==listaAPS[i],c(1,2,6,7,8,24,10,11,12,16,17,18,23,25,26,31)],n=4))
+  print(tail(d2[d2$APS==listaAPS[i],],n=4))
+  
 }
         
 outputfile = paste("alerta/alertaAPS_",max(d2$SE),".csv",sep="")
