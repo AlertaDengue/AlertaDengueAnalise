@@ -3,5 +3,6 @@
 .RData
 .Rhistory
 GeraAlerta/figure/*.*
-*,png
+*.png
 *.pdf
+*~
