@@ -37,8 +37,9 @@ source("organizaDados/organizasinan.r")
 source("organizaDados/juntaTudo.r")
 
 # A5. Dados das ovitrampas (ainda nao integrado ao resto)
+# dec="," pois o arquivo bruto utiliza vírgula como separador decimal.
 ovifile <- "dados_brutos/ovitrampa/IPOMar2015.csv"
-ovi<-read.csv(ovifile,sep=";")
+ovi<-read.csv(ovifile,sep=";",dec=",")
 
 # =======================================
 # B. Alerta: Para ajustar o modelo de alerta:
