@@ -4,11 +4,17 @@
 Prints smoothed values of an array, using moving averages with user-defined
 window and populating the extremes with smaller windows.
 
+#### WARNING ####
+Work in progress!
+Still has pending issues
+#################
+
 Copyright 2015 by Marcelo F C Gomes
 license: GPL v3
 '''
 
 import csv
+import warnings
 import argparse
 import numpy as np
 from numpy import convolve
@@ -36,7 +42,16 @@ def smooth(data, window):
     if window == 1:
         outdata = data
     else:
-        ma = movave(data, window)
+        threshold = min(window,len(data))
+        maflag = False
+        ma = []
+        if window == threshold:
+            # If window > len(data), it is not possible to use it.
+            warnings.warn('Window for smooth function is smaller than data.\n'+
+                          'window=%s, data length=%s'%(window,threshold))
+            ma = [v for v in movave(data, window)]
+            maflag = True
+
         rightdata = []
         outdata = []
 
@@ -50,7 +65,7 @@ def smooth(data, window):
                 rightdata.append(ma[-1])
             else:
                 win = 3
-                while win < window:
+                while win < threshold:
                     
                     # Calculate left entry:
                     xaux = data[:win]
@@ -76,7 +91,7 @@ def smooth(data, window):
             if window > 3:
                 outdata.extend(leftdata)
 
-            outdata.extend(ma)
+            if maflag: outdata.extend(ma)
 
             if window > 3:
                 outdata.extend(rightdata)
@@ -90,7 +105,7 @@ def smooth(data, window):
             # Use smaller odd windows to populate up to first entry
             # feasible with original window
             win = 2
-            while win < window:
+            while win < threshold:
 
                 # Calculate left entry:
                 xaux = data[:win]
@@ -109,7 +124,7 @@ def smooth(data, window):
             rightdata.reverse()
 
             # Populate complete entry:
-            outdata.extend(ma)
+            if maflag: outdata.extend(ma)
             outdata.extend(rightdata)
     
     return outdata
@@ -132,6 +147,7 @@ def main(fname, win, col, sep, dec):
 
     smoothdata = smooth(data, win)
 
+    print data, smoothdata
     for i in range(len(smoothdata)):
         print data[i],smoothdata[i]
         
