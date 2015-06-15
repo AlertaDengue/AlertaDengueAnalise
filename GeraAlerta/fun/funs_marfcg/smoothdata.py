@@ -119,10 +119,6 @@ def smooth(data, window):
             if window > 3 and threshold > 2:
                 outdata.extend(rightdata)
 
-            # Last datapoint as average over last entry and smoothed
-            # neighbor:
-            outdata.append(.5*(rightdata[-1]+data[-1]))
-
         else:  # Even window
 
             # Use smaller odd windows to populate up to first entry
