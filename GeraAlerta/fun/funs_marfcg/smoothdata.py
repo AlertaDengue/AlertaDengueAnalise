@@ -3,11 +3,32 @@
 '''
 Prints smoothed values of an array, using moving averages with user-defined
 window and populating the extremes with smaller windows.
+Returns a list with size len(data)-2 if window is odd (provided (len(data),win)>=3),
+or with size len(data)-1 if window is even (provided len(data)>1).
 
-#### WARNING ####
-Work in progress!
-Still has pending issues
-#################
+usage: smoothdata.py [-h] [--window WINDOW] [--column COLUMN]
+                     [--separator SEPARATOR] [--decimal DECIMAL]
+                     fname
+
+Suaviza um conjunto de dados fornecido, utilizando média móvel e povoando os
+extremos de maneira conveniente.
+
+positional arguments:
+  fname                 Caminho para o arquivo com os dados
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --window WINDOW, -w WINDOW
+                        Tamanho da janela para média móvel
+  --column COLUMN, -c COLUMN
+                        Coluna com os dados relevantes
+  --separator SEPARATOR, -s SEPARATOR
+                        Separador utilizado no arquivo de dados
+  --decimal DECIMAL, -d DECIMAL
+                        Separador decimal
+
+Example:
+python smoothdata.py smoothdata_sampledata.csv -w 3 -c 2 -s , -d .
 
 Copyright 2015 by Marcelo F C Gomes
 license: GPL v3
@@ -22,8 +43,8 @@ from scipy.interpolate import PchipInterpolator
 
 def movave(val,win):
     '''
-    Generate moving average of array val, with window win
-    Discard first and last entries that do not fit in window
+    Generate moving average of array val, with window win.
+    Discard first and last entries that do not fit in window.
     '''
     w = np.repeat(1.0, win)/win
     ma = np.convolve(val, w, "valid")
@@ -32,25 +53,30 @@ def movave(val,win):
 def smooth(data, window):
     '''
     Smooth data entries, using moving average with given window.
-    Returns a list with same size as data if window is odd, or
+    Particularities:
+    - Returns a list with size len(data)-2 if window is odd, or
     with size len(data)-1 if window is even.
-    Populates the extremes with smaller sized windows, respecting
-    original choice of odd or even.
-    If window is odd, first(last) entry is obtained from the average
+    - Populates the extremes with smaller sized windows, respecting
+    original choice of odd or even window.
+    - If window is odd, first(last) entry is obtained from the average
     over first(last) entry and it's smoothed neighbor.
+    If 
     '''
-    if window == 1:
+    if window == 1 or len(data) == 1:
         outdata = data
+    elif len(data) == 2:
+        outdata = [.5*(data[0]+data[1])]
     else:
         threshold = min(window,len(data))
         maflag = False
         ma = []
         if window == threshold:
+            ma = [v for v in movave(data, window)]
+            maflag = True
+        else:
             # If window > len(data), it is not possible to use it.
             warnings.warn('Window for smooth function is smaller than data.\n'+
                           'window=%s, data length=%s'%(window,threshold))
-            ma = [v for v in movave(data, window)]
-            maflag = True
 
         rightdata = []
         outdata = []
@@ -60,7 +86,7 @@ def smooth(data, window):
 
             # Use smaller odd windows to populate up to first entry
             # feasible with original window
-            if window == 3:
+            if window == 3 and ma:
                 leftdata.append(ma[0])
                 rightdata.append(ma[-1])
             else:
@@ -74,7 +100,7 @@ def smooth(data, window):
                     
                     # Calculate right entry:
                     xaux = data[-win:]
-                    ma_aux = moveave(xaux, win)
+                    ma_aux = movave(xaux, win)
                     rightdata.append(ma_aux[0])
                     
                     # Update window:
@@ -84,21 +110,13 @@ def smooth(data, window):
                     rightdata.reverse()
             
             # Populate complete entry:
-            # 1st datapoint as average over first entry and smoothed
-            # neighbor:
-            outdata.append(.5*(data[0]+leftdata[0]))
-
-            if window > 3:
+            if window > 3 and threshold > 2:
                 outdata.extend(leftdata)
 
             if maflag: outdata.extend(ma)
 
-            if window > 3:
+            if window > 3 and threshold > 2:
                 outdata.extend(rightdata)
-
-            # Last datapoint as average over last entry and smoothed
-            # neighbor:
-            outdata.append(.5*(rightdata[-1]+data[-1]))
 
         else:  # Even window
 
@@ -114,7 +132,7 @@ def smooth(data, window):
 
                 # Calculate right entry:
                 xaux = data[-win:]
-                ma_aux = moveave(xaux, win)
+                ma_aux = movave(xaux, win)
                 rightdata.append(ma_aux[0])
                 
                 # Update window:
@@ -146,10 +164,9 @@ def main(fname, win, col, sep, dec):
             data.append(float(row[col-1].replace(',','.')))
 
     smoothdata = smooth(data, win)
-
-    print data, smoothdata
+    
     for i in range(len(smoothdata)):
-        print data[i],smoothdata[i]
+        print i,smoothdata[i]
         
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Suaviza um conjunto de dados fornecido, utilizando média móvel e povoando os extremos de maneira conveniente.")
