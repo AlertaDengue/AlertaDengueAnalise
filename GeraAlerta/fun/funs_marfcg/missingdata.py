@@ -8,7 +8,7 @@ Fill missing values using scipy.interpolate.Akima1DInterpolator
 Can be used with input file or calling the function fill_missingdata(xy, window)
 from another script.
 
-usage: missing_data.py [-h] [--window WINDOW] [--xcolumn XCOLUMN]
+usage: missingdata.py [-h] [--window WINDOW] [--xcolumn XCOLUMN]
                        [--ycolumn YCOLUMN] [--separator SEPARATOR]
                        [--decimal DECIMAL]
                        fname
@@ -33,10 +33,10 @@ optional arguments:
                         Separador decimal
 
 Example 1:
-python missing_data.py missing_data_sampledata.csv -w 3 -xc 1 -yc 2 -s , -d .
+python missingdata.py missingdata_sampledata.csv -w 3 -xc 1 -yc 2 -s , -d .
 
 Example 2:
-python missing_data.py missing_data_sampledata2.csv -w 3 -xc 1 -yc 2 -s , -d .
+python missingdata.py missingdata_sampledata2.csv -w 3 -xc 1 -yc 2 -s , -d .
 Compare output with file smoothdata_sampledata.csv from smoothdata.py package
 
 Copyright 2015 by Marcelo F C Gomes
