@@ -60,7 +60,6 @@ def smooth(data, window):
     original choice of odd or even window.
     - If window is odd, first(last) entry is obtained from the average
     over first(last) entry and it's smoothed neighbor.
-    If 
     '''
     if window == 1 or len(data) == 1:
         outdata = data
@@ -77,6 +76,8 @@ def smooth(data, window):
             # If window > len(data), it is not possible to use it.
             warnings.warn('Window for smooth function is smaller than data.\n'+
                           'window=%s, data length=%s'%(window,threshold))
+            ma = [v for v in movave(data, window)]
+            maflag = True
 
         rightdata = []
         outdata = []
@@ -117,6 +118,10 @@ def smooth(data, window):
 
             if window > 3 and threshold > 2:
                 outdata.extend(rightdata)
+
+            # Last datapoint as average over last entry and smoothed
+            # neighbor:
+            outdata.append(.5*(rightdata[-1]+data[-1]))
 
         else:  # Even window
 
