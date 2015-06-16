@@ -38,12 +38,16 @@ optional arguments:
   -h, --help            show this help message and exit.
   --window WINDOW, -w WINDOW
                         Moving average window size (in number of points).
+                        Default=3
   --column COLUMN, -c COLUMN
-                        Column with data to be smoothed. Default=1
+                        Column with data to be smoothed.
+                        Default=1
   --separator SEPARATOR, -s SEPARATOR
-                        Field separator. Default=","
+                        Field separator.
+                        Default=","
   --decimal DECIMAL, -d DECIMAL
-                        Decimal separator. Default="."
+                        Decimal separator.
+                        Default="."
 ```
 
 Example:
@@ -89,13 +93,17 @@ optional arguments:
                         Moving average window size (in number of points).
                         Default=3
   --xcolumn XCOLUMN, -xc XCOLUMN
-                        Column with independent variable values (X). Default=1
+                        Column with independent variable values (X).
+                        Default=1
   --ycolumn YCOLUMN, -yc YCOLUMN
-                        Column with dependent variable values (Y). Default=2
+                        Column with dependent variable values (Y).
+                        Default=2
   --separator SEPARATOR, -s SEPARATOR
-                        Field separator. Default=","
+                        Field separator.
+                        Default=","
   --decimal DECIMAL, -d DECIMAL
-                        Decimal separator. Default="."
+                        Decimal separator.
+                        Default="."
 ```
 
 Example 1:
