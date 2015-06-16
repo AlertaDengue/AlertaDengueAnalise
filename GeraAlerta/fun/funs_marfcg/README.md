@@ -27,7 +27,7 @@ For example, if window=5, the second entry and the second last entry will be smo
 Returns a list with size len(data)-2 if window is odd (provided (len(data),win)>=3),
 or with size len(data)-1 if window is even (provided len(data)>1).
 
-'''
+```
 usage: smoothdata.py [-h] [--window WINDOW] [--column COLUMN]
                      [--separator SEPARATOR] [--decimal DECIMAL]
                      fname
@@ -44,12 +44,12 @@ optional arguments:
                         Field separator. Default=","
   --decimal DECIMAL, -d DECIMAL
                         DEcimal separator. Default="."
-'''
+```
 
 Example:
-'''
+```
 python smoothdata.py smoothdata_sampledata.csv -w 3 -c 2 -s , -d .
-'''
+```
 
 Copyright 2015 by Marcelo F C Gomes
 license: GPL v3
@@ -71,7 +71,7 @@ Fill missing values using scipy.interpolate.Akima1DInterpolator function.
 Can be used with input file or calling the function fill_missingdata(xy, window)
 from another script.
 
-'''
+```
 usage: missingdata.py [-h] [--window WINDOW] [--xcolumn XCOLUMN]
                        [--ycolumn YCOLUMN] [--separator SEPARATOR]
                        [--decimal DECIMAL]
@@ -100,17 +100,17 @@ optional arguments:
   --decimal DECIMAL, -d DECIMAL
                         Separador decimal
 			Deafult="."
-'''
+```
 
 Example 1:
-'''
+```
 python missingdata.py missingdata_sampledata.csv -w 3 -xc 1 -yc 2 -s , -d .
-'''
+```
 
 Example 2:
-'''
+```
 python missingdata.py missingdata_sampledata2.csv -w 3 -xc 1 -yc 2 -s , -d .
-'''
+```
 Compare output with file smoothdata_sampledata.csv from smoothdata.py package
 
 Copyright 2015 by Marcelo F C Gomes
