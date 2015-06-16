@@ -39,7 +39,6 @@ import warnings
 import argparse
 import numpy as np
 from numpy import convolve
-from scipy.interpolate import PchipInterpolator
 
 def movave(val,win):
     '''

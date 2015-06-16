@@ -13,8 +13,7 @@ usage: missingdata.py [-h] [--window WINDOW] [--xcolumn XCOLUMN]
                        [--decimal DECIMAL]
                        fname
 
-Suaviza um conjunto de dados fornecido, utilizando média móvel e povoando os
-extremos de maneira conveniente.
+Interpolate and extrapolate data with missing values, using Akima interpolator and smoothing function to avoid fluctuations.
 
 positional arguments:
   fname                 Caminho para o arquivo com os dados
@@ -197,13 +196,13 @@ def main(fname, win, xcol, ycol, sep, dec):
         print filleddata[i]
         
 if __name__=="__main__":
-    parser = argparse.ArgumentParser(description="Suaviza um conjunto de dados fornecido, utilizando média móvel e povoando os extremos de maneira conveniente.")
+    parser = argparse.ArgumentParser(description="Interpolate and extrapolate data with missing values, using Akima interpolator and smoothing function to avoid fluctuations.")
     parser.add_argument("fname", help="Caminho para o arquivo com os dados")
     parser.add_argument("--window", "-w", default=3,
                         help="Tamanho da janela para média móvel")
     parser.add_argument("--xcolumn", "-xc", default=1,
                         help="Coluna com os dados relevantes para x")
-    parser.add_argument("--ycolumn", "-yc", default=1,
+    parser.add_argument("--ycolumn", "-yc", default=2,
                         help="Coluna com os dados relevantes para y")
     parser.add_argument("--separator", "-s", default=",",
                         help="Separador utilizado no arquivo de dados")
