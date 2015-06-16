@@ -76,7 +76,7 @@ def smooth(data, window):
             warnings.warn('Window for smooth function is smaller than data.\n'+
                           'window=%s, data length=%s'%(window,threshold))
             ma = [v for v in movave(data, window)]
-            maflag = True
+            maflag = False
 
         rightdata = []
         outdata = []
@@ -108,7 +108,14 @@ def smooth(data, window):
                     
                     # Invert entries in rightdata:
                     rightdata.reverse()
-            
+
+                # Check whether there is need to add central point:
+                if win == threshold and window > threshold:
+                    # Calculate left entry:
+                    xaux = data[:win]
+                    ma_aux = movave(xaux, win)
+                    leftdata.append(ma_aux[0])
+                    
             # Populate complete entry:
             if window > 3 and threshold > 2:
                 outdata.extend(leftdata)
