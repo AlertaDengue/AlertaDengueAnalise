@@ -43,7 +43,7 @@ optional arguments:
   --separator SEPARATOR, -s SEPARATOR
                         Field separator. Default=","
   --decimal DECIMAL, -d DECIMAL
-                        DEcimal separator. Default="."
+                        Decimal separator. Default="."
 ```
 
 Example:
@@ -87,19 +87,15 @@ optional arguments:
   -h, --help            show this help message and exit
   --window WINDOW, -w WINDOW
                         Moving average window size (in number of points).
-			Default=3
+                        Default=3
   --xcolumn XCOLUMN, -xc XCOLUMN
-                        Column with independent variable values (X)
-			Default=1
+                        Column with independent variable values (X). Default=1
   --ycolumn YCOLUMN, -yc YCOLUMN
-                        Column with dependent variable values (Y)
-			Default=2
+                        Column with dependent variable values (Y). Default=2
   --separator SEPARATOR, -s SEPARATOR
-                        Separador utilizado no arquivo de dados
-			Default=","
+                        Field separator. Default=","
   --decimal DECIMAL, -d DECIMAL
-                        Separador decimal
-			Deafult="."
+                        Decimal separator. Default="."
 ```
 
 Example 1:
