@@ -1,3 +1,6 @@
+# Version update
+- Migrate functions to pandas
+
 # Missing values estimation
 The scripts in this folder provide functions to perform estimation for missing data.
 The process is divided in two main steps:
