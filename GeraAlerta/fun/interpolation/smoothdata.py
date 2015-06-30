@@ -28,7 +28,7 @@ optional arguments:
                         Separador decimal
 
 Example:
-python smoothdata.py smoothdata_sampledata.csv -w 3 -c 2 -s , -d .
+python smoothdata.py sampledata/smoothdata_sampledata.csv -w 3 -c 2 -s , -d .
 
 Copyright 2015 by Marcelo F C Gomes
 license: GPL v3
@@ -173,7 +173,7 @@ def main(fname, win, col, sep, dec):
     smoothdata = smooth(data, win)
     
     for i in range(len(smoothdata)):
-        print i,smoothdata[i]
+        print(i,smoothdata[i])
         
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Suaviza um conjunto de dados fornecido, utilizando média móvel e povoando os extremos de maneira conveniente.")
