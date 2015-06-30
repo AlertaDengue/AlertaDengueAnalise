@@ -32,11 +32,11 @@ optional arguments:
                         Separador decimal
 
 Example 1:
-python missingdata.py missingdata_sampledata.csv -w 3 -xc 1 -yc 2 -s , -d .
+python missingdata.py sampledata/missingdata_sampledata.csv -w 3 -xc 1 -yc 2 -s , -d .
 
 Example 2:
-python missingdata.py missingdata_sampledata2.csv -w 3 -xc 1 -yc 2 -s , -d .
-Compare output with file smoothdata_sampledata.csv from smoothdata.py package
+python missingdata.py sampledata/missingdata_sampledata2.csv -w 3 -xc 1 -yc 2 -s , -d .
+Compare output with file sampledata/smoothdata_sampledata.csv from smoothdata.py package
 
 Copyright 2015 by Marcelo F C Gomes
 license: GPL v3
@@ -84,10 +84,10 @@ def fill_missingdata(xy,window):
         else:
             # Empty value found.
             missingvals_index.append(i)
-            #print 'xy'
-            #print xy[i]
-            #print 'xaux,yaux'
-            #print xaux,yaux
+            #print('xy')
+            #print(xy[i])
+            #print('xaux,yaux')
+            #print(xaux,yaux)
 
             # Smooth out previous consecutive range.
             # If previous value was also empty, fall back.
@@ -95,7 +95,7 @@ def fill_missingdata(xy,window):
 
             last_empty = True
             sz = len(yaux)
-            #print sz, len(xaux)
+            #print(sz, len(xaux))
             if sz == 1:
                 # If single value, store as is
                 xnew.append(xaux[0])
@@ -110,10 +110,10 @@ def fill_missingdata(xy,window):
             else:
                 yi = yaux[0]
                 yf = yaux[-1]
-                #print xaux, yaux
+                #print(xaux, yaux)
                 yaux = smooth(yaux,window)
-                #print len(yaux), len(xaux)
-                #print xaux, yaux
+                #print(len(yaux), len(xaux))
+                #print(xaux, yaux)
                 if window%2 != 0:
                     # Odd window
 
@@ -146,8 +146,8 @@ def fill_missingdata(xy,window):
             xaux = []
             yaux = []
             
-            #print 'xnew,ynew'
-            #print xnew, ynew
+            #print('xnew,ynew')
+            #print(xnew, ynew)
 
     if not last_empty:
         sz = len(yaux)
@@ -200,8 +200,8 @@ def fill_missingdata(xy,window):
         
     # Generate (extra)interpolator from list of smoothed values
     # to estimate empty ones
-    #print xnew
-    #print ynew
+    #print(xnew)
+    #print(ynew)
     f = Akima1DInterpolator(np.array(xnew),np.array(ynew))
     for i in missingvals_index:
         x = float(xy[i][0])
@@ -242,13 +242,13 @@ def main(fname, win, xcol, ycol, sep, dec):
 
     filleddata, xsmooth, ysmooth = fill_missingdata(data, win)
     
-    print 'Smooth entries'
+    print('Smooth entries')
     for i in range(len(xsmooth)):
-        print xsmooth[i], ysmooth[i]
+        print(xsmooth[i], ysmooth[i])
 
-    print 'Filled list'
+    print('Filled list')
     for i in range(len(filleddata)):
-        print filleddata[i]
+        print(filleddata[i])
         
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Interpolate and extrapolate data with missing values, using Akima interpolator and smoothing function to avoid fluctuations.")
