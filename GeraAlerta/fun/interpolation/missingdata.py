@@ -45,6 +45,7 @@ license: GPL v3
 import argparse
 import csv
 import numpy as np
+import copy as cp
 from scipy.interpolate import Akima1DInterpolator
 from smoothdata import smooth
 
@@ -61,7 +62,7 @@ def fill_missingdata(xy,window):
              Check smoothdata.py for documentation.
     
     Output:
-    :xy: list of tuples with originally empty y values substituted
+    :xynew: list of tuples with originally empty y values substituted
          by estimated values.
     :xnew: list of smoothed x-values used for (extra)interpolation
     :ynew: list of smoothed y-values used for (extra)interpolation
@@ -84,10 +85,6 @@ def fill_missingdata(xy,window):
         else:
             # Empty value found.
             missingvals_index.append(i)
-            #print('xy')
-            #print(xy[i])
-            #print('xaux,yaux')
-            #print(xaux,yaux)
 
             # Smooth out previous consecutive range.
             # If previous value was also empty, fall back.
@@ -95,11 +92,12 @@ def fill_missingdata(xy,window):
 
             last_empty = True
             sz = len(yaux)
-            #print(sz, len(xaux))
-            if sz == 1:
-                # If single value, store as is
-                xnew.append(xaux[0])
-                ynew.append(yaux[0])
+
+            if sz == 1 or window == 1:
+                # If single value or win=1, store as is
+                for ii in range(len(xaux)):
+                    xnew.append(xaux[ii])
+                    ynew.append(yaux[ii])
             elif sz == 2:
                 # If couple of values,
                 # take the average on both dimensions
@@ -110,13 +108,9 @@ def fill_missingdata(xy,window):
             else:
                 yi = yaux[0]
                 yf = yaux[-1]
-                #print(xaux, yaux)
                 yaux = smooth(yaux,window)
-                #print(len(yaux), len(xaux))
-                #print(xaux, yaux)
                 if window%2 != 0:
-                    # Odd window
-
+                    # Odd window.
                     # For odd windows, take the average of
                     # first and last two entries to smooth
                     # out the extremes (xi,yi) & (xf,yf)
@@ -124,37 +118,34 @@ def fill_missingdata(xy,window):
                     yi = .5*(yi+yaux[0])
                     xf = .5*(xaux[-2]+xaux[-1])
                     yf = .5*(yaux[-1]+yf)
-
                     xnew.append(xi)
                     ynew.append(yi)
-                    for i in range(len(yaux)):
-                        xnew.append(xaux[i+1])
-                        ynew.append(yaux[i])
+                    for ii in range(len(yaux)):
+                        xnew.append(xaux[ii+1])
+                        ynew.append(yaux[ii])
                     xnew.append(xf)
                     ynew.append(yf)
                 else:
-                    # Even window
-                    for i in range(len(yaux)):
-                        # For even windows, smoothed values
-                        # corresponds to central point between
-                        # consecutive x values.
-                        xi = .5*(xaux[i]+xaux[i+1])
+                    # Even window.
+                    # For even windows, smoothed values
+                    # corresponds to central point between
+                    # consecutive x values.
+                    for ii in range(len(yaux)):
+                        xi = .5*(xaux[ii]+xaux[ii+1])
                         xnew.append(xi)
-                        ynew.append(yaux[i])
+                        ynew.append(yaux[ii])
 
             # Clear auxiliary lists:
             xaux = []
             yaux = []
             
-            #print('xnew,ynew')
-            #print(xnew, ynew)
-
     if not last_empty:
         sz = len(yaux)
-        if sz == 1:
-            # If single value, store as is
-            xnew.append(xaux[0])
-            ynew.append(yaux[0])
+        if sz == 1 or window == 1:
+            # If single value or win=1, store as is
+            for ii in range(len(xaux)):
+                xnew.append(xaux[ii])
+                ynew.append(yaux[ii])
         elif sz == 2:
             # If couple of values,
             # take the average on both dimensions
@@ -179,20 +170,20 @@ def fill_missingdata(xy,window):
                 
                 xnew.append(xi)
                 ynew.append(yi)
-                for i in range(len(yaux)):
-                    xnew.append(xaux[i+1])
-                    ynew.append(yaux[i])
+                for ii in range(len(yaux)):
+                    xnew.append(xaux[ii+1])
+                    ynew.append(yaux[ii])
                 xnew.append(xf)
                 ynew.append(yf)
             else:
                 # Even window
-                for i in range(len(yaux)):
+                for ii in range(len(yaux)):
                     # For even windows, smoothed values
                     # corresponds to central point between
                     # consecutive x values.
-                    xi = .5*(xaux[i]+xaux[i+1])
+                    xi = .5*(xaux[ii]+xaux[ii+1])
                     xnew.append(xi)
-                    ynew.append(yaux[i])
+                    ynew.append(yaux[ii])
         
         # Clear auxiliary lists:
         xaux = []
@@ -200,14 +191,13 @@ def fill_missingdata(xy,window):
         
     # Generate (extra)interpolator from list of smoothed values
     # to estimate empty ones
-    #print(xnew)
-    #print(ynew)
     f = Akima1DInterpolator(np.array(xnew),np.array(ynew))
+    xynew = cp.deepcopy(xy)
     for i in missingvals_index:
         x = float(xy[i][0])
-        xy[i] = (x,float(f(x,extrapolate=True)))
+        xynew[i] = (x,float(f(x,extrapolate=True)))
 
-    return xy, xnew, ynew
+    return xynew, xnew, ynew
 
 def main(fname, win, xcol, ycol, sep, dec):
     '''

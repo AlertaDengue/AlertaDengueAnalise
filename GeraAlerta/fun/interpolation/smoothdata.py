@@ -61,7 +61,7 @@ def smooth(data, window):
     over first(last) entry and it's smoothed neighbor.
     '''
     if window == 1 or len(data) == 1:
-        outdata = data
+        outdata = data[:]
     elif len(data) == 2:
         outdata = [.5*(data[0]+data[1])]
     else:
