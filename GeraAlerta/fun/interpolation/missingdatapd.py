@@ -50,6 +50,7 @@ from scipy.interpolate import Akima1DInterpolator
 def shift_left(dfin):
     '''
     Shift DataFrame indexes to the left and drop first row.
+    Assumes indexes are int.
     '''
 
     last_index = dfin.index[[-1]]
@@ -83,6 +84,8 @@ def smoothdata(df, win):
     and previously smoothed ones.
     - If window is odd, first(last) entry is obtained from the average
     over first(last) entry and it's smoothed neighbor.
+    - If x-column (1st column) dtype==datetime, changes to float64
+    using np.timedelta64
     '''
 
     emptyvals = ['NA','na',
@@ -95,9 +98,8 @@ def smoothdata(df, win):
     # Check if xcol is datetime and convert to float:
     if dfwork[xlbl].dtype == 'datetime64[ns]':
         dfwork['date_delta'] = (dfwork[xlbl] - dfwork[xlbl].min())/np.timedelta64(1, 'D')
-        dfwork.drop(xlbl, axis=1, inplace=True)
+        dfwork = dfwork[['date_delta',ylbl]]
         dfwork.rename(columns={'date_delta':xlbl},inplace=True)
-    
 
     dfwork_win = pd.rolling_mean(dfwork, window=win, center=True)
 
@@ -163,14 +165,14 @@ def smoothdata(df, win):
     # are kept as is, since mov ave is not possible
     replace_nan(dfwork_win, dfwork, ylbl)
 
-    # If win is even, remove duplicates from shift:
-    if win%2 == 0:
-        dfwork_win.drop_duplicates(inplace=True)
+    # Remove possible duplicates from shifts:
+    dfwork_win.drop_duplicates(inplace=True)
+
 
     # Clean up
     del dfwork
 
-    return dfwork_win
+    return dfwork_win.ix[:,[xlbl,ylbl]]
 
 
 def fill_missingdata(df, win):
@@ -189,15 +191,79 @@ def fill_missingdata(df, win):
     :df_smoothed: DataFrame used for (extra)interpolation
     '''
 
+    emptyvals = ['NA','na',
+                 'Null','null',
+                 'none','None',None]
     xlbl, ylbl = df.columns
-    dfwork = df.copy()
+    dfwork = df.replace(to_replace={ylbl:emptyvals}, value=np.nan)
+
+    # Check if xcol is datetime and convert to float:
+    dateflag = False
+    if dfwork[xlbl].dtype == 'datetime64[ns]':
+        dateflag = True
+        dfwork['date_delta'] = (dfwork[xlbl] - dfwork[xlbl].min())/np.timedelta64(1, 'D')
+        dfwork = dfwork[['date_delta',ylbl]]
+        dfwork.rename(columns={'date_delta':xlbl},inplace=True)
+
     df_smoothed = smoothdata(dfwork, win)
 
     # Extract x and y for interpolator:
     x = []
     y = []
-    missing = {'index':[], xlbl:[]}
     for row_index, row_data in df_smoothed.iterrows():
+         xi, yi = row_data.tolist()
+         if np.isfinite(yi):
+             x.append(xi)
+             y.append(yi)
+
+    missing = {'index':[], xlbl:[]}
+    for row_index, row_data in dfwork.iterrows():
+         xi, yi = row_data.tolist()
+         if np.isnan(yi):
+             missing['index'].append(row_index)
+             missing[xlbl].append(xi)
+
+    f = Akima1DInterpolator(np.array(x), np.array(y))
+    dfwork.ix[missing['index'], ylbl] = f(missing[xlbl], extrapolate=True)
+
+    # Restore original xcolumn, if needed:
+    if dateflag:
+        dfwork.ix[:,xlbl] = df.ix[:,xlbl]
+
+    # Clean up:
+    del x, y, missing
+
+    return dfwork, df_smoothed
+
+
+def interpolatenans(df):
+    '''
+    Uses Akima interpolator to fill nan entries
+    Same idea as of fill_missingdata, only without
+    smoothing the data first
+
+    Input:
+    :df: pandas DataFrame
+    
+    Output:
+    :df_filled: DataFrame with originally empty values substituted
+            by estimated values.
+    '''
+    
+    xlbl, ylbl = df.columns
+    dfwork = df.copy()
+
+    # Check if xcol is datetime and convert to float:
+    if dfwork[xlbl].dtype == 'datetime64[ns]':
+        dfwork['date_delta'] = (dfwork[xlbl] - dfwork[xlbl].min())/np.timedelta64(1, 'D')
+        dfwork = dfwork[['date_delta',ylbl]]
+        dfwork.rename(columns={'date_delta':xlbl},inplace=True)
+
+    # Extract x and y for interpolator:
+    x = []
+    y = []
+    missing = {'index':[], xlbl:[]}
+    for row_index, row_data in dfwork.iterrows():
          xi, yi = row_data.tolist()
          if np.isnan(yi):
              missing['index'].append(row_index)
@@ -212,8 +278,9 @@ def fill_missingdata(df, win):
     # Clean up:
     del x, y, missing
 
-    return dfwork, df_smoothed
+    return dfwork
 
+    
 def main(fname, win, xcol, ycol, sep, dec):
     '''
     Prints filled values of a given column col from file fname,
@@ -238,7 +305,8 @@ def main(fname, win, xcol, ycol, sep, dec):
                      na_values=emptyvals, keep_default_na=True,
                      usecols=[xcol,ycol])
 
-    filled_df, smoothed_df = fill_missingdata(df, win)
+    smoothed_df = smooth(df, win)
+    filled_df = fill_missingdata(smoothed_df, win)
 
     print('Smoothed data')
     print(smoothed_df)
