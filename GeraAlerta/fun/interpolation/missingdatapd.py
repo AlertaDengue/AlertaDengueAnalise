@@ -8,7 +8,7 @@ Fill missing values using scipy.interpolate.Akima1DInterpolator
 Can be used with input file or calling the function fill_missingdata(df, window)
 from another script.
 
-usage: missingdata.py [-h] [--window WINDOW] [--xcolumn XCOLUMN]
+usage: missingdatapd.py [-h] [--window WINDOW] [--xcolumn XCOLUMN]
                        [--ycolumn YCOLUMN] [--separator SEPARATOR]
                        [--decimal DECIMAL]
                        fname
@@ -99,6 +99,13 @@ def smoothdata(df, win):
     over first(last) entry and it's smoothed neighbor.
     - If x-column (1st column) dtype==datetime, changes to float64
     using np.timedelta64
+
+    Input:
+    :df: pandas DataFrame with 2 columns. Assumes first column is the independent variable.
+    :win: window for moving average.
+
+    Output:
+    :dfwork: DataFrame with smoothed entries in both columns.
     '''
 
     emptyvals = ['NA','na',
@@ -194,7 +201,7 @@ def fill_missingdata(df, win):
     Uses smoothdata function
 
     Input:
-    :df: pandas DataFrmae
+    :df: pandas DataFrame with 2 columns. Assumes first column is the independent variable.
     :win: window used for data smoothing. 
           Check smoothdata function for documentation.
     
@@ -256,7 +263,7 @@ def interpolatenans(df):
     smoothing the data first
 
     Input:
-    :df: pandas DataFrame
+    :df: pandas DataFrame with 2 columns. Assumes first column is the independent variable.
     
     Output:
     :df_filled: DataFrame with originally empty values substituted
