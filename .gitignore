@@ -1,7 +1,8 @@
 *.pyc
 *.html
-.RData
-.Rhistory
+*.RData
+*.Rhistory
 GeraAlerta/figure/*.*
-*,png
+*.png
 *.pdf
+*~
