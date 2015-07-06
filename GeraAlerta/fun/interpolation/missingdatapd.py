@@ -5,7 +5,7 @@ Interpolate and extrapolate data with missing values.
 Uses function smoothdata to smooth contigous intervals from input data.
 Fill missing values using scipy.interpolate.Akima1DInterpolator
 
-Can be used with input file or calling the function fill_missingdata(xy, window)
+Can be used with input file or calling the function fill_missingdata(df, window)
 from another script.
 
 usage: missingdata.py [-h] [--window WINDOW] [--xcolumn XCOLUMN]
@@ -34,6 +34,19 @@ optional arguments:
 Example:
 python missingdata.py sampledata/missingdata_sampledata3.csv -w 3 -xc 1 -yc 2 -s , -d .
 Compare output with file sampledata/smoothdata_sampledata.csv from smoothdata.py package
+
+
+Standalone function fill_missingdata(df, window) receives DataFrame and moving averages window.
+Returns filled DataFrame and smoothed version used for interpolation.
+    Input:
+    :df: pandas DataFrame with 2 columns. Assumes first column is the independent variable.
+    :win: window used for data smoothing. 
+          Check smoothdata function for documentation.
+    
+    Output:
+    :df_filled: DataFrame with originally empty values substituted
+                by estimated values. Preserves column labels and indexes.
+    :df_smoothed: DataFrame used to generate interpolator.
 
 Copyright 2015 by Marcelo F C Gomes
 license: GPL v3
