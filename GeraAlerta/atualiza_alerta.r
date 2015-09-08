@@ -17,7 +17,7 @@ source("fun/callmongoclima.r")
 # A. Organizar os dados novos:
 # ============================
 
-# A1. Atualizar dados de temperatura (verificar se tem conexão internet): 
+# A1. Atualizar dados de temperatura (verificar se tem conexão internet):
 source("organizaDados/organizaTemperatura.r")
 
 # A2. Atualizar dados de tweet:
@@ -27,7 +27,7 @@ source("organizaDados/organizatweets.r")
 # esse e' o unico que precisa ser nominalmente indicado aqui. 
 # O dbf deve estar na pasta indicada no path dados_brutos/sinan/
 novosinan2014 <- "dados_brutos/sinan/Dengue2014_23_03_2015.dbf"
-novosinan2015 <- "dados_brutos/sinan/Dengue04_05_2015.dbf"
+novosinan2015 <- "dados_brutos/sinan/Dengue2015_08_09_2015.dbf"
 # esse source retorna os casos que nao foram geolocalizados, verificar se algum pode
 # ser resolvido. A tabela APS-bairro esta na pasta tabelas.
 source("organizaDados/organizasinan.r")
@@ -37,14 +37,14 @@ source("organizaDados/organizasinan.r")
 source("organizaDados/juntaTudo.r")
 
 # A5. Dados das ovitrampas (ainda nao integrado ao resto)
-ovifile <- "dados_brutos/ovitrampa/IPOMar2015.csv"
+ovifile <- "dados_brutos/ovitrampa/IPO_RioJul2015.csv"
 ovi<-read.csv(ovifile,sep=";",dec=",")
 
 # =======================================
 # B. Alerta: Para ajustar o modelo de alerta:
 # =======================================
 # Selecione os dados da semana desejada
-dadosAPS<-"dados_limpos/dadosAPS_201520.csv"
+dadosAPS<-"dados_limpos/dadosAPS_201535.csv"
 source("geraAlerta/geraAlerta.r")
 
 
