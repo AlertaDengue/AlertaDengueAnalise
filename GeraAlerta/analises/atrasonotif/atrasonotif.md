@@ -56,8 +56,8 @@ mloglog   2 439298.0
 
 ![plot of chunk unnamed-chunk-9](atrasonotif-figure/unnamed-chunk-9-1.png) 
 
-#Modelo lognormal
-#===========================
+Modelo lognormal
+===========================
 
 ```
 
@@ -74,6 +74,11 @@ Log Normal distribution
 Loglik(model)= -218900.2   Loglik(intercept only)= -218900.2
 Number of Newton-Raphson Iterations: 5 
 n= 54492 
+```
+
+```
+               2.5 %   97.5 %
+(Intercept) 2.492393 2.510887
 ```
 
 Modelo lognormal

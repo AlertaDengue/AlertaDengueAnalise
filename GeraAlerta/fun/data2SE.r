@@ -2,8 +2,6 @@
 ### Funcoes auxiliadoras para formatacao dados de clima do Alerta dengue
 
 
-
-
 #================
 # Funcao data2SE
 #================

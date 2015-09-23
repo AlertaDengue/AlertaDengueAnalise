@@ -2,6 +2,7 @@
 # no mongo. Sao 4 estacoes:  
 
 callmongoclima<-function(estacao){
+  # quatro estacoes do rio de janeiro
   if(estacao=="galeao") db = "clima.SBGL"
   if(estacao=="santosdumont") db = "clima.SBRJ"
   if(estacao=="afonsos") db = "clima.SBAF"

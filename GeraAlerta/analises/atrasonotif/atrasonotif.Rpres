@@ -132,30 +132,36 @@ AIC(mexp,mweib,mgaus,mlogi,mlognorm,mloglog)
 # funcao para plotar survreg (equivalente ao grafico acima)
 
 
-survreg.curve <- function(model,col=1,seq.quantiles=seq(0,1,by =0.01)){
+survreg.curve <- function(model,col=1,seq.quantiles=seq(0,1,by =0.01),confint=TRUE){
   newdata=dss[1,]#newdata=ds[seq(1,dim(ds)[2],by=10)]
-  lines(x=predict(model,
-  newdata=newdata,
-  type="quantile",p=seq.quantiles),
-  y = (1-seq.quantiles),
-  col=col, lty=1,lwd=2)
-                    }
+  pred = predict(model, newdata=newdata,
+  type="quantile",p=seq.quantiles,se.fit=TRUE)
+  lines(pred$fit,col=col)
+  if(confint){
+    lines(pred$fit+1.96*pred$se.fit,col=col,lty=2)
+    lines(pred$fit-1.96*pred$se.fit,col=col,lty=2)
+    }
+  y = (1-seq.quantiles)
+}
 ```
 
 ```{r, echo=FALSE}
   
-plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days")
+plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days") 
 survreg.curve(mexp,col=2)
 survreg.curve(mweib,col=3)
 survreg.curve(mlognorm,col=4)
 legend(35,1,c("kaplan-meyer","exp","weib","lognormal"),col=1:4,lty=1)
+
+
 ```
 
-#Modelo lognormal
-#===========================
+Modelo lognormal
+===========================
 ```{r, echo=FALSE}
 summary(mlognorm)
 # parametros: meanlog = intercept; sdlog=exp(scale)
+confint(mlognorm)
 ```
 
 Modelo lognormal
@@ -167,6 +173,7 @@ meanlog
 sdlog
 plot(km,xlim=c(0,60),ylab="survival",main="time to data entry",xlab="days")
 lines(0:60,(1-plnorm(0:60,meanlog,sdlog)), lwd=3,col=3)
+
 
 ```
 

@@ -42,7 +42,7 @@ Confira a situação da dengue na cidade do Rio de Janeiro. Mais detalhes, ver: 
 
 ```{r echo=FALSE}
 bdalerta <- paste("../",nalerta,sep="")
-#bdalerta = "alertaAPS_201514.csv"
+#bdalerta = "../alerta/alertaAPS_201535.csv"
 d2 <- read.csv(file=bdalerta)
 ```
 
@@ -53,15 +53,34 @@ d2 <- read.csv(file=bdalerta)
 
 ```{r echo=FALSE}
 # serie temporal de casos agregados na cidade
-casos <- aggregate(d2[,"casos"],by=list(SE=d2$SE),FUN=sum) # casos brutos
-casosm <- aggregate(d2[,"casosm"],by=list(SE=d2$SE),FUN=sum) # casos corrigidos
-cidade<- merge(casos,casosm,by="SE")
-names(cidade)<-c("SE","casos","casos_corrigidos")
+#casos <- aggregate(d2[,"casos"],by=list(SE=d2$SE),FUN=sum) # casos brutos
+#casos_est <- aggregate(d2[,"casos_est"],by=list(SE=d2$SE),FUN=sum) # casos corrigidos
+#cidade<- merge(casos,casos_est,by="SE")
+#names(cidade)<-c("SE","casos","casos_corrigidos")
+#dt<-subset(d2,APS=="AP1")[,c("SE","tweets")]  # tweets
+#dc <- aggregate(d2[,"tmin"],by=list(SE=d2$SE),FUN=mean,na.rm=TRUE) #clima
+#names(dc)[2]<-"tmin"
+#cidade<- merge(cidade,dt,by="SE")
+#cidade<- merge(cidade,dc,by="SE")
+
+for(i in 1:10) d2$casos_est[d2$APS==listaAPS[i]]<-corrigecasosIC(d2$casos[d2$APS==listaAPS[i]])[,5]
+for(i in 1:10) d2$casos_estmin[d2$APS==listaAPS[i]]<-corrigecasosIC(d2$casos[d2$APS==listaAPS[i]])[,4]
+for(i in 1:10) d2$casos_estmax[d2$APS==listaAPS[i]]<-corrigecasosIC(d2$casos[d2$APS==listaAPS[i]])[,6]
+
+totcrude <- aggregate(d2$casos,by=list(d2$SE),sum)
+totest<-aggregate(d2$casos_est,by=list(d2$SE),sum)
+totmin<-aggregate(d2$casos_estmin,by=list(d2$SE),sum)
+totmax<-aggregate(d2$casos_estmax,by=list(d2$SE),sum)
+cidade<-cbind(totcrude,totest$x,totmin$x,totmax$x)
+
+names(cidade)<-c("SE","casos","casos.estimados","ICmin","ICmax")
 dt<-subset(d2,APS=="AP1")[,c("SE","tweets")]  # tweets
 dc <- aggregate(d2[,"tmin"],by=list(SE=d2$SE),FUN=mean,na.rm=TRUE) #clima
 names(dc)[2]<-"tmin"
 cidade<- merge(cidade,dt,by="SE")
 cidade<- merge(cidade,dc,by="SE")
+
+
 ```
 
 
@@ -74,7 +93,7 @@ le=dim(cidade)[1]
 #axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
 
 plot(cidade$casos, type="l", xlab="",ylab="casos notificados no RJ",axes=FALSE,main="casos de dengue")
-#lines(cidade$casos_corrigidos, col=2)
+#lines(cidade$casos.estimados, col=2)
 #legend((len-12),max(cidade$casos_corrigidos[(len-22):(len)],na.rm=TRUE),c("digitado","notificado estimado"),lty=1,col=1:2)
 axis(2)
 #axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$SE[rev(seq(le,1,by=-12))],las=2)
@@ -235,13 +254,13 @@ plot.alerta2<-function(d2=d2,ap){
   d2v <- subset(d2,APS==ap)
   
   cores <- c("#0D6B0D","#C8D20F","orange","red")
-  dv2.ts <- ts(d2v$casosm,start=c(2010,1),freq=52)
+  dv2.ts <- ts(d2v$casos,start=c(2010,1),freq=52)
   tempo <- time(dv2.ts)
   plot(dv2.ts,ylab="Casos",xlab="Ano")
   for (i in 1:4) {
     onde <- which(d2v$cor==i) 
      if (length(onde))
-          segments(tempo[onde],0,tempo[onde],(d2v[onde,"casosm"]),col=cores[i],lwd=3)
+          segments(tempo[onde],0,tempo[onde],(d2v[onde,"casos"]),col=cores[i],lwd=3)
   }
   title(as.character(ap),cex=1.4)
   lines(dv2.ts,lwd=2)
@@ -254,8 +273,8 @@ panderOptions('table.split.table', Inf)
 
 par(mfrow=c(1,1))
 plot.alerta2(d2,"AP1")
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -275,8 +294,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP2.1"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -295,8 +314,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP2.2"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -316,8 +335,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.1"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -335,8 +354,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.2"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -354,8 +373,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.3"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -372,8 +391,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP4"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -391,8 +410,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.1"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -410,8 +429,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.2"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
@@ -428,8 +447,8 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.3"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos_est","inc","alertaClima","alertaTweet","alertaTransmissao","alertaCasos","nivel")],n=3)
-names(tab)<-c("SE","temp","casos","inc","Clima","Tweet","Transm","Casos","nivel")
+tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
 
