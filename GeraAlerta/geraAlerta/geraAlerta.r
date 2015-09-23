@@ -15,11 +15,21 @@ listaAPS<-unique(d$APS)
 # Correcoes
 # =====================================================================
 # corrige casos pelo atraso de digitacao (usando modelo sobrevida lognormal)
-for(i in 1:10) d$casos_est[d$APS==listaAPS[i]] <-corrigecasos(d$casos[d$APS==listaAPS[i]])
+#for(i in 1:10) d$casos_est[d$APS==listaAPS[i]] <-corrigecasos(d$casos[d$APS==listaAPS[i]]) (antigo)
+for(i in 1:10) d$casos_est[d$APS==listaAPS[i]]<-corrigecasosIC(d$casos[d$APS==listaAPS[i]])[,5]
+for(i in 1:10) d$casos_estmin[d$APS==listaAPS[i]]<-corrigecasosIC(d$casos[d$APS==listaAPS[i]])[,4]
+for(i in 1:10) d$casos_estmax[d$APS==listaAPS[i]]<-corrigecasosIC(d$casos[d$APS==listaAPS[i]])[,6]
 
-tot<-aggregate(d$casos_est,by=list(d$SE),sum)
-names(tot)<-c("SE","casos.sem.atraso")
+totcrude <- aggregate(d$casos,by=list(d$SE),sum)
+totest<-aggregate(d$casos_est,by=list(d$SE),sum)
+totmin<-aggregate(d$casos_estmin,by=list(d$SE),sum)
+totmax<-aggregate(d$casos_estmax,by=list(d$SE),sum)
+tot<-cbind(totcrude,totest$x,totmin$x,totmax$x)
+
+names(tot)<-c("SE","casos","casos.estimados","ICmin","ICmax")
+
 message("correcao da incidencia pelo atraso de notificacao")
+options(scipen=10)
 print(tail(tot))
 
 # preencher alguns dados faltantes de clima com a media das outras estacoes (se possivel)
@@ -49,7 +59,7 @@ print(tail(tot))
 # data.frame para colocar os resultados
 SE<-d$SE[d$APS=="AP1"]
 d2 <- expand.grid(SE=SE,APS=listaAPS)
-d2<-merge(d2,d[,c("SE","APS","data","tweets","estacao","casos","casos_est","tmin")],by=c("SE","APS"))
+d2<-merge(d2,d[,c("SE","APS","data","tweets","estacao","casos","casos_est","casos_estmin","casos_estmax","tmin")],by=c("SE","APS"))
 
 # agregar dados de populacao (cuidado, desorganiza tudo!)
 pop<-read.csv(file="tabelas/populacao2010porAPS_RJ.csv")
@@ -213,11 +223,11 @@ def.cor<-function(d2v){
   # 1 = verde, 2=amarelo, 3 =laranja, 4 = vermelho
   les = dim(d2v)[1]
   d2v$cor <-NA
-  d2v$cor[intersect(6:les,which(d2v$alertaCli<3 & d2v$alertaRtweet<3 & d2v$alertaRt<3 & d2v$alertaCasos==0))]<-1
-  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3 | d2v$alertaRtweet>=3))]<-2
-  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+1)]<-2 # inercia para desligar
-  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+2)]<-2 # inercia para desligar
-  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+3)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCli<3 & d2v$alertaRtweet<4 & d2v$alertaRt<3 & d2v$alertaCasos==0))]<-1
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3 | d2v$alertaRtweet>=4))]<-2
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=4)+1)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=4)+2)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=4)+3)]<-2 # inercia para desligar
   d2v$cor[intersect(6:les,which(d2v$alertaRt>=3))]<-3
   d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+1)]<-3 # inercia para desligar
   d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+2)]<-3 # inercia para desligar
@@ -260,7 +270,7 @@ d2$nivel[d2$cor==4]<-"vermelho"
 options(digits = 2)
 for(i in 1:10) {
   message(paste ("Estado do Alerta de ",listaAPS[i]))
-  print(tail(d2[d2$APS==listaAPS[i],c(1:8,11,17,23,25,26,27,28,29)],n=4))
+  print(tail(d2[d2$APS==listaAPS[i],c(1:4,6:9,10,19,20,25,27,31)],n=4))
   #print(tail(d2[d2$APS==listaAPS[i],],n=4))
   
 }
@@ -268,7 +278,8 @@ for(i in 1:10) {
 outputfile = paste("alerta/alertaAPS_",max(d2$SE),".csv",sep="")
 message("alerta salvo em ",outputfile)
 
-write.table(d2[,c(1:8,11,17,23,25,26,27,28,29)],file=outputfile,row.names=FALSE,sep=",")
+dd<-d2[,c(1:4,6:9,10,19,20,25,27,31)]
+write.table(d2[,c(1:4,6:9,10,19,20,25,27,31)],file=outputfile,row.names=FALSE,sep=",")
 
 nalerta <- outputfile
 knit(input="geraAlerta/relatorio.rmd",quiet=TRUE,envir=new.env())
