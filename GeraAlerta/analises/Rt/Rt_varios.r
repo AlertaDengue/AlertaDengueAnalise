@@ -21,6 +21,40 @@ names(st)<-c("SE","casos")
 st$SE<-as.numeric(as.character(st$SE))
 tail(st)
 
+
+g <- c(0.1,0.3,0.4,0.2) # tempo de geracao
+
+Rt <- function(b,g) {
+  n = length(b)
+  R = rep(NA,n)
+  for (t in 5:n){
+    num = b[t]
+    den = sum(b[(t-4):(t-1)]*t(g))
+    R[t]=num/den
+  }
+  R
+}
+
+Ru = function(Rt,g){
+  n = length(Rt)
+  Ru = rep(NA,n)
+  for (u in 5:n){
+    Ru[u] = sum(g*Rt[(u-4):(u-1)])
+  }
+  Ru
+}
+  
+  
+Rt = Rt(st$casos,g) 
+Ru = Ru(Rt,g)
+tail(Rt)
+tail(Ru)
+plot(Rt,ylim=c(-1,5),type="l")
+lines(Ru,col=2)
+
+abline(h=1)
+
+
 #==================================================
 library(R0)
 inc<-check.incid(st$casos,st$SE)

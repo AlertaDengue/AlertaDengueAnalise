@@ -34,7 +34,7 @@ if(tail(tapply(nad3$SEM_NOT,nad3$SEM_NOT,length),1)>0) print(nad3[nad3$SEM_NOT==
 #message("% de registros sem geolocalizacao no RJ desde 2014: ",falha," %")
 rm(d3,nad3)
 
-###Serie temporal de casos no municipio todo em 2014
+###Serie temporal de casos no municipio
 # ---------------------------------------------------
 st14 <- aggregate(d$SEM_NOT,by=list(d$SEM_NOT),FUN=length)
 names(st14)<-c("SE","casos")
