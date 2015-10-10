@@ -158,12 +158,13 @@ le = dim(ovicity)[1]
 datas=unique(ovi$Date)
 corte = datas[length(datas)-12]
 oviap<-subset(ovi,Date>=corte)
+oviap <- ovi
 g<-ggplot(oviap, aes(x=Date, y=IPO))
 g + geom_bar(stat="identity") + 
     facet_wrap(~AP, ncol=2) + 
     theme_bw(base_size=11, base_family="Arial") +
-    labs(y = "IPO", x="") +
-    ggtitle("Índice de positividade de ovitrampas nos últimos 12 meses")
+    labs(y = "IPO", x="Meses") +
+    ggtitle("Índice de positividade de ovitrampas(ago 2012 a julho 2015)")
 
 
 ```

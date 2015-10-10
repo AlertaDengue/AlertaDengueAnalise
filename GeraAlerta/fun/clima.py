@@ -26,6 +26,7 @@ logger.addHandler(logging.StreamHandler())
 codes = ['SBRJ',  # santos dumont
          'SBJR',  # Jacarepagua
          'SBGL',  # Galeão
+         'SBCA',  # Cascavel
          'IRIODEJA30',  # Cachambi, Meier
          'IRIODEJA14',  # Pepino
          'SBAF',  # Campo dos Afonsos
@@ -153,4 +154,3 @@ if __name__=="__main__":
     fim = datetime.datetime.strptime(args.fim, "%Y-%m-%d")
 
     captura(ini, fim, args.codigo)
-

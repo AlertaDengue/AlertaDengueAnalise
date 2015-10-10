@@ -1,4 +1,4 @@
-git checkout -b claudia-codeco-ovitrampa master#Organização dos dados do tweet RJ
+#Organização dos dados do tweet RJ
 #===================================
 #Concatena os dados mais recentes com a serie historica. Sao precisos 3 dados de entrada:
 #- serie historica em semanas (a mais atualizada que tiver)

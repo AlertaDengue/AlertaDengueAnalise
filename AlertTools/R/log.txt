@@ -1,0 +1,31 @@
+# Log do Package AlertTools
+
+Documentacao para ajudar: http://r-pkgs.had.co.nz/intro.html
+
+Baseada no pacote devtools.
+
+5/10/2015
+Workflow:
+  My workflow   
+  Write a function.
+  Load it with devtools::load_all().
+  Experiment with it in the console to see if it works.
+  Rinse and repeat.
+
+Criei as funcoes 
+   get_timeseries.R contem 
+         getWU cujo dado de teste é WUdata
+         getTweet cujo dado de teste é tw.rda
+        getCases cujo dado de teste é sinan.rda 
+   utility_tools.R contem data2SE que requer a tabela interna SE 
+
+
+Tabelas de dados criadas
+devtools::use_data(SE,internal=TRUE)
+devtools::use_data(WUdata)
+devtools::use_data(tw)
+devtools::use_data(sinan)
+
+
+
+Proximos passos :  colocar no git

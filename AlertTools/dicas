@@ -1,0 +1,20 @@
+# Description
+Para acrescentar uma nova dependencia no Package
+devtools::use_package("dplyr")
+
+Para criar man 
+devtools::document()
+
+
+
+Workflow:
+Up until now, your workflow probably looks like this:
+
+    Write a function.
+    Load it with devtools::load_all().
+    Experiment with it in the console to see if it works.
+    Rinse and repeat.
+
+
+Para salvar tabelas de uso interno
+devtools::use_data(SE, internal = TRUE)

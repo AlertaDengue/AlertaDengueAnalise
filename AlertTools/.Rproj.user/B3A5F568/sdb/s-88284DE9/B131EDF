@@ -1,0 +1,16 @@
+{
+    "contents" : "#=============================\n# Script para atualizar dados\n#=============================\nrm(list=ls())\n\n# Requer\nlibrary(knitr)\nlibrary(markdown)\nlibrary(foreign)\nlibrary(rmongodb)\nlibrary(rgeos)\nlibrary(maptools)\nlibrary(ggplot2)\nsource(\"fun/callmongoclima.r\")\n\n#=============================\n# A. Organizar os dados novos:\n# ============================\n\n# A1. Atualizar dados de temperatura (verificar se tem conexão internet):\nsource(\"organizaDados/organizaTemperatura.r\")\n\n# A2. Atualizar dados de tweet:\nsource(\"organizaDados/organizatweets.r\")\n\n# A3. Atualizar dados de dengue:\n# esse e' o unico que precisa ser nominalmente indicado aqui. \n# O dbf deve estar na pasta indicada no path dados_brutos/sinan/\nnovosinan2014 <- \"dados_brutos/sinan/Dengue2014_23_03_2015.dbf\"\nnovosinan2015 <- \"dados_brutos/sinan/Dengue2015_05_10_2015.dbf\"\n# esse source retorna os casos que nao foram geolocalizados, verificar se algum pode\n# ser resolvido. A tabela APS-bairro esta na pasta tabelas.\nsource(\"organizaDados/organizasinan.r\")\n\n\n# A4. Juntar todos os dados numa unica tabela\nsource(\"organizaDados/juntaTudo.r\")\n\n# A5. Dados das ovitrampas (ainda nao integrado ao resto)\novifile <- \"dados_brutos/ovitrampa/IPO_RioJul2015.csv\"\novi<-read.csv(ovifile,sep=\";\",dec=\",\")\n\n# =======================================\n# B. Alerta: Para ajustar o modelo de alerta:\n# =======================================\n# Selecione os dados da semana desejada\ndadosAPS<-\"dados_limpos/dadosAPS_201539.csv\"\nsource(\"geraAlerta/geraAlerta.r\")\n\n\n\n\n",
+    "created" : 1444071583139.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "490128036",
+    "id" : "B131EDF",
+    "lastKnownWriteTime" : 1444062044,
+    "path" : "~/Documentos/AlertaDengueAnalise/GeraAlerta/atualiza_alerta.r",
+    "project_path" : null,
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

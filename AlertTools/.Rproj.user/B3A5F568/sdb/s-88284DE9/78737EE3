@@ -1,0 +1,17 @@
+{
+    "contents" : "# PROJETO ALERTA DENGUE -------------------------------------\n# Funcoes auxiliadoras para formatacao dados de clima do Alerta dengue\n# Claudia Codeco 2015\n# -----------------------------------------------------------\n\n# data2SE ---------------------------------------------------------------------\n#'@description Find to which epidemiological week belongs a given day (only >=2010)\n#'@title Define Epidemiological Week\n#'@param date string vector with dates to be converted\n#'@param format date format\n#'@return data.frame with the epidemiological weeks. Only works for years >= 2010.\n#'@examples\n#'data2SE(\"01-02-2010\",format=\"%d-%m-%Y\")\n#'data2SE(c(\"03-04-2013\",\"07-01-2014\"),format=\"%d-%m-%Y\")\n\ndata2SE <- function(days, format = \"%d/%m/%Y\"){\n  sem <- rep(NA,length(days))      \n  load(\"R/sysdata.rda\")\n  days<-as.Date(as.character(days),format=format)\n  for (i in 1:length(days)) {\n    week <- SE$SE[days[i] >= SE$Inicio & days[i] <= SE$Termino]\n    ano <-  SE$Ano[days[i] >= SE$Inicio & days[i] <= SE$Termino] \n    se = ano*100+week\n    sem[i]<-ifelse(length(sem)==0,NA,se)      \n  }\n  sem\n}\n\n\n\n",
+    "created" : 1444068513013.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3633029335",
+    "id" : "78737EE3",
+    "lastKnownWriteTime" : 1444071191,
+    "path" : "~/Docs_completo/R_Packages/AlertTools/R/utility_tools.R",
+    "project_path" : "R/utility_tools.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
