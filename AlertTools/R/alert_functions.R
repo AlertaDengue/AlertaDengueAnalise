@@ -5,13 +5,13 @@
 
 #setYellow --------------------------------------------------------------------
 #'@title Define conditions to issue an alert of level "Attention"
-#'@description Level = Yellow if environmental conditions required for
-#'positive mosquito population growth
+#'@description Level is yellow if environmental conditions required for
+#'positive mosquito population growth.
 #'@param temp time series of temperature.
 #'@param tempcrit critical temperature.
-#'@param lag count the number of weeks within the last lag weeks with conditions = TRUE
+#'@param lag count the number of weeks within the last lag weeks with conditions = TRUE.
 #'@return data.frame with the week condition and the number of weeks within the 
-#'last lag weeks with conditions = TRUE
+#'last lag weeks with conditions = TRUE.
 #'@examples
 #'clima = getWU(stations = c(330455), var = "tmin")
 #'clima = cbind(clima, setYellow(clima$tmin,22)) 
@@ -54,6 +54,43 @@ setOrange <- function(y, pvalue, lag=3){
   data.frame(weekorange = t1, accorange = c(rep(NA,(lag-1)),ac))
 }
 
+
+#setRed --------------------------------------------------------------------
+#'@title Define conditions to raise the red alert 
+#'@description "Red" indicates high dengue incidence, abova a threshold.
+#'@param y case count (ajusted or not).
+#'@param se sequence of epidemiological weeks. Not required, just to include in the output.
+#'@param pop population of the area.
+#'@param adjust TRUE if adjusting incidence is required. FALSE it not.   
+#'@param ccrit incidence threshold (per 100.000).
+#'@param lag count the number of weeks within the last lag weeks with conditions = TRUE.
+#'@return data.frame with the week condition and the number of weeks within the 
+#'last lag weeks with conditions = TRUE
+#'@examples
+#'res = getCases(city = c(330455), withdivision = TRUE) # Rio de Janeiro
+#'resd = aggrbylocality(d = res, locality="AP1") # Rio de Janeiro
+#'red = setRed(se = resd$SE, y = resd$casos, adjust=TRUE, pop = 30000, ccrit = 100, lag=3)
+#'tail(red)
+#'plot(red$tcasesICmin, type="b", ylab = "incidence")
+
+setRed <- function(y, se, pop, adjust = TRUE, ccrit=100, lag=3){
+  
+  if(adjust)
+    casesm <- adjustIncidence(se = se, y = y)[["tcasesICmin"]]
+    else
+      casesm <- y
+  
+  inc <- casesm / pop * 100000
+  i1 <- inc > ccrit
+  # 3 weeks accumulated condition
+  le <- length(i1)
+  ac <- i1[lag:le]
+  for(i in 1:(lag-1)) ac <- ac+i1[(lag-i):(le-i)]
+  
+  res <- data.frame(cases = casesm, inc = inc, rweek = as.numeric(i1), racc = c(rep(NA,(lag-1)),ac))  
+  if(!is.null(se)) res <- cbind(se, res)
+  res
+  }
 
 
 

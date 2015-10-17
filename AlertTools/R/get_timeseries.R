@@ -131,6 +131,7 @@ aggrbylocality <- function(d, locality){
   load("data/locs.rda")
   bair <- subset(locs, APS == locality)
   
+  if(dim(bair)[1]==0) warning("no case in this locality")
   # dataframe para guardar os resultados
   load("R/sysdata.rda")
   semanas <- SE$Ano * 100 + SE$SE

@@ -10,9 +10,11 @@
 #'A function describing the proportion known as a function of time passed is required.  
 #'@title Adjust incidence data correcting for the notification delay.
 #'@param y time series of cases to be adjusted.
-#'@param fun function describing the proportion reported as a function of time passed. 
+#'@param dist function describing the proportion reported as a function of time passed. 
 #'Currently only the accumulated lognormal function is implemented .
-#'@param pars list of parameters for the function fun.
+#'@param meanlog mean of the lognormal function.
+#'@param meanlog sdev of the lognormal function.
+#'@param prop alternatively, a vector with the proportion typed per week (not implemented yet).
 #'@return data.frame with p (proportion reported), lambda ( expected numbero f cases not yet reported),
 #'inc (expected true number of cases to be reported) incICmin and incICmax (95percent confidence interval for the true incidence)
 #'@examples
@@ -26,7 +28,7 @@
 #'lines(tail(resfit$tcasesmax,n=30),col=2,lty=3)
 #'legend(12,20,c("notified cases","+ to be notified cases"),lty=1, col=c(1,2),cex=0.7)
 
-adjustIncidence<-function(se, y, dist="lognormal", meanlog = 2.5016,sdlog=1.1013){
+adjustIncidence<-function(se, y, dist="lognormal", meanlog = 2.5016, sdlog=1.1013, prop){
   le = length(y) # cases
   lse = length(se) # weeks
   if (lse != le) warning("se and y sizes differ")
@@ -43,9 +45,9 @@ adjustIncidence<-function(se, y, dist="lognormal", meanlog = 2.5016,sdlog=1.1013
   lambda <- (d$casos/d$p) - d$casos   
   corr <- function(lamb,n=500) sort(rpois(n,lambda=lamb))[c(02,50,97)] # calcula 95% IC e mediana estimada da parte estocastica 
   
-  d$tcasesmin <- NA
+  d$tcasesICmin <- NA
   d$tcasesmed <- NA
-  d$tcasesmax <- NA
+  d$tcasesICmax <- NA
   
   for(i in 1:length(d$casos)) d[i,4:6] <- corr(lamb = lambda[i]) + d$casos[i]
   
