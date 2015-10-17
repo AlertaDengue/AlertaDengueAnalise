@@ -24,7 +24,9 @@ data.frame with the data aggregated per week according to disease onset date.
 Create weekly time series from case data from server. The source is the SINAN.
 }
 \examples{
-res = getCases(city = c(330455)) # Rio de Janeiro
+res = getCases(city = c(330455), withdivision = TRUE) # Rio de Janeiro
+head(res)
+res = getCases(city = c(330455), withdivision = FALSE) # Rio de Janeiro
 head(res)
 }
 

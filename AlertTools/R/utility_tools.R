@@ -26,5 +26,3 @@ data2SE <- function(days, format = "%d/%m/%Y"){
   sem
 }
 
-
-

@@ -28,4 +28,5 @@ devtools::use_data(sinan)
 
 
 
-Proximos passos :  colocar no git
+Proximos passos :  
+- melhorar os dados de tweets - pegar serie a partir de 1201320

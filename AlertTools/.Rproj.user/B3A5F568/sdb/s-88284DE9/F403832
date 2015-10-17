@@ -1,13 +1,13 @@
 {
-    "contents" : "# Log do Package AlertTools\n\nDocumentacao para ajudar: http://r-pkgs.had.co.nz/intro.html\n\nBaseada no pacote devtools.\n\n5/10/2015\nWorkflow:\n  My workflow   \n  Write a function.\n  Load it with devtools::load_all().\n  Experiment with it in the console to see if it works.\n  Rinse and repeat.\n\nCriei as funcoes \n   get_timeseries.R contem \n         getWU cujo dado de teste é WUdata\n         getTweet cujo dado de teste é tw.rda\n        getCases cujo dado de teste é sinan.rda \n   utility_tools.R contem data2SE que requer a tabela interna SE \n\n\nTabelas de dados criadas\ndevtools::use_data(SE,internal=TRUE)\ndevtools::use_data(WUdata)\ndevtools::use_data(tw)\ndevtools::use_data(sinan)\n\n\n\nProximos passos :  colocar no git\n",
+    "contents" : "# Log do Package AlertTools\n\nDocumentacao para ajudar: http://r-pkgs.had.co.nz/intro.html\n\nBaseada no pacote devtools.\n\n5/10/2015\nWorkflow:\n  My workflow   \n  Write a function.\n  Load it with devtools::load_all().\n  Experiment with it in the console to see if it works.\n  Rinse and repeat.\n\nCriei as funcoes \n   get_timeseries.R contem \n         getWU cujo dado de teste é WUdata\n         getTweet cujo dado de teste é tw.rda\n        getCases cujo dado de teste é sinan.rda \n   utility_tools.R contem data2SE que requer a tabela interna SE \n\n\nTabelas de dados criadas\ndevtools::use_data(SE,internal=TRUE)\ndevtools::use_data(WUdata)\ndevtools::use_data(tw)\ndevtools::use_data(sinan)\n\n\n\nProximos passos :  \n- melhorar os dados de tweets - pegar serie a partir de 1201320\n",
     "created" : 1444071871426.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1383137791",
+    "hash" : "61993517",
     "id" : "F403832",
-    "lastKnownWriteTime" : 1444508780,
-    "path" : "~/Docs_completo/R_Packages/AlertTools/R/log.txt",
+    "lastKnownWriteTime" : 1444936839,
+    "path" : "~/Documentos/AlertaDengueAnalise/AlertTools/R/log.txt",
     "project_path" : "R/log.txt",
     "properties" : {
         "tempName" : "Untitled1"

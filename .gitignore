@@ -6,3 +6,4 @@ GeraAlerta/figure/*.*
 *.png
 *.pdf
 *~
+.Rproj.user
