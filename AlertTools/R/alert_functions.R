@@ -53,15 +53,18 @@ setYellow <- function(temp, se, tempcrit, lag=3){
 #'lines(x, ora$upr, lty = 3)
 #'lines(x, ora$lwr, lty = 3)
 #'abline(h = 1, col =2)
-#'points(x[ora$o1==1], ora$Rt[ora$o1==1], col="orange", pch=16)
+#'points(x[ora$oweek==1], ora$Rt[ora$oweek==1], col="orange", pch=16)
 
 setOrange <- function(obj, pvalue = 0.9, lag=3){
-  obj$o1 <- as.numeric(obj$p1 > pvalue)
+  
+  if(!("p1" %in% names(obj))) stop("obj must be created by an Rt function")
+  
+  obj$oweek <- as.numeric(obj$p1 > pvalue)
   
   # lag weeks accumulated condition
   le <- dim(obj)[1]
-  ac <- obj$o1[lag:le]
-  for(i in 1:(lag-1)) ac <- ac+obj$o1[(lag-i):(le-i)]
+  ac <- obj$oweek[lag:le]
+  for(i in 1:(lag-1)) ac <- ac+obj$oweek[(lag-i):(le-i)]
   obj$oacc <- c(rep(NA,(lag-1)),ac)
   
   return(obj)
@@ -116,12 +119,9 @@ setRed <- function(obj, pop, ccrit=100, lag=3){
 #'@description This function receives the time series inputs (cases, tweets, 
 #'climate) and return levels of alert (1 (low) to 4 (high)). It will run the
 #' set color functions and them combine them hierarchically.    
-#'@param sey data.frame with se and cases per locality.
-#'@param temp time series of temperature.
-#'@param tw time series of tweets.   
-#'@param tempcrit critical temperature.
-#'@param inccrit critical incidence, per 100.000.
-#'@param pop population size   
+#'@param yellow object from setyellow function.
+#'@param orange object from setorange function.
+#'@param red object from setred function.
 #'@return data.frame with
 #'@examples
 #' #This is the whole sequence of the alert. Getting data:
@@ -131,9 +131,11 @@ setRed <- function(obj, pop, ccrit=100, lag=3){
 #'clima <- getWU(stations = 'SBRJ', var = "tmin") # get locality's tmin from local meteorological station
 #' #Adjust incidence
 #'adjcase <- adjustIncidence(se = resd$SE, y = resd$casos)
+#' # Calculate Rt
+#'rtnorm<-Rt(y = resfit$tcasesmed, se = resfit$SE, gtdist="normal", meangt=3, sdgt = 1)
 #' #Calculate each level
 #'yellowalert <- setYellow(temp = clima$tmin, se = clima$SE, tempcrit = 22)
-#'orangealert <- setOrange(y = resd, pvalue = 0.9, lag= 3) # NOT FINISHED
+#'orangealert <- setOrange(obj = resd, pvalue = 0.9, lag= 3) 
 #'redalert <- setRed(se = adjcase$SE, y = adjcase$tcasesICmin, adjust=FALSE, pop = 30000, 
 #'                    ccrit = 100, lag=3)
 #' # green - yellow levels only 
