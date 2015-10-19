@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_timeseries.R
 \name{getCases}
 \alias{getCases}
-\title{Get Case Data}
+\title{Get Case Data and aggregate per week and area}
 \usage{
 getCases(city, withdivision = TRUE, disease = "dengue",
   datasource = "test")
@@ -10,10 +10,9 @@ getCases(city, withdivision = TRUE, disease = "dengue",
 \arguments{
 \item{city}{city's geocode.}
 
-\item{withdivision}{Either FALSE if aggregation at the city level, or TRUE if at the neighborhood
-level. These are the two possible aggregations.}
+\item{withdivision}{either FALSE if aggregation at the city level, or TRUE.}
 
-\item{disease}{Default is "dengue".}
+\item{disease}{default is "dengue".}
 
 \item{datasource}{data server or "test" if using local test data.}
 }

@@ -48,5 +48,3 @@ dadosAPS<-"dados_limpos/dadosAPS_201540.csv"
 source("geraAlerta/geraAlerta.r")
 
 
-
-

@@ -22,5 +22,6 @@ res = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'))
 head(res)
 res = getWU(stations = c(330455))
 head(res)
+res = getWU(stations = 'SBRJ', var="tmin")
 }
 

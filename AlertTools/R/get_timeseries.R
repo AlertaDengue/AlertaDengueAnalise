@@ -13,7 +13,7 @@
 #'head(res)
 #'res = getWU(stations = c(330455))
 #'head(res)
-#'res = getWU(stations = c(330455), var="tmin")
+#'res = getWU(stations = 'SBRJ', var="tmin")
 
 getWU <- function(stations, var = "all",datasource = "test") {
     
@@ -24,7 +24,7 @@ getWU <- function(stations, var = "all",datasource = "test") {
     # if cities are given as argument
     if (all(nchar(stations) == 6)) { 
         if (datasource == "test") sta = unique(WUdata$estacao[WUdata$cidade%in%stations]) 
-        message("the following stations were found:")
+        message("the stations belong to the following cities:")
         print(sta)
     } 
     # if stations are given as argument
@@ -33,13 +33,16 @@ getWU <- function(stations, var = "all",datasource = "test") {
           cities = unique(WUdata$cidade[WUdata$estacao%in%stations])
           sta = stations
         }
-        message("the stations belong to the following cities:")
+        message("the following stations were found:")
         print(sta)
     }
     
     # getting the climate data (all from each sta)------------------------------
     
-    if (datasource == "test") d<-WUdata
+    if (datasource == "test") {
+      if (all(nchar(stations) == 6)) d <- WUdata
+      else d <- subset(WUdata, estacao %in% stations)
+    }
     
     # Atribuir SE e agregar por semana-----------------------------------------
     d$SE <- data2SE(d$data, format = "%Y-%m-%d")
