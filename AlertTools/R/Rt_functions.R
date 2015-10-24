@@ -4,7 +4,6 @@
 # -----------------------------------------------------------
 
 
-
 #Rtoriginal -----------------------------------------------------------------------
 #'@description Calculates the effective reproductive number from the growth rate 
 #'of cases. The The original formulation is simply the ratio between 3-weeks accumulated
@@ -23,16 +22,6 @@
 #'lines(rt$lwr,lty=3)
 #'lines(rt$upr,lty=3)
 #'abline(h = 1, col = 2)
-#' # Rt delta and normal
-#'rtdelta<-Rt(obj = res, count = "casos", gtdist="delta", meangt=3)
-#'rtnorm<-Rt(obj = res, count = "casos", gtdist="normal", meangt=3, sdgt = 1)
-#'lines(rtdelta$Rt, col = 3)
-#'lines(rtdelta$lwr,lty = 3, col = 3)
-#'lines(rtdelta$upr,lty = 3, col = 3)
-#'lines(rtnorm$Rt, col = 4)
-#'lines(rtnorm$lwr,lty = 3, col = 4)
-#'lines(rtnorm$upr,lty = 3, col = 4)
-#'legend(30,3,c("original","delta","normal"),lty=1, col = c(1,3,4), cex = 0.7)
 
 
 Rtoriginal<-function(obj, count = "casos", meangt, CI = "beta", alpha = .95, a0 = 2 , b0 = 3){  
@@ -106,10 +95,8 @@ Rt<-function(obj, count = "casos", gtdist, meangt, sdgt, CI = "beta", alpha = .9
   
   if(!any(c(count,"SE") %in% names(obj))) stop("obj must be a data.frame with variables 
                                               SE and var, at least. Consider using getCases")
-  
   y <- obj[,count]
   le <- length(y)
-  
   if (le < 2*meangt) warning("you need a time series                           
                              with size at least 2 generation intervals to estimate Rt")
   

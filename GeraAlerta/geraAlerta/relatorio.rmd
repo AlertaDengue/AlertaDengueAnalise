@@ -274,7 +274,7 @@ panderOptions('table.split.table', Inf)
 
 par(mfrow=c(1,1))
 plot.alerta2(d2,"AP1")
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -295,7 +295,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP2.1"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -315,7 +315,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP2.2"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -336,7 +336,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.1"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -355,7 +355,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.2"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -374,7 +374,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP3.3"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -392,7 +392,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP4"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -411,7 +411,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.1"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -430,7 +430,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.2"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```
@@ -448,7 +448,7 @@ pander(tab)
 ```{r echo=FALSE}
 ap = "AP5.3"
 plot.alerta2(d2,ap)
-tab<-tail(d2[d2$APS=="AP1",c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
+tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL
 ```

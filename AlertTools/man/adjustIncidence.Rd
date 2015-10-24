@@ -4,34 +4,31 @@
 \alias{adjustIncidence}
 \title{Adjust incidence data correcting for the notification delay.}
 \usage{
-adjustIncidence(se, y, dist = "lognormal", meanlog = 2.5016,
-  sdlog = 1.1013, prop)
+adjustIncidence(obj, pdig = plnorm((1:20) * 7, 2.5016, 1.1013))
 }
 \arguments{
-\item{y}{time series of cases to be adjusted.}
+\item{obj}{data.frame with crude weekly cases (not adjusted). This data.frame comes from the getCases
+function (if withdivision = FALSE), of getCases followed by casesinlocality (if dataframe is available
+per bairro)}
 
-\item{dist}{function describing the proportion reported as a function of time passed.
-Currently only the accumulated lognormal function is implemented .}
-
-\item{meanlog}{mean of the lognormal function.}
-
-\item{prop}{alternatively, a vector with the proportion typed per week (not implemented yet).}
-
-\item{meanlog}{sdev of the lognormal function.}
+\item{pdig}{vector of probability of been typed in the database up to 1, 2, 3, n, weeks after symptoms onset.
+The length of the vector corresponds to the maximum delay. After day, it is assumed that p = 1. The default
+was obtained from Rio de Janeiro.}
 }
 \value{
-data.frame with p (proportion reported), lambda ( expected numbero f cases not yet reported),
-inc (expected true number of cases to be reported) incICmin and incICmax (95percent confidence interval for the true incidence)
+data.frame with pdig (proportion reported), median and 95percent confidence interval for the
+predicted cases-to-be-notified)
 }
 \description{
 Often, there is a delay between symptom onset and notification. This function
-adjust the time series of reported cases adding the cases that will be reported in the future.
-A function describing the proportion known as a function of time passed is required.
+adjust the time series of reported cases by adding the cases that will be reported in the future.
+It requires knowing the probability of notification per week passed. This function assumes a stationary
+notification process, there is, no influence of covariates or any temporal inhomogeneity.
 }
 \examples{
 res = getCases(city = c(330455), withdivision = FALSE) # Rio de Janeiro
 head(res)
-resfit<-adjustIncidence(se = res$SE, y = res$casos)
+resfit<-adjustIncidence(obj=res)
 tail(resfit)
 plot(tail(resfit$casos,n=30),type="l",ylab="cases",xlab="weeks")
 lines(tail(resfit$tcasesmed,n=30),col=2)

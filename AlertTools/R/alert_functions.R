@@ -45,7 +45,7 @@ setYellow <- function(temp, se, tempcrit, lag=3){
 #'res <- getCases(city = c(330455), withdivision = FALSE) # Rio de Janeiro
 #'resd <- aggrbylocality(d = res, locality="AP1") # Rio de Janeiro
 #'resfit <- adjustIncidence(se = res$SE, y = res$casos)
-#'rtnorm<-Rt(y = resfit$tcasesmed, se = resfit$SE, gtdist="normal", meangt=3, sdgt = 1)
+#'rtnorm<-Rt(obj = resfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 #'ora = setOrange(obj = rtnorm, pvalue = 0.9, lag= 3) 
 #'head(ora)
 #'x = 1:length(ora$SE)
@@ -132,12 +132,11 @@ setRed <- function(obj, pop, ccrit=100, lag=3){
 #' #Adjust incidence
 #'adjcase <- adjustIncidence(se = resd$SE, y = resd$casos)
 #' # Calculate Rt
-#'rtnorm<-Rt(y = resfit$tcasesmed, se = resfit$SE, gtdist="normal", meangt=3, sdgt = 1)
+#'rtnorm<-Rt(obj = resfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 #' #Calculate each level
 #'yellowalert <- setYellow(temp = clima$tmin, se = clima$SE, tempcrit = 22)
-#'orangealert <- setOrange(obj = resd, pvalue = 0.9, lag= 3) 
-#'redalert <- setRed(se = adjcase$SE, y = adjcase$tcasesICmin, adjust=FALSE, pop = 30000, 
-#'                    ccrit = 100, lag=3)
+#'orangealert <- setOrange(obj = rtnorm, pvalue = 0.9, lag= 3) 
+#'redalert <- setRed(obj = resfit, pop = 30000, ccrit = 100, lag=3)
 #' # green - yellow levels only 
 #'resu <- classify(yel = yellowalert) # with only green-yellow levels
 #'tail(resu)
@@ -145,30 +144,44 @@ setRed <- function(obj, pop, ccrit=100, lag=3){
 #'plot(x,resu$temp, type="l", xlab= "weeks", ylab = "temp")
 #'points(x[resu$level==2], resu$temp[resu$level==2], col="yellow",pch=16)
 #' # all four levels
-#'resu <- classify(yel = yellowalert, ora = orangealert, red = redalert) 
+#'resu <- classify(yel = yellowalert, ora = orangealert, red = redalert, inerciaon=1, inerciaoff=c(NA,1,1,1)) 
+#'x = 1:length(resu$casos)
+#'plot(x,resu$casos, type="l", xlab= "weeks", ylab = "casos")
+#'points(x[resu$level==2], resu$casos[resu$level==2], col="yellow",pch=16)
+#'points(x[resu$level==3], resu$casos[resu$level==3], col="orange",pch=16)
+#'points(x[resu$level==4], resu$casos[resu$level==4], col="red",pch=16)
 
 
-
-
-classify <- function(yel, ora=c(), red=c(), turnoff = c(3000,3,3,3)){
+classify <- function(yel, ora=c(), red=c(), inerciaon=3, inerciaoff = c(NA,3,3,3)){
   
+  obj <- yel
   # defining the number of levels from the input
-  if (is.null(yel)) stop("calculate setYellow")
-  if (is.null(yel) == FALSE & is.null(ora) == TRUE & is.null(red) == TRUE){
-    print("only green - yellow levels calculated")
-    ncol = 2
-    yel$level <- NA
-    les = dim(yel)[1]
-    inerciaon = max(yel$yacc) # the number of weeks until the system turns to yellow
-    yel$level[intersect(6:les,which(yel$yacc<3))] <-  1 # first color
-    yel$level[intersect(6:les,which(yel$yacc>=3))]<-  2 # second color
-    inerciaoff = turnoff[2] # number of weeks not turningoff once on
-    for (i in 1:inerciaoff) yel$level[intersect(6:les,which(yel$yacc>=3)+i)] <- 2   
-    }
-  if (is.null(yel) == FALSE & is.null(ora) == FALSE & is.null(red) == FALSE){
-    ncol = 4
+  if (is.null(obj)) stop("calculate setYellow")
+  
+  ncol <- 2
+  
+  obj$level <- NA
+  les = dim(obj)[1]
+  obj$level[intersect(6:les,which(obj$yacc < inerciaon))] <-  1 # first color (green)
+  obj$level[intersect(6:les,which(obj$yacc >= inerciaon))] <-  2 # second color (yellow)
+  for (i in 1:inerciaoff[2]) obj$level[intersect(6:les,which(yel$yacc>=3)+i)] <- 2
+  
+  if (is.null(yel) == FALSE & is.null(ora) == FALSE & is.null(red) == FALSE){ # add orange and red
+    obj <- merge(obj, ora, by="SE", by.all = TRUE)
+    red <- subset(red, select=-casos)
+    obj <- merge(obj, red, by="SE", by.all = TRUE)
+    ncol <- 4
+    obj$level[intersect(6:les,which(ora$oacc >= inerciaon))] <- 3 
+    for (i in 1:inerciaoff[3]) obj$level[intersect(6:les,which(ora$oacc>=3)+i)] <- 3
+    
+    obj$level[intersect(6:les,which(red$racc >= inerciaon))] <- 4
+    for (i in 1:inerciaoff[4]) obj$level[intersect(6:les,which(red$racc>=3)+i)] <- 4  
   }
     
-  yel
+  if(ncol == 2) message("Alert with 2 levels (green - yellow)")
+  else message("Alert with 4 levels (all colors)")
+    
+  
+  obj
 }
 
