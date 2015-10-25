@@ -77,7 +77,14 @@ getWU <- function(stations, var = "all", finalday = Sys.Date(), datasource = "da
 getTweet <- function(city, lastday = Sys.Date(), datasource = "data/tw.rda") {
   
   stopifnot(all(nchar(city) == 6)) # incluir teste de existencia da cidade  
-  if (datasource == "data/tw.rda") load(datasource)
+  if (datasource == "data/tw.rda") {
+    load(datasource)
+  } else if (datasource == "db"){
+    c1 <- paste("select data_dia, numero from \"Municipio\".\"Tweet\" where 
+                \"Municipio_geocodigo\" between ", city,"0", sep = "", " ", "and", " ",city,"9")
+    tw <- dbGetQuery(con,c1)
+    names(tw)<-c("data","tweet")
+  }
   
   tw <- subset(tw, as.Date(data, format = "%Y-%m-%d") <= lastday)
   
