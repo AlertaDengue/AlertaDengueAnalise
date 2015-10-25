@@ -186,12 +186,26 @@ casesinlocality <- function(obj, locality){
 #'cas = getCases(city = c(330455), lastday ="2014-03-10", withdivision = FALSE) 
 #'tw = getTweet(city = c(330455), lastday = "2014-03-10")
 #'clima = getWU(stations = 'SBRJ', var="tmin", finalday = "2014-03-10")
-
-# completar essa funcao 
+#'mergedata(cases = cas,tweet = tw, climate = clima)
+#'mergedata(tweet = tw, climate = clima)
+#'mergedata(cases = cas, climate = clima)
+#'mergedata(tweet = tw, climate = clima)
 
 mergedata <- function(cases = c(), tweet =c(), climate=c()){
-  d <- merge(cases, tweet, all = TRUE)
-  d <- merge(d, climate, all=TRUE)
+  # checking the datasets
+  if (!is.null(cases) & !all(table(cases$SE)==1)) stop("merging require one line per SE in case dataset")
+  if (!is.null(tweet) & !all(table(tweet$SE)==1)) stop("merging require one line per SE in tweet dataset")
+  if (!is.null(climate) & !all(table(climate$SE)==1)) stop("merging require one line per SE in climate dataset")
+  
+  # merging
+  if (is.null(cases)) d <- merge(tweet, climate, by="SE", all = TRUE)
+  if (is.null(tweet)) d <- merge(cases, climate,  by="SE", all = TRUE)
+  if (is.null(climate)) d <- merge(cases, tweet,  by="SE", all = TRUE)
+  if (!(is.null(cases) | is.null(tweet) | is.null(climate))){
+    d <- merge(cases, tweet,  by="SE", all = TRUE)
+    d <- merge(d, climate,  by="SE", all=TRUE)  
+  }
+  
   d
 }
 
