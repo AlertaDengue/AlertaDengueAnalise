@@ -157,7 +157,7 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = TRUE, disease =
 
 casesinlocality <- function(obj, locality){
   
-  if(!all(c("bairro", "SE", "casos") %in% names(dC0))) stop("only use function caseinlocality 
+  if(!all(c("bairro", "SE", "casos") %in% names(obj))) stop("only use function caseinlocality 
                                                              with dataframe with columns bairro, SE, casos.
                                                              Use the output of getCases(withdivision=TRUE)")
   # trocar locs depois pelo acesso direto ao servidor

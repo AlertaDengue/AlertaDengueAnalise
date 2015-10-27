@@ -21,7 +21,8 @@
 #'critgy <- c("tmin > 22 | tweet > 10", 3)
 #'crityg <- c("tmin <= 22 & tweet <= 10", 3)
 #'alerta <- greenyellow(d, gy = critgy, yg = crityg)
-#'head(alerta)
+#'names(alerta)
+#'head(alerta$indices)
 
 greenyellow <- function(obj, gy, yg){
       le <- dim(obj)[1] 
@@ -43,11 +44,58 @@ greenyellow <- function(obj, gy, yg){
       indices$ygtrue <- as.numeric(eval(parse(text = cyg[1])))
       indices$nygtrue <- accumcond(indices$ygtrue, as.numeric(cyg[2]))
       
-      return(indices)      
+      # setting the level
+      indices$level <- 1
+      indices$level[indices$ngytrue == as.numeric(cgy[2])] <-2
+      indices$level[indices$nygtrue == as.numeric(cyg[2])] <- 1
+      return(list(data=obj, indices=indices, rules=paste(gy,",",yg), n = 2))      
 }
 
 
 
+#plot.alert --------------------------------------------------------------------
+#'@title Plot the time series of warnings.
+#'@description 
+#'@param obj object created by the greenyellow or green2red functions.
+#'@param var to be ploted in the graph, usually cases when available.  
+#'@param cores colors corresponding to the levels 1, 2, 3, 4.
+#'@return a plot
+#'@examples
+#'tw <- getTweet(city = c(330455), lastday = "2014-03-10")
+#'clima <- getWU(stations = 'SBRJ', var="tmin", finalday = "2014-03-10")
+#'d<- mergedata(tweet = tw, climate = clima)
+#'critgy <- c("tmin > 22 | tweet > 10", 3)
+#'crityg <- c("tmin <= 22 & tweet <= 10", 3)
+#'alerta <- greenyellow(d, gy = critgy, yg = crityg)
+#'plot.alerta(alerta, "tmin")
+
+
+
+plot.alerta<-function(d, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
+      
+      stopifnot(names(d) == c("data", "indices", "rules","n"))
+      stopifnot(var %in% names(d$data))
+      stopifnot(n %in% c(2,4))
+      
+      par(mai=c(0,0,0,0),mar=c(4,4,1,1))
+      x <- 1:length(obj$SE)
+      ticks <- seq(1, length(d$data$SE), length.out = 8)
+      
+      if (d$n == 2){
+            plot(x, d$data[,var], xlab = "SE", ylab = var, type="l", axes=FALSE)
+            axis(2)
+            axis(1, at = ticks, labels = d$data$SE[ticks], las=3)
+            for (i in 1:2) {
+                  onde <- which(d$indices$level==i) 
+                  if (length(onde))
+                        segments(x[onde],0,x[onde],(d$data[onde,var]),col=cores[i],lwd=3)
+            }
+            
+            }
+}
+      
+      
+            
 
 #setOrange --------------------------------------------------------------------
 #'@title Raise orange alert if sustained transmission is detected.

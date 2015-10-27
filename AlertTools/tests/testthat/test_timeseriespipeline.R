@@ -72,9 +72,9 @@ test_that("output of getWU has the required columns.", {
 
 # ---------------------
 # Testing mergedata 
-d0<- mergedata(cases = dC31,tweet = dT0, climate = dW01[dW01$estacao=="SBJR",])
-d1<- mergedata(tweet = dT0, climate = dW01[dW01$estacao=="SBJR",])
-d2<- mergedata(cases = cas, climate = clima[dW01$estacao=="SBJR",])
+d0<- mergedata(cases = dC31,tweet = dT01, climate = dW01[dW01$estacao=="SBJR",])
+d1<- mergedata(tweet = dT01, climate = dW01[dW01$estacao=="SBJR",])
+d2<- mergedata(cases = dC31, climate = clima[dW01$estacao=="SBJR",])
 d3<- mergedata(cases = dC31, tweet = tw)
 
 test_that("output of merging is a non empty data.frame.", {
