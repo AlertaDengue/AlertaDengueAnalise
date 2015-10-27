@@ -3,33 +3,50 @@
 # Claudia Codeco 2015
 # -----------------------------------------------------------
 
-#setYellow --------------------------------------------------------------------
-#'@title Define conditions to issue an alert of level Yellow.
+
+
+#greenyellow --------------------------------------------------------------------
+#'@title Define conditions to issue an alert of 2 levels Green/Yellow.
 #'@description Yellow is raised when environmental conditions required for
-#'positive mosquito population growth are detected.
-#'@param temp time series of temperature.
-#'@param se sequence of epidemiological weeks.
-#'@param tempcrit critical temperature.
-#'@param lag count the number of weeks within the last lag weeks with conditions = TRUE.
+#'positive mosquito population growth are detected, green otherwise.
+#'@param obj dataset from the mergedata function.
+#'@param gy criteria to change from green to yellow 
+#'@param yg criteria to change from yellow to green
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
-#'clima = getWU(stations = "SBRJ", var = "tmin")
-#'yellow = setYellow(temp = clima$tmin, se = clima$SE,  tempcrit = 22) 
-#'head(yellow)
-#'x = 1:length(yellow$SE)
-#'plot(x, yellow$temp, type="l", xlab= "weeks", ylab = "Temperature")
-#'abline(h = 22, col =2)
-#'points(x[yellow$yweek==1], yellow$temp[yellow$yweek==1], col="yellow", pch=16)
+#'tw <- getTweet(city = c(330455), lastday = "2014-03-10")
+#'clima <- getWU(stations = 'SBRJ', var="tmin", finalday = "2014-03-10")
+#'d<- mergedata(tweet = tw, climate = clima)
+#'critgy <- c("tmin > 22 | tweet > 10", 3)
+#'crityg <- c("tmin <= 22 & tweet <= 10", 3)
+#'alerta <- greenyellow(d, gy = critgy, yg = crityg)
+#'head(alerta)
 
-setYellow <- function(temp, se, tempcrit, lag=3){
-  t1 <- as.numeric(temp > tempcrit)
-  # 3 weeks accumulated condition
-  le <- length(t1)
-  ac <- t1[lag:le]
-  for(i in 1:(lag-1)) ac <- ac+t1[(lag-i):(le-i)]
-  data.frame(SE = se, temp = temp, yweek = t1, yacc = c(rep(NA,(lag-1)),ac))
+greenyellow <- function(obj, gy, yg){
+      le <- dim(obj)[1] 
+      # accumulating condition function
+      accumcond <- function(vec, lag) {
+            le <- length(vec)
+            ac <- vec[lag:le]
+            for(j in 1:(lag-1)) ac <- rowSums(cbind(ac, vec[(lag-j):(le-j)]), na.rm = TRUE)
+            c(rep(NA,(lag-1)), ac)
+      }
+      
+      # data.frame to store results
+      indices <- data.frame(gytrue = rep(NA,le), ngytrue = rep(NA,le),
+                            ygtrue = rep(NA,le), nygtrue = rep(NA,le))
+            
+      # calculating each condition (week and accumulated)  
+      indices$gytrue <- as.numeric(eval(parse(text = cgy[1])))
+      indices$ngytrue <- accumcond(indices$gytrue, as.numeric(cgy[2]))
+      indices$ygtrue <- as.numeric(eval(parse(text = cyg[1])))
+      indices$nygtrue <- accumcond(indices$ygtrue, as.numeric(cyg[2]))
+      
+      return(indices)      
 }
+
+
 
 
 #setOrange --------------------------------------------------------------------
