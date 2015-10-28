@@ -15,11 +15,11 @@
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
-#'tw <- getTweet(city = c(330455), lastday = "2014-03-10")
-#'clima <- getWU(stations = 'SBRJ', var="tmin", finalday = "2014-03-10")
+#'tw <- getTweet(city = c(330455))
+#'clima <- getWU(stations = 'SBRJ', var="tmin")
 #'d<- mergedata(tweet = tw, climate = clima)
-#'critgy <- c("tmin > 22 | tweet > 10", 3)
-#'crityg <- c("tmin <= 22 & tweet <= 10", 3)
+#'critgy <- c("tmin > 22 | tweet > 80", 3)
+#'crityg <- c("tmin <= 22 & tweet <= 80", 3)
 #'alerta <- greenyellow(d, gy = critgy, yg = crityg)
 #'names(alerta)
 #'head(alerta$indices)
@@ -39,15 +39,17 @@ greenyellow <- function(obj, gy, yg){
                             ygtrue = rep(NA,le), nygtrue = rep(NA,le))
             
       # calculating each condition (week and accumulated)  
-      indices$gytrue <- as.numeric(eval(parse(text = cgy[1])))
-      indices$ngytrue <- accumcond(indices$gytrue, as.numeric(cgy[2]))
-      indices$ygtrue <- as.numeric(eval(parse(text = cyg[1])))
-      indices$nygtrue <- accumcond(indices$ygtrue, as.numeric(cyg[2]))
+
+      indices$gytrue <- with(obj, as.numeric(eval(parse(text = gy[1]))))
+      indices$ngytrue <- with(obj, accumcond(indices$gytrue, as.numeric(gy[2])))
+      indices$ygtrue <- with(obj, as.numeric(eval(parse(text = yg[1]))))
+      indices$nygtrue <- with(obj, accumcond(indices$ygtrue, as.numeric(yg[2])))
       
       # setting the level
       indices$level <- 1
-      indices$level[indices$ngytrue == as.numeric(cgy[2])] <-2
-      indices$level[indices$nygtrue == as.numeric(cyg[2])] <- 1
+      indices$level[indices$ngytrue == as.numeric(gy[2])] <-2
+      indices$level[indices$nygtrue == as.numeric(yg[2])] <- 1
+      
       return(list(data=obj, indices=indices, rules=paste(gy,",",yg), n = 2))      
 }
 
@@ -71,24 +73,23 @@ greenyellow <- function(obj, gy, yg){
 
 
 
-plot.alerta<-function(d, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
+plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
       
-      stopifnot(names(d) == c("data", "indices", "rules","n"))
-      stopifnot(var %in% names(d$data))
-      stopifnot(n %in% c(2,4))
-      
+      stopifnot(names(obj) == c("data", "indices", "rules","n"))
+      stopifnot(var %in% names(obj$data))
+            
       par(mai=c(0,0,0,0),mar=c(4,4,1,1))
-      x <- 1:length(obj$SE)
-      ticks <- seq(1, length(d$data$SE), length.out = 8)
+      x <- 1:length(obj$data$SE)
+      ticks <- seq(1, length(obj$data$SE), length.out = 8)
       
-      if (d$n == 2){
-            plot(x, d$data[,var], xlab = "SE", ylab = var, type="l", axes=FALSE)
+      if (obj$n == 2){
+            plot(x, obj$data[,var], xlab = "SE", ylab = var, type="l", axes=FALSE)
             axis(2)
-            axis(1, at = ticks, labels = d$data$SE[ticks], las=3)
+            axis(1, at = ticks, labels = obj$data$SE[ticks], las=3)
             for (i in 1:2) {
-                  onde <- which(d$indices$level==i) 
+                  onde <- which(obj$indices$level==i) 
                   if (length(onde))
-                        segments(x[onde],0,x[onde],(d$data[onde,var]),col=cores[i],lwd=3)
+                        segments(x[onde],0,x[onde],(obj$data[onde,var]),col=cores[i],lwd=3)
             }
             
             }
