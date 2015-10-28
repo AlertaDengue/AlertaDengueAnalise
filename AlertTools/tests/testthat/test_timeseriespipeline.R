@@ -51,8 +51,8 @@ dT01 = getTweet(city = c(330455), lastday = Sys.Date()) # Rio de Janeiro
 dT02 = getTweet(city = c(330455), lastday = "2014-03-01") # Rio de Janeiro
 
 test_that("output of getTweet has the required columns.", {
-  expect_true(all(c("localidade", "SE", "tweet") %in% names(dT01)))
-  expect_true(all(c("localidade", "SE", "tweet") %in% names(dT02)))  
+  expect_true(all(c("cidade", "SE", "tweet") %in% names(dT01)))
+  expect_true(all(c("cidade", "SE", "tweet") %in% names(dT02)))  
 })
 
 
@@ -64,9 +64,9 @@ dW02 = getWU(stations = c(330455))
 dW03 = getWU(stations = 'SBRJ', var="tmin")
 
 test_that("output of getWU has the required columns.", {
-  expect_true(all(c("cidade", "SE", "estacao","tmin") %in% names(dW01)))
-  expect_true(all(c("cidade", "SE", "estacao","tmin") %in% names(dW02)))
-  expect_true(all(c("cidade", "SE", "estacao","tmin") %in% names(dW03)))  
+  expect_true(all(c("cidade", "SE", "estacao") %in% names(dW01)))
+  expect_true(all(c("cidade", "SE", "estacao") %in% names(dW02)))
+  expect_true(all(c("cidade", "SE", "estacao") %in% names(dW03)))  
 })
 
 
@@ -74,7 +74,7 @@ test_that("output of getWU has the required columns.", {
 # Testing mergedata 
 d0<- mergedata(cases = dC31,tweet = dT01, climate = dW01[dW01$estacao=="SBJR",])
 d1<- mergedata(tweet = dT01, climate = dW01[dW01$estacao=="SBJR",])
-d2<- mergedata(cases = dC31, climate = clima[dW01$estacao=="SBJR",])
+d2<- mergedata(cases = dC31, climate = dW01[dW01$estacao=="SBJR",])
 d3<- mergedata(cases = dC31, tweet = tw)
 
 test_that("output of merging is a non empty data.frame.", {
@@ -84,3 +84,9 @@ test_that("output of merging is a non empty data.frame.", {
   expect_more_than(dim(d3)[1], 0)
 })
 
+test_that("output has the minimum set of columns.", {
+      expect_true(all(c("cidade", "SE", "estacao","tweet","casos") %in% names(d0)))
+      expect_true(all(c("cidade", "SE", "estacao","tweet") %in% names(d1)))
+      expect_true(all(c("cidade", "SE", "estacao","casos") %in% names(d2)))
+      expect_true(all(c("cidade", "SE", "tweet","casos") %in% names(d3)))
+})

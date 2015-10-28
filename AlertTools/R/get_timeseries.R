@@ -14,7 +14,7 @@
 #'head(res)
 #'res = getWU(stations = c(330455))
 #'head(res)
-#'res = getWU(stations = 'SBRJ', var="tmin", finalday = "2013-10-10")
+#'res = getWU(stations = 'SBRJ', var="tmin", finalday = "2014-10-10")
 
 getWU <- function(stations, var = "all", finalday = Sys.Date(), datasource = "data/WUdata.rda") {
     
@@ -47,6 +47,8 @@ getWU <- function(stations, var = "all", finalday = Sys.Date(), datasource = "da
     }
     
     # trimming data -----------------------------------------------------------
+    stopifnot(finalday > min(as.Date(d$data, format = "%Y-%m-%d")))
+    
     d <- subset(d, as.Date(d$data, format = "%Y-%m-%d") <= finalday)
     
     # Atribuir SE e agregar por semana-----------------------------------------
@@ -93,7 +95,7 @@ getTweet <- function(city, lastday = Sys.Date(), datasource = "data/tw.rda") {
   twf <- aggregate(tw[,2], by = list(SE = tw$SE), FUN = sum, na.rm = TRUE)
   names(twf)[2] <- "tweet"
   N = dim(twf)[1]
-  twf <- cbind(localidade = rep(city, N), twf)
+  twf <- cbind(cidade = rep(city, N), twf)
   twf
 }
 
@@ -127,11 +129,13 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = TRUE, disease =
     names(st)<-c("SE","casos")
     st$SE<-as.numeric(as.character(st$SE))
     st <- cbind(localidade = city, st)
+    st <- cbind(cidade = city, st)
   } else {
     st <- aggregate(dd$SEM_PRI,by=list(bairro=dd$NM_BAIRRO, SE=dd$SEM_PRI),
                     FUN=length)
     names(st)[3]<-c("casos")
     st$SE<-as.numeric(as.character(st$SE))  
+    st <- cbind(cidade = city, st)
     }  
   st  
 }
@@ -163,14 +167,15 @@ casesinlocality <- function(obj, locality){
   # trocar locs depois pelo acesso direto ao servidor
   load("data/locs.rda")
   bair <- subset(locs, APS == locality)
-  
+  cidade <- unique(obj$cidade, na.rm=TRUE)
   if(dim(bair)[1]==0) warning("no case in this locality")
   # dataframe para guardar os resultados
   load("R/sysdata.rda")
   semanas <- SE$Ano * 100 + SE$SE
   semin <- which(semanas == min(obj$SE))
   semax <- which(semanas == max(obj$SE))
-  st <- data.frame(localidade=locality, SE=semanas[semin:semax], casos = NA)
+  st <- data.frame(cidade = cidade, localidade=locality, 
+                   SE=semanas[semin:semax], casos = NA)
   
   # selecionando os registros dos bairros da localidade
   db <- obj[(obj$bairro %in% bair$bairro),]
@@ -185,32 +190,59 @@ casesinlocality <- function(obj, locality){
 # mergedata --------------------------------------------------------------
 #'@description Merge cases, tweets and climate data for the alert  
 #'@title Merge cases, tweets and climate data.
-#'@param cases data.frame with aggregated cases by locality (or city) and epidemiological week.
+#'@param cases data.frame with aggregated cases by locality (or city)
+#' and epidemiological week.
 #'@param tweet data.frame with tweets aggregated per week
-#'@param climate data.frame with climate data aggregated per week for the station of interest.
+#'@param climate data.frame with climate data aggregated per week for the
+#' station of interest.
 #'@return data.frame with all data available 
 #'@examples
-#'cas = getCases(city = c(330455), lastday ="2014-03-10", withdivision = FALSE) 
-#'tw = getTweet(city = c(330455), lastday = "2014-03-10")
-#'clima = getWU(stations = 'SBRJ', var="tmin", finalday = "2014-03-10")
-#'mergedata(cases = cas,tweet = tw, climate = clima)
-#'mergedata(tweet = tw, climate = clima)
-#'mergedata(cases = cas, climate = clima)
-#'mergedata(tweet = tw, climate = clima)
+#'cas = getCases(city = c(330455), withdivision = FALSE) 
+#'casa = getCases(city = c(330455), withdivision = TRUE) 
+#'cas2 = casesinlocality(obj = casa, locality = "AP1")
+#'tw = getTweet(city = c(330455))
+#'clima = getWU(stations = 'SBRJ', var="tmin")
+#'head(mergedata(cases = cas,tweet = tw, climate = clima))
+#'head(mergedata(cases = cas2,tweet = tw, climate = clima))
+#'head(mergedata(tweet = tw, climate = clima))
+#'head(mergedata(cases = cas, climate = clima))
+#'head(mergedata(cases = cas2, climate = clima))
+#'head(mergedata(tweet = tw, cases = cas))
+#'head(mergedata(tweet = tw, cases = cas2))
 
 mergedata <- function(cases = c(), tweet =c(), climate=c()){
   # checking the datasets
-  if (!is.null(cases) & !all(table(cases$SE)==1)) stop("merging require one line per SE in case dataset")
-  if (!is.null(tweet) & !all(table(tweet$SE)==1)) stop("merging require one line per SE in tweet dataset")
-  if (!is.null(climate) & !all(table(climate$SE)==1)) stop("merging require one line per SE in climate dataset")
+  if (!is.null(cases) & !all(table(cases$SE)==1)) 
+        stop("merging require one line per SE in case dataset")
+  if (!is.null(tweet) & !all(table(tweet$SE)==1)) 
+        stop("merging require one line per SE in tweet dataset")
+  if (!is.null(climate) & !all(table(climate$SE)==1))
+        stop("merging require one line per SE in climate dataset")
   
   # merging
-  if (is.null(cases)) d <- merge(tweet, climate, by="SE", all = TRUE)
-  if (is.null(tweet)) d <- merge(cases, climate,  by="SE", all = TRUE)
-  if (is.null(climate)) d <- merge(cases, tweet,  by="SE", all = TRUE)
+  if (is.null(cases)) {
+        cidade <- unique(climate$cidade,na.rm=TRUE)
+        stopifnot(unique(tweet$localidade) == cidade) # garanting we are merging data from the same place
+        d <- merge(climate, tweet, by=c("cidade", "SE"), all = TRUE)
+        d$cidade <- cidade
+  } else if (is.null(tweet)){
+        cidade <- unique(climate$cidade,na.rm=TRUE)
+        localidade <- unique(cases$localidade,na.rm=TRUE)
+        stopifnot(unique(cases$cidade) == cidade) 
+        d <- merge(cases, climate,  by=c("cidade","SE"), all = TRUE)     
+        d$cidade <- cidade
+        d$localidade <- localidade
+  } else if (is.null(climate)) {
+        cidade <- unique(cases$cidade,na.rm=TRUE)
+        localidade <- unique(cases$localidade,na.rm=TRUE)
+        stopifnot(unique(cases$cidade) == cidade) 
+        d <- merge(cases, tweet,  by=c("cidade","SE"), all = TRUE)
+        d$cidade <- cidade
+        d$localidade <- localidade
+  }
   if (!(is.null(cases) | is.null(tweet) | is.null(climate))){
-    d <- merge(cases, tweet,  by="SE", all = TRUE)
-    d <- merge(d, climate,  by="SE", all=TRUE)  
+    d <- merge(cases, tweet,  by=c("cidade","SE"), all = TRUE)
+    d <- merge(d, climate,  by=c("cidade","SE"), all=TRUE)  
   }
   
   d
