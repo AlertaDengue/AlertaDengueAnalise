@@ -32,15 +32,5 @@ plot(rt$Rt, type="l", xlab = "weeks", ylab = "Rt")
 lines(rt$lwr,lty=3)
 lines(rt$upr,lty=3)
 abline(h = 1, col = 2)
-# Rt delta and normal
-rtdelta<-Rt(obj = res, count = "casos", gtdist="delta", meangt=3)
-rtnorm<-Rt(obj = res, count = "casos", gtdist="normal", meangt=3, sdgt = 1)
-lines(rtdelta$Rt, col = 3)
-lines(rtdelta$lwr,lty = 3, col = 3)
-lines(rtdelta$upr,lty = 3, col = 3)
-lines(rtnorm$Rt, col = 4)
-lines(rtnorm$lwr,lty = 3, col = 4)
-lines(rtnorm$upr,lty = 3, col = 4)
-legend(30,3,c("original","delta","normal"),lty=1, col = c(1,3,4), cex = 0.7)
 }
 

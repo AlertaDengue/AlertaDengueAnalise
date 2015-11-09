@@ -1,6 +1,10 @@
 {
-    "path" : "~/Docs_completo/R_Packages/AlertTools/R",
+    "path" : "~/Documentos/AlertaDengueAnalise/AlertTools/tests/testthat",
     "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 1
+        },
         {
             "ascending" : true,
             "columnIndex" : 2

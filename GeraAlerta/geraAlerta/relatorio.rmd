@@ -271,9 +271,9 @@ plot.alerta2<-function(d2=d2,ap){
 
 ```{r echo=FALSE}
 panderOptions('table.split.table', Inf)
-
+ap="AP1"
 par(mfrow=c(1,1))
-plot.alerta2(d2,"AP1")
+plot.alerta2(d2,ap)
 tab<-tail(d2[d2$APS==ap,c("SE","tmin","casos","casos_est","casos_estmin","casos_estmax","inc","nivel")],n=3)
 names(tab)<-c("SE","temp","casos not","casos est","ICmin","ICmax","inc","nivel")
 rownames(tab) <- NULL

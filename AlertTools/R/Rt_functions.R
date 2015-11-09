@@ -33,7 +33,7 @@ Rtoriginal<-function(obj, count = "casos", meangt, CI = "beta", alpha = .95, a0 
   if (le < 2*meangt) warning("you need a time series                           
                              with size at least 2 generation intervals to estimate Rt")
   
-  message("Rtoriginal is deprecated. Consider using Rtnormal or Rtdelta.")
+  message("Rtoriginal is deprecated. Consider using Rt.")
   ac <- y[meangt:le]
   
   for(i in 1:(meangt-1)) ac <- ac+y[(meangt-i):(le-i)]    
@@ -45,6 +45,7 @@ Rtoriginal<-function(obj, count = "casos", meangt, CI = "beta", alpha = .95, a0 
   obj$Rt[(meangt + 1):le] <- jk1/jk
   obj$upr <- NA
   obj$lwr <- NA
+  obj$p1 <- NA
   ## p1 = Pr(R>1) 
   if (CI == "beta"){
     for( k in 1: (le-meangt)){

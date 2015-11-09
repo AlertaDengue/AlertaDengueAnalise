@@ -4,12 +4,14 @@
 \alias{getTweet}
 \title{Get Tweeter Data}
 \usage{
-getTweet(city, datasource = "test")
+getTweet(city, lastday = Sys.Date(), datasource = "data/tw.rda")
 }
 \arguments{
 \item{city}{city's geocode.}
 
-\item{datasource}{server or "test" if using test dataset.}
+\item{datasource}{server or "data/tw.rda" if using test dataset.}
+
+\item{finalday}{last day. Default is the last available.}
 }
 \value{
 data.frame with weekly counts of people tweeting on dengue.
@@ -20,6 +22,8 @@ source of this data is the Observatorio da Dengue (UFMG).
 }
 \examples{
 res = getTweet(city = c(330455)) # Rio de Janeiro
-head(res)
+tail(res)
+res = getTweet(city = c(330455), lastday = "2014-03-01") # Rio de Janeiro
+tail(res)
 }
 

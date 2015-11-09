@@ -4,12 +4,15 @@
 \alias{getWU}
 \title{Get Climate Data}
 \usage{
-getWU(stations, var = "all", datasource = "test")
+getWU(stations, var = "all", finalday = Sys.Date(),
+  datasource = "data/WUdata.rda")
 }
 \arguments{
 \item{stations}{vector with the stations codes (4 digits) OR the city's geocode.}
 
 \item{var}{climate variables (default var="all": all variables available )}
+
+\item{finalday}{last day. Default is the last available.}
 }
 \value{
 data.frame with the weekly data (cidade estacao data tmin tmed tmax umin umed umax pressaomin pressaomed pressaomax)
@@ -22,6 +25,6 @@ res = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'))
 head(res)
 res = getWU(stations = c(330455))
 head(res)
-res = getWU(stations = 'SBRJ', var="tmin")
+res = getWU(stations = 'SBRJ', var="tmin", finalday = "2014-10-10")
 }
 

@@ -4,27 +4,30 @@
 # -----------------------------------------------------------
 
 
-
-#greenyellow --------------------------------------------------------------------
-#'@title Define conditions to issue an alert of 2 levels Green/Yellow.
-#'@description Yellow is raised when environmental conditions required for
-#'positive mosquito population growth are detected, green otherwise.
-#'@param obj dataset from the mergedata function.
-#'@param gy criteria to change from green to yellow 
-#'@param yg criteria to change from yellow to green
+#twoalert --------------------------------------------------------------------
+#'@title Define conditions to issue a 2 level alert Green/Yellow.
+#'@description This function is meant to be used when case data is absent. 
+#'In this scenario, only two levels exist: Yellow if environmental conditions 
+#'required for positive mosquito population growth are detected, or if social activity
+#'increases. Green otherwise. But clearly, the user can define any rule. 
+#'@param obj dataset from the mergedata function containing at least SE, and the 
+#'variables used for alert calculation.
+#'@param cy criteria to set the yellow alarm, written as a vector with three elements.
+#'The first is the condition (see the example), the second is the number of times the
+#'condition must be tru to issue the yellow alert, and the third, the number of weeks
+#'false to turn off the alert (green).
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
 #'tw <- getTweet(city = c(330455))
 #'clima <- getWU(stations = 'SBRJ', var="tmin")
 #'d<- mergedata(tweet = tw, climate = clima)
-#'critgy <- c("tmin > 22 | tweet > 80", 3)
-#'crityg <- c("tmin <= 22 & tweet <= 80", 3)
-#'alerta <- greenyellow(d, gy = critgy, yg = crityg)
-#'names(alerta)
+#'crity <- c("tmin > 22", 3, 3)
+#'alerta <- twoalert(d, cy = crity)
 #'head(alerta$indices)
+#'plot.alerta(alerta, var="tmin")
 
-greenyellow <- function(obj, gy, yg){
+twoalert <- function(obj, cy){
       le <- dim(obj)[1] 
       # accumulating condition function
       accumcond <- function(vec, lag) {
@@ -35,30 +38,120 @@ greenyellow <- function(obj, gy, yg){
       }
       
       # data.frame to store results
-      indices <- data.frame(gytrue = rep(NA,le), ngytrue = rep(NA,le),
-                            ygtrue = rep(NA,le), nygtrue = rep(NA,le))
-            
+      indices <- data.frame(ytrue = rep(NA,le), nytrue = rep(NA,le))
+                            
       # calculating each condition (week and accumulated)  
 
-      indices$gytrue <- with(obj, as.numeric(eval(parse(text = gy[1]))))
-      indices$ngytrue <- with(obj, accumcond(indices$gytrue, as.numeric(gy[2])))
-      indices$ygtrue <- with(obj, as.numeric(eval(parse(text = yg[1]))))
-      indices$nygtrue <- with(obj, accumcond(indices$ygtrue, as.numeric(yg[2])))
-      
+      indices$ytrue <- with(obj, as.numeric(eval(parse(text = cy[1]))))
+      indices$nytrue <- with(obj, accumcond(indices$ytrue, as.numeric(cy[2])))
+            
       # setting the level
       indices$level <- 1
-      indices$level[indices$ngytrue == as.numeric(gy[2])] <-2
-      indices$level[indices$nygtrue == as.numeric(yg[2])] <- 1
+      indices$level[indices$nytrue == as.numeric(cy[2])] <-2
+      for(i in 1:cy[3]){  # delay to turn off
+            indices$level[which(indices$nytrue == as.numeric(cy[3])) + i] <-2      
+      }
       
-      return(list(data=obj, indices=indices, rules=paste(gy,",",yg), n = 2))      
+      return(list(data=obj, indices=indices, rules=paste(cy), n = 2))      
 }
 
+
+#fouralert ---------------------------------------------------------------------
+#'@title Define conditions to issue a 4 level alert Green-Yellow-Orange-Red.
+#'@description Yellow is raised when environmental conditions required for
+#'positive mosquito population growth are detected, green otherwise.Orange 
+#'indicates evidence of sustained transmission, red indicates evidence of 
+#'an epidemic scenario.  
+#'@param obj dataset from the mergedata function.
+#'@param cy conditions for yellow. 
+#'@param co conditions for orange.
+#'@param cr conditions for red.
+#'@return data.frame with the week condition and the number of weeks within the 
+#'last lag weeks with conditions = TRUE.
+#'@examples
+#'tw <- getTweet(city = c(330455))
+#'clima <- getWU(stations = 'SBRJ', var="tmin")
+#'cas = getCases(city = c(330455), withdivision = FALSE)
+#'casfit<-adjustIncidence(obj=cas)
+#'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
+#'d<- mergedata(cases = casr, tweet = tw, climate = clima)
+#'crity <- c("tmin > 22", 3, 3)
+#'crito <- c("p1 > 0.9", 3, 0)
+#'critr <- c("inc > 100", 3, 0)
+#'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
+#'plot.alerta(alerta, "casos")
+
+fouralert <- function(obj, cy, co, cr, pop){
+      le <- dim(obj)[1]
+      
+      # calculate incidence
+      if("tcasesmed" %in% names(obj)){
+            obj$inc <- obj$tcasesmed / pop * 100000      
+      } else{
+            obj$inc <- obj$casos / pop * 100000      
+      }
+      
+      # accumulating condition function
+      accumcond <- function(vec, lag) {
+            le <- length(vec)
+            ac <- vec[lag:le]
+            for(j in 1:(lag-1)) ac <- rowSums(cbind(ac, vec[(lag-j):(le-j)]), na.rm = TRUE)
+            c(rep(NA,(lag-1)), ac)
+      }
+      
+      
+      # data.frame to store results
+      indices <- data.frame(cytrue = rep(NA,le), nytrue = rep(NA,le),
+                            cotrue = rep(NA,le), notrue = rep(NA,le),
+                            crtrue = rep(NA,le), nrtrue = rep(NA,le)
+                            )
+      
+      # calculating each condition (week and accumulated)  
+      
+      assertcondition <- function(dd, cond){
+            condtrue <- with(dd, as.numeric(eval(parse(text = cond[1]))))
+            ncondtrue <- with(dd, accumcond(condtrue, as.numeric(cond[2])))
+            cbind(condtrue, ncondtrue)
+      }
+      
+      indices[,c("cytrue", "nytrue")] <- assertcondition(obj , cy)
+      indices[,c("cotrue", "notrue")] <- assertcondition(obj , co)
+      indices[,c("crtrue", "nrtrue")] <- assertcondition(obj, cr)
+            
+      # setting the level
+      indices$level <- 1
+      indices$level[indices$nytrue == as.numeric(cy[2])] <-2
+      indices$level[indices$notrue == as.numeric(co[2])] <-3
+      indices$level[indices$nrtrue == as.numeric(cr[2])] <-4
+
+      # delay turnoff
+      delayturnoff <- function(cond, level, d=indices){
+            delay = as.numeric(as.character(cond[3]))
+            if(delay > 0){
+                  cand <- c()
+                  for(i in 1:delay){
+                        cand <- c(cand, which(d$level==level) + i)
+                  }
+                  for (j in cand){
+                        d$level[j] <- max(d$level[j], level)
+                  }
+            }
+            d
+      } 
+      indices <- delayturnoff(cond=cr,level=4)
+      indices <- delayturnoff(cond=co,level=3)
+      indices <- delayturnoff(cond=cy,level=2)
+      
+
+      return(list(data=obj, indices=indices, rules=paste("cy", ";", "co", ";",
+                                                         "cr"),n = 4))      
+}
 
 
 #plot.alert --------------------------------------------------------------------
 #'@title Plot the time series of warnings.
-#'@description 
-#'@param obj object created by the greenyellow or green2red functions.
+#'@description Function to plot the output of 
+#'@param obj object created by the twoalert and fouralert functions.
 #'@param var to be ploted in the graph, usually cases when available.  
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
 #'@return a plot
@@ -68,7 +161,7 @@ greenyellow <- function(obj, gy, yg){
 #'d<- mergedata(tweet = tw, climate = clima)
 #'critgy <- c("tmin > 22 | tweet > 10", 3)
 #'crityg <- c("tmin <= 22 & tweet <= 10", 3)
-#'alerta <- greenyellow(d, gy = critgy, yg = crityg)
+#'alerta <- twoalert(d, gy = critgy, yg = crityg)
 #'plot.alerta(alerta, "tmin")
 
 
@@ -82,11 +175,11 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
       x <- 1:length(obj$data$SE)
       ticks <- seq(1, length(obj$data$SE), length.out = 8)
       
-      if (obj$n == 2){
+      if (obj$n == 2 | obj$n == 4){
             plot(x, obj$data[,var], xlab = "SE", ylab = var, type="l", axes=FALSE)
             axis(2)
             axis(1, at = ticks, labels = obj$data$SE[ticks], las=3)
-            for (i in 1:2) {
+            for (i in 1:obj$n) {
                   onde <- which(obj$indices$level==i) 
                   if (length(onde))
                         segments(x[onde],0,x[onde],(obj$data[onde,var]),col=cores[i],lwd=3)
@@ -98,7 +191,7 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
       
             
 
-#setOrange --------------------------------------------------------------------
+#isOrange --------------------------------------------------------------------
 #'@title Raise orange alert if sustained transmission is detected.
 #'@description "Orange" is defined by effective reproductive number greater than 1. 
 #'Rt must be computed before using this function.
@@ -112,7 +205,7 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
 #'resd <- aggrbylocality(d = res, locality="AP1") # Rio de Janeiro
 #'resfit <- adjustIncidence(se = res$SE, y = res$casos)
 #'rtnorm<-Rt(obj = resfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
-#'ora = setOrange(obj = rtnorm, pvalue = 0.9, lag= 3) 
+#'ora = isOrange(obj = rtnorm, pvalue = 0.9, lag= 3) 
 #'head(ora)
 #'x = 1:length(ora$SE)
 #'plot(x, ora$Rt, type="l", xlab= "weeks", ylab = "Rt")
@@ -121,7 +214,7 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
 #'abline(h = 1, col =2)
 #'points(x[ora$oweek==1], ora$Rt[ora$oweek==1], col="orange", pch=16)
 
-setOrange <- function(obj, pvalue = 0.9, lag=3){
+isOrange <- function(obj, pvalue = 0.9, lag=3){
   
   if(!("p1" %in% names(obj))) stop("obj must be created by an Rt function")
   
@@ -137,7 +230,7 @@ setOrange <- function(obj, pvalue = 0.9, lag=3){
 }
 
 
-#setRed --------------------------------------------------------------------
+#isRed --------------------------------------------------------------------
 #'@title Raise red alert if incidence reaches above a threshold. 
 #'@description "Red" indicates high dengue incidence, defined by a threshold provided 
 #'by the user. The WHO recommends 300 per 100.000. 
@@ -152,14 +245,14 @@ setOrange <- function(obj, pvalue = 0.9, lag=3){
 #'res = getCases(city = c(330455), withdivision = TRUE) # Rio de Janeiro
 #'resd = aggrbylocality(d = res, locality="AP1") # Rio de Janeiro
 #'resfit<-adjustIncidence(se = resd$SE, y = resd$casos)
-#'red = setRed(obj = resfit, pop = 30000, ccrit = 10, lag=3)
+#'red = isRed(obj = resfit, pop = 30000, ccrit = 10, lag=3)
 #'tail(red)
 #'x = 1:length(red$SE)
 #'plot(x, red$inc, type="l", xlab= "weeks", ylab = "incidence")
 #'abline(h = 10, col =2)
 #'points(x[red$rweek==1], red$inc[red$rweek==1], col="red", pch=16)
 
-setRed <- function(obj, pop, ccrit=100, lag=3){
+isRed <- function(obj, pop, ccrit=100, lag=3){
   
   if("tcasesICmin" %in% names(obj)) {}
   else stop("please carry out the incidence adjustment first.")
@@ -179,75 +272,4 @@ setRed <- function(obj, pop, ccrit=100, lag=3){
   }
 
 
-
-#classify ------------------------------------------------------------
-#'@title Classifies the disease time series into transmission levels.
-#'@description This function receives the time series inputs (cases, tweets, 
-#'climate) and return levels of alert (1 (low) to 4 (high)). It will run the
-#' set color functions and them combine them hierarchically.    
-#'@param yellow object from setyellow function.
-#'@param orange object from setorange function.
-#'@param red object from setred function.
-#'@return data.frame with
-#'@examples
-#' #This is the whole sequence of the alert. Getting data:
-#'res <- getCases(city = c(330455), withdivision = TRUE) # get case data from Rio de Janeiro
-#'resd <- aggrbylocality(d = res, locality="AP1") # case data from a locality in Rio de Janeiro
-#'tweet <- getTweet(city = c(330455)) # Rio de Janeiro # get tweeter data
-#'clima <- getWU(stations = 'SBRJ', var = "tmin") # get locality's tmin from local meteorological station
-#' #Adjust incidence
-#'adjcase <- adjustIncidence(se = resd$SE, y = resd$casos)
-#' # Calculate Rt
-#'rtnorm<-Rt(obj = resfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
-#' #Calculate each level
-#'yellowalert <- setYellow(temp = clima$tmin, se = clima$SE, tempcrit = 22)
-#'orangealert <- setOrange(obj = rtnorm, pvalue = 0.9, lag= 3) 
-#'redalert <- setRed(obj = resfit, pop = 30000, ccrit = 100, lag=3)
-#' # green - yellow levels only 
-#'resu <- classify(yel = yellowalert) # with only green-yellow levels
-#'tail(resu)
-#'x = 1:length(resu$temp)
-#'plot(x,resu$temp, type="l", xlab= "weeks", ylab = "temp")
-#'points(x[resu$level==2], resu$temp[resu$level==2], col="yellow",pch=16)
-#' # all four levels
-#'resu <- classify(yel = yellowalert, ora = orangealert, red = redalert, inerciaon=1, inerciaoff=c(NA,1,1,1)) 
-#'x = 1:length(resu$casos)
-#'plot(x,resu$casos, type="l", xlab= "weeks", ylab = "casos")
-#'points(x[resu$level==2], resu$casos[resu$level==2], col="yellow",pch=16)
-#'points(x[resu$level==3], resu$casos[resu$level==3], col="orange",pch=16)
-#'points(x[resu$level==4], resu$casos[resu$level==4], col="red",pch=16)
-
-
-classify <- function(yel, ora=c(), red=c(), inerciaon=3, inerciaoff = c(NA,3,3,3)){
-  
-  obj <- yel
-  # defining the number of levels from the input
-  if (is.null(obj)) stop("calculate setYellow")
-  
-  ncol <- 2
-  
-  obj$level <- NA
-  les = dim(obj)[1]
-  obj$level[intersect(6:les,which(obj$yacc < inerciaon))] <-  1 # first color (green)
-  obj$level[intersect(6:les,which(obj$yacc >= inerciaon))] <-  2 # second color (yellow)
-  for (i in 1:inerciaoff[2]) obj$level[intersect(6:les,which(yel$yacc>=3)+i)] <- 2
-  
-  if (is.null(yel) == FALSE & is.null(ora) == FALSE & is.null(red) == FALSE){ # add orange and red
-    obj <- merge(obj, ora, by="SE", by.all = TRUE)
-    red <- subset(red, select=-casos)
-    obj <- merge(obj, red, by="SE", by.all = TRUE)
-    ncol <- 4
-    obj$level[intersect(6:les,which(ora$oacc >= inerciaon))] <- 3 
-    for (i in 1:inerciaoff[3]) obj$level[intersect(6:les,which(ora$oacc>=3)+i)] <- 3
-    
-    obj$level[intersect(6:les,which(red$racc >= inerciaon))] <- 4
-    for (i in 1:inerciaoff[4]) obj$level[intersect(6:les,which(red$racc>=3)+i)] <- 4  
-  }
-    
-  if(ncol == 2) message("Alert with 2 levels (green - yellow)")
-  else message("Alert with 4 levels (all colors)")
-    
-  
-  obj
-}
 

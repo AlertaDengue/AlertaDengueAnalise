@@ -75,7 +75,7 @@ test_that("output of getWU has the required columns.", {
 d0<- mergedata(cases = dC31,tweet = dT01, climate = dW01[dW01$estacao=="SBJR",])
 d1<- mergedata(tweet = dT01, climate = dW01[dW01$estacao=="SBJR",])
 d2<- mergedata(cases = dC31, climate = dW01[dW01$estacao=="SBJR",])
-d3<- mergedata(cases = dC31, tweet = tw)
+d3<- mergedata(cases = dC31, tweet = dT01)
 
 test_that("output of merging is a non empty data.frame.", {
   expect_more_than(dim(d0)[1], 0)
@@ -90,3 +90,5 @@ test_that("output has the minimum set of columns.", {
       expect_true(all(c("cidade", "SE", "estacao","casos") %in% names(d2)))
       expect_true(all(c("cidade", "SE", "tweet","casos") %in% names(d3)))
 })
+
+
