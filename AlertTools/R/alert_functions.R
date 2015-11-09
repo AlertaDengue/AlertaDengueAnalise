@@ -202,9 +202,8 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
 #'last lag weeks with conditions = TRUE
 #'@examples
 #'res <- getCases(city = c(330455), withdivision = FALSE) # Rio de Janeiro
-#'resd <- aggrbylocality(d = res, locality="AP1") # Rio de Janeiro
-#'resfit <- adjustIncidence(se = res$SE, y = res$casos)
-#'rtnorm<-Rt(obj = resfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
+#'resfit <- adjustIncidence(obj = res)
+#'rtnorm<-Rt(obj = res, count = "casos", gtdist="normal", meangt=3, sdgt = 1)
 #'ora = isOrange(obj = rtnorm, pvalue = 0.9, lag= 3) 
 #'head(ora)
 #'x = 1:length(ora$SE)
@@ -243,10 +242,9 @@ isOrange <- function(obj, pvalue = 0.9, lag=3){
 #'last lag weeks with conditions = TRUE
 #'@examples
 #'res = getCases(city = c(330455), withdivision = TRUE) # Rio de Janeiro
-#'resd = aggrbylocality(d = res, locality="AP1") # Rio de Janeiro
-#'resfit<-adjustIncidence(se = resd$SE, y = resd$casos)
-#'red = isRed(obj = resfit, pop = 30000, ccrit = 10, lag=3)
-#'tail(red)
+#'resd = casesinlocality(res, "AP1") # Rio de Janeiro
+#'resfit<-adjustIncidence(resd)
+#'red = isRed(resfit, pop = 30000, ccrit = 10, lag=3)
 #'x = 1:length(red$SE)
 #'plot(x, red$inc, type="l", xlab= "weeks", ylab = "incidence")
 #'abline(h = 10, col =2)
