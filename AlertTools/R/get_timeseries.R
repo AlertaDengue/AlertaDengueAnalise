@@ -5,62 +5,56 @@
 # GetWU --------------------------------------------------------
 #'@description Create weekly time series from meteorological station data in server
 #'@title Get Climate Data
-#'@param stations vector with the stations codes (4 digits) OR the city's geocode.
+#'@param stations vector with the stations codes (4 digits).
+#'@param city vector with the cities codes (6 digits). Not implemented yet. 
 #'@param var climate variables (default var="all": all variables available )
-#'@param finalday last day. Default is the last available. 
+#'@param finalday last day. Default is the last available. Format = Year-month-day. 
+#'@param datasource use "db" to refer to the sql server. Default is the test dataset.
 #'@return data.frame with the weekly data (cidade estacao data tmin tmed tmax umin umed umax pressaomin pressaomed pressaomax)
 #'@examples
 #'res = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'))
-#'head(res)
-#'res = getWU(stations = c(330455))
-#'head(res)
 #'res = getWU(stations = 'SBRJ', var="tmin", finalday = "2014-10-10")
 
-getWU <- function(stations, var = "all", finalday = Sys.Date(), datasource = "data/WUdata.rda") {
-    
-    stopifnot(all(nchar(stations) == 6) || all(nchar(stations) == 4)) # incluir teste de existencia da cidade
-  
-    # Test data -------------------------------------------
-    if (datasource == "data/WUdata.rda") load(datasource)
-    
-    # if cities are given as argument
-    if (all(nchar(stations) == 6)) { 
-        if (datasource == "data/WUdata.rda") sta = unique(WUdata$estacao[WUdata$cidade%in%stations]) 
-        message("the stations belong to the following cities:")
-        print(sta)
-    } 
-    # if stations are given as argument
-    if (all(nchar(stations) == 4)) {  
-        if (datasource == "data/WUdata.rda") {
-          cities = unique(WUdata$cidade[WUdata$estacao%in%stations])
-          sta = stations
-        }
-        message("the following stations were found:")
-        print(sta)
-    }
-    
-    # getting the climate data (all from each sta)------------------------------
-    
-    if (datasource == "data/WUdata.rda") {
-      if (all(nchar(stations) == 6)) d <- WUdata
-      else d <- subset(WUdata, estacao %in% stations)
-    }
-    
-    # trimming data -----------------------------------------------------------
-    stopifnot(finalday > min(as.Date(d$data, format = "%Y-%m-%d")))
-    
-    d <- subset(d, as.Date(d$data, format = "%Y-%m-%d") <= finalday)
-    
-    # Atribuir SE e agregar por semana-----------------------------------------
-    d$SE <- data2SE(d$data, format = "%Y-%m-%d")
-    n = dim(d)[2] - 1
-    df <- aggregate(d[, 4:n], by = list(cidade = d$cidade, SE = d$SE, estacao = d$estacao), 
-                    FUN = mean, na.rm = TRUE)
-    
-    if (var != "all") df <- subset(df, select = c("cidade","SE","estacao",var))
-    df
+getWU <- function(stations, var = "all", city=c(), finalday = Sys.Date(), datasource = "data/WUdata.rda") {
+      
+      if (!all(nchar(stations) == 4)) stop("'stations' should be a vector of 4 digit station names")
+      nsta = length(stations)
+      
+      # loading Test data -------------------------------------------
+      if (datasource == "data/WUdata.rda") {
+            load(datasource)
+            cities = unique(WUdata$cidade[WUdata$estacao%in%stations])
+            message(paste("stations belong to city(es):", cities))
+            d <- subset(WUdata, estacao %in% stations)
+            stopifnot(finalday > min(as.Date(d$data, format = "%Y-%m-%d")))
+            d <- subset(d, as.Date(d$data, format = "%Y-%m-%d") <= finalday)
+            }                  
+      
+      # loading data from sql server-------------------------------------------
+      if (datasource == "db") {
+            # creating the sql query for the stations
+            sql1 = paste("'", stations[1], sep = "")
+            if (ns > 1) for (i in 2:ns) sql1 = paste(sql1, stations[i], sep = "','")
+            sql1 <- paste(sql1, "'", sep = "")
+            
+            # sql query for the date
+            sql2 = paste("'", finalday, "'", sep = "")
+            
+            sql <- paste("SELECT * from \"Municipio\".\"Clima_wu\" WHERE 
+                        \"Estacao_wu_estacao_id\"
+                        IN  (", sql1, ") AND data_dia <= ",sql2)
+            d <- dbGetQuery(con,sql)
+            if (!var[1]=="all") d <- d[,var]
+      }
+      
+      # Atribuir SE e agregar por semana-----------------------------------------
+      d$SE <- data2SE(d$data, format = "%Y-%m-%d")
+      n = dim(d)[2] - 1
+      df <- aggregate(d[, 4:n], by = list(cidade = d$cidade, SE = d$SE, estacao = d$estacao), 
+                      FUN = mean, na.rm = TRUE)
+      df
 }
- 
+
 # GetTweet --------------------------------------------------------------
 #'@description Create weekly time series from tweeter data from server. The 
 #'source of this data is the Observatorio da Dengue (UFMG).
@@ -77,26 +71,26 @@ getWU <- function(stations, var = "all", finalday = Sys.Date(), datasource = "da
 
 
 getTweet <- function(city, lastday = Sys.Date(), datasource = "data/tw.rda") {
-  
-  stopifnot(all(nchar(city) == 6)) # incluir teste de existencia da cidade  
-  if (datasource == "data/tw.rda") {
-    load(datasource)
-  } else if (datasource == "db"){
-    c1 <- paste("select data_dia, numero from \"Municipio\".\"Tweet\" where 
+      
+      stopifnot(all(nchar(city) == 6)) # incluir teste de existencia da cidade  
+      if (datasource == "data/tw.rda") {
+            load(datasource)
+      } else if (datasource == "db"){
+            c1 <- paste("select data_dia, numero from \"Municipio\".\"Tweet\" where 
                 \"Municipio_geocodigo\" between ", city,"0", sep = "", " ", "and", " ",city,"9")
-    tw <- dbGetQuery(con,c1)
-    names(tw)<-c("data","tweet")
-  }
-  
-  tw <- subset(tw, as.Date(data, format = "%Y-%m-%d") <= lastday)
-  
-  # Atribuir SE e agregar por semana-----------------------------------------
-  tw$SE <- data2SE(tw$data, format = "%Y-%m-%d")
-  twf <- aggregate(tw[,2], by = list(SE = tw$SE), FUN = sum, na.rm = TRUE)
-  names(twf)[2] <- "tweet"
-  N = dim(twf)[1]
-  twf <- cbind(cidade = rep(city, N), twf)
-  twf
+            tw <- dbGetQuery(con,c1)
+            names(tw)<-c("data","tweet")
+      }
+      
+      tw <- subset(tw, as.Date(data, format = "%Y-%m-%d") <= lastday)
+      
+      # Atribuir SE e agregar por semana-----------------------------------------
+      tw$SE <- data2SE(tw$data, format = "%Y-%m-%d")
+      twf <- aggregate(tw[,2], by = list(SE = tw$SE), FUN = sum, na.rm = TRUE)
+      names(twf)[2] <- "tweet"
+      N = dim(twf)[1]
+      twf <- cbind(cidade = rep(city, N), twf)
+      twf
 }
 
 
@@ -118,26 +112,26 @@ getTweet <- function(city, lastday = Sys.Date(), datasource = "data/tw.rda") {
 #'tail(dC0)
 
 getCases <- function(city, lastday = Sys.Date(),  withdivision = TRUE, disease = "dengue", datasource = "data/sinan.rda") {
-  
-  stopifnot(all(nchar(city) == 6)) # incluir teste de existencia da cidade  
-  
-  if (datasource == "data/sinan.rda") load(datasource)
-  
-  dd <- subset(sinan, DT_DIGITA <= lastday)
-  if (withdivision == FALSE){
-    st <- aggregate(dd$SEM_PRI,by=list(dd$SEM_PRI),FUN=length)
-    names(st)<-c("SE","casos")
-    st$SE<-as.numeric(as.character(st$SE))
-    st <- cbind(localidade = city, st)
-    st <- cbind(cidade = city, st)
-  } else {
-    st <- aggregate(dd$SEM_PRI,by=list(bairro=dd$NM_BAIRRO, SE=dd$SEM_PRI),
-                    FUN=length)
-    names(st)[3]<-c("casos")
-    st$SE<-as.numeric(as.character(st$SE))  
-    st <- cbind(cidade = city, st)
-    }  
-  st  
+      
+      stopifnot(all(nchar(city) == 6)) # incluir teste de existencia da cidade  
+      
+      if (datasource == "data/sinan.rda") load(datasource)
+      
+      dd <- subset(sinan, DT_DIGITA <= lastday)
+      if (withdivision == FALSE){
+            st <- aggregate(dd$SEM_PRI,by=list(dd$SEM_PRI),FUN=length)
+            names(st)<-c("SE","casos")
+            st$SE<-as.numeric(as.character(st$SE))
+            st <- cbind(localidade = city, st)
+            st <- cbind(cidade = city, st)
+      } else {
+            st <- aggregate(dd$SEM_PRI,by=list(bairro=dd$NM_BAIRRO, SE=dd$SEM_PRI),
+                            FUN=length)
+            names(st)[3]<-c("casos")
+            st$SE<-as.numeric(as.character(st$SE))  
+            st <- cbind(cidade = city, st)
+      }  
+      st  
 }
 
 
@@ -160,29 +154,29 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = TRUE, disease =
 #'head(dC1)
 
 casesinlocality <- function(obj, locality){
-  
-  if(!all(c("bairro", "SE", "casos") %in% names(obj))) stop("only use function caseinlocality 
+      
+      if(!all(c("bairro", "SE", "casos") %in% names(obj))) stop("only use function caseinlocality 
                                                              with dataframe with columns bairro, SE, casos.
                                                              Use the output of getCases(withdivision=TRUE)")
-  # trocar locs depois pelo acesso direto ao servidor
-  load("data/locs.rda")
-  bair <- subset(locs, APS == locality)
-  cidade <- unique(obj$cidade, na.rm=TRUE)
-  if(dim(bair)[1]==0) warning("no case in this locality")
-  # dataframe para guardar os resultados
-  load("R/sysdata.rda")
-  semanas <- SE$Ano * 100 + SE$SE
-  semin <- which(semanas == min(obj$SE))
-  semax <- which(semanas == max(obj$SE))
-  st <- data.frame(cidade = cidade, localidade=locality, 
-                   SE=semanas[semin:semax], casos = NA)
-  
-  # selecionando os registros dos bairros da localidade
-  db <- obj[(obj$bairro %in% bair$bairro),]
-    
-  for(i in 1:dim(st)[1]) st$casos[i] <- sum(db$SE == st$SE[i])
-    
-  return(st)
+      # trocar locs depois pelo acesso direto ao servidor
+      load("data/locs.rda")
+      bair <- subset(locs, APS == locality)
+      cidade <- unique(obj$cidade, na.rm=TRUE)
+      if(dim(bair)[1]==0) warning("no case in this locality")
+      # dataframe para guardar os resultados
+      load("R/sysdata.rda")
+      semanas <- SE$Ano * 100 + SE$SE
+      semin <- which(semanas == min(obj$SE))
+      semax <- which(semanas == max(obj$SE))
+      st <- data.frame(cidade = cidade, localidade=locality, 
+                       SE=semanas[semin:semax], casos = NA)
+      
+      # selecionando os registros dos bairros da localidade
+      db <- obj[(obj$bairro %in% bair$bairro),]
+      
+      for(i in 1:dim(st)[1]) st$casos[i] <- sum(db$SE == st$SE[i])
+      
+      return(st)
 }
 
 
@@ -211,40 +205,41 @@ casesinlocality <- function(obj, locality){
 #'head(mergedata(tweet = tw, cases = cas2))
 
 mergedata <- function(cases = c(), tweet =c(), climate=c()){
-  # checking the datasets
-  if (!is.null(cases) & !all(table(cases$SE)==1)) 
-        stop("merging require one line per SE in case dataset")
-  if (!is.null(tweet) & !all(table(tweet$SE)==1)) 
-        stop("merging require one line per SE in tweet dataset")
-  if (!is.null(climate) & !all(table(climate$SE)==1))
-        stop("merging require one line per SE in climate dataset")
-  
-  # merging
-  if (is.null(cases)) {
-        cidade <- unique(climate$cidade,na.rm=TRUE)
-        stopifnot(unique(tweet$localidade) == cidade) # garanting we are merging data from the same place
-        d <- merge(climate, tweet, by=c("cidade", "SE"), all = TRUE)
-        d$cidade <- cidade
-  } else if (is.null(tweet)){
-        cidade <- unique(climate$cidade,na.rm=TRUE)
-        localidade <- unique(cases$localidade,na.rm=TRUE)
-        stopifnot(unique(cases$cidade) == cidade) 
-        d <- merge(cases, climate,  by=c("cidade","SE"), all = TRUE)     
-        d$cidade <- cidade
-        d$localidade <- localidade
-  } else if (is.null(climate)) {
-        cidade <- unique(cases$cidade,na.rm=TRUE)
-        localidade <- unique(cases$localidade,na.rm=TRUE)
-        stopifnot(unique(cases$cidade) == cidade) 
-        d <- merge(cases, tweet,  by=c("cidade","SE"), all = TRUE)
-        d$cidade <- cidade
-        d$localidade <- localidade
-  }
-  if (!(is.null(cases) | is.null(tweet) | is.null(climate))){
-    d <- merge(cases, tweet,  by=c("cidade","SE"), all = TRUE)
-    d <- merge(d, climate,  by=c("cidade","SE"), all=TRUE)  
-  }
-  
-  d
+      # checking the datasets
+      if (!is.null(cases) & !all(table(cases$SE)==1)) 
+            stop("merging require one line per SE in case dataset")
+      if (!is.null(tweet) & !all(table(tweet$SE)==1)) 
+            stop("merging require one line per SE in tweet dataset")
+      if (!is.null(climate) & !all(table(climate$SE)==1))
+            stop("merging require one line per SE in climate dataset")
+      
+      # merging
+      if (is.null(cases)) {
+            cidade <- unique(climate$cidade,na.rm=TRUE)
+            stopifnot(unique(tweet$localidade) == cidade) # garanting we are merging data from the same place
+            d <- merge(climate, tweet, by=c("cidade", "SE"), all = TRUE)
+            d$cidade <- cidade
+      } else if (is.null(tweet)){
+            cidade <- unique(climate$cidade,na.rm=TRUE)
+            localidade <- unique(cases$localidade,na.rm=TRUE)
+            stopifnot(unique(cases$cidade) == cidade) 
+            d <- merge(cases, climate,  by=c("cidade","SE"), all = TRUE)     
+            d$cidade <- cidade
+            d$localidade <- localidade
+      } else if (is.null(climate)) {
+            cidade <- unique(cases$cidade,na.rm=TRUE)
+            localidade <- unique(cases$localidade,na.rm=TRUE)
+            stopifnot(unique(cases$cidade) == cidade) 
+            d <- merge(cases, tweet,  by=c("cidade","SE"), all = TRUE)
+            d$cidade <- cidade
+            d$localidade <- localidade
+      }
+      if (!(is.null(cases) | is.null(tweet) | is.null(climate))){
+            d <- merge(cases, tweet,  by=c("cidade","SE"), all = TRUE)
+            d <- merge(d, climate,  by=c("cidade","SE"), all=TRUE)  
+      }
+      
+      d
 }
+
 

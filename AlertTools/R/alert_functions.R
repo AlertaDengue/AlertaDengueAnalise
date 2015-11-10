@@ -189,8 +189,6 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
 }
       
       
-            
-
 #isOrange --------------------------------------------------------------------
 #'@title Raise orange alert if sustained transmission is detected.
 #'@description "Orange" is defined by effective reproductive number greater than 1. 

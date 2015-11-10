@@ -4,15 +4,19 @@
 \alias{getWU}
 \title{Get Climate Data}
 \usage{
-getWU(stations, var = "all", finalday = Sys.Date(),
+getWU(stations, var = "all", city = c(), finalday = Sys.Date(),
   datasource = "data/WUdata.rda")
 }
 \arguments{
-\item{stations}{vector with the stations codes (4 digits) OR the city's geocode.}
+\item{stations}{vector with the stations codes (4 digits).}
 
 \item{var}{climate variables (default var="all": all variables available )}
 
-\item{finalday}{last day. Default is the last available.}
+\item{city}{vector with the cities codes (6 digits). Not implemented yet.}
+
+\item{finalday}{last day. Default is the last available. Format = Year-month-day.}
+
+\item{datasource}{use "db" to refer to the sql server. Default is the test dataset.}
 }
 \value{
 data.frame with the weekly data (cidade estacao data tmin tmed tmax umin umed umax pressaomin pressaomed pressaomax)
@@ -22,9 +26,6 @@ Create weekly time series from meteorological station data in server
 }
 \examples{
 res = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'))
-head(res)
-res = getWU(stations = c(330455))
-head(res)
 res = getWU(stations = 'SBRJ', var="tmin", finalday = "2014-10-10")
 }
 
