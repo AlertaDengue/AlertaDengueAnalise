@@ -10,10 +10,10 @@
 #'@param var climate variables (default var="all": all variables available )
 #'@param finalday last day. Default is the last available. Format = Year-month-day. 
 #'@param datasource use "db" to refer to the sql server. Default is the test dataset.
-#'@return data.frame with the weekly data (cidade estacao data tmin tmed tmax umin umed umax pressaomin pressaomed pressaomax)
+#'@return data.frame with the weekly data (cidade estacao data temp_min tmed tmax umin umed umax pressaomin pressaomed pressaomax)
 #'@examples
 #'res = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'))
-#'res = getWU(stations = 'SBRJ', var="tmin", finalday = "2014-10-10")
+#'res = getWU(stations = 'SBRJ', var="temp_min", finalday = "2014-10-10")
 
 getWU <- function(stations, var = "all", city=c(), finalday = Sys.Date(), datasource = "data/WUdata.rda") {
       
@@ -23,11 +23,12 @@ getWU <- function(stations, var = "all", city=c(), finalday = Sys.Date(), dataso
       # loading Test data -------------------------------------------
       if (datasource == "data/WUdata.rda") {
             load(datasource)
-            cities = unique(WUdata$cidade[WUdata$estacao%in%stations])
+            cities = unique(WUdata$cidade[WUdata$Estacao_wu_estacao_id%in%stations])
             message(paste("stations belong to city(es):", cities))
-            d <- subset(WUdata, estacao %in% stations)
+            d <- subset(WUdata, Estacao_wu_estacao_id %in% stations)
             stopifnot(finalday > min(as.Date(d$data, format = "%Y-%m-%d")))
             d <- subset(d, as.Date(d$data, format = "%Y-%m-%d") <= finalday)
+            
             }                  
       
       # loading data from sql server-------------------------------------------
@@ -47,6 +48,7 @@ getWU <- function(stations, var = "all", city=c(), finalday = Sys.Date(), dataso
             if (!var[1]=="all") d <- d[,var]
       }
       
+      names(d)[which(names(WUdata)== "Estacao_wu_estacao_id")]<-"estacao"
       # Atribuir SE e agregar por semana-----------------------------------------
       d$SE <- data2SE(d$data, format = "%Y-%m-%d")
       n = dim(d)[2] - 1
@@ -115,9 +117,19 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = TRUE, disease =
       
       stopifnot(all(nchar(city) == 6)) # incluir teste de existencia da cidade  
       
-      if (datasource == "data/sinan.rda") load(datasource)
+      # reading the data
+      if (datasource == "data/sinan.rda") {
+            load(datasource)
+            dd <- subset(sinan, DT_DIGITA <= lastday)
+      } else if(datasource == "db"){
+            # atencao, esse query nao especifica a cidade
+            sql1 <- paste("'", finalday, "'", sep = "")
+            sql <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE 
+                        dt_digita <= ",sql1)
+            dd <- dbGetQuery(con,sql)
+      }
       
-      dd <- subset(sinan, DT_DIGITA <= lastday)
+      
       if (withdivision == FALSE){
             st <- aggregate(dd$SEM_PRI,by=list(dd$SEM_PRI),FUN=length)
             names(st)<-c("SE","casos")
@@ -195,7 +207,7 @@ casesinlocality <- function(obj, locality){
 #'casa = getCases(city = c(330455), withdivision = TRUE) 
 #'cas2 = casesinlocality(obj = casa, locality = "AP1")
 #'tw = getTweet(city = c(330455))
-#'clima = getWU(stations = 'SBRJ', var="tmin")
+#'clima = getWU(stations = 'SBRJ', var="temp_min")
 #'head(mergedata(cases = cas,tweet = tw, climate = clima))
 #'head(mergedata(cases = cas2,tweet = tw, climate = clima))
 #'head(mergedata(tweet = tw, climate = clima))
@@ -242,4 +254,5 @@ mergedata <- function(cases = c(), tweet =c(), climate=c()){
       d
 }
 
-
+nomes=(c("Estacao_wu_estacao_id","data_dia","temp_min","temp_med","temp_max",
+         "umid_min","umid_med","umid_max","pressao_min","pressao_med","pressao_max"))

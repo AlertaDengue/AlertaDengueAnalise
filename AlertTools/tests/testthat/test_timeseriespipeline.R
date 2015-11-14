@@ -60,12 +60,10 @@ test_that("output of getTweet has the required columns.", {
 # Testing getWU function
 # ----------------------
 dW01 = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'))
-dW02 = getWU(stations = c(330455))
-dW03 = getWU(stations = 'SBRJ', var="tmin")
+dW03 = getWU(stations = 'SBRJ', var="temp_min")
 
 test_that("output of getWU has the required columns.", {
   expect_true(all(c("cidade", "SE", "estacao") %in% names(dW01)))
-  expect_true(all(c("cidade", "SE", "estacao") %in% names(dW02)))
   expect_true(all(c("cidade", "SE", "estacao") %in% names(dW03)))  
 })
 

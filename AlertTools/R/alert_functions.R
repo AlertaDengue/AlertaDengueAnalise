@@ -20,12 +20,12 @@
 #'last lag weeks with conditions = TRUE.
 #'@examples
 #'tw <- getTweet(city = c(330455))
-#'clima <- getWU(stations = 'SBRJ', var="tmin")
+#'clima <- getWU(stations = 'SBRJ', var="temp_min")
 #'d<- mergedata(tweet = tw, climate = clima)
-#'crity <- c("tmin > 22", 3, 3)
+#'crity <- c("temp_min > 22", 3, 3)
 #'alerta <- twoalert(d, cy = crity)
 #'head(alerta$indices)
-#'plot.alerta(alerta, var="tmin")
+#'plot.alerta(alerta, var="temp_min")
 
 twoalert <- function(obj, cy){
       le <- dim(obj)[1] 
@@ -70,12 +70,12 @@ twoalert <- function(obj, cy){
 #'last lag weeks with conditions = TRUE.
 #'@examples
 #'tw <- getTweet(city = c(330455))
-#'clima <- getWU(stations = 'SBRJ', var="tmin")
+#'clima <- getWU(stations = 'SBRJ', var="temp_min")
 #'cas = getCases(city = c(330455), withdivision = FALSE)
 #'casfit<-adjustIncidence(obj=cas)
 #'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 #'d<- mergedata(cases = casr, tweet = tw, climate = clima)
-#'crity <- c("tmin > 22", 3, 3)
+#'crity <- c("temp_min > 22", 3, 3)
 #'crito <- c("p1 > 0.9", 3, 0)
 #'critr <- c("inc > 100", 3, 0)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
@@ -141,7 +141,6 @@ fouralert <- function(obj, cy, co, cr, pop){
       indices <- delayturnoff(cond=cr,level=4)
       indices <- delayturnoff(cond=co,level=3)
       indices <- delayturnoff(cond=cy,level=2)
-      
 
       return(list(data=obj, indices=indices, rules=paste("cy", ";", "co", ";",
                                                          "cr"),n = 4))      
@@ -157,12 +156,12 @@ fouralert <- function(obj, cy, co, cr, pop){
 #'@return a plot
 #'@examples
 #'tw <- getTweet(city = c(330455), lastday = "2014-03-10")
-#'clima <- getWU(stations = 'SBRJ', var="tmin", finalday = "2014-03-10")
+#'clima <- getWU(stations = 'SBRJ', var="temp_min", finalday = "2014-03-10")
 #'d<- mergedata(tweet = tw, climate = clima)
-#'critgy <- c("tmin > 22 | tweet > 10", 3)
-#'crityg <- c("tmin <= 22 & tweet <= 10", 3)
+#'critgy <- c("temp_min > 22 | tweet > 10", 3)
+#'crityg <- c("temp_min <= 22 & tweet <= 10", 3)
 #'alerta <- twoalert(d, gy = critgy, yg = crityg)
-#'plot.alerta(alerta, "tmin")
+#'plot.alerta(alerta, "temp_min")
 
 
 
