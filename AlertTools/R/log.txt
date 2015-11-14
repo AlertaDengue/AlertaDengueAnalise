@@ -12,6 +12,17 @@ Workflow:
   Experiment with it in the console to see if it works.
   Rinse and repeat.
 
+Profissionalizando os testes
+devtools::use_testthat()
+This will: create a tests/testthat directory, adds testthat to the Suggests field in the DESCRIPTION,
+creates a file tests/testthat.R that runs all your tests are when R CMD check runs. 
+
+Agora:
+Modify your code or tests.
+Test your package with Ctrl/Cmd + Shift + T or devtools::test().
+Repeat until all tests pass.
+
+
 Criei as funcoes 
    get_timeseries.R contem 
          getWU cujo dado de teste é WUdata
@@ -28,4 +39,5 @@ devtools::use_data(sinan)
 
 
 
-Proximos passos :  colocar no git
+Proximos passos :  
+- melhorar os dados de tweets - pegar serie a partir de 1201320

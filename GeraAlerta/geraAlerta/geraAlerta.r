@@ -224,10 +224,10 @@ def.cor<-function(d2v){
   les = dim(d2v)[1]
   d2v$cor <-NA
   d2v$cor[intersect(6:les,which(d2v$alertaCli<3 & d2v$alertaRtweet<4 & d2v$alertaRt<3 & d2v$alertaCasos==0))]<-1
-  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3 | d2v$alertaRtweet>=4))]<-2
-  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=4)+1)]<-2 # inercia para desligar
-  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=4)+2)]<-2 # inercia para desligar
-  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=4)+3)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3 | d2v$alertaRtweet>=3))]<-2
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+1)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+2)]<-2 # inercia para desligar
+  d2v$cor[intersect(6:les,which(d2v$alertaCli>=3| d2v$alertaRtweet>=3)+3)]<-2 # inercia para desligar
   d2v$cor[intersect(6:les,which(d2v$alertaRt>=3))]<-3
   d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+1)]<-3 # inercia para desligar
   d2v$cor[intersect(6:les,which(d2v$alertaRt>=3)+2)]<-3 # inercia para desligar

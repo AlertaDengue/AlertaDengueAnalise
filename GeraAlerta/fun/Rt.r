@@ -86,3 +86,5 @@ Rt.gamma <- function(d, gt = 3, alpha = .95){
   } 
   return(data.frame(Rt, CIs))
 }
+
+

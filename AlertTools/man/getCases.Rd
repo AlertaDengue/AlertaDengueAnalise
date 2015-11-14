@@ -2,20 +2,21 @@
 % Please edit documentation in R/get_timeseries.R
 \name{getCases}
 \alias{getCases}
-\title{Get Case Data}
+\title{Get Case Data and aggregate per week and area}
 \usage{
-getCases(city, withdivision = TRUE, disease = "dengue",
-  datasource = "test")
+getCases(city, lastday = Sys.Date(), withdivision = TRUE,
+  disease = "dengue", datasource = "data/sinan.rda")
 }
 \arguments{
 \item{city}{city's geocode.}
 
-\item{withdivision}{Either FALSE if aggregation at the city level, or TRUE if at the neighborhood
-level. These are the two possible aggregations.}
+\item{withdivision}{either FALSE if aggregation at the city level, or TRUE.}
 
-\item{disease}{Default is "dengue".}
+\item{disease}{default is "dengue".}
 
-\item{datasource}{data server or "test" if using local test data.}
+\item{datasource}{data server or "data/sinan.rda" if using local test data.}
+
+\item{finalday}{last day. Default is the last available.}
 }
 \value{
 data.frame with the data aggregated per week according to disease onset date.
@@ -24,7 +25,11 @@ data.frame with the data aggregated per week according to disease onset date.
 Create weekly time series from case data from server. The source is the SINAN.
 }
 \examples{
-res = getCases(city = c(330455)) # Rio de Janeiro
-head(res)
+dC0 = getCases(city = c(330455), withdivision = TRUE) # Rio de Janeiro
+head(dC0)
+dC0 = getCases(city = c(330455), withdivision = FALSE)
+tail(dC0)
+dC0 = getCases(city = c(330455), lastday ="2014-03-10", withdivision = FALSE)
+tail(dC0)
 }
 

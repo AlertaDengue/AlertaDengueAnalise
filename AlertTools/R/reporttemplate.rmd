@@ -1,6 +1,6 @@
 ---
-title: "Info Dengue Rio"
-author: "Relatório de situação da dengue na cidade do Rio de Janeiro"
+title: "Info Dengue"
+author: "Relatório de situação da dengue"
 output: pdf_document
 geometry: margin=0.5in
 fontsize: 12pt
