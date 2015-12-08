@@ -1,5 +1,7 @@
 setwd("../..")
 
+## fazer um teste para verificar se as semanas estao todas presentes na serie
+
 # Testing function getCases
 
 test_that("sinan data exists", {
@@ -47,8 +49,8 @@ test_that("output of Rt has the required columns.", {
 # ----------------------
 # Testing getTweet function
 # ----------------------
-dT01 = getTweet(city = c(330455), lastday = Sys.Date()) # Rio de Janeiro
-dT02 = getTweet(city = c(330455), lastday = "2014-03-01") # Rio de Janeiro
+dT01 = getTweet(city = c(330455), lastday = Sys.Date(), datasource = "data/tw.rda") # Rio de Janeiro
+dT02 = getTweet(city = c(330455), lastday = "2014-03-01", datasource = "data/tw.rda") # Rio de Janeiro
 
 test_that("output of getTweet has the required columns.", {
   expect_true(all(c("cidade", "SE", "tweet") %in% names(dT01)))
@@ -59,12 +61,12 @@ test_that("output of getTweet has the required columns.", {
 # ----------------------
 # Testing getWU function
 # ----------------------
-dW01 = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'))
-dW03 = getWU(stations = 'SBRJ', var="temp_min")
+dW01 = getWU(stations = c('SBRJ','SBJR','SBAF'), datasource="data/WUdata")
+dW03 = getWU(stations = 'SBRJ', var="temp_min", datasource="data/WUdata")
 
 test_that("output of getWU has the required columns.", {
-  expect_true(all(c("cidade", "SE", "estacao") %in% names(dW01)))
-  expect_true(all(c("cidade", "SE", "estacao") %in% names(dW03)))  
+  expect_true(all(c("SE", "estacao") %in% names(dW01)))
+  expect_true(all(c("SE", "estacao") %in% names(dW03)))  
 })
 
 

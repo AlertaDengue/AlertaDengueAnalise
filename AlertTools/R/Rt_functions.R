@@ -73,7 +73,7 @@ Rtoriginal<-function(obj, count = "casos", meangt, CI = "beta", alpha = .95, a0 
 #'  
 #'@return data.frame with estimated Rt and confidence intervals. 
 #'@examples
-#'res = getCases(city = c(330455), withdivision = FALSE) # Rio de Janeiro
+#'res = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda") # Rio de Janeiro
 #' # Rt original
 #'rt<-Rtoriginal(obj = res, count = "casos", meangt=3)
 #'plot(rt$Rt, type="l", xlab = "weeks", ylab = "Rt")
@@ -118,7 +118,7 @@ Rt<-function(obj, count = "casos", gtdist, meangt, sdgt, CI = "beta", alpha = .9
     obj$Rt[t]<-num/deno
     if (CI == "beta"){
        obj$p1[t] <- 1 - pbeta(.5, shape1 = num, shape2 = deno)
-       obj[t, c("upr","lwr")] <- ll(betaconf(alpha = alpha, x = num, 
+       obj[t, c("lwr","upr")] <- ll(betaconf(alpha = alpha, x = num, 
                                n = num + deno, a = a0, b = b0 ))
     }
   }

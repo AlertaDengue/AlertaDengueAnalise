@@ -20,7 +20,7 @@
 #'last lag weeks with conditions = TRUE.
 #'@examples
 #'tw <- getTweet(city = c(330455))
-#'clima <- getWU(stations = 'SBRJ', var="temp_min")
+#'clima <- getWU(stations = 'SBRJ', var="temp_min", datasource="data/WUdata")
 #'d<- mergedata(tweet = tw, climate = clima)
 #'crity <- c("temp_min > 22", 3, 3)
 #'alerta <- twoalert(d, cy = crity)
@@ -66,32 +66,34 @@ twoalert <- function(obj, cy){
 #'@param cy conditions for yellow. 
 #'@param co conditions for orange.
 #'@param cr conditions for red.
+#'@param missing how missing data is treated. "last" if last value is repeated. 
+#'It is currently the only option.
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
 #'tw <- getTweet(city = c(330455))
-#'clima <- getWU(stations = 'SBRJ', var="temp_min")
-#'cas = getCases(city = c(330455), withdivision = FALSE)
+#'clima <- getWU(stations = 'SBRJ', var="temp_min",datasource="db")
+#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
 #'casfit<-adjustIncidence(obj=cas)
 #'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 #'d<- mergedata(cases = casr, tweet = tw, climate = clima)
 #'crity <- c("temp_min > 22", 3, 3)
-#'crito <- c("p1 > 0.9", 3, 0)
-#'critr <- c("inc > 100", 3, 0)
+#'crito <- c("p1 > 0.9", 3, 3)
+#'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
 #'plot.alerta(alerta, "casos")
 
-fouralert <- function(obj, cy, co, cr, pop){
+fouralert <- function(obj, cy, co, cr, pop, miss="last"){
       le <- dim(obj)[1]
       
-      # calculate incidence
+      # calculate incidence")
       if("tcasesmed" %in% names(obj)){
             obj$inc <- obj$tcasesmed / pop * 100000      
       } else{
             obj$inc <- obj$casos / pop * 100000      
       }
       
-      # accumulating condition function
+      # accumulating condition function")
       accumcond <- function(vec, lag) {
             le <- length(vec)
             ac <- vec[lag:le]
@@ -100,7 +102,7 @@ fouralert <- function(obj, cy, co, cr, pop){
       }
       
       
-      # data.frame to store results
+      # data.frame to store results")
       indices <- data.frame(cytrue = rep(NA,le), nytrue = rep(NA,le),
                             cotrue = rep(NA,le), notrue = rep(NA,le),
                             crtrue = rep(NA,le), nrtrue = rep(NA,le)
@@ -110,6 +112,10 @@ fouralert <- function(obj, cy, co, cr, pop){
       
       assertcondition <- function(dd, cond){
             condtrue <- with(dd, as.numeric(eval(parse(text = cond[1]))))
+            if (miss == "last"){
+                  mi <- which(is.na(condtrue))
+                  for (i in mi[mi!=1]) condtrue[i] <- condtrue[i-1]
+            }
             ncondtrue <- with(dd, accumcond(condtrue, as.numeric(cond[2])))
             cbind(condtrue, ncondtrue)
       }
@@ -118,19 +124,22 @@ fouralert <- function(obj, cy, co, cr, pop){
       indices[,c("cotrue", "notrue")] <- assertcondition(obj , co)
       indices[,c("crtrue", "nrtrue")] <- assertcondition(obj, cr)
             
-      # setting the level
+      # setting the level")
       indices$level <- 1
       indices$level[indices$nytrue == as.numeric(cy[2])] <-2
       indices$level[indices$notrue == as.numeric(co[2])] <-3
       indices$level[indices$nrtrue == as.numeric(cr[2])] <-4
-
-      # delay turnoff
+      
+      
+      # delay turnoff")
       delayturnoff <- function(cond, level, d=indices){
             delay = as.numeric(as.character(cond[3]))
+            N = dim(d)[1]
             if(delay > 0){
                   cand <- c()
                   for(i in 1:delay){
                         cand <- c(cand, which(d$level==level) + i)
+                        cand <- cand[cand<=N]
                   }
                   for (j in cand){
                         d$level[j] <- max(d$level[j], level)
@@ -141,7 +150,12 @@ fouralert <- function(obj, cy, co, cr, pop){
       indices <- delayturnoff(cond=cr,level=4)
       indices <- delayturnoff(cond=co,level=3)
       indices <- delayturnoff(cond=cy,level=2)
-
+      print("Last data")
+      print(tail(obj, n=6 ))
+      
+      print("Last warnings")
+      print(tail(indices, n=6 ))
+      
       return(list(data=obj, indices=indices, rules=paste("cy", ";", "co", ";",
                                                          "cr"),n = 4))      
 }
@@ -155,39 +169,106 @@ fouralert <- function(obj, cy, co, cr, pop){
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
 #'@return a plot
 #'@examples
-#'tw <- getTweet(city = c(330455), lastday = "2014-03-10")
-#'clima <- getWU(stations = 'SBRJ', var="temp_min", finalday = "2014-03-10")
-#'d<- mergedata(tweet = tw, climate = clima)
-#'critgy <- c("temp_min > 22 | tweet > 10", 3)
-#'crityg <- c("temp_min <= 22 & tweet <= 10", 3)
-#'alerta <- twoalert(d, gy = critgy, yg = crityg)
-#'plot.alerta(alerta, "temp_min")
+#'tw <- getTweet(city = c(330455))
+#'clima <- getWU(stations = 'SBRJ', var="temp_min",datasource="db")
+#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+#'casfit<-adjustIncidence(obj=cas)
+#'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
+#'d<- mergedata(cases = casr, tweet = tw, climate = clima)
+#'crity <- c("temp_min > 22", 3, 3)
+#'crito <- c("p1 > 0.9", 3, 3)
+#'critr <- c("inc > 100", 3, 3)
+#'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
+#'plot.alerta(alerta, "casos")
 
 
-
-plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red")){
+plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), ini=201001, fim=202001){
       
       stopifnot(names(obj) == c("data", "indices", "rules","n"))
       stopifnot(var %in% names(obj$data))
-            
+      
+      datapos <- which(obj$data$SE <= fim & obj$data$SE >= ini)
+      data <- obj$data[datapos,]
+      indices <- obj$indices[datapos,]
+      
       par(mai=c(0,0,0,0),mar=c(4,4,1,1))
-      x <- 1:length(obj$data$SE)
-      ticks <- seq(1, length(obj$data$SE), length.out = 8)
+      x <- 1:length(data$SE)
+      ticks <- seq(1, length(data$SE), length.out = 8)
       
       if (obj$n == 2 | obj$n == 4){
-            plot(x, obj$data[,var], xlab = "SE", ylab = var, type="l", axes=FALSE)
+            plot(x, data[,var], xlab = "", ylab = "casos", type="l", axes=FALSE)
             axis(2)
-            axis(1, at = ticks, labels = obj$data$SE[ticks], las=3)
+            axis(1, at = ticks, labels = data$SE[ticks], las=3)
             for (i in 1:obj$n) {
-                  onde <- which(obj$indices$level==i) 
+                  onde <- which(indices$level==i) 
                   if (length(onde))
-                        segments(x[onde],0,x[onde],(obj$data[onde,var]),col=cores[i],lwd=3)
+                        segments(x[onde],0,x[onde],(data[onde,var]),col=cores[i],lwd=3)
             }
             
             }
 }
       
+
+#write.alerta --------------------------------------------------------------------
+#'@title Write the alert into the database.
+#'@description Function to write the alert results into the database.  
+#'@param obj object created by the twoalert and fouralert functions.
+#'@param ini first epidemiological week of the period to be written.
+#'@param end last epidemiological week of the period to be written.  
+#'@param write use "all" if database data should be replaced by the new ones, 
+#'"new" if only new epidemiological weeks are written, or "no". Default to "no" 
+#'@return data.frame with the data to be written. 
+#'@examples
+#'tw <- getTweet(city = c(330455))
+#'clima <- getWU(stations = 'SBRJ', var="temp_min",datasource="db")
+#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+#'casfit<-adjustIncidence(obj=cas)
+#'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
+#'d<- mergedata(cases = casr, tweet = tw, climate = clima)
+#'crity <- c("temp_min > 22", 3, 3)
+#'crito <- c("p1 > 0.9", 3, 3)
+#'critr <- c("inc > 100", 3, 3)
+#'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
+#'res <- write.alerta(alerta)
+
+
+write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAaction="omitcasesmedNA"){
       
+      stopifnot(names(obj) == c("data", "indices", "rules","n"))
+      
+      # cutting the period of interest
+      if(missing(ini)) ini <- min(obj$data$SE)
+      if(missing(end)) end <- max(obj$data$SE)
+      
+      datapos <- which(obj$data$SE <= end & obj$data$SE >= ini)
+      data <- obj$data[datapos,]
+      indices <- obj$indices[datapos,]
+      
+      # creating the data.frame with the required columns
+      d <- data.frame(SE = obj$data$SE)
+      d$data_iniSE <- SE2date(d$SE)$ini
+      d$casos_est <- obj$data$tcasesmed
+      d$casos_est_min <- obj$data$tcasesICmin
+      d$casos_est_max <- obj$data$tcasesICmax
+      d$casos <- obj$data$casos
+      d$municipio_geocodigo <- obj$data$cidade # com 6 digitos
+      d$p_rt1 <- obj$data$p1
+      d$p_inc100k <- obj$data$inc
+      d$Localidade_id <- obj$data$localidade
+      d$nivel <- obj$indices$level
+      d$versao_modelo <- as.character(version)
+      
+      # removing tail if NA
+      if(NAaction=="omitcasesmedNA"){
+            linha <- which(is.na(d$casos_est))
+            d <- d[-linha,]
+      }
+      d
+}
+
+      
+
+
 #isOrange --------------------------------------------------------------------
 #'@title Raise orange alert if sustained transmission is detected.
 #'@description "Orange" is defined by effective reproductive number greater than 1. 
@@ -267,4 +348,16 @@ isRed <- function(obj, pop, ccrit=100, lag=3){
   }
 
 
+
+# ####### pedaço de codigo para testar limiar
+# pred<- prediction(predictions = alerta$data$temp_min, labels = alerta$data$p1d,
+#                   label.ordering = c(0,1))
+# perf<- performance(pred, "ppv")
+# cuts <- perf@x.values[[1]][which.max(perf@y.values[[1]])]
+# plot(perf,ylim=c(0,0.45), xlab = "Temperature cutoff",axes=FALSE) # 22.5
+# abline(v=21)
+# perf<- performance(pred, "spec")
+# plot(perf)
+# perf<- performance(pred, "sens")
+# plot(perf)
 
