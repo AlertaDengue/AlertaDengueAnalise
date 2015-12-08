@@ -261,7 +261,7 @@ write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAacti
       #dd <- dbGetQuery(con,"SELECT id from \"Municipio\".\"Historico_alerta\"")
       #currentid <- max(dd$id)
       d$id <- 1:dim(d)[1]
-      
+      print(d)
       # removing tail if NA
       if(NAaction=="omitcasesmedNA"){
             linha <- which(is.na(d$casos_est))
@@ -273,13 +273,14 @@ write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAacti
       if(write == "db"){
             newdata <- d
             
-            varnames <- "(\"SE\",\"data_iniSE\",casos_est,casos_est_min,casos_est_max,casos,municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo)"
+            varnames <- "(\"SE\", \"data_iniSE\", casos_est, casos_est_min, casos_est_max, casos,
+                        municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo)"
                   
             for (li in 1:dim(newdata)[1]){
                   linha = as.character(newdata[li,1])
                   for (i in 2:dim(newdata)[2]) linha = paste(linha, as.character(newdata[li,i]),sep=",")
                   
-                  sql = paste("insert into \"Municipio\".\"Historico_alerta\" ",varnames, "(", linha, ")")
+                  sql = paste("INSERT INTO \"Municipio\".\"Historico_alerta\" ",varnames, " VALUES (", linha, ")",sep="")
                   dbGetQuery(con, sql)    
             }
       }

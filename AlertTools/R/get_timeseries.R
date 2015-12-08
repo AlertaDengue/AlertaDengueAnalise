@@ -232,9 +232,9 @@ casesinlocality <- function(obj, locality){
 #'@return data.frame with all data available 
 #'@examples
 #'cas = getCases(city = c(330455), withdivision = FALSE,datasource = "data/sinan.rda") 
-#'casa = getCases(city = c(330455), withdivision = TRUEdatasource = "data/sinan.rda") 
+#'casa = getCases(city = c(330455), withdivision = TRUE, datasource = "data/sinan.rda") 
 #'cas2 = casesinlocality(obj = casa, locality = "AP1")
-#'tw = getTweet(city = c(330455))
+#'tw = getTweet(city = c(330455), datasource = "data/tw.rda")
 #'clima = getWU(stations = 'SBRJ', var="temp_min", datasource="data/WUdata.rda")
 #'head(mergedata(cases = cas,tweet = tw, climate = clima))
 #'head(mergedata(cases = cas2,tweet = tw, climate = clima))
@@ -243,6 +243,7 @@ casesinlocality <- function(obj, locality){
 #'head(mergedata(cases = cas2, climate = clima))
 #'head(mergedata(tweet = tw, cases = cas))
 #'head(mergedata(tweet = tw, cases = cas2))
+#'head(mergedata(tweet = tw, cases = cas, climate = clima))
 
 mergedata <- function(cases = c(), tweet =c(), climate=c(), ini=200952){
       # checking the datasets
@@ -259,10 +260,10 @@ mergedata <- function(cases = c(), tweet =c(), climate=c(), ini=200952){
       } else if (is.null(tweet)){
             d <- merge(cases, climate,  by=c("SE"), all = TRUE)     
       } else if (is.null(climate)) {
-            d <- merge(cases, tweet,  by=c("SE"), all = TRUE)
+            d <- merge(cases, tweet[, c("SE","tweet")],  by=c("SE"), all = TRUE)
       }
       if (!(is.null(cases) | is.null(tweet) | is.null(climate))){
-            d <- merge(cases, tweet,  by=c("SE"), all = TRUE)
+            d <- merge(cases, tweet[, c("SE","tweet")],  by=c("SE"), all = TRUE)
             d <- merge(d, climate,  by=c("SE"), all=TRUE)  
       }
       # removing begining
