@@ -259,10 +259,10 @@ mergedata <- function(cases = c(), tweet =c(), climate=c(), ini=200952){
       } else if (is.null(tweet)){
             d <- merge(cases, climate,  by=c("SE"), all = TRUE)     
       } else if (is.null(climate)) {
-            d <- merge(cases, tweet,  by=c("cidade","SE"), all = TRUE)
+            d <- merge(cases, tweet,  by=c("SE"), all = TRUE)
       }
       if (!(is.null(cases) | is.null(tweet) | is.null(climate))){
-            d <- merge(cases, tweet,  by=c("cidade","SE"), all = TRUE)
+            d <- merge(cases, tweet,  by=c("SE"), all = TRUE)
             d <- merge(d, climate,  by=c("SE"), all=TRUE)  
       }
       # removing begining

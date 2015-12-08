@@ -215,13 +215,13 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'@param obj object created by the twoalert and fouralert functions.
 #'@param ini first epidemiological week of the period to be written.
 #'@param end last epidemiological week of the period to be written.  
-#'@param write use "all" if database data should be replaced by the new ones, 
-#'"new" if only new epidemiological weeks are written, or "no". Default to "no" 
+#'@param write use "db" if data.frame should be inserted into the project database,
+#' or "no" (default) if nothing is saved. 
 #'@return data.frame with the data to be written. 
 #'@examples
-#'tw <- getTweet(city = c(330455))
-#'clima <- getWU(stations = 'SBRJ', var="temp_min",datasource="db")
-#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+#'tw <- getTweet(city = c(330070), datasource="db")
+#'clima <- getWU(stations = 'SBCB', var="temp_min",datasource="db")
+#'cas = getCases(city = c(330070), withdivision = FALSE, datasource="db")
 #'casfit<-adjustIncidence(obj=cas)
 #'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 #'d<- mergedata(cases = casr, tweet = tw, climate = clima)
@@ -229,8 +229,7 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'crito <- c("p1 > 0.9", 3, 3)
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-#'res <- write.alerta(alerta)
-
+#'res <- write.alerta(alerta, ini=201432, end= 201433, write="db")
 
 write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAaction="omitcasesmedNA"){
       
@@ -240,28 +239,49 @@ write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAacti
       if(missing(ini)) ini <- min(obj$data$SE)
       if(missing(end)) end <- max(obj$data$SE)
       
-      datapos <- which(obj$data$SE <= end & obj$data$SE >= ini)
+      datapos <-  which(obj$data$SE <= end & obj$data$SE >= ini)
       data <- obj$data[datapos,]
       indices <- obj$indices[datapos,]
       
       # creating the data.frame with the required columns
-      d <- data.frame(SE = obj$data$SE)
+      d <- data.frame(SE = data$SE)
       d$data_iniSE <- SE2date(d$SE)$ini
-      d$casos_est <- obj$data$tcasesmed
-      d$casos_est_min <- obj$data$tcasesICmin
-      d$casos_est_max <- obj$data$tcasesICmax
-      d$casos <- obj$data$casos
-      d$municipio_geocodigo <- obj$data$cidade # com 6 digitos
-      d$p_rt1 <- obj$data$p1
-      d$p_inc100k <- obj$data$inc
-      d$Localidade_id <- obj$data$localidade
-      d$nivel <- obj$indices$level
+      d$casos_est <- data$tcasesmed
+      d$casos_est_min <- data$tcasesICmin
+      d$casos_est_max <- data$tcasesICmax
+      d$casos <- data$casos
+      d$municipio_geocodigo <- data$cidade # com 6 digitos
+      d$p_rt1 <- data$p1
+      d$p_inc100k <- data$inc
+      d$Localidade_id <- data$localidade
+      d$nivel <- indices$level
       d$versao_modelo <- as.character(version)
+      
+      # finding the last id variable
+      #dd <- dbGetQuery(con,"SELECT id from \"Municipio\".\"Historico_alerta\"")
+      #currentid <- max(dd$id)
+      d$id <- 1:dim(d)[1]
       
       # removing tail if NA
       if(NAaction=="omitcasesmedNA"){
             linha <- which(is.na(d$casos_est))
-            d <- d[-linha,]
+            if(length(linha)!=0) d <- d[-linha,]
+      }
+
+      print(d)
+      
+      if(write == "db"){
+            newdata <- d
+            
+            varnames <- "(\"SE\",\"data_iniSE\",casos_est,casos_est_min,casos_est_max,casos,municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo)"
+                  
+            for (li in 1:dim(newdata)[1]){
+                  linha = as.character(newdata[li,1])
+                  for (i in 2:dim(newdata)[2]) linha = paste(linha, as.character(newdata[li,i]),sep=",")
+                  
+                  sql = paste("insert into \"Municipio\".\"Historico_alerta\" ",varnames, "(", linha, ")")
+                  dbGetQuery(con, sql)    
+            }
       }
       d
 }
