@@ -112,12 +112,10 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
 #'@param datasource "db" if using the project database or "data/sinan.rda" if using local test data. 
 #'@return data.frame with the data aggregated per week according to disease onset date.
 #'@examples
-#'dC0 = getCases(city = c(330455), withdivision = TRUE, datasource = "data/sinan.rda") # Rio de Janeiro
-#'head(dC0)
-#'dC0 = getCases(city = c(330455), withdivision = FALSE, datasource = "data/sinan.rda") 
-#'tail(dC0)
 #'dC0 = getCases(city = c(330455), lastday ="2014-03-10", withdivision = FALSE, datasource = "data/sinan.rda") 
 #'tail(dC0)
+#'dC0 = getCases(city = c(330455), withdivision = TRUE, datasource = "data/sinan.rda") # Rio de Janeiro
+#'head(dC0)
 
 getCases <- function(city, lastday = Sys.Date(),  withdivision = TRUE, 
                      disease = "dengue", datasource) {
@@ -161,7 +159,7 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = TRUE,
       if (withdivision == FALSE){
             st <- data.frame(SE = sem, casos = 0)
             for(i in 1:nsem) st$casos[i] <- sum(dd$SEM_NOT == st$SE[i])
-            st$localidade <- city
+            st$localidade <- 0
             st$cidade <- city
       } else {
             bairro = na.omit(unique(dd$NM_BAIRRO))

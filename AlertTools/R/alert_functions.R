@@ -229,7 +229,9 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'crito <- c("p1 > 0.9", 3, 3)
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
+#'res <- write.alerta(alerta, ini=201432, end= 201433)
 #'res <- write.alerta(alerta, ini=201432, end= 201433, write="db")
+
 
 write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAaction="omitcasesmedNA"){
       
@@ -260,26 +262,39 @@ write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAacti
       # finding the last id variable
       #dd <- dbGetQuery(con,"SELECT id from \"Municipio\".\"Historico_alerta\"")
       #currentid <- max(dd$id)
-      d$id <- 1:dim(d)[1]
-      print(d)
+      #d$id <- (currentid + 1): (currentid + dim(d)[1])
+      
+      # defining the id (SE+julian(versaomodelo)+geocodigo+localidade)
+      d$id <- NA
+      for (i in 1:dim(d)[1]) {
+            versaojulian <- as.character(julian(as.Date(d$versao_modelo[i])))
+            d$id[i] <- paste(d$municipio_geocodigo[i], d$Localidade_id[i], d$SE[i], versaojulian, sep="")
+      }
+      
       # removing tail if NA
       if(NAaction=="omitcasesmedNA"){
             linha <- which(is.na(d$casos_est))
             if(length(linha)!=0) d <- d[-linha,]
       }
 
-      print(d)
-      
       if(write == "db"){
             newdata <- d
             
             varnames <- "(\"SE\", \"data_iniSE\", casos_est, casos_est_min, casos_est_max, casos,
-                        municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo)"
+                        municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo,id)"
+                  
+            whichvartext <- c(2, 12) 
                   
             for (li in 1:dim(newdata)[1]){
                   linha = as.character(newdata[li,1])
-                  for (i in 2:dim(newdata)[2]) linha = paste(linha, as.character(newdata[li,i]),sep=",")
-                  
+                  for (i in 2:dim(newdata)[2]) {
+                        if (i %in% whichvartext) {
+                              value = paste("'", as.character(newdata[li,i]), "'", sep="")
+                              linha = paste(linha, value, sep=",")
+                              }
+                        else {linha = paste(linha, as.character(newdata[li,i]),sep=",")}
+                  }
+                                     
                   sql = paste("INSERT INTO \"Municipio\".\"Historico_alerta\" ",varnames, " VALUES (", linha, ")",sep="")
                   dbGetQuery(con, sql)    
             }
