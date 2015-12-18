@@ -15,15 +15,64 @@
 
 data2SE <- function(days, format = "%d/%m/%Y"){
   sem <- rep(NA,length(days))      
-  load("R/sysdata.rda")
   days<-as.Date(as.character(days),format=format)
   for (i in 1:length(days)) {
-    week <- SE$SE[days[i] >= SE$Inicio & days[i] <= SE$Termino]
-    ano <-  SE$Ano[days[i] >= SE$Inicio & days[i] <= SE$Termino] 
-    se = ano*100+week
-    sem[i]<-ifelse(length(sem)==0,NA,se)      
+    sem[i]<-episem(days[i])      
   }
   sem
+}
+
+# episem ---------------------------------------------------------------------
+#'@description Find to which epidemiological week belongs a given day (Oswaldo's function)
+#'@title Define Epidemiological Week
+#'@param date date to be converted (class Date)
+#'@param separa symbol between year and week
+#'@return epidemiological week 
+#'@examples
+#'episem(x= as.Date("2015-01-01", format="%Y-%m-%d"))
+
+episem <- function(x, format="%Y-%m-%d") {
+      # semana epi 1 de 2000 02/01/2000
+      if (class(x)!= "Date") {
+            x <- as.Date(x, format = format)
+            #warning("Precisa ser do tipo Date - Convertendo de texto")
+      }
+      
+      ##  funcoes auxiliares - poderia usar a lubridate mas achei assim mais simples
+      
+      year  <- function(dt) {as.numeric(format(dt,"%Y"))}  ## retorna ano
+      wday <- function(dt) {as.numeric(format(dt,"%w"))}   ## retorna dia sendo  0 = domingo a 6= sabado
+      passado <- function(dt,diff=1) {as.Date(paste(as.numeric(format(dt,"%Y"))-diff,format(dt,"%m-%d"),sep="-"))} ## ano - x
+      
+      ## Inicio 
+      
+      ano <- year(x) # extrai ano
+      dia1 <- as.Date(paste(ano,'01','01',sep='-')) # primeiro do ano 
+      
+      diasem <- wday(dia1)  #descobre o dia da semana do dia1 
+      fwd <- ifelse (diasem <=3, dia1 - diasem , dia1 + (7 - diasem) ) #se for menor ou igua a 3 (quarta) 
+      fwd <- as.Date(fwd,origin = '1970-01-01') # reformata em data pois ela perde a formatacao 
+      
+      ## caso a data seja menor que a da 1o semana do ano (fwd)
+      if (x < fwd) {
+            dia1 <- passado(dia1)  # ano -1 
+            diasem <- wday(dia1)  #dia da semana 
+            fwd <- ifelse (diasem <=3, dia1 - diasem , dia1 + (7 - diasem) )
+            fwd <- as.Date(fwd,origin = '1970-01-01')
+      }
+      
+      diafim <- as.Date(paste(ano,'12','31',sep='-')) #Ultimo dia do ano
+      diasem <- wday(diafim)                          #dia semana do ultimo dia
+      
+      ewd <- ifelse (diasem < 3, diafim - diasem , diafim + 6 - diasem) 
+      ewd <- as.Date(ewd,origin = '1970-01-01') # ultima semana epi do ano
+      
+      if (x >= ewd) fwd <- ewd + 1 #caso a data (x) seja maior ou igual a ultiam semaan do ano
+      epiweek <- floor(as.numeric(x - fwd) / 7 ) + 1 #numero de semanas e a diff da data e da primeira semana div por 7
+      
+      if(epiweek==0) epiweek <- 1 ## gatilho se for 0 vira semana 1
+      epiyear <- year(fwd + 180) ## ano epidemiologico
+      epiyear*100+epiweek
 }
 
 
@@ -39,7 +88,7 @@ data2SE <- function(days, format = "%d/%m/%Y"){
 SE2date <- function(se){
       if(!class(se[1]) %in% c("numeric","integer")) stop("se should be numeric or integer")
 
-      load("R/sysdata.rda")
+#      load("R/sysdata.rda")
       SE$sem <- SE$Ano*100 + SE$SE
       res <- data.frame(SE = se, ini = as.Date("1970-01-01"))
       for (i in 1:length(res$SE)) res$ini[i] <- SE$Inicio[SE$sem == res$SE[i]]
@@ -57,7 +106,7 @@ SE2date <- function(se){
 #'seqSE(201502, 201510)
 
 seqSE <- function(from, to){
-      load("R/sysdata.rda")
+#      load("R/sysdata.rda")
       SE$SE <- SE$Ano*100 + SE$SE
       N <- dim(SE)[1]
       
@@ -74,29 +123,89 @@ seqSE <- function(from, to){
       SE[which(SE$SE==from):which(SE$SE==to),]
 }
 
-# 
 
-# write.alerta ---------------------------------------------------------------------
-#'@description Internal function used to convert from the two or four alert output
-#'to a data.frame to be exported to the server
-#'@title Create data.frame to export to the server
-#'@param cidade geocode of the city
-#'@param localidade name of the locality, if exists, NA otherwise
-#'@param alerta output of the twoalert or fouralert functions 
-#'@return a data.frame with columns compatible with the SQL table Historico_Alerta  
+# lastDBdate ---------------------------------------------------------------------
+#'@description  Useful to check if the database is up-to-date. 
+#'@title Returns the most recent date present in the database table. 
+#'@param tab table in the database. Either (sinan, clima_wu, tweet ou historico). 
+#'@param city city geocode, if empty, whole dataset is considered. Not implemented yet.
+#'@param station wu station. Not implemented yet.
+#'@return most recent date 
+#'@examples
+#'lastDBdate( tab = "tweet")
+#'lastDBdate("sinan", city=330240) 
 
-write.alerta <- function(cidade, localidade, alerta){
-      d <- data.frame(SE = alerta$data$SE, nivel = alerta$indices$level)
-      d$municipio <- cidade
-      d$localidade <- localidade 
-      d$data_iniSE <- SE2date(d$SE)[,2] 
-      if(!is.null(alerta$data$casos)) d$casos <- alerta$data$casos
-      if(!is.null(alerta$data$tcasesmed)) d$casos_est <- alerta$data$tcasesmed
-      if(!is.null(alerta$data$tcasesmin)) d$casos_est_min <- alerta$data$tcasesmin
-      if(!is.null(alerta$data$tcasesmax)) d$casos_est_max <- alerta$data$tcasesmax
-      if(!is.null(alerta$data$p1)) d$pr_rt1 <- alerta$data$p1
-      if(!is.null(alerta$data$inc)) d$pr_inc100K <- alerta$data$inc
-      d    
+lastDBdate <- function(tab, city, station){
+      if (tab == "sinan"){
+            if (missing(city)) {sql <- "SELECT dt_notific from \"Municipio\".\"Notificacao\""}
+            else {sql <- paste("SELECT dt_notific from \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo between ", city,"0", sep = "",
+                                     " ", "and", " ",city,"9")}
+            dd <- dbGetQuery(con,sql)
+            date <- max(dd$dt_notific)
+      }
+      if (tab == "tweet"){
+            if (missing(city)) sql <- paste("SELECT data_dia from \"Municipio\".\"Tweet\"")
+            dd <- dbGetQuery(con,sql)
+            date <- max(dd$data_dia)
+      }
+      if (tab == "clima_wu"){
+            if (missing(station)) sql <- paste("SELECT data_dia from \"Municipio\".\"Clima_wu\"")
+            dd <- dbGetQuery(con,sql)
+            date <- max(dd$data_dia)
+      }
+      if (tab == "historico"){
+            if (missing(city)) sql <- paste("SELECT \"data_iniSE\" from \"Municipio\".\"Historico_alerta\"")
+            dd <- dbGetQuery(con,sql)
+            date <- max(dd$data_iniSE)
+      }
+      date
 }
 
 
+
+# DenguedbConnect ---------------------------------------------------------------------
+#'@description  Opens a connection to the Project database. 
+#'@title Returns the connection to the database. 
+#'@return "PostgreSQLConnection" object   
+#'@examples
+#'con <- DenguedbConnect()
+#'dbListTables(con) 
+#'dbDisconnect(con)
+
+DenguedbConnect <- function(){
+      dbname <- "dengue"
+      user <- "dengueadmin"
+      password <- "aldengue"
+      host <- "localhost"
+      
+      dbConnect(dbDriver("PostgreSQL"), user=user,
+                       password=password, dbname=dbname)
+      
+}
+
+
+# sevendigitgeocode ---------------------------------------------------------------------
+#'@description  calculates the verification digit of brazilian municipalities. Required 
+#'to convert 6 digits to 7 digits geocodes. 
+#'@title convert 6 to 7 digits geocodes. 
+#'@return 7 digits municipality geocode.   
+#'@examples
+#'sevendigitgeocode(330455)
+
+sevendigitgeocode <- function(dig){
+      peso <- c(1, 2, 1, 2, 1, 2, 0)
+      soma <- 0
+      digchar <- strsplit(as.character(dig),"")[[1]]
+      ndig <- length(digchar)
+
+      if (ndig!=6) stop("this funtion receives 6 digits geocodes only")
+      
+      for (i in 1:6){
+            valor <- as.integer(digchar[i]) * peso[i]
+            nvalor <- ifelse(valor < 10, valor, trunc(valor/10) + valor%%10)
+            soma <- soma + nvalor
+      }
+      dv <- ifelse(soma%%10 == 0, 0, 10 - (soma%%10))
+      dig*10+dv
+}
+      

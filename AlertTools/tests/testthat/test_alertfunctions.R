@@ -4,11 +4,11 @@ setwd("../..")
 # Testing twoalert
 # -------------------------
 
-dC0 = getCases(city = c(330455), withdivision = TRUE, datasource="data/sinan.rda")
-dC1 = casesinlocality(obj = dC0, locality = "AP1") # Rio de Janeiro
+dC0 = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+dC1 = dC0 #casesinlocality(obj = dC0, locality = "AP1") # Rio de Janeiro
 dC31<-Rt(obj = dC1, count = "casos", gtdist="normal", meangt=3, sdgt = 1)
 dT01 = getTweet(city = c(330455), lastday = Sys.Date(), datasource = "data/tw.rda") 
-dW01 = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'),datasource="data/WUdata")
+dW01 = getWU(stations = c('SBRJ','SBJR','SBAF','SBGL'),datasource="data/WUdata.rda")
 d0<- mergedata(cases = dC31,tweet = dT01, climate = dW01[dW01$estacao=="SBJR",])
 
 test_that("output of merging is a non empty data.frame.", {

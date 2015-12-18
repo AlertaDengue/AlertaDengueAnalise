@@ -19,9 +19,9 @@
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
-#'tw <- getTweet(city = c(330455))
-#'clima <- getWU(stations = 'SBRJ', var="temp_min", datasource="data/WUdata")
-#'d<- mergedata(tweet = tw, climate = clima)
+#'tw = getTweet(city = c(330455), datasource = "data/tw.rda") 
+#'cli = getWU(stations = 'SBRJ', datasource="data/WUdata.rda")
+#'d<- mergedata(tweet = tw, climate = cli)
 #'crity <- c("temp_min > 22", 3, 3)
 #'alerta <- twoalert(d, cy = crity)
 #'head(alerta$indices)
@@ -71,8 +71,8 @@ twoalert <- function(obj, cy){
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
-#'tw <- getTweet(city = c(330455))
-#'clima <- getWU(stations = 'SBRJ', var="temp_min",datasource="db")
+#'tw = getTweet(city = c(330455), datasource = "data/tw.rda") 
+#'cli = getWU(stations = 'SBRJ', datasource="data/WUdata.rda")
 #'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
 #'casfit<-adjustIncidence(obj=cas)
 #'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
@@ -81,7 +81,10 @@ twoalert <- function(obj, cy){
 #'crito <- c("p1 > 0.9", 3, 3)
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-#'plot.alerta(alerta, "casos")
+#'plot.alerta(alerta, var="casos", ylab="casos")
+#' # For a more useful output
+#'res <- write.alerta(alerta)
+#'tail(res)
 
 fouralert <- function(obj, cy, co, cr, pop, miss="last"){
       le <- dim(obj)[1]
@@ -169,20 +172,10 @@ fouralert <- function(obj, cy, co, cr, pop, miss="last"){
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
 #'@return a plot
 #'@examples
-#'tw <- getTweet(city = c(330455))
-#'clima <- getWU(stations = 'SBRJ', var="temp_min",datasource="db")
-#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
-#'casfit<-adjustIncidence(obj=cas)
-#'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
-#'d<- mergedata(cases = casr, tweet = tw, climate = clima)
-#'crity <- c("temp_min > 22", 3, 3)
-#'crito <- c("p1 > 0.9", 3, 3)
-#'critr <- c("inc > 100", 3, 3)
-#'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-#'plot.alerta(alerta, "casos")
+#'  # See fouralert function
 
 
-plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), ini=201001, fim=202001){
+plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), ini=201001, fim=202001, ylab=var){
       
       stopifnot(names(obj) == c("data", "indices", "rules","n"))
       stopifnot(var %in% names(obj$data))
@@ -196,7 +189,7 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
       ticks <- seq(1, length(data$SE), length.out = 8)
       
       if (obj$n == 2 | obj$n == 4){
-            plot(x, data[,var], xlab = "", ylab = "casos", type="l", axes=FALSE)
+            plot(x, data[,var], xlab = "", ylab = ylab, type="l", axes=FALSE)
             axis(2)
             axis(1, at = ticks, labels = data$SE[ticks], las=3)
             for (i in 1:obj$n) {
@@ -217,11 +210,13 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'@param end last epidemiological week of the period to be written.  
 #'@param write use "db" if data.frame should be inserted into the project database,
 #' or "no" (default) if nothing is saved. 
+#'@param replacelast weeks to replace the ones present in the database. replacelast = 26 
+#'updates the db for the last 6 months. replacelast = 9999 replace all db. 
 #'@return data.frame with the data to be written. 
 #'@examples
-#'tw <- getTweet(city = c(330070), datasource="db")
-#'clima <- getWU(stations = 'SBCB', var="temp_min",datasource="db")
-#'cas = getCases(city = c(330070), withdivision = FALSE, datasource="db")
+#'tw = getTweet(city = c(330455), datasource = "data/tw.rda") 
+#'cli = getWU(stations = 'SBRJ', datasource="data/WUdata.rda")
+#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
 #'casfit<-adjustIncidence(obj=cas)
 #'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 #'d<- mergedata(cases = casr, tweet = tw, climate = clima)
@@ -229,11 +224,11 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'crito <- c("p1 > 0.9", 3, 3)
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-#'res <- write.alerta(alerta, ini=201432, end= 201433)
-#'res <- write.alerta(alerta, ini=201432, end= 201433, write="db")
+#'res <- write.alerta(alerta)
+#'tail(res)
 
 
-write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAaction="omitcasesmedNA"){
+write.alerta<-function(obj, ini, end, write = "no", replacelast = 26, version = Sys.Date(), NAaction="omitcasesmedNA"){
       
       stopifnot(names(obj) == c("data", "indices", "rules","n"))
       
@@ -252,17 +247,16 @@ write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAacti
       d$casos_est_min <- data$tcasesICmin
       d$casos_est_max <- data$tcasesICmax
       d$casos <- data$casos
-      d$municipio_geocodigo <- data$cidade # com 6 digitos
+      d$municipio_geocodigo <- data$cidade # com 7 digitos
       d$p_rt1 <- data$p1
       d$p_inc100k <- data$inc
       d$Localidade_id <- data$localidade
       d$nivel <- indices$level
       d$versao_modelo <- as.character(version)
       
-      # finding the last id variable
-      #dd <- dbGetQuery(con,"SELECT id from \"Municipio\".\"Historico_alerta\"")
-      #currentid <- max(dd$id)
-      #d$id <- (currentid + 1): (currentid + dim(d)[1])
+      cidade <- unique(data$cidade)
+      
+      if (length(cidade) > 1) stop("so posso gravar no bd uma cidade por vez.")
       
       # defining the id (SE+julian(versaomodelo)+geocodigo+localidade)
       d$id <- NA
@@ -278,11 +272,18 @@ write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAacti
       }
 
       if(write == "db"){
-            newdata <- d
             
             varnames <- "(\"SE\", \"data_iniSE\", casos_est, casos_est_min, casos_est_max, casos,
                         municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo,id)"
                   
+            if (replacelast < 9999){ #remove parte do historico do municipio
+                  datarep <- max(d$data_iniSE) - (replacelast * 7)      
+                  print(paste("historical data erased since",datarep))
+                  sql <- paste("DELETE from \"Municipio\".\"Historico_alerta\" where municipio_geocodigo = ", cidade, "and data_iniSE >",datarep)
+                  dbGetQuery(con, sql)      
+            }
+            
+            newdata <- d[d$data_iniSE >= datarep,]
             whichvartext <- c(2, 12) 
                   
             for (li in 1:dim(newdata)[1]){
@@ -296,9 +297,9 @@ write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAacti
                   }
                                      
                   sql = paste("INSERT INTO \"Municipio\".\"Historico_alerta\" ",varnames, " VALUES (", linha, ")",sep="")
-                  dbGetQuery(con, sql)    
+                  try(dbGetQuery(con, sql))
             }
-      }
+            }
       d
 }
 
@@ -315,10 +316,10 @@ write.alerta<-function(obj, ini, end, write = "no", version = Sys.Date(), NAacti
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE
 #'@examples
-#'res <- getCases(city = c(330455), withdivision = FALSE) # Rio de Janeiro
-#'resfit <- adjustIncidence(obj = res)
-#'rtnorm<-Rt(obj = res, count = "casos", gtdist="normal", meangt=3, sdgt = 1)
-#'ora = isOrange(obj = rtnorm, pvalue = 0.9, lag= 3) 
+#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+#'casfit<-adjustIncidence(obj=cas)
+#'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
+#'ora = isOrange(obj = casr, pvalue = 0.9, lag= 3) 
 #'head(ora)
 #'x = 1:length(ora$SE)
 #'plot(x, ora$Rt, type="l", xlab= "weeks", ylab = "Rt")
@@ -355,13 +356,12 @@ isOrange <- function(obj, pvalue = 0.9, lag=3){
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE
 #'@examples
-#'res = getCases(city = c(330455), withdivision = TRUE) # Rio de Janeiro
-#'resd = casesinlocality(res, "AP1") # Rio de Janeiro
-#'resfit<-adjustIncidence(resd)
-#'red = isRed(resfit, pop = 30000, ccrit = 10, lag=3)
+#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+#'casfit<-adjustIncidence(obj=cas)
+#'red = isRed(casfit, pop = 30000, ccrit = 30, lag=3)
 #'x = 1:length(red$SE)
 #'plot(x, red$inc, type="l", xlab= "weeks", ylab = "incidence")
-#'abline(h = 10, col =2)
+#'abline(h = 30, col =2)
 #'points(x[red$rweek==1], red$inc[red$rweek==1], col="red", pch=16)
 
 isRed <- function(obj, pop, ccrit=100, lag=3){

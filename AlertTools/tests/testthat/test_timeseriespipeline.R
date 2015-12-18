@@ -9,21 +9,22 @@ test_that("sinan data exists", {
   expect_equal(le, 1)
 })
 
-dC0 = getCases(city = c(330455), withdivision = TRUE, datasource="data/sinan.rda")
+#dC0 = getCases(city = c(330455), withdivision = TRUE, datasource="data/sinan.rda")
 dC00 = getCases(city = c(330455), withdivision = FALSE,datasource="data/sinan.rda")
 
 
 test_that("output getCases has the required columns", {
-  expect_true(all(c("bairro", "SE", "casos") %in% names(dC0)))
+#  expect_true(all(c("bairro", "SE", "casos") %in% names(dC0)))
   expect_true(all(c("localidade", "SE", "casos") %in% names(dC00)))
 })
 
 # Testing function casesinlocality
-dC1 = casesinlocality(obj = dC0, locality = "AP1") # Rio de Janeiro
+#dC1 = casesinlocality(obj = dC0, locality = "AP1") # Rio de Janeiro
 
-test_that("output of casesinlocality has the required columns.", {
-  expect_true(all(c("localidade", "SE", "casos") %in% names(dC1)))
-})
+#test_that("output of casesinlocality has the required columns.", {
+#  expect_true(all(c("localidade", "SE", "casos") %in% names(dC1)))
+#})
+dC1 <- dC0
 
 # Testing the adjustIncidence function
 dC2<-adjustIncidence(obj=dC1)
@@ -61,8 +62,8 @@ test_that("output of getTweet has the required columns.", {
 # ----------------------
 # Testing getWU function
 # ----------------------
-dW01 = getWU(stations = c('SBRJ','SBJR','SBAF'), datasource="data/WUdata")
-dW03 = getWU(stations = 'SBRJ', var="temp_min", datasource="data/WUdata")
+dW01 = getWU(stations = c('SBRJ','SBJR','SBAF'), datasource="data/WUdata.rda")
+dW03 = getWU(stations = 'SBRJ', var="temp_min", datasource="data/WUdata.rda")
 
 test_that("output of getWU has the required columns.", {
   expect_true(all(c("SE", "estacao") %in% names(dW01)))

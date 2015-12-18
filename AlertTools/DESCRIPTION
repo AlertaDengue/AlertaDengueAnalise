@@ -8,9 +8,10 @@ Maintainer: Claudia Codeco <claudia.codeco@gmail.com>
 Description: Set of functions to get data from the Alerta Dengue server,
     organize into time series, correct the notification data, calculate alert
     indices. Also includes utility functions to create reports and maps.
-License: Open
-Imports: foreign
-Suggests: testthat,
-    knitr,
-    rmarkdown
+License: CCO
+Imports:
+    foreign,
+    RPostgreSQL
+Suggests:
 VignetteBuilder: knitr
+RoxygenNote: 5.0.1
