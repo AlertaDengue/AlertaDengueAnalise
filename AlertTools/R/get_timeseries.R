@@ -75,10 +75,8 @@ getWU <- function(stations, vars = "temp_min", city=c(), finalday = Sys.Date(), 
 #'@return data.frame with weekly counts of people tweeting on dengue.
 #'@examples
 #'res = getTweet(city = c(330455), lastday = "2014-03-01", datasource = con)
-#'tail(res)
-#'# Not run
 #'res = getTweet(city = c(330455), datasource = "data/tw.rda") 
-
+#'tail(res)
 
 getTweet <- function(city, lastday = Sys.Date(), datasource) {
       
@@ -97,7 +95,6 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
       
       # Atribuir SE e agregar por semana-----------------------------------------
       tw$SE <- data2SE(tw$data_dia, format = "%Y-%m-%d")
-      print(tail(tw))
       sem <- seqSE(from = min(tw$SE), to = max(tw$SE))$SE
       twf <- data.frame(SE = sem, tweet = NA)
       for (i in 1:dim(twf)[1]) twf$tweet[i] <- sum(tw$tweet[tw$SE==twf$SE[i]])  
