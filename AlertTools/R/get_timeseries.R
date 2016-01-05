@@ -260,3 +260,5 @@ mergedata <- function(cases = c(), tweet =c(), climate=c(), ini=200952){
       d <- subset(d, SE > ini)
       d
 }
+
+

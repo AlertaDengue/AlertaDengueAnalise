@@ -4,8 +4,8 @@
 \alias{write.alerta}
 \title{Write the alert into the database.}
 \usage{
-write.alerta(obj, ini, end, write = "no", version = Sys.Date(),
-  NAaction = "omitcasesmedNA")
+write.alerta(obj, ini, end, write = "no", replacelast = 26,
+  version = Sys.Date(), NAaction = "omitcasesmedNA")
 }
 \arguments{
 \item{obj}{object created by the twoalert and fouralert functions.}
@@ -16,6 +16,9 @@ write.alerta(obj, ini, end, write = "no", version = Sys.Date(),
 
 \item{write}{use "db" if data.frame should be inserted into the project database,
 or "no" (default) if nothing is saved.}
+
+\item{replacelast}{weeks to replace the ones present in the database. replacelast = 26 
+updates the db for the last 6 months. replacelast = 9999 replace all db.}
 }
 \value{
 data.frame with the data to be written.
@@ -24,17 +27,17 @@ data.frame with the data to be written.
 Function to write the alert results into the database.
 }
 \examples{
-tw = getTweet(city = c(330455), datasource = "data/tw.rda") 
-cli = getWU(stations = 'SBRJ', datasource="data/WUdata.rda")
-cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+tw = getTweet(city = 330070, datasource = con) 
+cli = getWU(stations = 'SBCB', datasource=con)
+cas = getCases(city = 330070, withdivision = FALSE, datasource=con)
 casfit<-adjustIncidence(obj=cas)
 casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
-d<- mergedata(cases = casr, tweet = tw, climate = clima)
+d<- mergedata(cases = casr, tweet = tw, climate = cli)
 crity <- c("temp_min > 22", 3, 3)
 crito <- c("p1 > 0.9", 3, 3)
 critr <- c("inc > 100", 3, 3)
 alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-res <- write.alerta(alerta)
+res <- write.alerta(alerta, write="db", replacelast = 5)
 tail(res)
 }
 

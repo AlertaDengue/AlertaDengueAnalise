@@ -214,17 +214,17 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'updates the db for the last 6 months. replacelast = 9999 replace all db. 
 #'@return data.frame with the data to be written. 
 #'@examples
-#'tw = getTweet(city = c(330455), datasource = "data/tw.rda") 
-#'cli = getWU(stations = 'SBRJ', datasource="data/WUdata.rda")
-#'cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+#'tw = getTweet(city = 330070, datasource = con) 
+#'cli = getWU(stations = 'SBCB', datasource=con)
+#'cas = getCases(city = 330070, withdivision = FALSE, datasource=con)
 #'casfit<-adjustIncidence(obj=cas)
 #'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
-#'d<- mergedata(cases = casr, tweet = tw, climate = clima)
+#'d<- mergedata(cases = casr, tweet = tw, climate = cli)
 #'crity <- c("temp_min > 22", 3, 3)
 #'crito <- c("p1 > 0.9", 3, 3)
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-#'res <- write.alerta(alerta)
+#'res <- write.alerta(alerta, write="db", replacelast = 5)
 #'tail(res)
 
 
@@ -249,13 +249,13 @@ write.alerta<-function(obj, ini, end, write = "no", replacelast = 26, version = 
       d$casos <- data$casos
       d$municipio_geocodigo <- data$cidade # com 7 digitos
       d$p_rt1 <- data$p1
+      d$p_rt1[is.na(d$p_rt1)] <- 0
       d$p_inc100k <- data$inc
       d$Localidade_id <- data$localidade
       d$nivel <- indices$level
       d$versao_modelo <- as.character(version)
       
-      cidade <- unique(data$cidade)
-      
+      cidade <- na.omit(unique(d$municipio_geocodigo))
       if (length(cidade) > 1) stop("so posso gravar no bd uma cidade por vez.")
       
       # defining the id (SE+julian(versaomodelo)+geocodigo+localidade)
@@ -279,11 +279,16 @@ write.alerta<-function(obj, ini, end, write = "no", replacelast = 26, version = 
             if (replacelast < 9999){ #remove parte do historico do municipio
                   datarep <- max(d$data_iniSE) - (replacelast * 7)      
                   print(paste("historical data erased since",datarep))
-                  sql <- paste("DELETE from \"Municipio\".\"Historico_alerta\" where municipio_geocodigo = ", cidade, "and data_iniSE >",datarep)
+                  sql <- paste("DELETE from \"Municipio\".\"Historico_alerta\" where municipio_geocodigo = ", cidade, "AND \"data_iniSE\" >",datarep)
                   dbGetQuery(con, sql)      
+                  
+                  newdata <- d[d$data_iniSE >= datarep,]
+            } else {
+                  sql <- paste("DELETE from \"Municipio\".\"Historico_alerta\" where municipio_geocodigo = ", cidade)    
+                  newdata <- d
             }
             
-            newdata <- d[d$data_iniSE >= datarep,]
+            
             whichvartext <- c(2, 12) 
                   
             for (li in 1:dim(newdata)[1]){

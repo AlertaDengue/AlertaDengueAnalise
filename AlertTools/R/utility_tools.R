@@ -209,3 +209,35 @@ sevendigitgeocode <- function(dig){
       dig*10+dv
 }
       
+
+# nafill ------------------------------------
+#'@description  collection of imputation procedures 
+#'@title methods to substitute NAs.Use the function na.approx from package zoo. 
+#'@param v vector with missing elements.
+#'@param rule rule for filling the missing cells. "zero" just fills them with 0; "linearinterp"
+#' interpolate using tzoo::na.approx. In this case, the tails are not filled. 
+#'@param maxgap maximum number of consecutive NAs to fill. Longer gaps will be left i=unchanged
+#'@return vector with replaced NA.
+#'   
+#'@examples
+#'v <- c(1,2,3,NA,5,6,NA,NA,9,10,NA,NA)
+#'nafill(v, rule = "zero")
+#'nafill(v, rule = "linear")
+
+nafill <- function(v, rule, maxgap = 4){
+      if(sum(is.na(v))==0) stop("vector contains no missing elements")
+      
+      miss <- which(is.na(v))
+      if (rule == "zero"){v[miss]<-0}
+      if (rule == "linear") {v <- na.approx(v, method = "linear", maxgap = maxgap, na.rm=FALSE)}
+      
+      v
+}
+      
+            
+      
+      
+      
+      
+
+      
