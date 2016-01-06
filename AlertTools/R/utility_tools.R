@@ -225,12 +225,11 @@ sevendigitgeocode <- function(dig){
 #'nafill(v, rule = "linear")
 
 nafill <- function(v, rule, maxgap = 4){
-      if(sum(is.na(v))==0) stop("vector contains no missing elements")
-      
-      miss <- which(is.na(v))
-      if (rule == "zero"){v[miss]<-0}
-      if (rule == "linear") {v <- na.approx(v, method = "linear", maxgap = maxgap, na.rm=FALSE)}
-      
+      if(sum(is.na(v))!=0) {
+            miss <- which(is.na(v))
+            if (rule == "zero"){v[miss]<-0}
+            if (rule == "linear") {v <- zoo::na.approx(v, method = "linear", maxgap = maxgap, na.rm=FALSE)}
+      }
       v
 }
       

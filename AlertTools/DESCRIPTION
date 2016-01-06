@@ -11,7 +11,8 @@ Description: Set of functions to get data from the Alerta Dengue server,
 License: CCO
 Imports:
     foreign,
-    RPostgreSQL
+    RPostgreSQL,
+    zoo
 Suggests:
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

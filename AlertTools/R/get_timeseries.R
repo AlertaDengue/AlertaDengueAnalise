@@ -114,7 +114,7 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
 #'@return data.frame with the data aggregated per week according to disease onset date.
 #'@examples
 #'dC0 = getCases(city = c(330455), lastday ="2014-03-10", withdivision = FALSE, datasource = "data/sinan.rda") 
-#'dC0 = getCases(city = 330455, withdivision = FALSE, datasource = con) 
+#'dC0 = getCases(city = 330220, withdivision = FALSE, datasource = con) 
 #'head(dC0)
 
 getCases <- function(city, lastday = Sys.Date(),  withdivision = FALSE, 
@@ -134,6 +134,7 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = FALSE,
             if (dim(dd)[1]==0) stop("geocodigo retornou zero casos. Está correto?")
             
             dd$SEM_NOT <- data2SE(dd$dt_notific, format = "%Y-%m-%d")
+            
             
       } else { # one or more dbf files
             nf = length(datasource)
@@ -160,6 +161,19 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = FALSE,
             for(i in 1:nsem) st$casos[i] <- sum(dd$SEM_NOT == st$SE[i])
             st$localidade <- 0
             st$cidade <- city
+            
+            nome = NA
+            pop = NA
+            if (class(datasource) == "PostgreSQLConnection"){
+                  # pegando nome da cidade e populacao
+                  sql2 <- paste("SELECT nome,populacao from \"Dengue_global\".\"Municipio\" WHERE geocodigo =", city) 
+                  varglobais <- dbGetQuery(datasource,sql2)
+                  nome <- varglobais$nome
+                  pop <- varglobais$populacao      
+            }
+            st$nome <- nome 
+            st$pop <- pop
+            
       } else {
             stop("division = TRUE not working yet.")
             bairro = na.omit(unique(dd$NM_BAIRRO))
