@@ -204,8 +204,11 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 
 #write.alerta --------------------------------------------------------------------
 #'@title Write the alert into the database.
-#'@description Function to write the alert results into the database.  
+#'@description Function to write the alert results into the database. It only writes one city at a time. It is recommended that the end data is specified.
+#'If this is the first time a city is included in the dataset, than use newcity = TRUE. This will force to insert from the beginning. Or if you want to update,
+#'you can define the ini-end dates or define the last n weeks.   
 #'@param obj object created by the twoalert and fouralert functions.
+#'@param newcity if TRUE, it forces the ini to the first date available
 #'@param ini first epidemiological week of the period to be written.
 #'@param end last epidemiological week of the period to be written.  
 #'@param write use "db" if data.frame should be inserted into the project database,
@@ -214,9 +217,9 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'updates the db for the last 6 months. replacelast = 9999 replace all db. 
 #'@return data.frame with the data to be written. 
 #'@examples
-#'tw = getTweet(city = 330070, datasource = con) 
+#'tw = getTweet(city = 330020, datasource = con) 
 #'cli = getWU(stations = 'SBCB', datasource=con)
-#'cas = getCases(city = 330070, withdivision = FALSE, datasource=con)
+#'cas = getCases(city = 330020, withdivision = FALSE, datasource=con)
 #'casfit<-adjustIncidence(obj=cas)
 #'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 #'d<- mergedata(cases = casr, tweet = tw, climate = cli)
@@ -224,16 +227,23 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'crito <- c("p1 > 0.9", 3, 3)
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-#'res <- write.alerta(alerta, write="db", replacelast = 5)
+#'res <- write.alerta(alerta, end = 201602, newcity=TRUE, write="db", replacelast = 9999)
 #'tail(res)
 
 
-write.alerta<-function(obj, ini, end, write = "no", replacelast = 26, version = Sys.Date(), NAaction="omitcasesmedNA"){
+write.alerta<-function(obj, ini, end, newcity=FALSE, write = "no", replacelast = 9999, version = Sys.Date(), NAaction="omitcasesmedNA"){
       
       stopifnot(names(obj) == c("data", "indices", "rules","n"))
       
+      if (newcity){
+            city <- na.omit(unique(obj$data$cidade))
+            sql <- paste("SELECT * from \"Municipio\".\"Historico_alerta\" WHERE municipio_geocodigo = ", city)
+            cc<- dbGetQuery(con, sql)
+            if (dim(cc)[1] != 0) stop(paste("city",city, "is already in the database"))
+      } 
+            
       # cutting the period of interest
-      if(missing(ini)) ini <- min(obj$data$SE)
+      if(missing(ini) | newcity == TRUE) ini <- min(obj$data$SE)
       if(missing(end)) end <- max(obj$data$SE)
       
       datapos <-  which(obj$data$SE <= end & obj$data$SE >= ini)
@@ -266,17 +276,17 @@ write.alerta<-function(obj, ini, end, write = "no", replacelast = 26, version = 
       }
       
       # removing tail if NA
-      if(NAaction=="omitcasesmedNA"){
-            linha <- which(is.na(d$casos_est))
-            if(length(linha)!=0) d <- d[-linha,]
-      }
+      #if(NAaction=="omitcasesmedNA"){
+      #      linha <- which(is.na(d$casos_est))
+      #      if(length(linha)!=0) d <- d[-linha,]
+      #}
 
       if(write == "db"){
             
             varnames <- "(\"SE\", \"data_iniSE\", casos_est, casos_est_min, casos_est_max, casos,
                         municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo,id)"
                   
-            if (replacelast < 9999){ #remove parte do historico do municipio
+            if (replacelast < 9999 & newcity == FALSE){ #remove parte do historico do municipio
                   datarep <- max(d$data_iniSE) - (replacelast * 7)      
                   print(paste("historical data erased since",datarep))
                   sql <- paste("DELETE from \"Municipio\".\"Historico_alerta\" where municipio_geocodigo = ", cidade, "AND \"data_iniSE\" >",datarep)
