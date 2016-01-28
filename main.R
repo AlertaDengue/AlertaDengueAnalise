@@ -122,6 +122,35 @@ save(alerta,file=paste("report/",nick,".RData",sep=""))
 
 
 #--------------------------
+## Rio de Janeiro
+#--------------------------
+
+cidade = 330455
+nick = "Rio"
+estacoeswu = "SBGL"
+withdivision = FALSE
+nlocalidades = 10
+pop = c(2,1,1,3,2,0.4,1,0.5,1,1)*1000000
+
+dC0 = getCases(city = cidade, withdivision = withdivision, datasource = con) # consulta dados do sinan
+dT = getTweet(city = cidade, lastday = Sys.Date(),datasource = con) # consulta dados do tweet
+dW = getWU(stations = estacoeswu,var="temp_min",datasource = con) # consulta dados do clima
+
+d <- mergedata(cases = dC0, climate = dW, tweet = dT, ini=201152)  # junta os dados
+d$temp_min <- nafill(d$temp_min, rule="linear")  # interpolacao clima
+d$casos <- nafill(d$casos, "zero") # preenche de zeros o final da serie
+
+dC2 <- adjustIncidence(d, pdig = pdig) # ajusta a incidencia
+dC3 <- Rt(dC2, count = "tcasesmed", gtdist=gtdist, meangt=meangt, sdgt = sdgt) # calcula Rt
+
+alerta <- fouralert(dC3, cy = crity, co = crito, cr = critr, pop=pop, miss="last") # calcula alerta
+
+alerta <- run.pipeline(cidade, nome,nick,estacoeswu,pop)
+figrelatorio(alerta, nick)
+save(alerta,file=paste("report/",nick,".RData",sep=""))
+
+
+#--------------------------
 ## Cabo Frio
 #--------------------------
 
