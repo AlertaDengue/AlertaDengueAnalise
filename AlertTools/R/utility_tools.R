@@ -218,7 +218,6 @@ sevendigitgeocode <- function(dig){
 #' interpolate using tzoo::na.approx. In this case, the tails are not filled. 
 #'@param maxgap maximum number of consecutive NAs to fill. Longer gaps will be left i=unchanged
 #'@return vector with replaced NA.
-#'   
 #'@examples
 #'v <- c(1,2,3,NA,5,6,NA,NA,9,10,NA,NA)
 #'nafill(v, rule = "zero")
@@ -234,9 +233,4 @@ nafill <- function(v, rule, maxgap = 4){
 }
       
             
-      
-      
-      
-      
-
       

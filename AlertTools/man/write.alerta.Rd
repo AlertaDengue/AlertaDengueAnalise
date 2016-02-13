@@ -4,23 +4,13 @@
 \alias{write.alerta}
 \title{Write the alert into the database.}
 \usage{
-write.alerta(obj, ini, end, newcity = FALSE, write = "no",
-  replacelast = 9999, version = Sys.Date(), NAaction = "omitcasesmedNA")
+write.alerta(obj, write = "no", version = Sys.Date())
 }
 \arguments{
 \item{obj}{object created by the twoalert and fouralert functions.}
 
-\item{ini}{first epidemiological week of the period to be written.}
-
-\item{end}{last epidemiological week of the period to be written.}
-
-\item{newcity}{if TRUE, it forces the ini to the first date available}
-
 \item{write}{use "db" if data.frame should be inserted into the project database,
 or "no" (default) if nothing is saved.}
-
-\item{replacelast}{weeks to replace the ones present in the database. replacelast = 26 
-updates the db for the last 6 months. replacelast = 9999 replace all db.}
 }
 \value{
 data.frame with the data to be written.
@@ -41,7 +31,9 @@ crity <- c("temp_min > 22", 3, 3)
 crito <- c("p1 > 0.9", 3, 3)
 critr <- c("inc > 100", 3, 3)
 alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-res <- write.alerta(alerta, end = 201602, newcity=TRUE, write="db", replacelast = 9999)
+res <- write.alerta(alerta, write="no")
+tail(res)
+res <- write.alerta(alerta, write="db")
 tail(res)
 }
 

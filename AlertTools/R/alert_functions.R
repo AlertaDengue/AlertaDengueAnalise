@@ -208,13 +208,8 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'If this is the first time a city is included in the dataset, than use newcity = TRUE. This will force to insert from the beginning. Or if you want to update,
 #'you can define the ini-end dates or define the last n weeks.   
 #'@param obj object created by the twoalert and fouralert functions.
-#'@param newcity if TRUE, it forces the ini to the first date available
-#'@param ini first epidemiological week of the period to be written.
-#'@param end last epidemiological week of the period to be written.  
 #'@param write use "db" if data.frame should be inserted into the project database,
 #' or "no" (default) if nothing is saved. 
-#'@param replacelast weeks to replace the ones present in the database. replacelast = 26 
-#'updates the db for the last 6 months. replacelast = 9999 replace all db. 
 #'@return data.frame with the data to be written. 
 #'@examples
 #'tw = getTweet(city = 330020, datasource = con) 
@@ -227,28 +222,18 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'crito <- c("p1 > 0.9", 3, 3)
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-#'res <- write.alerta(alerta, end = 201602, newcity=TRUE, write="db", replacelast = 9999)
+#'res <- write.alerta(alerta, write="no")
 #'tail(res)
 
+#'res <- write.alerta(alerta, write="db")
+#'tail(res)
 
-write.alerta<-function(obj, ini, end, newcity=FALSE, write = "no", replacelast = 9999, version = Sys.Date(), NAaction="omitcasesmedNA"){
+write.alerta<-function(obj, write = "no", version = Sys.Date()){
       
       stopifnot(names(obj) == c("data", "indices", "rules","n"))
       
-      if (newcity){
-            city <- na.omit(unique(obj$data$cidade))
-            sql <- paste("SELECT * from \"Municipio\".\"Historico_alerta\" WHERE municipio_geocodigo = ", city)
-            cc<- dbGetQuery(con, sql)
-            if (dim(cc)[1] != 0) stop(paste("city",city, "is already in the database"))
-      } 
-            
-      # cutting the period of interest
-      if(missing(ini) | newcity == TRUE) ini <- min(obj$data$SE)
-      if(missing(end)) end <- max(obj$data$SE)
-      
-      datapos <-  which(obj$data$SE <= end & obj$data$SE >= ini)
-      data <- obj$data[datapos,]
-      indices <- obj$indices[datapos,]
+      data <- obj$data
+      indices <- obj$indices
       
       # creating the data.frame with the required columns
       d <- data.frame(SE = data$SE)
@@ -272,52 +257,45 @@ write.alerta<-function(obj, ini, end, newcity=FALSE, write = "no", replacelast =
       d$id <- NA
       for (i in 1:dim(d)[1]) {
             versaojulian <- as.character(julian(as.Date(d$versao_modelo[i])))
-            d$id[i] <- paste(d$municipio_geocodigo[i], d$Localidade_id[i], d$SE[i], versaojulian, sep="")
+            d$id[i] <- paste(d$municipio_geocodigo[i], d$Localidade_id[i], d$SE[i], 
+                             versaojulian, sep="")
       }
       
-      # removing tail if NA
-      #if(NAaction=="omitcasesmedNA"){
-      #      linha <- which(is.na(d$casos_est))
-      #      if(length(linha)!=0) d <- d[-linha,]
-      #}
-
       if(write == "db"){
+            # se tiver ja algum registro com mesmo geocodigo e SE, esse sera substituido pelo atualizado.
             
             varnames <- "(\"SE\", \"data_iniSE\", casos_est, casos_est_min, casos_est_max, casos,
                         municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo,id)"
-                  
-            if (replacelast < 9999 & newcity == FALSE){ #remove parte do historico do municipio
-                  datarep <- max(d$data_iniSE) - (replacelast * 7)      
-                  print(paste("historical data erased since",datarep))
-                  sql <- paste("DELETE from \"Municipio\".\"Historico_alerta\" where municipio_geocodigo = ", cidade, "AND \"data_iniSE\" >",datarep)
-                  dbGetQuery(con, sql)      
-                  
-                  newdata <- d[d$data_iniSE >= datarep,]
-            } else {
-                  sql <- paste("DELETE from \"Municipio\".\"Historico_alerta\" where municipio_geocodigo = ", cidade)    
-                  newdata <- d
-            }
             
+            sepvarnames <- c("\"SE\"", "\"data_iniSE\"", "casos_est", "casos_est_min", "casos_est_max",
+                             "casos","municipio_geocodigo","p_rt1","p_inc100k","\"Localidade_id\"",
+                             "nivel","versao_modelo","id")
             
-            whichvartext <- c(2, 12) 
-                  
-            for (li in 1:dim(newdata)[1]){
-                  linha = as.character(newdata[li,1])
-                  for (i in 2:dim(newdata)[2]) {
-                        if (i %in% whichvartext) {
-                              value = paste("'", as.character(newdata[li,i]), "'", sep="")
-                              linha = paste(linha, value, sep=",")
-                              }
-                        else {linha = paste(linha, as.character(newdata[li,i]),sep=",")}
-                  }
-                                     
-                  sql = paste("INSERT INTO \"Municipio\".\"Historico_alerta\" ",varnames, " VALUES (", linha, ")",sep="")
-                  try(dbGetQuery(con, sql))
-            }
-            }
-      d
-}
+            updates <- paste(sepvarnames[1],"=excluded.",sepvarnames[1],sep="")
+            for(i in 2:13) updates <- paste(updates, paste(sepvarnames[i],"=excluded.",
+                                                             sepvarnames[i],sep=""),sep=",") 
 
+            stringvars = c(2,12)            
+            for (li in 1:dim(d)[1]){
+                  linha = as.character(d[li,1])
+                  for (i in 2:dim(d)[2]) {
+                        if (i %in% stringvars & !is.na(as.character(d[li,i]))) {
+                              value = paste("'", as.character(d[li,i]), "'", sep="")
+                              linha = paste(linha, value, sep=",")
+                        }
+                        else {linha = paste(linha, as.character(d[li,i]),sep=",")}
+                  }
+                  linha = gsub("NA","NULL",linha)
+                  insert_sql = paste("INSERT INTO \"Municipio\".\"Historico_alerta\" " ,varnames, 
+                                     " VALUES (", linha, ") ON CONFLICT ON CONSTRAINT alertas_unicos DO
+                               UPDATE SET",updates, sep="")
+                  
+                  try(dbGetQuery(con, insert_sql))      
+            }
+      }
+            d
+}
+      
       
 
 
