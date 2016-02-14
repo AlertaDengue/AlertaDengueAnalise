@@ -111,7 +111,6 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
 #'@param disease default is "dengue".
 #'@param withdivision either FALSE if aggregation at the city level. TRUE not working.
 #'@param datasource "db" if using the project database or "data/sinan.rda" if using local test data. 
-#'@param checkduplicated TRUE for checking for duplicated records using variables ("dt_notific","nu_notific","municipio_geocodigo")
 #'@return data.frame with the data aggregated per week according to disease onset date.
 #'@examples
 #'dC0 = getCases(city = c(330455), lastday ="2014-03-10", withdivision = FALSE, datasource = "data/sinan.rda") 
@@ -119,7 +118,7 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
 #'head(dC0)
 
 getCases <- function(city, lastday = Sys.Date(),  withdivision = FALSE, 
-                     disease = "dengue", datasource, checkduplicated = TRUE) {
+                     disease = "dengue", datasource) {
       
       if(nchar(city) == 6) city <- sevendigitgeocode(city)   
       
@@ -157,11 +156,12 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = FALSE,
       sem <- seqSE(from = min(dd$SEM_NOT), to = max(dd$SEM_NOT))$SE
       nsem <- length(sem)
       
-      if (checkduplicated) {
-            cvars <- c("dt_notific","nu_notific","municipio_geocodigo")
-            du <- sum(duplicated(dd[,dvar1]))
-            warning(paste("Encontrados", du ," notificações duplicadas no banco de dados da cidade", city))
-      }
+#       if (checkduplicated) {
+#             cvars <- c("SEM_NOT","nu_notific","municipio_geocodigo")
+#             du <- sum(duplicated(dd[,cvars]))
+#             warning(paste("Encontrados", du ," notificações duplicadas no banco de dados da cidade", city))
+#             print(dd[duplicated(dd[,cvars]),])
+#       }
       
       if (withdivision == FALSE){
             st <- data.frame(SE = sem, casos = 0)

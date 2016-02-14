@@ -5,7 +5,7 @@
 \title{Get Case Data and aggregate per week and area}
 \usage{
 getCases(city, lastday = Sys.Date(), withdivision = FALSE,
-  disease = "dengue", datasource, checkduplicated = TRUE)
+  disease = "dengue", datasource)
 }
 \arguments{
 \item{city}{city's geocode.}
@@ -15,8 +15,6 @@ getCases(city, lastday = Sys.Date(), withdivision = FALSE,
 \item{disease}{default is "dengue".}
 
 \item{datasource}{"db" if using the project database or "data/sinan.rda" if using local test data.}
-
-\item{checkduplicated}{TRUE for checking for duplicated records using variables ("dt_notific","nu_notific","municipio_geocodigo")}
 
 \item{finalday}{last day. Default is the last available.}
 }
