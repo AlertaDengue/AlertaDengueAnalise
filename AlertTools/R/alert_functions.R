@@ -153,12 +153,6 @@ fouralert <- function(obj, cy, co, cr, pop, miss="last"){
       indices <- delayturnoff(cond=cr,level=4)
       indices <- delayturnoff(cond=co,level=3)
       indices <- delayturnoff(cond=cy,level=2)
-      print("Last data")
-      print(tail(obj, n=6 ))
-      
-      print("Last warnings")
-      print(tail(indices, n=6 ))
-      
       return(list(data=obj, indices=indices, rules=paste("cy", ";", "co", ";",
                                                          "cr"),n = 4))      
 }
@@ -234,6 +228,9 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
       
       data <- obj$data
       indices <- obj$indices
+    
+      cidade <- na.omit(unique(obj$data$cidade))
+      if (length(cidade) > 1) stop("so posso gravar no bd uma cidade por vez.")
       
       # creating the data.frame with the required columns
       d <- data.frame(SE = data$SE)
@@ -242,7 +239,7 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
       d$casos_est_min <- data$tcasesICmin
       d$casos_est_max <- data$tcasesICmax
       d$casos <- data$casos
-      d$municipio_geocodigo <- data$cidade # com 7 digitos
+      d$municipio_geocodigo <- na.omit(unique(data$cidade)) # com 7 digitos
       d$p_rt1 <- data$p1
       d$p_rt1[is.na(d$p_rt1)] <- 0
       d$p_inc100k <- data$inc
@@ -250,8 +247,7 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
       d$nivel <- indices$level
       d$versao_modelo <- as.character(version)
       
-      cidade <- na.omit(unique(d$municipio_geocodigo))
-      if (length(cidade) > 1) stop("so posso gravar no bd uma cidade por vez.")
+      d$Localidade_id[is.na(d$Localidade_id)] <- 0
       
       # defining the id (SE+julian(versaomodelo)+geocodigo+localidade)
       d$id <- NA
@@ -297,6 +293,89 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
 }
       
       
+
+#write.Rio --------------------------------------------------------------------
+#'@title Write the Rio alert into the database, from the csv.
+#'@description Temporary function to run while the within city alert is not implemented
+#'@param filename csv from the atualizaalerta.r script.
+#'@return data.frame with the data to be written. 
+#'@examples
+#'res <- write.Rio(filename="../alertaAPS_201606.csv", write="db")
+#'tail(res)
+#'res <- write.Rio(filename="../alertaAPS_201608.csv", write="no")
+#'tail(res)
+write.Rio<-function(filename, write = "no", version = Sys.Date()){
+      
+      obj <- read.csv(filename)
+#      stopifnot(names(obj) %in% c("APS", "SE", "data","tweets"))
+      
+      # creating the data.frame with the required columns
+      d <- data.frame(se = obj$SE)
+      d$aps <- obj$APS
+      d$data <- as.Date(obj$data, format = "%Y-%m-%d")
+      d$tweets <- obj$tweets
+      d$casos <- obj$casos
+      d$casos_est <- obj$casos_est
+      d$casos_estmin <- obj$casos_estmin
+      d$casos_estmax <- obj$casos_estmax
+      d$tmin <- obj$tmin
+      d$rt <- obj$Rt
+      d$rt[!is.finite(d$rt)] <- NA
+      d$prt1 <- obj$pRt1
+      d$prt1[is.na(d$prt1)] <- 0
+      d$inc <- obj$inc
+      d$nivel <- obj$cor
+      
+      falt <- which(is.na(d$data))
+      if (length(falt)>0) {
+            for (i in falt) d$data[i] <- SE2date(d$se[i])$ini
+      }
+      
+      d$data <- as.character(d$data)
+      # defining the id (SE+julian(versaomodelo)+geocodigo+localidade)
+      d$id <- NA
+      
+      getAPScode <- function(ap) {
+            aps <- c("AP1","AP2.1","AP2.2","AP3.1","AP3.2","AP3.3","AP4","AP5.1","AP5.2","AP5.3")
+            code <- c(10,21,22,31,32,33,40,51,52,53)
+            code[which(aps==ap)]
+      }
+      
+      for (i in 1:dim(d)[1]) {
+            versaojulian <- as.character(julian(Sys.Date()))
+            d$id[i] <- paste(getAPScode(d$aps[i]), d$se[i],versaojulian, sep="")
+      }
+      
+      if(write == "db"){
+            
+            # esvaziar a tabela
+            sql <- "DELETE from \"Municipio\".\"alerta_mrj\""
+            dbGetQuery(con, sql)
+            
+            varnames <- "(se,aps,data,tweets,casos,casos_est,casos_estmin,
+            casos_estmax,tmin,rt,prt1,inc,nivel,id)"
+            
+            # construindo a linha para inserir
+            stringvars = c(2,3)            
+            for (li in 1:dim(d)[1]){
+                  linha = as.character(d[li,1])
+                  for (i in 2:dim(d)[2]) {
+                        if (i %in% stringvars & !is.na(as.character(d[li,i]))) {
+                              value = paste("'", as.character(d[li,i]), "'", sep="")
+                              linha = paste(linha, value, sep=",")
+                        }
+                        else {linha = paste(linha, as.character(d[li,i]),sep=",")}
+                  }
+                  linha = gsub("NA","NULL",linha)
+                  insert_sql = paste("INSERT INTO \"Municipio\".\"alerta_mrj\"" ,varnames, 
+                                     " VALUES (", linha, ")", sep="")
+                  
+                  try(dbGetQuery(con, insert_sql))      
+            }
+      }
+      d
+}
+
 
 
 #isOrange --------------------------------------------------------------------

@@ -5,19 +5,17 @@
 # GetWU --------------------------------------------------------
 #'@description Create weekly time series from meteorological station data in server
 #'@title Get Climate Data
-#'@param stations vector with the stations codes (4 digits).
-#'@param city vector with the cities codes (6 digits). Not implemented yet. 
+#'@param stations station code (4 digits).
 #'@param vars climate variables (default var="all": all variables available )
-#'@param finalday last day. Default is the last available. Format = Year-month-day. 
+#'@param finalday last day. Default is the last available. Format = %Y-%m-%d. 
 #'@param datasource Use "data/WUdata.rda" to use test dataset. #' Use the connection to the Postgresql server if using project data. See also DenguedbConnect
 #' to open the database connection. 
 #'@return data.frame with the weekly data (cidade estacao data temp_min tmed tmax umin umed umax pressaomin pressaomed pressaomax)
 #'@examples
-#'res = getWU(stations = c('SBRJ','SBJR','SBAF'), datasource="data/WUdata.rda")
-#'res = getWU(stations = 'SBRJ', vars="temp_min", finalday = "2014-10-10", datasource= con)
+#'res = getWU(station = 'SBRJ', vars="temp_min", finalday = "2014-10-10", datasource= con)
 #'tail(res)
 
-getWU <- function(stations, vars = "temp_min", city=c(), finalday = Sys.Date(), datasource) {
+getWU <- function(stations, vars = "temp_min", finalday = Sys.Date(), datasource) {
       
       if (!all(nchar(stations) == 4)) stop("'stations' should be a vector of 4 digit station names")
       nsta = length(stations)
@@ -33,6 +31,7 @@ getWU <- function(stations, vars = "temp_min", city=c(), finalday = Sys.Date(), 
       } else if (class(datasource) == "PostgreSQLConnection") {
             # creating the sql query for the stations
             sql1 = paste("'", stations[1], sep = "")
+            nsta = length(stations)
             if (nsta > 1) for (i in 2:nsta) sql1 = paste(sql1, stations[i], sep = "','")
             sql1 <- paste(sql1, "'", sep = "")
             # sql query for the date
@@ -155,14 +154,6 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = FALSE,
       
       sem <- seqSE(from = min(dd$SEM_NOT), to = max(dd$SEM_NOT))$SE
       nsem <- length(sem)
-      
-#       if (checkduplicated) {
-#             cvars <- c("SEM_NOT","nu_notific","municipio_geocodigo")
-#             du <- sum(duplicated(dd[,cvars]))
-#             warning(paste("Encontrados", du ," notificações duplicadas no banco de dados da cidade", city))
-#             print(dd[duplicated(dd[,cvars]),])
-#       }
-      
       if (withdivision == FALSE){
             st <- data.frame(SE = sem, casos = 0)
             for(i in 1:nsem) st$casos[i] <- sum(dd$SEM_NOT == st$SE[i])

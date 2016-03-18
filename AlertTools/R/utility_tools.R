@@ -132,29 +132,56 @@ seqSE <- function(from, to){
 #'@param station wu station. Not implemented yet.
 #'@return most recent date 
 #'@examples
-#'lastDBdate( tab = "tweet")
-#'lastDBdate("sinan", city=330240) 
+#'lastDBdate(tab="tweet")
+#'lastDBdate(tab="tweet", city=330240)
+#'lastDBdate(tab="sinan", city=330240)
+#'lastDBdate(tab="clima_wu", station="SBAF")  
 
-lastDBdate <- function(tab, city, station){
+lastDBdate <- function(tab, city = NULL, station = NULL){
       if (tab == "sinan"){
-            if (missing(city)) {sql <- "SELECT dt_notific from \"Municipio\".\"Notificacao\""}
-            else {sql <- paste("SELECT dt_notific from \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo between ", city,"0", sep = "",
-                                     " ", "and", " ",city,"9")}
+            if (is.null(city)) {
+                  sql <- "SELECT dt_notific from \"Municipio\".\"Notificacao\""
+                  print("Nenhuma cidade indicada, data refere-se ao banco todo")
+                  } else {
+                        if(nchar(city) == 6) city <- sevendigitgeocode(city)
+                        sql <- paste("SELECT dt_notific from \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = ", city)
+                        }
             dd <- dbGetQuery(con,sql)
             date <- max(dd$dt_notific)
       }
+      
       if (tab == "tweet"){
-            if (missing(city)) sql <- paste("SELECT data_dia from \"Municipio\".\"Tweet\"")
+            if (is.null(city)) {
+                  sql <- paste("SELECT data_dia from \"Municipio\".\"Tweet\"")
+                  print("Nenhuma cidade indicada, data refere-se ao banco todo")
+            } else {
+                  if(nchar(city) == 6) city <- sevendigitgeocode(city)
+                  sql <- paste("SELECT data_dia from \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = ", city)
+                  }
             dd <- dbGetQuery(con,sql)
             date <- max(dd$data_dia)
       }
+      
       if (tab == "clima_wu"){
-            if (missing(station)) sql <- paste("SELECT data_dia from \"Municipio\".\"Clima_wu\"")
+            if (!is.null(city)) stop("indique a estacao desejada")
+            if (is.null(station)) {
+                  sql <- paste("SELECT data_dia from \"Municipio\".\"Clima_wu\"")
+                  print("Nenhuma estacao indicada, data e' a mais recente no banco todo")
+            } else {
+                  sql1 <- paste("'", stations, "'",sep = "")
+                  sql <- paste("SELECT * from \"Municipio\".\"Clima_wu\" WHERE \"Estacao_wu_estacao_id\" = ",sql1)
+            }
             dd <- dbGetQuery(con,sql)
             date <- max(dd$data_dia)
       }
+      
       if (tab == "historico"){
-            if (missing(city)) sql <- paste("SELECT \"data_iniSE\" from \"Municipio\".\"Historico_alerta\"")
+            if (is.null(city)) {
+                  sql <- paste("SELECT \"data_iniSE\" from \"Municipio\".\"Historico_alerta\"")
+                  print("Nenhuma cidade indicada, data refere-se ao banco todo")
+            } else {
+                  sql <- paste("SELECT \"data_iniSE\" from \"Municipio\".\"Historico_alerta\" WHERE municipio_geocodigo = ", city)
+            }
             dd <- dbGetQuery(con,sql)
             date <- max(dd$data_iniSE)
       }
