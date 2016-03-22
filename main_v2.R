@@ -8,8 +8,8 @@ library(RPostgreSQL)
 #library(AlertTools)
 library(devtools)
 devtools::load_all()
-source("../config.R") # configuracao do alerta (pipeline)
-
+source("../config.R") # valores dos parametros
+source("../pipeline.R") # funcoes pipeline e gerafigura
 
 # ================================
 # Definir output
@@ -37,12 +37,13 @@ datafim <- data2SE(lastDBdate("sinan"), format="%Y-%m-%d")
 # Alerta Estado do Rio de Janeiro
 # ================================
 
-# para rodar para uma cidade especifica:
-cid <- list(geocodigo = 330450, estacao="SBGL",pdig = c(2.791400,0.9913278),
-            tcrit = 22, inccrit = 100)
-res = run.pipeline(lugar = cid, sefinal = datafim, sfigs = salvafiguras)
 
-regioes <- c("RJ.noroeste", "RJ.norte", "RJ.serrana", "RJ.lagos", "RJ.metropol", "RJ.centrosul", 
-             "RJ.medparaiba", "RJ.costaverde", "RJ.capital")
-for (reg in regioes) run.pipeline(lugar = eval(parse(text=reg)), sefinal = datafim, sfigs = salvafiguras)
+# Capital:
+#cid <- list(geocodigo = 330450, estacao="SBGL",pdig = c(2.791400,0.9913278),
+#            tcrit = 22, inccrit = 100)
+#res = run.pipeline(lugar = cid, sefinal = datafim, sfigs = salvafiguras)
+
+# Regiao:
+
+run.pipeline(lugar = eval(parse(text=reg)), sefinal = datafim, sfigs = salvafiguras)
 

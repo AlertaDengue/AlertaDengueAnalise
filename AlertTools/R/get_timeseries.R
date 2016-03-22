@@ -87,17 +87,23 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
             c1 <- paste("select data_dia, numero from \"Municipio\".\"Tweet\" where 
                 \"Municipio_geocodigo\" = ", city)
             tw <- dbGetQuery(datasource,c1)
+            if (dim(tw)[1]>0) 
             names(tw) <- c("data_dia","tweet")
       }
+      if (dim(tw)[1]>0){
+            tw <- subset(tw, as.Date(data_dia, format = "%Y-%m-%d") <= lastday)
+            
+            # Atribuir SE e agregar por semana-----------------------------------------
+            tw$SE <- data2SE(tw$data_dia, format = "%Y-%m-%d")
+            sem <- seqSE(from = min(tw$SE), to = max(tw$SE))$SE
+            twf <- data.frame(SE = sem, tweet = NA)
+            for (i in 1:dim(twf)[1]) twf$tweet[i] <- sum(tw$tweet[tw$SE==twf$SE[i]])  
+            twf$cidade <- city      
+      } else {
+            twf = NULL
+            print("essa cidade nao tem tweets")
+            }
       
-      tw <- subset(tw, as.Date(data_dia, format = "%Y-%m-%d") <= lastday)
-      
-      # Atribuir SE e agregar por semana-----------------------------------------
-      tw$SE <- data2SE(tw$data_dia, format = "%Y-%m-%d")
-      sem <- seqSE(from = min(tw$SE), to = max(tw$SE))$SE
-      twf <- data.frame(SE = sem, tweet = NA)
-      for (i in 1:dim(twf)[1]) twf$tweet[i] <- sum(tw$tweet[tw$SE==twf$SE[i]])  
-      twf$cidade <- city
       twf
 }
 
