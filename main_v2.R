@@ -8,7 +8,7 @@ library(RPostgreSQL)
 #library(AlertTools)
 library(devtools)
 devtools::load_all()
-source("../config.R") # valores dos parametros
+source("../config.R") # valores dos parametros (params)
 source("../pipeline.R") # funcoes pipeline e gerafigura
 
 # ================================
@@ -36,14 +36,19 @@ datafim <- data2SE(lastDBdate("sinan"), format="%Y-%m-%d")
 # ================================
 # Alerta Estado do Rio de Janeiro
 # ================================
+#Regionais: "Metropolitana I"   "Metropolitana II"  "Litoral Sul"
+# "Médio Paraíba" "Centro Sul" "Serrana" "Baixada Litorânea" "Norte"            
+#"Noroeste" 
 
+run.pipeline(regional = "Metropolitana I", params = RJ.met1, sfigs = salvafiguras)
+run.pipeline(regional = "Metropolitana II", params = RJ.met2, sfigs = salvafiguras)
+run.pipeline(regional = "Litoral Sul", params = RJ.litoralsul, sfigs = salvafiguras)
+run.pipeline(regional = "Médio Paraíba", params = RJ.medparaiba, sfigs = salvafiguras)
+run.pipeline(regional = "Centro Sul", params = RJ.centrosul, sfigs = salvafiguras)
+run.pipeline(regional = "Serrana", params = RJ.serrana, sfigs = salvafiguras)
+run.pipeline(regional = "Baixada Litorânea", params = RJ.baixadalit, sfigs = salvafiguras)
+run.pipeline(regional = "Norte", params = RJ.norte, sfigs = salvafiguras)
+run.pipeline(regional = "Noroeste", params = RJ.noroeste, sfigs = salvafiguras)
 
-# Capital:
-#cid <- list(geocodigo = 330450, estacao="SBGL",pdig = c(2.791400,0.9913278),
-#            tcrit = 22, inccrit = 100)
-#res = run.pipeline(lugar = cid, sefinal = datafim, sfigs = salvafiguras)
-
-# Regiao:
-
-run.pipeline(lugar = eval(parse(text=reg)), sefinal = datafim, sfigs = salvafiguras)
-
+# capital (separado)
+run.pipeline(cidade = 330455, params = RJ.capital, sfigs = salvafiguras)
