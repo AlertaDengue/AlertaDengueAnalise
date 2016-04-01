@@ -165,13 +165,15 @@ fouralert <- function(obj, cy, co, cr, pop, miss="last"){
 #'indicates evidence of sustained transmission, red indicates evidence of 
 #'an epidemic scenario.  
 #'@param pars parameters of the alert.
+#'@param naps subset of vector 0:9 corresponding to the id of the APS. Default is all of them.
 #'@param datasource it is the name of the sql connection.
 #'@return list with an alert object for each APS.
 #'@examples
-#'alerio <- alertaRio()
-#'tail(alerio)
+#'alerio2 <- alertaRio(naps = 2, datasource=con)
+#'alerio <- alertaRio(datasource=con)
+#'names(alerio)
 
-alertaRio <- function(pars = list(meanlog = 2.5016,sdlog=1.1013,
+alertaRio <- function(naps = 0:9, pars = list(meanlog = 2.5016,sdlog=1.1013,
                       crity=c("temp_min > 22", 3, 3), crito=c("p1 > 0.9", 3, 3),
                       critr=c("inc > 100", 3, 2)), datasource){
       
@@ -182,21 +184,21 @@ alertaRio <- function(pars = list(meanlog = 2.5016,sdlog=1.1013,
       cli.SBGL = getWU(stations = 'SBGL', datasource=datasource)
       
       APS <- c("APS 1", "APS 2.1", "APS 2.2", "APS 3.1", "APS 3.2", "APS 3.3"
-               , "APS 4", "APS 5.1", "APS 5.2", "APS 5.3")
+               , "APS 4", "APS 5.1", "APS 5.2", "APS 5.3")[(naps + 1)]
       
       p <- rev(plnorm(seq(7,20,by=7), pars$meanlog, pars$sdlog))
       
       res <- vector("list", length(APS))
       names(res) <- APS
-      for (apsid in 0:9){
-            message(paste("rodando", APS[(apsid+1)],"..."))
-            cas = getCasesinRio(APSid = apsid, datasource=datasource)
+      for (i in length(APS)){
+            message(paste("rodando", APS[i],"..."))
+            cas = getCasesinRio(APSid = naps[i], datasource=datasource)
             d <- merge(cas, cli.SBRJ, by.x = "SE", by.y = "SE")
             d <- merge(d, tw, by.x = "SE", by.y = "SE")
             
             casfit<-adjustIncidence(obj=d, pdig = p)
             casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-            res[[(apsid+1)]] <- fouralert(casr, cy = pars$crity, co = pars$crito,
+            res[[i]] <- fouralert(casr, cy = pars$crity, co = pars$crito,
                                           cr = pars$critr, pop=cas$pop[1])
       }
             
@@ -252,7 +254,6 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #' or "no" (default) if nothing is saved. 
 #'@return data.frame with the data to be written. 
 #'@examples
-#'tw = getTweet(city = 330020, datasource = con) 
 #'cli = getWU(stations = 'SBCB', datasource=con)
 #'cas = getCases(city = 330020, withdivision = FALSE, datasource=con)
 #'casfit<-adjustIncidence(obj=cas)
@@ -263,9 +264,6 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
 #'res <- write.alerta(alerta, write="no")
-#'tail(res)
-
-#'res <- write.alerta(alerta, write="db")
 #'tail(res)
 
 write.alerta<-function(obj, write = "no", version = Sys.Date()){
@@ -338,18 +336,99 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
             d
 }
       
+#write.alertaRio --------------------------------------------------------------------
+#'@title Write the Rio de janeiro alert into the database.
+#'@description Function to write the alert results into the database. 
+#'@param obj object created by the alertRio function and contains alerts for each APS.
+#'@param write use "db" if data.frame should be inserted into the project database,
+#' or "no" (default) if nothing is saved. 
+#'@return data.frame with the data to be written. 
+#'@examples
+#'alerio2 <- alertaRio(naps = 2, datasource=con)
+#'res <- write.alerta(alerio, write="no")
+#'tail(res)
+
+write.alerta<-function(obj, write = "no", version = Sys.Date()){
       
+      stopifnot(names(obj) == c("data", "indices", "rules","n"))
+      
+      data <- obj$data
+      indices <- obj$indices
+      
+      cidade <- na.omit(unique(obj$data$cidade))
+      if (length(cidade) > 1) stop("so posso gravar no bd uma cidade por vez.")
+      
+      # creating the data.frame with the required columns
+      d <- data.frame(SE = data$SE)
+      d$data_iniSE <- SE2date(d$SE)$ini
+      d$casos_est <- data$tcasesmed
+      d$casos_est_min <- data$tcasesICmin
+      d$casos_est_max <- data$tcasesICmax
+      d$casos <- data$casos
+      d$municipio_geocodigo <- na.omit(unique(data$cidade)) # com 7 digitos
+      d$p_rt1 <- data$p1
+      d$p_rt1[is.na(d$p_rt1)] <- 0
+      d$p_inc100k <- data$inc
+      d$Localidade_id <- data$localidade
+      d$nivel <- indices$level
+      d$versao_modelo <- as.character(version)
+      
+      d$Localidade_id[is.na(d$Localidade_id)] <- 0
+      
+      # defining the id (SE+julian(versaomodelo)+geocodigo+localidade)
+      d$id <- NA
+      for (i in 1:dim(d)[1]) {
+            versaojulian <- as.character(julian(as.Date(d$versao_modelo[i])))
+            d$id[i] <- paste(d$municipio_geocodigo[i], d$Localidade_id[i], d$SE[i], 
+                             versaojulian, sep="")
+      }
+      
+      if(write == "db"){
+            # se tiver ja algum registro com mesmo geocodigo e SE, esse sera substituido pelo atualizado.
+            
+            varnames <- "(\"SE\", \"data_iniSE\", casos_est, casos_est_min, casos_est_max, casos,
+            municipio_geocodigo,p_rt1,p_inc100k,\"Localidade_id\",nivel,versao_modelo,id)"
+            
+            sepvarnames <- c("\"SE\"", "\"data_iniSE\"", "casos_est", "casos_est_min", "casos_est_max",
+                             "casos","municipio_geocodigo","p_rt1","p_inc100k","\"Localidade_id\"",
+                             "nivel","versao_modelo","id")
+            
+            updates <- paste(sepvarnames[1],"=excluded.",sepvarnames[1],sep="")
+            for(i in 2:13) updates <- paste(updates, paste(sepvarnames[i],"=excluded.",
+                                                           sepvarnames[i],sep=""),sep=",") 
+            
+            stringvars = c(2,12)            
+            for (li in 1:dim(d)[1]){
+                  linha = as.character(d[li,1])
+                  for (i in 2:dim(d)[2]) {
+                        if (i %in% stringvars & !is.na(as.character(d[li,i]))) {
+                              value = paste("'", as.character(d[li,i]), "'", sep="")
+                              linha = paste(linha, value, sep=",")
+                        }
+                        else {linha = paste(linha, as.character(d[li,i]),sep=",")}
+                  }
+                  linha = gsub("NA","NULL",linha)
+                  insert_sql = paste("INSERT INTO \"Municipio\".\"Historico_alerta\" " ,varnames, 
+                                     " VALUES (", linha, ") ON CONFLICT ON CONSTRAINT alertas_unicos DO
+                               UPDATE SET",updates, sep="")
+                  
+                  try(dbGetQuery(con, insert_sql))      
+            }
+      }
+      d
+}
+
 
 #write.Rio --------------------------------------------------------------------
-#'@title Write the Rio alert into the database, from the csv.
+#'@title Write the Rio alert into the database, from the csv (deprecated) or object
+#' created by the alertaRio function.
 #'@description Temporary function to run while the within city alert is not implemented
 #'@param filename csv from the atualizaalerta.r script.
 #'@return data.frame with the data to be written. 
 #'@examples
-#'res <- write.Rio(filename="../alertaAPS_201606.csv", write="db")
-#'tail(res)
 #'res <- write.Rio(filename="../alertaAPS_201608.csv", write="no")
 #'tail(res)
+
 write.Rio<-function(filename, write = "no", version = Sys.Date()){
       
       obj <- read.csv(filename)
