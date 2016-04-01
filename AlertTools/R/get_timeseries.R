@@ -223,7 +223,6 @@ getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
       nsem <- length(sem)
       st <- data.frame(SE = sem, casos = 0)
       for(i in 1:nsem) st$casos[i] <- sum(d$SEM_NOT == st$SE[i])
-      st$cidade <- 3304557
       st$nome <- "Rio de Janeiro"
       # agrega informacao de populacao da APS
       

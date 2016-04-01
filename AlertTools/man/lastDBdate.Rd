@@ -4,7 +4,7 @@
 \alias{lastDBdate}
 \title{Returns the most recent date present in the database table.}
 \usage{
-lastDBdate(tab, city, station)
+lastDBdate(tab, city = NULL, station = NULL)
 }
 \arguments{
 \item{tab}{table in the database. Either (sinan, clima_wu, tweet ou historico).}
@@ -20,7 +20,9 @@ most recent date
 Useful to check if the database is up-to-date.
 }
 \examples{
-lastDBdate( tab = "tweet")
-lastDBdate("sinan", city=330240) 
+lastDBdate(tab="tweet")
+lastDBdate(tab="tweet", city=330240)
+lastDBdate(tab="sinan", city=330240)
+lastDBdate(tab="clima_wu", station="SBAF")  
 }
 

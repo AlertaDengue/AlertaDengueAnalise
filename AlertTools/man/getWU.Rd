@@ -4,17 +4,14 @@
 \alias{getWU}
 \title{Get Climate Data}
 \usage{
-getWU(stations, vars = "temp_min", city = c(), finalday = Sys.Date(),
-  datasource)
+getWU(stations, vars = "temp_min", finalday = Sys.Date(), datasource)
 }
 \arguments{
-\item{stations}{vector with the stations codes (4 digits).}
+\item{stations}{station code (4 digits).}
 
 \item{vars}{climate variables (default var="all": all variables available )}
 
-\item{city}{vector with the cities codes (6 digits). Not implemented yet.}
-
-\item{finalday}{last day. Default is the last available. Format = Year-month-day.}
+\item{finalday}{last day. Default is the last available. Format = %Y-%m-%d.}
 
 \item{datasource}{Use "data/WUdata.rda" to use test dataset. #' Use the connection to the Postgresql server if using project data. See also DenguedbConnect
 to open the database connection.}
@@ -26,8 +23,7 @@ data.frame with the weekly data (cidade estacao data temp_min tmed tmax umin ume
 Create weekly time series from meteorological station data in server
 }
 \examples{
-res = getWU(stations = c('SBRJ','SBJR','SBAF'), datasource="data/WUdata.rda")
-res = getWU(stations = 'SBRJ', vars="temp_min", finalday = "2014-10-10", datasource= con)
+res = getWU(station = 'SBRJ', vars="temp_min", finalday = "2014-10-10", datasource= con)
 tail(res)
 }
 

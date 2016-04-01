@@ -164,111 +164,43 @@ fouralert <- function(obj, cy, co, cr, pop, miss="last"){
 #'positive mosquito population growth are detected, green otherwise.Orange 
 #'indicates evidence of sustained transmission, red indicates evidence of 
 #'an epidemic scenario.  
-#'@param obj dataset from the mergedata function.
-#'@param cy conditions for yellow. 
-#'@param co conditions for orange.
-#'@param cr conditions for red.
-#'@param missing how missing data is treated. "last" if last value is repeated. 
-#'It is currently the only option.
-#'@return data.frame with the week condition and the number of weeks within the 
-#'last lag weeks with conditions = TRUE.
+#'@param pars parameters of the alert.
+#'@param datasource it is the name of the sql connection.
+#'@return list with an alert object for each APS.
 #'@examples
-
 #'alerio <- alertaRio()
 #'tail(alerio)
 
-
-alertaRio <- function(datasource = con, pdig = pdigit, crity=c("temp_min > 22", 3, 3),
-                      crito=c("p1 > 0.9", 3, 3),critr=c("inc > 100", 3, 2)){
+alertaRio <- function(pars = list(meanlog = 2.5016,sdlog=1.1013,
+                      crity=c("temp_min > 22", 3, 3), crito=c("p1 > 0.9", 3, 3),
+                      critr=c("inc > 100", 3, 2)), datasource){
+      
+      message("obtendo dados de clima e tweets ...")
       tw = getTweet(city = 3304557, datasource = datasource) 
       cli.SBRJ = getWU(stations = 'SBRJ', datasource=datasource)
       cli.SBJR = getWU(stations = 'SBJR', datasource=datasource)
       cli.SBGL = getWU(stations = 'SBGL', datasource=datasource)
-      cas = getCasesinRio(datasource=datasource)
       
-      # AP1
-      print("rodando AP1...")
-      d <- merge(cas[cas$APS=="AP1",], cli.SBRJ, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP1 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=226963)
-
-      # AP2.1
-      print("rodando AP2.1...")
-      d <- merge(cas[cas$APS=="AP2.1",], cli.SBRJ, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP21 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=552691)
+      APS <- c("APS 1", "APS 2.1", "APS 2.2", "APS 3.1", "APS 3.2", "APS 3.3"
+               , "APS 4", "APS 5.1", "APS 5.2", "APS 5.3")
       
-      # AP2.2
-      print("rodando AP2.2...")
-      d <- merge(cas[cas$APS=="AP2.2",], cli.SBRJ, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP22 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=371120)
+      p <- rev(plnorm(seq(7,20,by=7), pars$meanlog, pars$sdlog))
       
-      # AP3.1
-      print("rodando AP3.1...")
-      d <- merge(cas[cas$APS=="AP3.1",], cli.SBGL, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP31 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=735788)
-      
-      # AP3.2
-      print("rodando AP3.2...")
-      d <- merge(cas[cas$APS=="AP3.2",], cli.SBGL, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP32 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=489716)
-      
-      # AP3.3
-      print("rodando AP3.3...")
-      d <- merge(cas[cas$APS=="AP3.3",], cli.SBGL, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP33 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=924364)
-      
-      # AP4
-      print("rodando AP4...")
-      d <- merge(cas[cas$APS=="AP4",], cli.SBJR, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP4 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=838857)
-      
-      # AP5.1
-      print("rodando AP5.1...")
-      d <- merge(cas[cas$APS=="AP5.1",], cli.SBGL, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP51 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=655874)
-      
-      # AP5.2
-      print("rodando AP5.2...")
-      d <- merge(cas[cas$APS=="AP5.2",], cli.SBGL, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP52 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=665198)
-      
-      # AP5.3
-      print("rodando AP5.3...")
-      d <- merge(cas[cas$APS=="AP5.3",], cli.SBGL, by.x = "SE", by.y = "SE")
-      d <- merge(d, tw, by.x = "SE", by.y = "SE")
-      casfit<-adjustIncidence(obj=d, pdig = pdigit)
-      casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-      alertaAP53 <- fouralert(casr, cy = crity, co = crito, cr = critr, pop=368534)
-      
-      list(AP1 = alertaAP1, AP21 = alertaAP21, AP22 = alertaAP22, AP31 = alertaAP31,
-                  AP32 = alertaAP32, AP4 = alertaAP4, AP51 = alertaAP51, AP52 = alertaAP52,
-                  AP53 = alertaAP53)
+      res <- vector("list", length(APS))
+      names(res) <- APS
+      for (apsid in 0:9){
+            message(paste("rodando", APS[(apsid+1)],"..."))
+            cas = getCasesinRio(APSid = apsid, datasource=datasource)
+            d <- merge(cas, cli.SBRJ, by.x = "SE", by.y = "SE")
+            d <- merge(d, tw, by.x = "SE", by.y = "SE")
+            
+            casfit<-adjustIncidence(obj=d, pdig = p)
+            casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
+            res[[(apsid+1)]] <- fouralert(casr, cy = pars$crity, co = pars$crito,
+                                          cr = pars$critr, pop=cas$pop[1])
+      }
+            
+      res
 }
 
 
