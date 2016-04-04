@@ -129,7 +129,7 @@ seqSE <- function(from, to){
 #'@title Returns the most recent date present in the database table. 
 #'@param tab table in the database. Either (sinan, clima_wu, tweet ou historico). 
 #'@param city city geocode, if empty, whole dataset is considered. Not implemented yet.
-#'@param station wu station. Not implemented yet.
+#'@param station wu station.
 #'@return most recent date 
 #'@examples
 #'lastDBdate(tab="tweet")
@@ -162,13 +162,15 @@ lastDBdate <- function(tab, city = NULL, station = NULL){
             date <- max(dd$data_dia)
       }
       
+      
       if (tab == "clima_wu"){
             if (!is.null(city)) stop("indique a estacao desejada")
             if (is.null(station)) {
-                  sql <- paste("SELECT data_dia from \"Municipio\".\"Clima_wu\"")
+                  sql <- paste("SELECT data_dia from \"Municipio\".\"Clima_wu\" WHERE 
+                               \"Estacao_wu_estacao_id\"")
                   print("Nenhuma estacao indicada, data e' a mais recente no banco todo")
             } else {
-                  sql1 <- paste("'", stations, "'",sep = "")
+                  sql1 <- paste("'", station, "'",sep = "")
                   sql <- paste("SELECT * from \"Municipio\".\"Clima_wu\" WHERE \"Estacao_wu_estacao_id\" = ",sql1)
             }
             dd <- dbGetQuery(con,sql)
