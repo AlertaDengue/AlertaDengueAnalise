@@ -21,7 +21,6 @@ If this is the first time a city is included in the dataset, than use newcity = 
 you can define the ini-end dates or define the last n weeks.
 }
 \examples{
-tw = getTweet(city = 330020, datasource = con) 
 cli = getWU(stations = 'SBCB', datasource=con)
 cas = getCases(city = 330020, withdivision = FALSE, datasource=con)
 casfit<-adjustIncidence(obj=cas)
@@ -32,8 +31,6 @@ crito <- c("p1 > 0.9", 3, 3)
 critr <- c("inc > 100", 3, 3)
 alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
 res <- write.alerta(alerta, write="no")
-tail(res)
-res <- write.alerta(alerta, write="db")
 tail(res)
 }
 
