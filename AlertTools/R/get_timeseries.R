@@ -227,10 +227,11 @@ getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
       # agrega informacao de populacao da APS
       
       pop = NA
-      sql2 <- paste("SELECT nome,populacao from \"Municipio\".\"Localidade\" WHERE id =", APSid) 
+      sql2 <- paste("SELECT nome,id,populacao from \"Municipio\".\"Localidade\" WHERE id =", APSid) 
       varglobais <- dbGetQuery(datasource,sql2)
       st$pop <- varglobais$populacao      
       st$localidade <- varglobais$nome
+      st$localidadeid <- varglobais$id
       st  
 }
 

@@ -88,7 +88,7 @@ episem <- function(x, format="%Y-%m-%d") {
 SE2date <- function(se){
       if(!class(se[1]) %in% c("numeric","integer")) stop("se should be numeric or integer")
 
-#      load("R/sysdata.rda")
+      load("R/sysdata.rda")
       SE$sem <- SE$Ano*100 + SE$SE
       res <- data.frame(SE = se, ini = as.Date("1970-01-01"))
       for (i in 1:length(res$SE)) res$ini[i] <- SE$Inicio[SE$sem == res$SE[i]]
