@@ -86,17 +86,23 @@ twoalert <- function(obj, cy){
 #'res <- write.alerta(alerta)
 #'tail(res)
 
-fouralert <- function(obj, cy, co, cr, pop, miss="last"){
+fouralert <- function(obj, pars, pop, miss="last"){
       le <- dim(obj)[1]
       
-      # calculate incidence")
+      cy = gsub("tcrit",pars$tcrit,pars$crity)
+      cy = gsub("preseas",pars$preseas,cy)
+      co = gsub("preseas",pars$preseas,pars$crito)
+      cr = gsub("inccrit",pars$inccrit,pars$critr)
+      incpos = pars$posseas
+
+            # calculate incidence")
       if("tcasesmed" %in% names(obj)){
             obj$inc <- obj$tcasesmed / pop * 100000      
       } else{
             obj$inc <- obj$casos / pop * 100000      
       }
       
-      # accumulating condition function")
+      # accumulating condition function
       accumcond <- function(vec, lag) {
             le <- length(vec)
             ac <- vec[lag:le]
@@ -119,7 +125,13 @@ fouralert <- function(obj, cy, co, cr, pop, miss="last"){
                   mi <- which(is.na(condtrue))
                   for (i in mi[mi!=1]) condtrue[i] <- condtrue[i-1]
             }
-            ncondtrue <- with(dd, accumcond(condtrue, as.numeric(cond[2])))
+            accun <- as.numeric(cond[2])
+            if (accun > 1){
+                  ncondtrue <- with(dd, accumcond(condtrue, as.numeric(cond[2])))      
+            } else {
+                  ncondtrue <- condtrue
+            }
+            
             cbind(condtrue, ncondtrue)
       }
       
@@ -127,25 +139,33 @@ fouralert <- function(obj, cy, co, cr, pop, miss="last"){
       indices[,c("cotrue", "notrue")] <- assertcondition(obj , co)
       indices[,c("crtrue", "nrtrue")] <- assertcondition(obj, cr)
             
-      # setting the level")
+      # setting the level
       indices$level <- 1
       indices$level[indices$nytrue == as.numeric(cy[2])] <-2
       indices$level[indices$notrue == as.numeric(co[2])] <-3
       indices$level[indices$nrtrue == as.numeric(cr[2])] <-4
       
+      # making it orange if now is pRt>crit and in the past 3 weeks, alert was orange at least once 
+      for (k in 5:dim(indices)[1]){
+            if (indices$level[k] != 4 & indices$cotrue[k] == 1 & any(indices$level[(k-2):k]==3)) indices$level[k]<-3
+      }
       
-      # delay turnoff")
+      # making it yellow if inc > posinc, and rt was orange or red at least once in the last 8 weeks 
+      for (k in 10:dim(indices)[1]){
+            if (indices$level[k] %in% c(1,2) & obj$inc[k] > incpos & any(indices$level[(k-8):k] %in% c(3,4))) indices$level[k]<-2
+      }
+      # delay turnoff
       delayturnoff <- function(cond, level, d=indices){
             delay = as.numeric(as.character(cond[3]))
             N = dim(d)[1]
             if(delay > 0){
                   cand <- c()
                   for(i in 1:delay){
-                        cand <- c(cand, which(d$level==level) + i)
+                        cand <- unique(c(cand, which(d$level==level) + i))
                         cand <- cand[cand<=N]
                   }
                   for (j in cand){
-                        d$level[j] <- max(d$level[j], level)
+                        d$level[j] <- max(d$level[j], 2) # fica amarelo no delay
                   }
             }
             d
@@ -166,15 +186,17 @@ fouralert <- function(obj, cy, co, cr, pop, miss="last"){
 #'an epidemic scenario.  
 #'@param pars parameters of the alert.
 #'@param naps subset of vector 0:9 corresponding to the id of the APS. Default is all of them.
-#'@param datasource it is the name of the sql connecation.
+#'@param datasource it is the name of the sql connection.
+#'@param verbose FALSE
 #'@return list with an alert object for each APS.
 #'@examples
-#'alerio2 <- alertaRio(naps = c(0,1), datasource=con)
+#'params <- list(pdig=c(2.5016,1.1013),crity=c("temp_min > 22", 3, 3), crito=c("p1 > 0.9", 3, 3),
+#'critr=c("inc > 100", 3, 2))
+#'alerio2 <- alertaRio(naps = c(0,1), pars=params, datasource=con)
 #'names(alerio2)
 
-alertaRio <- function(naps = 0:9, pars = list(meanlog = 2.5016,sdlog=1.1013,
-                      crity=c("temp_min > 22", 3, 3), crito=c("p1 > 0.9", 3, 3),
-                      critr=c("inc > 100", 3, 2)), datasource){
+
+alertaRio <- function(naps = 0:9, pars, datasource, verbose = TRUE){
       
       message("obtendo dados de clima e tweets ...")
       tw = getTweet(city = 3304557, datasource = datasource) 
@@ -182,10 +204,22 @@ alertaRio <- function(naps = 0:9, pars = list(meanlog = 2.5016,sdlog=1.1013,
       cli.SBJR = getWU(stations = 'SBJR', datasource=datasource)
       cli.SBGL = getWU(stations = 'SBGL', datasource=datasource)
       
+      if (verbose){
+            message("As ultimas datas no banco são:")
+            print(paste("Ultimos registros de dengue:",lastDBdate("sinan", city=330455)))
+            print(paste("Ultimos registros de tweets:",lastDBdate("tweet", city=330455)))
+            print(paste("Ultimos registros de temp em SBRJ:",lastDBdate("clima_wu", station = "SBRJ")))
+            print(paste("Ultimos registros de temp em SBJR:",lastDBdate("clima_wu", station = "SBJR")))
+            print(paste("Ultimos registros de temp em SBGL:",lastDBdate("clima_wu", station = "SBGL")))
+            
+            out = readline("deseja continuar (y/n)?")
+            if(out == "n") stop("alerta interrompido pelo usuario")
+      }
+      
       APS <- c("APS 1", "APS 2.1", "APS 2.2", "APS 3.1", "APS 3.2", "APS 3.3"
                , "APS 4", "APS 5.1", "APS 5.2", "APS 5.3")[(naps + 1)]
       
-      p <- rev(plnorm(seq(7,20,by=7), pars$meanlog, pars$sdlog))
+      p <- rev(plnorm(seq(7,20,by=7), pars$pdig[1], pars$pdig[2]))
       
       res <- vector("list", length(APS))
       names(res) <- APS
@@ -196,9 +230,10 @@ alertaRio <- function(naps = 0:9, pars = list(meanlog = 2.5016,sdlog=1.1013,
             d <- merge(d, tw, by.x = "SE", by.y = "SE")
             
             casfit<-adjustIncidence(obj=d, pdig = p)
-            casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)      
-            res[[i]] <- fouralert(casr, cy = pars$crity, co = pars$crito,
-                                          cr = pars$critr, pop=cas$pop[1])
+            casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)   
+            
+             
+            res[[i]] <- fouralert(casr, pars, pop=cas$pop[1])
       }
             
       res
@@ -242,6 +277,67 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
             }
 }
       
+#map.Rio --------------------------------------------------------------------
+#'@title Plot the alert map for Rio de Janeiro city.
+#'@description Function to plot a map of the alert 
+#'@param obj object created by the twoalert and fouralert functions.
+#'@param var to be ploted in the graph, usually cases when available.  
+#'@param cores colors corresponding to the levels 1, 2, 3, 4.
+#'@return a plot
+#'@examples
+
+map.Rio<-function(obj, cores = c("#0D6B0D","#C8D20F","orange","red"), data, datasource=con){
+      
+      stopifnot(names(obj[[1]]) == c("data", "indices", "rules","n"))
+      tab <- dbReadTable(datasource, c("Municipio","Localidade"))
+      
+      mapa1 <- readOGR(tab$geojson[1], layer="OGRGeoJSON",verbose=FALSE)
+      mapa2 <- Polygon(readOGR(tab$geojson[2], layer="OGRGeoJSON",verbose=FALSE))
+      map1 <- Polygons(list(mapa1),"s1")
+      map2 <- Polygons(list(mapa2),"s2")
+      mapacomp <- SpatialPolygons(list(map1,map2),1:2) 
+      plot(mapacomp)
+      bbox(mapa)<-cbind(c(minx, maxx),c(miny, maxy))
+      
+      minx <- bbox(mapa)[1]
+      miny <- bbox(mapa)[2]
+      maxx <- bbox(mapa)[3]
+      maxy <- bbox(mapa)[4]
+      
+      for(i in 2:10){
+            mapa <- readOGR(tab$geojson[i], layer="OGRGeoJSON",verbose = FALSE)
+            minx <- min(minx,bbox(mapa)[1])
+            miny <- min(miny,bbox(mapa)[2])
+            maxx <- max(maxx,bbox(mapa)[3])
+            maxy <- max(maxy,bbox(mapa)[4])
+      }
+      
+      
+      par(mai=c(0,0,0,0),mar=c(4,1,1,1))
+      plot(mapa, box = cbind(c(minx, maxx),c(miny, maxy)))
+      for (i in 2:10){
+            map <- readOGR(tab$geojson[i], layer="OGRGeoJSON")
+            plot(map,add=TRUE)
+      }
+      naps <- length(obj)
+      nivel <- obj$indices[datapos,]
+      
+      par(mai=c(0,0,0,0),mar=c(4,4,1,1))
+      x <- 1:length(data$SE)
+      ticks <- seq(1, length(data$SE), length.out = 8)
+      
+      if (obj$n == 2 | obj$n == 4){
+            plot(x, data[,var], xlab = "", ylab = ylab, type="l", axes=FALSE)
+            axis(2)
+            axis(1, at = ticks, labels = data$SE[ticks], las=3)
+            for (i in 1:obj$n) {
+                  onde <- which(indices$level==i) 
+                  if (length(onde))
+                        segments(x[onde],0,x[onde],(data[onde,var]),col=cores[i],lwd=3)
+            }
+            
+      }
+}
 
 #write.alerta --------------------------------------------------------------------
 #'@title Write the alert into the database.
