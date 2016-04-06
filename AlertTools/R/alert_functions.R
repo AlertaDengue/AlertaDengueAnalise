@@ -251,7 +251,8 @@ alertaRio <- function(naps = 0:9, pars, datasource, verbose = TRUE){
 #'  # See fouralert function
 
 
-plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), ini=201001, fim=202001, ylab=var){
+plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), 
+                      ini=201001, fim=202001, ylab=var, yrange){
       
       stopifnot(names(obj) == c("data", "indices", "rules","n"))
       stopifnot(var %in% names(obj$data))
@@ -264,8 +265,14 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
       x <- 1:length(data$SE)
       ticks <- seq(1, length(data$SE), length.out = 8)
       
+      if(!missing(yrange)){
+            limy = yrange
+      } else {
+            limy = range(data[,var])
+      }
+      
       if (obj$n == 2 | obj$n == 4){
-            plot(x, data[,var], xlab = "", ylab = ylab, type="l", axes=FALSE)
+            plot(x, data[,var], xlab = "", ylab = ylab, type="l", ylim= limy, axes=FALSE)
             axis(2)
             axis(1, at = ticks, labels = data$SE[ticks], las=3)
             for (i in 1:obj$n) {
@@ -283,60 +290,48 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), i
 #'@param obj object created by the twoalert and fouralert functions.
 #'@param var to be ploted in the graph, usually cases when available.  
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
-#'@return a plot
+#'@return a map
 #'@examples
+#'map.Rio(alerio)
 
-map.Rio<-function(obj, cores = c("#0D6B0D","#C8D20F","orange","red"), data, datasource=con){
+map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasource=con,
+                  shapefile = "../CAPS_SMS.shp"){
       
       stopifnot(names(obj[[1]]) == c("data", "indices", "rules","n"))
-      tab <- dbReadTable(datasource, c("Municipio","Localidade"))
       
-      mapa1 <- readOGR(tab$geojson[1], layer="OGRGeoJSON",verbose=FALSE)
-      mapa2 <- Polygon(readOGR(tab$geojson[2], layer="OGRGeoJSON",verbose=FALSE))
-      map1 <- Polygons(list(mapa1),"s1")
-      map2 <- Polygons(list(mapa2),"s2")
-      mapacomp <- SpatialPolygons(list(map1,map2),1:2) 
-      plot(mapacomp)
-      bbox(mapa)<-cbind(c(minx, maxx),c(miny, maxy))
+      require(maptools,quietly = TRUE,warn.conflicts = FALSE)
+      mapa <- readShapeSpatial(shapefile,ID="COD_AP_SMS")
+      d2 <- obj[[1]]$data
       
-      minx <- bbox(mapa)[1]
-      miny <- bbox(mapa)[2]
-      maxx <- bbox(mapa)[3]
-      maxy <- bbox(mapa)[4]
-      
-      for(i in 2:10){
-            mapa <- readOGR(tab$geojson[i], layer="OGRGeoJSON",verbose = FALSE)
-            minx <- min(minx,bbox(mapa)[1])
-            miny <- min(miny,bbox(mapa)[2])
-            maxx <- max(maxx,bbox(mapa)[3])
-            maxy <- max(maxy,bbox(mapa)[4])
-      }
-      
-      
-      par(mai=c(0,0,0,0),mar=c(4,1,1,1))
-      plot(mapa, box = cbind(c(minx, maxx),c(miny, maxy)))
-      for (i in 2:10){
-            map <- readOGR(tab$geojson[i], layer="OGRGeoJSON")
-            plot(map,add=TRUE)
-      }
-      naps <- length(obj)
-      nivel <- obj$indices[datapos,]
-      
-      par(mai=c(0,0,0,0),mar=c(4,4,1,1))
-      x <- 1:length(data$SE)
-      ticks <- seq(1, length(data$SE), length.out = 8)
-      
-      if (obj$n == 2 | obj$n == 4){
-            plot(x, data[,var], xlab = "", ylab = ylab, type="l", axes=FALSE)
-            axis(2)
-            axis(1, at = ticks, labels = data$SE[ticks], las=3)
-            for (i in 1:obj$n) {
-                  onde <- which(indices$level==i) 
-                  if (length(onde))
-                        segments(x[onde],0,x[onde],(data[onde,var]),col=cores[i],lwd=3)
+      # definindo a data do mapa (se nao for dada na funcao, usar a ultima)
+      if(missing(data)) {
+            ultima_se <- sort(d2$SE,decreasing =TRUE)[1]
+      } else {
+            ultima_se <- data
+            stopifnot (which(d2$SE==ultima_se)>0)
             }
-            
+      
+      lastab <- data.frame(APS = nomesAPS, cor = "grey")
+      lastab$cor <- as.character(lastab$cor)
+      for (i in 1:10){
+            i2 <- obj[[i]]$indices
+            lastab$cor[i] <- cores[i2[which(d2$SE==ultima_se),c("level")]]      
       }
+      
+      lastab$APS2 <-  as.numeric(gsub("APS","",lastab$APS))
+      mapa@data <- merge(mapa@data,lastab,by.x="COD_AP_SMS",by.y="APS2")
+      par(mfrow=c(1,1),mai=c(0,0,0,0),mar=c(4,1,1,1))
+      
+      plot(mapa,col=mapa@data$cor)
+      coords <- coordinates(mapa)
+      coords[1,1] <- -43.19
+      coords[2,2] <- -22.945
+      #text(coords,label=mapa@data$COD_AP_SMS,cex=0.6)
+      legend("bottomright",fill=cores,c("atividade baixa","Alerta","Transmissão sustentada","atividade alta"),bty="n",cex=0.6)
+      par(cex.main=0.7)
+      title(paste0( "Mapa MRJ por APs \n"," Semana ",substr(ultima_se,5,6)," de ",
+                    substr(ultima_se,1,4)),line=-1)
+      
 }
 
 #write.alerta --------------------------------------------------------------------

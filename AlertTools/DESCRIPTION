@@ -12,7 +12,8 @@ License: CCO
 Imports:
     foreign,
     RPostgreSQL,
-    zoo
+    zoo,
+    maptools
 Suggests:
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
