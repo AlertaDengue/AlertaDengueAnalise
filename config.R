@@ -1,24 +1,29 @@
 # ====================================================
 # Arquivo de configuracao do Alerta Dengue
 # ====================================================
-
-# O default e' calcular o Alerta para a semana anterior
 hoje = Sys.Date()
       
 # ====================================================
-# Parametros que sao fixos
+## Parametros globais (para todos os municipios)
 # ====================================================
-gtdist="normal"; meangt=3; sdgt = 1.2   # # distribuicao do tempo de geracao 
-#---------------------------------------------------------------
-# Regras: (criterio, duracao da condicao para turnon, turnoff)
-#---------------------------------------------------------------
+
+## Distribuicao do tempo de geracao da dengue:
+gtdist="normal"; meangt=3; sdgt = 1.2   
+
+## Regras de mudança de nivel de alerta
+# (criterio, duracao da condicao para turnon, turnoff)
+
 crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 0)
 crito = c("p1 > 0.9 & inc > preseas", 2, 2)
 critr = c("inc > inccrit", 1, 2)
 
-#########################################################
-## Alerta Estado do Rio de Janeiro 
-#########################################################
+# ========================================================
+## Parametros locais (para municipios ou regionais)
+# ========================================================
+
+# -----------------
+## RIO DE JANEIRO 
+# -----------------
 
 RJ.noroeste <- list(pdig = c(2.791400,0.9913278), tcrit=22, inccrit=129.5, 
                     preseas=45.66, posseas=51.29 ,crity = crity, crito=crito, critr=critr)

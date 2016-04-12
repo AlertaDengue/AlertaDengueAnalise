@@ -261,5 +261,26 @@ nafill <- function(v, rule, maxgap = 4){
       v
 }
       
-            
+
+# getRegionais ------------------------------------
+#'@description  consult database to get list of regionais 
+#'@title get list of regionais. 
+#'@param uf full name of the state.
+#'@param database name of the database
+#'@return vector with names of the regionais.
+#'@examples
+#'getRegionais(uf="Rio de Janeiro")
+
+getRegionais <- function(uf, database){
+      
+      sqlquery = paste("SELECT nome_regional, uf 
+                  FROM \"Dengue_global\".\"Municipio\" 
+                  INNER JOIN \"Dengue_global\".regional_saude
+                  ON municipio_geocodigo = geocodigo
+                  where uf = '", uf, "'", sep="")
+      
+      d = dbGetQuery(con, sqlquery)    
+      unique(d$nome_regional) 
+}
+
       
