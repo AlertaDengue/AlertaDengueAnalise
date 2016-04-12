@@ -55,7 +55,7 @@ As sub-divisões são as áreas programáticas da saúde. Verde indica atividade
 
 ```{r fig.align='center',  echo=FALSE, message=TRUE, warning=TRUE}
 
-map.Rio(alerio,data = 201613, shapefile = "../../CAPS_SMS.shp")
+map.Rio(alerio, shapefile = "../../CAPS_SMS.shp")
 ```
 
 Veja o mapa interativo em [Alerta Dengue](http://alerta.dengue.mat.br)
@@ -132,25 +132,35 @@ pander(tab,compact=TRUE,)
 
 
 ### Alerta por APS {#aps}
-A linha tracejada azul indica o limiar pré-epidêmico; a linha tracejada vermelha indica o limiar de atividade alta (acima do qual é acionado o alerta vermelho). 
+A linha tracejada verde indica o limiar pré-epidêmico; a linha tracejada vermelha indica o limiar de atividade alta (acima do qual é acionado o alerta vermelho). 
 
 ```{r, echo=FALSE}
-inid = 201401
-par(mfrow=c(5,2),mar=c(5,0,0,0))
-ymax <- max(110,max(alerio[[1]]$data$inc[alerio[[1]]$data$SE > inid]))
-for (i in 2:10) ymax <- max(ymax, max(alerio[[1]]$data$inc[alerio[[1]]$data$SE > inid]),yrange=c(0,ymax))
-
-for (i in 1:10) {
-      plot.alerta(alerio[[i]],var="inc",ini=201401,fim=max(alerio[[i]]$data$SE),yrange=c(0,ymax))
+inid = 201224
+par(mfrow=c(5,1),mar=c(5,0,0,5))
+for (i in 1:5) {
+      plot.alerta(alerio[[i]],var="inc",ini=inid,fim=max(alerio[[i]]$data$SE))
       mtext(names(alerio)[i],line=-1, cex=0.7)
-      abline(h=100, lty=2, col="red")
-      abline(h=14.15, lty=2, col="blue")
+ #     abline(h=100, lty=2, col="red")
+ #     abline(h=14.15, lty=2, col="blue")
 }
 
 ```
 
 \newpage
 
+```{r, echo=FALSE}
+par(mfrow=c(5,1),mar=c(5,0,0,5))
+
+for (i in 6:10) {
+      plot.alerta(alerio[[i]],var="inc",ini=inid,fim=max(alerio[[i]]$data$SE))
+      mtext(names(alerio)[i],line=-1, cex=0.7)
+#      abline(h=100, lty=2, col="red")
+#      abline(h=14.15, lty=2, col="blue")
+}
+
+```
+
+\newpage
 ### Tabelas com os dados das últimas quatro semanas por APS
 
 casos not = casos notificados, casos est = casos estimados após correção do atraso de notificação, tmin = temperatura mínima da semana, Rt = número reprodutivo, se maior que 1, indica que os casos estão com tendência de aumento, prob(Rt > 1) = p-valor do teste se Rt >1,

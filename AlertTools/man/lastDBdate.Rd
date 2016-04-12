@@ -11,7 +11,7 @@ lastDBdate(tab, city = NULL, station = NULL)
 
 \item{city}{city geocode, if empty, whole dataset is considered. Not implemented yet.}
 
-\item{station}{wu station. Not implemented yet.}
+\item{station}{wu station.}
 }
 \value{
 most recent date

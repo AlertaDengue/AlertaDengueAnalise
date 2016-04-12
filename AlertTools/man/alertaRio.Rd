@@ -4,16 +4,16 @@
 \alias{alertaRio}
 \title{4 level alert Green-Yellow-Orange-Red for Rio de Janeiro.}
 \usage{
-alertaRio(naps = 0:9, pars = list(meanlog = 2.5016, sdlog = 1.1013, crity =
-  c("temp_min > 22", 3, 3), crito = c("p1 > 0.9", 3, 3), critr = c("inc > 100",
-  3, 2)), datasource)
+alertaRio(naps = 0:9, pars, datasource, verbose = TRUE)
 }
 \arguments{
 \item{naps}{subset of vector 0:9 corresponding to the id of the APS. Default is all of them.}
 
 \item{pars}{parameters of the alert.}
 
-\item{datasource}{it is the name of the sql connecation.}
+\item{datasource}{it is the name of the sql connection.}
+
+\item{verbose}{FALSE}
 }
 \value{
 list with an alert object for each APS.
@@ -25,7 +25,9 @@ indicates evidence of sustained transmission, red indicates evidence of
 an epidemic scenario.
 }
 \examples{
-alerio2 <- alertaRio(naps = c(0,1), datasource=con)
+params <- list(pdig=c(2.5016,1.1013),crity=c("temp_min > 22", 3, 3), crito=c("p1 > 0.9", 3, 3),
+critr=c("inc > 100", 3, 2))
+alerio2 <- alertaRio(naps = c(0,1), pars=params, datasource=con)
 names(alerio2)
 }
 

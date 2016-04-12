@@ -8,7 +8,8 @@ devtools::load_all()
 source("../config.R") # criterios em uso
 
 # --Calcula alerta--
-alerio <- alertaRio(pars=RJ.aps, datasource=DenguedbConnect(), verbose=FALSE)
+con = DenguedbConnect()
+alerio <- alertaRio(pars=RJ.aps, datasource=con, verbose=TRUE)
 res <- write.alertaRio(alerio, write="no")
 map.Rio(alerio)
 knit(input="report/matriz_relatorioMRJ.Rmd",quiet=TRUE,envir=new.env())

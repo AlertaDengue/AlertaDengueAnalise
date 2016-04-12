@@ -4,13 +4,10 @@
 \alias{getCases}
 \title{Get Case Data and aggregate per week and area}
 \usage{
-getCases(city, lastday = Sys.Date(), withdivision = FALSE,
-  disease = "dengue", datasource)
+getCases(city, lastday = Sys.Date(), disease = "dengue", datasource)
 }
 \arguments{
 \item{city}{city's geocode.}
-
-\item{withdivision}{either FALSE if aggregation at the city level. TRUE not working.}
 
 \item{disease}{default is "dengue".}
 
@@ -25,8 +22,8 @@ data.frame with the data aggregated per week according to disease onset date.
 Create weekly time series from case data from server. The source is the SINAN.
 }
 \examples{
-dC0 = getCases(city = c(330455), lastday ="2014-03-10", withdivision = FALSE, datasource = "data/sinan.rda") 
-dC0 = getCases(city = 330220, withdivision = FALSE, datasource = con) 
+dC0 = getCases(city = c(330455), lastday ="2014-03-10", datasource = "data/sinan.rda") 
+dC0 = getCases(city = 330220, datasource = con) 
 head(dC0)
 }
 

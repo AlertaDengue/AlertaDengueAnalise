@@ -114,16 +114,14 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
 #'@param city city's geocode.
 #'@param finalday last day. Default is the last available.
 #'@param disease default is "dengue".
-#'@param withdivision either FALSE if aggregation at the city level. TRUE not working.
 #'@param datasource "db" if using the project database or "data/sinan.rda" if using local test data. 
 #'@return data.frame with the data aggregated per week according to disease onset date.
 #'@examples
-#'dC0 = getCases(city = c(330455), lastday ="2014-03-10", withdivision = FALSE, datasource = "data/sinan.rda") 
-#'dC0 = getCases(city = 330220, withdivision = FALSE, datasource = con) 
+#'dC0 = getCases(city = c(330455), lastday ="2014-03-10", datasource = "data/sinan.rda") 
+#'dC0 = getCases(city = 330220, datasource = con) 
 #'head(dC0)
 
-getCases <- function(city, lastday = Sys.Date(),  withdivision = FALSE, 
-                     disease = "dengue", datasource) {
+getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource) {
       
       if(nchar(city) == 6) city <- sevendigitgeocode(city)   
       
@@ -160,33 +158,27 @@ getCases <- function(city, lastday = Sys.Date(),  withdivision = FALSE,
       
       sem <- seqSE(from = min(dd$SEM_NOT), to = max(dd$SEM_NOT))$SE
       nsem <- length(sem)
-      if (withdivision == FALSE){
-            st <- data.frame(SE = sem, casos = 0)
-            for(i in 1:nsem) st$casos[i] <- sum(dd$SEM_NOT == st$SE[i])
-            st$localidade <- 0
-            st$cidade <- city
+      
+      
+      st <- data.frame(SE = sem, casos = 0)
+      for(i in 1:nsem) st$casos[i] <- sum(dd$SEM_NOT == st$SE[i])
+
+      st$localidade <- 0
+      st$cidade <- city
             
-            nome = NA
-            pop = NA
-            if (class(datasource) == "PostgreSQLConnection"){
-                  # pegando nome da cidade e populacao
-                  sql2 <- paste("SELECT nome,populacao from \"Dengue_global\".\"Municipio\" WHERE geocodigo =", city) 
-                  varglobais <- dbGetQuery(datasource,sql2)
-                  nome <- varglobais$nome
-                  pop <- varglobais$populacao      
-            }
-            st$nome <- nome 
-            st$pop <- pop
-            
-      } else {
-            stop("division = TRUE not working yet.")
-            bairro = na.omit(unique(dd$NM_BAIRRO))
-            st <- expand.grid(SE = sem, bairro = bairro)
-            st$casos <- 0
-            nst <- dim(st)[1]
-            for(i in 1:nst) st$casos[i] <- sum(dd$SEM_NOT == st$SE[i] & dd$NM_BAIRRO == st$bairro[i])
-            st$cidade <- city
-      }  
+      nome = NA
+      pop = NA
+      if (class(datasource) == "PostgreSQLConnection"){
+            # pegando nome da cidade e populacao
+            sql2 <- paste("SELECT nome,populacao from \"Dengue_global\".\"Municipio\" WHERE geocodigo =", city) 
+            varglobais <- dbGetQuery(datasource,sql2)
+            nome <- varglobais$nome
+            pop <- varglobais$populacao      
+      }
+      st$nome <- nome 
+      st$pop <- pop
+
+        
       st  
 }
 

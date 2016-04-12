@@ -4,7 +4,7 @@
 \alias{fouralert}
 \title{Define conditions to issue a 4 level alert Green-Yellow-Orange-Red.}
 \usage{
-fouralert(obj, cy, co, cr, pop, miss = "last")
+fouralert(obj, pars, pop, miss = "last")
 }
 \arguments{
 \item{obj}{dataset from the mergedata function.}
