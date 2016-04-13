@@ -261,7 +261,6 @@ nafill <- function(v, rule, maxgap = 4){
       v
 }
       
-
 # getRegionais ------------------------------------
 #'@description  consult database to get list of regionais 
 #'@title get list of regionais. 
@@ -284,3 +283,4 @@ getRegionais <- function(uf, database){
 }
 
       
+

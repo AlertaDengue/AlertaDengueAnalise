@@ -32,20 +32,23 @@
 #'res <- write.alerta(ale)
 #'tail(res)
 
-fouralert <- function(obj, pars, pop, miss="last"){
+fouralert <- function(obj, pars, crit, pop, miss="last"){
       le <- dim(obj)[1]
       
+      vars = names(pars)
       # verificando se pars esta bem formado:
-      if(!all(names(pars) %in% c("pdig","tcrit","inccrit","preseas","posseas",
-                                 "crity","crito","critr"))) {
+      if(!all(vars %in% c("pdig","tcrit","inccrit","preseas","posseas"))) {
             stop("Verifique o config. Está faltando parametros em pars para rodar o alerta")} 
       
-      cy = gsub("tcrit",pars$tcrit,pars$crity)
-      cy = gsub("preseas",pars$preseas,cy)
-      co = gsub("preseas",pars$preseas,pars$crito)
-      cr = gsub("inccrit",pars$inccrit,pars$critr)
+      cyellow = crit[[1]]; corange = crit[[2]]; cred = crit[[3]]
+      for (k in vars) {
+            if (k != "pdig"){ 
+                  cyellow = gsub(k,pars[[k]],cyellow)
+                  corange = gsub(k,pars[[k]],corange)
+                  cred = gsub(k,pars[[k]],cred)
+            }
+      }
       incpos = pars$posseas
-      
       
       # calculate incidence"
       if("tcasesmed" %in% names(obj)){
@@ -86,19 +89,20 @@ fouralert <- function(obj, pars, pop, miss="last"){
             cbind(condtrue, ncondtrue)
       }
       
-      indices[,c("cytrue", "nytrue")] <- assertcondition(obj , cy)
-      indices[,c("cotrue", "notrue")] <- assertcondition(obj , co)
-      indices[,c("crtrue", "nrtrue")] <- assertcondition(obj, cr)
+      indices[,c("cytrue", "nytrue")] <- assertcondition(obj , cyellow)
+      indices[,c("cotrue", "notrue")] <- assertcondition(obj , corange)
+      indices[,c("crtrue", "nrtrue")] <- assertcondition(obj, cred)
             
       # setting the level
       indices$level <- 1
-      indices$level[indices$nytrue == as.numeric(cy[2])] <-2
-      indices$level[indices$notrue == as.numeric(co[2])] <-3
-      indices$level[indices$nrtrue == as.numeric(cr[2])] <-4
+      indices$level[indices$nytrue == as.numeric(cyellow[2])] <-2
+      indices$level[indices$notrue == as.numeric(corange[2])] <-3
+      indices$level[indices$nrtrue == as.numeric(cred[2])] <-4
       
       # making it orange if now is pRt>crit and in the past 3 weeks, alert was orange at least once 
       for (k in 5:dim(indices)[1]){
-            if (indices$level[k] != 4 & indices$cotrue[k] == 1 & any(indices$level[(k-2):k]==3)) indices$level[k]<-3
+            if (indices$level[k] != 4 & indices$cotrue[k] == 1 & 
+                any(indices$level[(k-2):k]==3)) indices$level[k]<-3
       }
       
       # making it yellow if inc > posinc, and rt was orange or red at least once in the last 8 weeks 
@@ -121,70 +125,74 @@ fouralert <- function(obj, pars, pop, miss="last"){
             }
             d
       } 
-      indices <- delayturnoff(cond=cr,level=4)
-      indices <- delayturnoff(cond=co,level=3)
-      indices <- delayturnoff(cond=cy,level=2)
+      indices <- delayturnoff(cond=cred,level=4)
+      indices <- delayturnoff(cond=corange,level=3)
+      indices <- delayturnoff(cond=cyellow,level=2)
       return(list(data=obj, indices=indices, rules=pars, n=4))      
 }
 
-#run.pipeline ---------------------------------------------------------------------
+#update.alerta ---------------------------------------------------------------------
 #'@title Define conditions to issue a 4 level alert Green-Yellow-Orange-Red for any city or region.
 #'@description Yellow is raised when environmental conditions required for
 #'positive mosquito population growth are detected, green otherwise.Orange 
 #'indicates evidence of sustained transmission, red indicates evidence of 
 #'an epidemic scenario.  
-#'@param cidade city's geocode (6 or 7 digits).
-#'@param regional name of the 'regional de saude'.
-#'@param estado full name of the state. Only required if there is more than one regional with the same name.
-#'@param pars list with criteria for each color. See example.
+#'@param city city's geocode (6 or 7 digits).
+#'@param region full name of 'regional' or state (same name present in the database).
+#'@param pars list of parameters for the alerta, defined in config.R
+#'@param crit criteria for the alert colors, defined in config.R
 #'@param writedb TRUE if it should write into the database, default is FALSE.
 #'@param sefinal if given, it stops at that week
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
-#'res <- run.pipeline(cidade = 330240, pars = RJ.noroeste, datasource = con,sefinal=201613)
-#'tail(res$data)
-#'res <- run.pipeline(regional="Noroeste", pars = RJ.noroeste, datasource = con,sefinal=201613)
+#'res <- update.alerta(city = 330240, pars = pars.Rio, crit = criteria, datasource = con)
+#'res <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = criteria, datasource = con,sefinal=201613)
 #'tail(res$data)
 
-run.pipeline <- function(cidade, regional, estado, pars, writedb = FALSE, sfigs=FALSE,
-                         datasource, sefinal){
-
-      # verificando se pars esta bem formado:
-      if(!all(names(pars) %in% c("pdig","tcrit","inccrit","preseas","posseas",
-                                 "crity","crito","critr"))) {
-           stop("Verifique o config. Está faltando parametros em pars para rodar o alerta")} 
+update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, datasource, sefinal){
       
-      # pegando informacao sobre a estacao wu dessa cidade
-      if(!missing (cidade)) { 
-            if(nchar(cidade) == 6) cidade <- sevendigitgeocode(cidade) 
+      # update of a single city
+      if(!missing (city)) { 
+            if(nchar(city) == 6) city <- sevendigitgeocode(city) 
             sql = paste("SELECT geocodigo, codigo_estacao_wu
                         FROM \"Dengue_global\".\"Municipio\" 
                         INNER JOIN \"Dengue_global\".regional_saude
                         ON municipio_geocodigo = geocodigo
-                        where geocodigo = '", cidade, "'", sep="")
+                        where geocodigo = '", city, "'", sep="")
             dd <- dbGetQuery(con,sql)
+            
       }
       
-      if (!missing(regional)){ # cidades da regional
-            sql = paste("SELECT *
+      if (!missing(region)){ # uma ou mais regionais
+            regionais = region
+            message("As regionais são:"); regionais
+            
+            sql1 = paste("'", regionais[1], sep = "")
+            ns = length(regionais)
+            if (ns > 1) for (i in 2:ns) sql1 = paste(sql1, regionais[i], sep = "','")
+            sql1 <- paste(sql1, "'", sep = "")
+            
+            sql = paste("SELECT geocodigo, nome, populacao, uf, codigo_estacao_wu, nome_regional
                         FROM \"Dengue_global\".\"Municipio\" 
                         INNER JOIN \"Dengue_global\".regional_saude
                         ON municipio_geocodigo = geocodigo
-                        where nome_regional = '",regional,"'",sep="")
+                        where nome_regional IN (",sql1,")",sep="")
             dd <- dbGetQuery(con,sql)
-            if (dim(dd)[1]==0) stop(paste("A regional",regional, "nao foi achada. 
+            if (dim(dd)[1]==0) stop(paste("A regional",region, "nao foi achada. 
                                           Verifique se escreveu certo (por extenso)"))
             
             if(length(unique(dd$uf)) > 1){
                   if (missing(estado)) stop(paste("Existe mais de uma regional com esse nome. 
                                           Especifique o estado (por extenso):", unique(dd$uf)))
-                  dd <- subset(dd, uf == estado)
+                  dd <- subset(dd, uf == estate)
             }
             
       }
       #
-      nlugares <- dim(dd)[1]
+      nlugares = dim(dd)[1]
+      if (nlugares == 0) stop("A cidade ou regiao nao foi encontrada")
+      
       print(paste("sera'feita analise de",nlugares,"cidade(s):"))
       print(dd$geocodigo)      
       
@@ -197,9 +205,10 @@ run.pipeline <- function(cidade, regional, estado, pars, writedb = FALSE, sfigs=
       
       alertas <- list()
       for (i in 1:nlugares){ # para cada cidade ...
+
             geocidade = dd$geocodigo[i]
             estacao = dd$codigo_estacao_wu[i]
-            print(paste("Rodando alerta para ", geocidade, "usando estacao", estacao))
+            print(paste("(Cidade ",i,"de",nlugares,")","Rodando alerta para ", geocidade, "usando estacao", estacao))
             
             dC0 = getCases(city = geocidade, datasource=datasource) # consulta dados do sinan
             dT = getTweet(city = geocidade, lastday = Sys.Date(),datasource=datasource) # consulta dados do tweet
@@ -209,16 +218,32 @@ run.pipeline <- function(cidade, regional, estado, pars, writedb = FALSE, sfigs=
             if (!missing(sefinal)) d <- subset(d,SE<=sefinal)
             d$temp_min <- nafill(d$temp_min, rule="linear")  # interpolacao clima NOVO
             d$casos <- nafill(d$casos, "zero") # preenche de zeros o final da serie NOVO
+            
+            # parsi e' pars de uma unica cidade. 
+            # E'preciso extrair no caso de region 
+            if (nlugares > 1) {
+                  d$nome_regional <- dd$nome_regional[dd$geocodigo==geocidade]
+                  parsi <- pars[[d$nome_regional[1]]]
+            } else {
+                  parsi <- pars
+            }
+            
+            if(!all(names(parsi) %in% c("pdig","tcrit","inccrit","preseas","posseas",
+                                       "crity","crito","critr"))) {
+                  stop("Verifique o config dessa cidade. Está faltando parametros em pars para rodar o alerta")} 
+            
+            
             #d <- subset(d,SE<=sefinal)
             # preenchendo potenciais missings
             d$cidade[is.na(d$cidade)==TRUE] <- geocidade
             d$nome[is.na(d$nome)==TRUE] <- na.omit(unique(d$nome))[1]
             d$pop[is.na(d$pop)==TRUE] <- na.omit(unique(d$pop))[1]
-            pdig <- plnorm((1:20)*7, pars$pdig[1], pars$pdig[2])[2:20]
+            
+            pdig <- plnorm((1:20)*7, parsi$pdig[1], parsi$pdig[2])[2:20]
             dC2 <- adjustIncidence(d, pdig = pdig) # ajusta a incidencia
             dC3 <- Rt(dC2, count = "tcasesmed", gtdist=gtdist, meangt=meangt, sdgt = sdgt) # calcula Rt
             
-            alerta <- fouralert(dC3, pars = pars, pop=dC0$pop[1], miss="last") # calcula alerta
+            alerta <- fouralert(dC3, pars = parsi, crit = criteria, pop=dC0$pop[1], miss="last") # calcula alerta
             nome = na.omit(unique(dC0$nome))
             nick <- gsub(" ", "", nome, fixed = TRUE)
             #names(alerta) <- nick
@@ -233,9 +258,6 @@ run.pipeline <- function(cidade, regional, estado, pars, writedb = FALSE, sfigs=
                   res <- write.alerta(alerta, write = "db")
                   write.csv(alerta,file=paste("memoria/", nick,hoje,".csv",sep="")) 
             }
-            
-            if (sfigs == TRUE)  figrelatorio(alerta)      
-            #message(paste("alerta gerado para cidade",cidade))
       }
       
       res = alerta
@@ -255,13 +277,17 @@ run.pipeline <- function(cidade, regional, estado, pars, writedb = FALSE, sfigs=
 #'@param verbose FALSE
 #'@return list with an alert object for each APS.
 #'@examples
-#'params <- list(pdig=c(2.5016,1.1013),crity=c("temp_min > 22", 3, 3), crito=c("p1 > 0.9", 3, 3),
-#'critr=c("inc > 100", 3, 2))
-#'alerio2 <- alertaRio(naps = c(0,1), pars=params, datasource=con)
+#'params <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 14.15, posseas = 18)
+#'criter <- criteria = list(
+#'crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 0),
+#'crito = c("p1 > 0.9 & inc > preseas", 2, 2),
+#'critr = c("inc > inccrit", 1, 2)
+#')
+#'alerio2 <- alertaRio(naps = c(0,1), pars=params, crit = criter, datasource=con)
 #'names(alerio2)
 
 
-alertaRio <- function(naps = 0:9, pars, datasource, verbose = TRUE){
+alertaRio <- function(naps = 0:9, pars, crit, datasource, verbose = TRUE){
       
       message("obtendo dados de clima e tweets ...")
       tw = getTweet(city = 3304557, datasource = datasource) 
@@ -298,7 +324,7 @@ alertaRio <- function(naps = 0:9, pars, datasource, verbose = TRUE){
             casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)   
             
              
-            res[[i]] <- fouralert(casr, pars, pop=cas$pop[1])
+            res[[i]] <- fouralert(obj = casr, pars = pars, crit = crit, pop=cas$pop[1])
       }
             
       res
@@ -413,15 +439,15 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #geraMapa --------------------------------------------------------------------
 #'@title Plot the alert map for any state.
 #'@description Function to plot a map of the alert 
-#'@param regionais vector of alerts created by run.pipeline.
+#'@param regionais vector of alerts created by update.alerta.
 #'@param se epidemiological week (format = 201610).  
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
 #'@param titulo title of the map
 #'@param filename if present, the map is saved.
 #'@return a map
 #'@examples
-#'reg1 <- run.pipeline(regional="Noroeste", pars = RJ.noroeste, datasource = con,sefinal=201613)
-#'reg2 <- run.pipeline(regional="Norte", pars = RJ.norte, datasource = con,sefinal=201613)
+#'reg1 <- update.alerta(regional="Noroeste", pars = RJ.noroeste, datasource = con,sefinal=201613)
+#'reg2 <- update.alerta(regional="Norte", pars = RJ.norte, datasource = con,sefinal=201613)
 #'geraMapa(c(alerta.Norte, alerta.Noroeste), data=201613, shapefile="../33MUE250GC_SIR.shp", 
 #'varid="CD_GEOCMU", titulo="Regionais Norte e Nordeste")
 
