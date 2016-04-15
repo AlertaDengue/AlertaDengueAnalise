@@ -166,8 +166,6 @@ update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, data
       
       if (!missing(region)){ # uma ou mais regionais
             regionais = region
-            message("As regionais são:"); regionais
-            
             sql1 = paste("'", regionais[1], sep = "")
             ns = length(regionais)
             if (ns > 1) for (i in 2:ns) sql1 = paste(sql1, regionais[i], sep = "','")
@@ -451,24 +449,30 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'geraMapa(c(alerta.Norte, alerta.Noroeste), data=201613, shapefile="../33MUE250GC_SIR.shp", 
 #'varid="CD_GEOCMU", titulo="Regionais Norte e Nordeste")
 
-geraMapa<-function(regionais, cores = c("green","yellow","orange","red"), se, datasource=con,
-                  shapefile="", varid="", titulo="", filename){
+geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), se, datasource=con,
+                   shapefile, varid, varname, titulo="", filename, caption=TRUE){
       
       require(maptools,quietly = TRUE,warn.conflicts = FALSE)
       
-      lastab <- data.frame(cidade = names(regionais), geocodigo = NA, cor = "grey", nome=NA)
-      lastab$cor <- as.character(lastab$cor)
+      N = length(alerta) # numero de cidades presentes no objeto alerta.
       
-      N = dim(lastab)[1]
-      for (i in 1:N){ # por regional
-            ciddata <- regionais[[i]]$data
-            inddata <- regionais[[i]]$indices
-            lastab[i,2:4] <- c(ciddata$cidade[1],
-                            cores[inddata[which(ciddata$SE==data),c("level")]],
-                            ciddata$nome[1])
-            }
-            
-      lastab$plotar <- 1
+      # subset de cidades para o mapa
+      if (!missing(subset)){
+            ale <- alerta[which(names(alerta) %in% gsub(" ","", subset$nome))]
+      } else {ale <- alerta}
+      
+      # table com as cidades e cores
+      lastab <- data.frame(cidade = names(ale), geocodigo = NA, cor = "grey"
+                           , nome=NA, short = NA)
+      lastab$cor <- as.character(lastab$cor)
+      n = length(ale)
+      for (i in 1:n){ # por cidade
+            ciddata <- ale[[i]]$data
+            inddata <- ale[[i]]$indices
+            lastab[i,2:5] <- c(ciddata$cidade[1],
+                               cores[inddata[which(ciddata$SE==data),c("level")]],
+                               ciddata$nome[1], substring(ciddata$nome[1],1,3))
+      }
       
       mapa <- readShapeSpatial(shapefile,ID=varid)
       meumapa <- mapa[as.character(mapa@data$CD_GEOCMU) %in% lastab$geocodigo,]
@@ -480,18 +484,15 @@ geraMapa<-function(regionais, cores = c("green","yellow","orange","red"), se, da
       
       par(mfrow=c(1,1),mai=c(0,0,0,0),mar=c(4,1,1,1))
       plot(meumapa,col=meumapa@data$cor)
-      coords <- coordinates(mapa)
-      coords[1,1] <- -43.19
-      coords[2,2] <- -22.945
-      #text(coords,label=mapa@data$COD_AP_SMS,cex=0.6)
+      coords <- coordinates(meumapa)
+      if (caption == TRUE) text(coords,label=meumapa@data$short,cex=0.6)
       legend("bottomright",fill=cores,c("atividade baixa","Alerta","Transmissão sustentada","atividade alta"),bty="n",cex=0.6)
       par(cex.main=0.7)
-      
       title(paste0(titulo, " (Semana ",substr(data,5,6)," de ",substr(data,1,4),")"),line=0)
       
       if(!missing(filename)) {dev.off()} #salvar
-      
 }
+
 
 #write.alerta --------------------------------------------------------------------
 #'@title Write the alert into the database.
@@ -539,7 +540,6 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
       d$Localidade_id <- data$localidade
       d$nivel <- indices$level
       d$versao_modelo <- as.character(version)
-      
       d$Localidade_id[is.na(d$Localidade_id)] <- 0
       
       # defining the id (SE+julian(versaomodelo)+geocodigo+localidade)
@@ -582,6 +582,7 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
                   try(dbGetQuery(con, insert_sql))      
             }
       }
+      
       d
 }
 

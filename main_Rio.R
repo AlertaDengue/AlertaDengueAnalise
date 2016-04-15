@@ -1,10 +1,6 @@
 # ================================================================================
 # Arquivo de execução do Alerta Dengue: Municipio do Rio de Janeiro
 # ================================================================================
-library(foreign)
-library("RPostgreSQL")
-#library(AlertTools)
-devtools::load_all()
 source("../config.R") # criterios em uso
 
 # --Calcula alerta--

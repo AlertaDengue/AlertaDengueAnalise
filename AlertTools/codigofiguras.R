@@ -47,3 +47,60 @@ fig.all <- function(obj){
             message(paste("Figura salva da cidade", nick))
       }
 }
+
+# -----------------------------------------------
+fig.cores <- function(obj){
+      
+      ncidades = length(obj)
+      
+      for (i in 1:ncidades){
+            oobj <- obj[[i]]
+            nome = na.omit(unique(oobj$data$nome))
+            nick <- gsub(" ", "", nome, fixed = TRUE)
+            filename = paste("report/cores_",nick,".png",sep="")
+            
+            png(filename, width = 16, height = 5.5, units="cm", res=100)
+            layout(matrix(1), widths = lcm(15), 
+                   heights = c(lcm(5)))
+            # Grafico baixo
+            par(mai=c(0,0,0,0),mar=c(1,4,0,4))
+            plot.alerta(oobj, var="inc",ini=201352,fim=max(oobj$data$SE))
+            dev.off()
+            message(paste("Figura salva da cidade", nick))
+      }
+}
+
+mapa.regional <- function(alerta, regionais, estado, sigla, shape, 
+                          shapeid, data_mapa = data_relatorio){
+      for (i in regionais) {
+            cidades = getCidades(regional = i, uf = estado)["nome"]
+            titu = paste(sigla,":",i, sep="")
+            nomesemespaco = gsub(" ","",i) 
+            fname = paste("mapa",sigla,"_",nomesemespaco,".png",sep="")
+            geraMapa(alerta=alerta, subset=cidades, data=data_mapa,
+                     shapefile=shape, varid=shapeid, 
+                     titulo=titu ,filename=fname)
+      }
+}
+
+
+xtable.regional <- function(obj, nomesregionais, estado, sigla,
+                            data_mapa = data_relatorio){
+      for (i in nomesregionais) {
+            cidades = getCidades(regional = i, uf = estado)["municipio_geocodigo"]
+            #titu = paste(sigla,":",i, sep="")
+            nomesemespaco = gsub(" ","",i)
+            fname = paste("tabregional",sigla,"_",i,".tex",sep="")
+            d <- obj[which(obj$municipio_geocodigo %in% cidades$municipio_geocodigo),]
+            tots <- tail(aggregate(cbind(casos,casos_est)~SE,FUN=sum, data=d))
+            tot1 <- tail(aggregate((nivel==1)~SE,FUN=sum, data=d))[2]
+            tot2 <- tail(aggregate((nivel==2)~SE,FUN=sum, data=d))[2]
+            tot3 <- tail(aggregate((nivel==3)~SE,FUN=sum, data=d))[2]
+            tot4 <- tail(aggregate((nivel==4)~SE,FUN=sum, data=d))[2]
+            tot <- cbind(tots,tot1,tot2,tot3,tot4)
+            names(tot) <- c("SE","casos","casos estimados","n. verde", "n.amarelo", 
+                            "n.laranja","n.vermelho")
+            
+            print(xtable(tot), type="latex", file=fname)
+      }
+}

@@ -282,5 +282,26 @@ getRegionais <- function(uf, database){
       unique(d$nome_regional) 
 }
 
+
+# getRegionais ------------------------------------
+#'@description  consult database to get list of regionais 
+#'@title get list of regionais. 
+#'@param uf full name of the state.
+#'@param database name of the database
+#'@return vector with names of the regionais.
+#'@examples
+#'getCidades(regional = "Metropolitana I", uf="Rio de Janeiro")
+
+getCidades <- function(regional, uf, database){
       
+      sqlquery = paste("SELECT municipio_geocodigo, nome, nome_regional, uf 
+                  FROM \"Dengue_global\".\"Municipio\" 
+                  INNER JOIN \"Dengue_global\".regional_saude
+                  ON municipio_geocodigo = geocodigo
+                  where uf = '", uf, "' AND nome_regional = '",regional ,"'", sep="")
+      
+      d = dbGetQuery(con, sqlquery)    
+      d 
+}
+
 
