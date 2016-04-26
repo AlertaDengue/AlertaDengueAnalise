@@ -4,16 +4,12 @@
 \alias{fouralert}
 \title{Define conditions to issue a 4 level alert Green-Yellow-Orange-Red.}
 \usage{
-fouralert(obj, pars, pop, miss = "last")
+fouralert(obj, pars, crit, pop, miss = "last")
 }
 \arguments{
 \item{obj}{dataset from the mergedata function.}
 
-\item{cy}{conditions for yellow.}
-
-\item{co}{conditions for orange.}
-
-\item{cr}{conditions for red.}
+\item{pars}{list with criteria for each color. See example.}
 
 \item{missing}{how missing data is treated. "last" if last value is repeated. 
 It is currently the only option.}
@@ -31,17 +27,17 @@ an epidemic scenario.
 \examples{
 tw = getTweet(city = c(330455), datasource = "data/tw.rda") 
 cli = getWU(stations = 'SBRJ', datasource="data/WUdata.rda")
-cas = getCases(city = c(330455), withdivision = FALSE, datasource="data/sinan.rda")
+cas = getCases(city = c(330455), datasource="data/sinan.rda")
 casfit<-adjustIncidence(obj=cas)
 casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
-d<- mergedata(cases = casr, tweet = tw, climate = clima)
-crity <- c("temp_min > 22", 3, 3)
-crito <- c("p1 > 0.9", 3, 3)
-critr <- c("inc > 100", 3, 3)
-alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-plot.alerta(alerta, var="casos", ylab="casos")
+d<- mergedata(cases = casr, tweet = tw, climate = cli)
+crit <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 14.15, posseas = 18,
+              crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 0),
+              crito = c("p1 > 0.9 & inc > preseas", 2, 2),
+              critr = c("inc > inccrit", 1, 2))
+ale <- fouralert(d, pars = crit, pop = 1000000)
 # For a more useful output
-res <- write.alerta(alerta)
+res <- write.alerta(ale)
 tail(res)
 }
 

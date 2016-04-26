@@ -3,6 +3,8 @@
 # ====================================================
 library(foreign)
 library("RPostgreSQL")
+library(xtable)
+library(knitr)
 #library(AlertTools)
 devtools::load_all()
 

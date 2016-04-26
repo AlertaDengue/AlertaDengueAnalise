@@ -1,0 +1,412 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Boletim semanal estadual do InfoDengue
+% Adapted for InfoDengue by Claudia Codeco and Thais Riback (April 2016)
+%
+% Created by:
+% Bob Kerstetter (https://www.tug.org/texshowcase/) and extensively modified by:
+% Vel (vel@latextemplates.com)
+% 
+% Original template downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
+\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+
+\usepackage{Sweave}
+\begin{document}
+\input{newsletter_InfoDenguev2_01-concordance}
+
+%---------------------------------------------------------------------------------
+%	HEADER IMAGE
+%---------------------------------------------------------------------------------
+
+\begin{figure}[H]
+\centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
+\end{figure}
+
+\centerline {\color{blue}\rule{1\linewidth}{2.75pt}} % Horizontal line
+
+%---------------------------------------------------------------------------------
+%	CAIXA LATERAL - PRIMEIRA PAGINA
+%--------------------------------------------------------------------------------
+
+% Carregando dados para a primeira pagina
+
+
+\begin{minipage}[t]{.30\linewidth} % Mini page taking up 30% of the actual page
+\begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box
+
+%-----------------------------------------------------------
+
+\hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
+
+\textbf{Semana 13 de 2016} % se, ano, em pp.RData
+
+\begin{itemize}
+\item \hyperlink{estado}{O Estado} 
+\end{itemize}
+
+
+\textbf{Regionais de Saúde:}
+
+
+\begin{itemize}\item \hyperlink{MetI}{Metropolitana I}
+\item \hyperlink{MetII}{Metropolitana II}
+\item \hyperlink{MedPar}{Médio Paraíba}
+\item \hyperlink{CSul}{Centro Sul}
+\item \hyperlink{Serra}{Serrana}
+\item \hyperlink{BaixLit}{Baixada Litorânea}
+\item \hyperlink{Norte}{Norte}
+\item \hyperlink{Nord}{Nordeste}\end{itemize}
+\centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
+
+%-----------------------------------------------------------
+
+\hyperlink{vartab}{Variáves nas Tabelas}
+
+\hyperlink{notas}{Notas} % These link to their appropriate sections in the newsletter
+
+\hyperlink{creditos}{Creditos} % These link to their appropriate sections in the newsletter
+
+\centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
+
+\textbf{Contato}
+\begin{description}
+\item alerta\_dengue@fiocruz.br  
+\end{description}
+
+\end{mdframed}
+\end{minipage}\hfill % End the sidebar mini page 
+\begin{minipage}[t]{.66\linewidth} % Nao pode colocar espaco acima senao ela nao fica lado a lado
+
+%--------------------------------------------------------------------------------
+%	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
+%-------------------------------------------------------------------------------
+\hypertarget{titulo}{\heading{Situação da Dengue no Estado do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
+
+Desde o início do ano, 5420 casos foram registrados no estado, sendo 350 na última semana. A figura abaixo mostra as condições de transmissão em cada município.
+
+% Mapa estadual
+\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_ERJ.png}
+%-----------------------------------------------------------
+
+Dos 92 municipios, 10 encontram-se em nivel verde, 20 em nivel amarelo, 30 em nivel laranja e 1 em nivel vermelho referentes a semana epidemiológica 13-2016. Para informações mais atualizadas
+sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
+
+
+%--------------------------------------------------------------------------------
+%	PRIMEIRA PAGINA : BOX - CODIGO DE CORES
+%--------------------------------------------------------------------------------
+\vspace{1cm}
+\begin{mdframed}[style=intextbox,frametitle={}] % Sidebar box
+
+\hypertarget{descriptivebox}{\heading{O código de Cores}{1pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
+As cores indicam niveis de atenção
+\begin{description}
+\item[Verde:] temperaturas amenas, baixa incidência de casos.      
+\item[Amarelo:] temperatura propícia para a população do vetor e transmissão da dengue.
+\item[Laranja:] transmissão aumentada e sustentada de dengue. 
+\item[Vermelho:] incidência alta de dengue, acima dos 90\% históricos.
+\end{description}
+\end{mdframed}
+
+\textbf{Na semana passada:} 10 municípios em nivel amarelo, 30 em laranja e 10 em vermelho.    
+
+\end{minipage} % End the main body - first page mini page
+
+
+%----------------------------------------------------------------------------------
+%	SEGUNDA PAGINA: TEXTO PRINCIPAL - LOOP PELAS REGIONAIS
+%----------------------------------------------------------------------------------
+
+\begin{minipage}[t]{.66\linewidth}
+\hypertarget{MetI}{\heading{Regional Metropolitana I}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/mapaRJ_Metropolitana I.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
+% latex table generated in R 3.2.5 by xtable 1.8-2 package
+% Tue Apr 26 14:26:04 2016
+\begin{tabular}{rrr}
+  \hline
+1 & 2 & 3 \\ 
+  \hline
+1.00 & 2.00 & 4.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{Municipios}\begin{itemize}\item \hyperlink{Rio}{Rio de Janeiro}
+\item \hyperlink{Mag}{Magé}
+\item \hyperlink{SGoncalo}{São Gonçalo}
+\item \hyperlink{SJMeriti}{São João de Meriti}
+\item \hyperlink{Niguacu}{Nova Iguaçu}
+\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{MetII}{\heading{Regional Metropolitana II}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/mapaRJ_Metropolitana II.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
+% latex table generated in R 3.2.5 by xtable 1.8-2 package
+% Tue Apr 26 14:26:04 2016
+\begin{tabular}{rrr}
+  \hline
+1 & 2 & 3 \\ 
+  \hline
+1.00 & 2.00 & 4.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{Municipios}\begin{itemize}\item \hyperlink{Rio}{Rio de Janeiro}
+\item \hyperlink{Mag}{Magé}
+\item \hyperlink{SGoncalo}{São Gonçalo}
+\item \hyperlink{SJMeriti}{São João de Meriti}
+\item \hyperlink{Niguacu}{Nova Iguaçu}
+\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{MedPar}{\heading{Regional Médio Paraíba}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/mapaRJ_Médio Paraíba.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
+% latex table generated in R 3.2.5 by xtable 1.8-2 package
+% Tue Apr 26 14:26:04 2016
+\begin{tabular}{rrr}
+  \hline
+1 & 2 & 3 \\ 
+  \hline
+1.00 & 2.00 & 4.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{Municipios}\begin{itemize}\item \hyperlink{Rio}{Rio de Janeiro}
+\item \hyperlink{Mag}{Magé}
+\item \hyperlink{SGoncalo}{São Gonçalo}
+\item \hyperlink{SJMeriti}{São João de Meriti}
+\item \hyperlink{Niguacu}{Nova Iguaçu}
+\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{CSul}{\heading{Regional Centro Sul}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/mapaRJ_Centro Sul.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
+% latex table generated in R 3.2.5 by xtable 1.8-2 package
+% Tue Apr 26 14:26:04 2016
+\begin{tabular}{rrr}
+  \hline
+1 & 2 & 3 \\ 
+  \hline
+1.00 & 2.00 & 4.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{Municipios}\begin{itemize}\item \hyperlink{Rio}{Rio de Janeiro}
+\item \hyperlink{Mag}{Magé}
+\item \hyperlink{SGoncalo}{São Gonçalo}
+\item \hyperlink{SJMeriti}{São João de Meriti}
+\item \hyperlink{Niguacu}{Nova Iguaçu}
+\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Serra}{\heading{Regional Serrana}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/mapaRJ_Serrana.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
+% latex table generated in R 3.2.5 by xtable 1.8-2 package
+% Tue Apr 26 14:26:04 2016
+\begin{tabular}{rrr}
+  \hline
+1 & 2 & 3 \\ 
+  \hline
+1.00 & 2.00 & 4.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{Municipios}\begin{itemize}\item \hyperlink{Rio}{Rio de Janeiro}
+\item \hyperlink{Mag}{Magé}
+\item \hyperlink{SGoncalo}{São Gonçalo}
+\item \hyperlink{SJMeriti}{São João de Meriti}
+\item \hyperlink{Niguacu}{Nova Iguaçu}
+\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{BaixLit}{\heading{Regional Baixada Litorânea}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/mapaRJ_Baixada Litorânea.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
+% latex table generated in R 3.2.5 by xtable 1.8-2 package
+% Tue Apr 26 14:26:05 2016
+\begin{tabular}{rrr}
+  \hline
+1 & 2 & 3 \\ 
+  \hline
+1.00 & 2.00 & 4.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{Municipios}\begin{itemize}\item \hyperlink{Rio}{Rio de Janeiro}
+\item \hyperlink{Mag}{Magé}
+\item \hyperlink{SGoncalo}{São Gonçalo}
+\item \hyperlink{SJMeriti}{São João de Meriti}
+\item \hyperlink{Niguacu}{Nova Iguaçu}
+\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Norte}{\heading{Regional Norte}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/mapaRJ_Norte.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
+% latex table generated in R 3.2.5 by xtable 1.8-2 package
+% Tue Apr 26 14:26:05 2016
+\begin{tabular}{rrr}
+  \hline
+1 & 2 & 3 \\ 
+  \hline
+1.00 & 2.00 & 4.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{Municipios}\begin{itemize}\item \hyperlink{Rio}{Rio de Janeiro}
+\item \hyperlink{Mag}{Magé}
+\item \hyperlink{SGoncalo}{São Gonçalo}
+\item \hyperlink{SJMeriti}{São João de Meriti}
+\item \hyperlink{Niguacu}{Nova Iguaçu}
+\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Nord}{\heading{Regional Nordeste}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/mapaRJ_Nordeste.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
+% latex table generated in R 3.2.5 by xtable 1.8-2 package
+% Tue Apr 26 14:26:05 2016
+\begin{tabular}{rrr}
+  \hline
+1 & 2 & 3 \\ 
+  \hline
+1.00 & 2.00 & 4.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+  3.00 & 4.00 & 5.00 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{Municipios}\begin{itemize}\item \hyperlink{Rio}{Rio de Janeiro}
+\item \hyperlink{Mag}{Magé}
+\item \hyperlink{SGoncalo}{São Gonçalo}
+\item \hyperlink{SJMeriti}{São João de Meriti}
+\item \hyperlink{Niguacu}{Nova Iguaçu}
+\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage
+
+%-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE
+%-----------------------------------------------------------------------------------
+% \begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+% 
+% %\hypertarget{reg1}{\heading{Regional Metropolitana 1: cidades}{6pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
+% 
+% 
+% \subsection*{Saquarema}
+% 
+% \begin{itemize}
+% \item Nivel atual: Amarelo
+% \item Probabilidade de transmissão sustentada na próxima semana: 20\%.
+% \end{itemize}
+% 
+% \begin{center}
+% %\begin{wrapfigure}[7]{l}[0pt]{0pt} % In-line figure with text wrapping around it
+% \includegraphics[width=1\textwidth]{cores_Saquarema.png}
+% %\end{wrapfigure}
+% 
+% 
+% \begin{tabular}{rrrrrrr}
+% \hline
+% SE & casos & casos estimados & temp & tweet & Rt & nivel \\ 
+% \hline
+% 201610.00 & 1074.00 & 1353.00 &   0 &   9 &   3 &   0 \\ 
+% 201611.00 & 1448.00 & 2111.00 &   0 &  11 &   1 &   0 \\ 
+% 201612.00 & 1177.00 & 2155.00 &   0 &  10 &   2 &   0 \\ 
+% 201613.00 & 1566.00 & 4689.00 &   0 &   9 &   3 &   0 \\ 
+% \hline
+% \end{tabular}
+% \end{center}
+% 
+% \subsection*{Arraial do Cabo}
+% 
+% \begin{itemize}
+% \item Nivel atual: Amarelo
+% \item Probabilidade de transmissão sustentada na próxima semana: 20\%.
+% \end{itemize}
+% 
+% \begin{center}
+% %\begin{wrapfigure}[7]{l}[0pt]{0pt} % In-line figure with text wrapping around it
+% \includegraphics[width=1\textwidth]{cores_Saquarema.png}
+% %\end{wrapfigure}
+% 
+% \begin{tabular}{rrrrrrr}
+% \hline
+% SE & casos & casos estimados & temp & tweet & Rt & nivel \\ 
+% \hline
+% 201610.00 & 1074.00 & 1353.00 &   0 &   9 &   3 &   0 \\ 
+% 201611.00 & 1448.00 & 2111.00 &   0 &  11 &   1 &   0 \\ 
+% 201612.00 & 1177.00 & 2155.00 &   0 &  10 &   2 &   0 \\ 
+% 201613.00 & 1566.00 & 4689.00 &   0 &   9 &   3 &   0 \\ 
+% \hline
+% \end{tabular}
+% \end{center}
+% 
+% \BackToContents % Link back to the contents of the newsletter
+% \end{minipage}\hfill % End of the main body - second page mini page
+% 
+
+\newpage
+
+%---------------------------------------------------------------------------------
+%	Variáves nas Tabelas, Créditos e Contato
+%---------------------------------------------------------------------------------
+
+\begin{minipage}[t]{1\linewidth} 
+
+\centering
+\hypertarget{notas}{\heading{Notas}{6pt}} % \hypertarget provides a label to reference using 
+
+\hyperlink{vartab}{\textbf{Lista das variáveis apresentadas nas tabelas:}}
+
+\begin{description}
+\item[SE =] semana epidemiológica
+\item [tweet =] número de tweets indicativos de casos de dengue na cidade
+\item [temp =] média das temperaturas mínimas da semana
+\item [casos =] casos notificados de dengue 
+\item [casos.esp =] número de casos estimados após correção pelo atraso de notificação
+\item [maxcasos =] número máximo de casos estimados (IC 95\%)
+\item [p(Rt1) =] probabilidade do número reprodutivo ser maior que 1 (indica transmissão)
+\item [inc =] incidência por 100.000 habs
+\item [nivel =] nivel do alerta (1 = mais baixo, 4 = mais alto)
+\item [cor =] cor do alerta (verde, amarelo, laranja, vermelho)\\
+\end{description}
+
+\hyperlink{notas}{\textbf{Observações}}\\
+
+\begin{itemize}
+\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.\\ 
+\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.\\
+\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.\\
+\end{itemize}
+
+\textbf{Créditos}\\
+Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
+\begin{itemize}
+\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro\\
+\item Escola de Matemática Aplicada, Fundação Getúlio Vargas\\
+\item Secretarias do Estado e Município do Rio de Janeiro\\
+\item Secretaria Estadual de Saúde do Paraná\\
+\end{itemize}
+
+Para mais detalhes sobre o sistema de alerta consultar: \href{http://info.dengue.mat.br}{\textit{Info Dengue}}\\
+
+\textbf{Contato}: alerta\_dengue@fiocruz.br
+\end{minipage} % fim da pagina de creditos
+
+\end{document} 

@@ -442,6 +442,10 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
 #'@param titulo title of the map
 #'@param filename if present, the map is saved.
+#'@param shapefile shapefile containing polygons for the municipalities
+#'@param varid shapefile variable indicating the geocode of the municipalities  
+#'@param varname name of the variable to be plotted
+#'@param resol dpi png resolution, default is 200
 #'@return a map
 #'@examples
 #'reg1 <- update.alerta(regional="Noroeste", pars = RJ.noroeste, datasource = con,sefinal=201613)
@@ -450,7 +454,7 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'varid="CD_GEOCMU", titulo="Regionais Norte e Nordeste")
 
 geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), se, datasource=con,
-                   shapefile, varid, varname, titulo="", filename, caption=TRUE){
+                   shapefile, varid, varname, titulo="", filename, caption=TRUE, resol = 200){
       
       require(maptools,quietly = TRUE,warn.conflicts = FALSE)
       
@@ -479,7 +483,7 @@ geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), s
       meumapa@data <- merge(meumapa@data,lastab,by.x=varid,by.y="geocodigo")
       
       if(!missing(filename)){#salvar
-            png(filename, width = 16, height = 15, units="cm", res=100)
+            png(filename, width = 16, height = 15, units="cm", res=resol)
       }
       
       par(mfrow=c(1,1),mai=c(0,0,0,0),mar=c(4,1,1,1))

@@ -4,7 +4,7 @@
 \alias{alertaRio}
 \title{4 level alert Green-Yellow-Orange-Red for Rio de Janeiro.}
 \usage{
-alertaRio(naps = 0:9, pars, datasource, verbose = TRUE)
+alertaRio(naps = 0:9, pars, crit, datasource, verbose = TRUE)
 }
 \arguments{
 \item{naps}{subset of vector 0:9 corresponding to the id of the APS. Default is all of them.}
@@ -25,9 +25,13 @@ indicates evidence of sustained transmission, red indicates evidence of
 an epidemic scenario.
 }
 \examples{
-params <- list(pdig=c(2.5016,1.1013),crity=c("temp_min > 22", 3, 3), crito=c("p1 > 0.9", 3, 3),
-critr=c("inc > 100", 3, 2))
-alerio2 <- alertaRio(naps = c(0,1), pars=params, datasource=con)
+params <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 14.15, posseas = 18)
+criter <- criteria = list(
+crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 0),
+crito = c("p1 > 0.9 & inc > preseas", 2, 2),
+critr = c("inc > inccrit", 1, 2)
+)
+alerio2 <- alertaRio(naps = c(0,1), pars=params, crit = criter, datasource=con)
 names(alerio2)
 }
 
