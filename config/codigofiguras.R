@@ -71,15 +71,16 @@ fig.cores <- function(obj){
 }
 
 mapa.regional <- function(alerta, regionais, estado, sigla, shape, 
-                          shapeid, data_mapa = data_relatorio){
+                          shapeid, data_mapa = data_relatorio, dir="",
+                          datasource){
       for (i in regionais) {
-            cidades = getCidades(regional = i, uf = estado)["nome"]
+            cidades = getCidades(regional = i, uf = estado,datasource = datasource)["nome"]
             titu = paste(sigla,":",i, sep="")
             nomesemespaco = gsub(" ","",i) 
-            fname = paste("mapa",sigla,"_",nomesemespaco,".png",sep="")
-            geraMapa(alerta=alerta, subset=cidades, data=data_mapa,
+            fname = paste(dir,"Mapa",sigla,"_",nomesemespaco,".png",sep="")
+            geraMapa(alerta=alerta, subset=cidades, se=data_mapa,
                      shapefile=shape, varid=shapeid, 
-                     titulo=titu ,filename=fname)
+                     titulo=titu ,filename=fname, dir="")
       }
 }
 

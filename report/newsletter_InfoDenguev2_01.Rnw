@@ -132,17 +132,17 @@ As cores indicam niveis de atenção
 <<r,echo=FALSE,results=tex>>=
 # O loop e'feito no R e o template em latex entra como string
 #length(regs)
-for (i in 1:1){
+for (i in 1:length(regs)){
 
       cat("\\begin{minipage}[t]{.66\\linewidth}\n")  # inicio da minipage
       # titulo:
       cat(paste("\\hypertarget{",nickregs[i],"}{\\heading{Regional ",regs[i],"}}\n")) 
       
       # Mapa:
-      #mapareg = paste(pathrelatorio,"figs/mapa",sigla,"_",regs[i],".png",sep="")
-      #mapareg = paste(sigla,"/figs/mapa",sigla,"_",nomereg,".png",sep="")
+      nomesemespaco = gsub(" ","", regs[i])
+      mapareg=paste(sigla,"/figs/","Mapa","_",nomesemespaco,".png",sep="")
       
-      #cat(paste("\\includegraphics[width=0.8\\textwidth]{",mapareg,"}",sep=""))
+      cat(paste("\\includegraphics[width=0.8\\textwidth]{",mapareg,"}",sep=""))
 
       # Two-column layout inicio
 #      cat("\\begin{multicols}{2}\n")
@@ -175,17 +175,17 @@ for (i in 1:1){
       cat("\\begin{mdframed}[style=sidebar,frametitle={}]\n") # Sidebar box 
  
       cat("\\textbf{Municipios}") # titulo
-#       cat("\\begin{itemize}")
-#       
-#        municip.reg <- municipios[municipios$nome_regional==regs[i]]
-#        
-#        for (j in 1:dim(municip.reg)[1]) {
-#              linksite <- paste("https://alerta.dengue.mat.br/alerta/",
-#                                municip.reg$municipio_geocodigo[j],sep="")
-#              cat(paste("\\item \\hyperlink{",linksite,"}{",municip.reg$nome[j],"}\n",sep=""))
-#        }
-#        cat("\\end{itemize}")
-#  
+       cat("\\begin{itemize}")
+       
+        municip.reg <- municipios[municipios$nome_regional==regs[i],]
+        
+        for (j in 1:dim(municip.reg)[1]) {
+              linksite <- paste("https:/alerta.dengue.mat.br/alerta/",
+                                municip.reg$municipio_geocodigo[j],sep="")
+              cat(paste("\\item \\hyperlink{",linksite,"}{",municip.reg$nome[j],"}\n",sep=""))
+        }
+        cat("\\end{itemize}")
+  
       # #\BackToContents % Link back to the contents of the newsletter
       
       # fim do box e minipage

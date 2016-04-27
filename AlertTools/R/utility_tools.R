@@ -288,12 +288,12 @@ getRegionais <- function(uf, database){
 #'@title get list of cities. 
 #'@param uf full name of the state.
 #'@param regional full name of the regional.
-#'@param database name of the database
+#'@param datasource name of the database
 #'@return vector with names of the cities.
 #'@examples
 #'getCidades(regional = "Metropolitana I", uf="Rio de Janeiro")
 
-getCidades <- function(regional, uf, database){
+getCidades <- function(regional, uf, datasource){
       
       if(missing(uf)) stop("getCidades requer nome da uf por extenso")
       if(!missing(regional)){
@@ -312,7 +312,7 @@ getCidades <- function(regional, uf, database){
                   where uf = '", uf, "'", sep="")      
       }
       
-      d = dbGetQuery(con, sqlquery)    
+      d = dbGetQuery(datasource, sqlquery)    
       d 
 }
 

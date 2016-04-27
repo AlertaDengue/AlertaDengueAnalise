@@ -442,6 +442,7 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
 #'@param titulo title of the map
 #'@param filename if present, the map is saved.
+#'@param dir directory where map will be saved 
 #'@param shapefile shapefile containing polygons for the municipalities
 #'@param varid shapefile variable indicating the geocode of the municipalities  
 #'@param varname name of the variable to be plotted
@@ -454,7 +455,7 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'varid="CD_GEOCMU", titulo="Regionais Norte e Nordeste")
 
 geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), se, datasource=con,
-                   shapefile, varid, varname, titulo="", filename, caption=TRUE, resol = 200){
+                   shapefile, varid, varname, titulo="", filename, dir="",caption=TRUE, resol = 200){
       
       require(maptools,quietly = TRUE,warn.conflicts = FALSE)
       
@@ -474,7 +475,7 @@ geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), s
             ciddata <- ale[[i]]$data
             inddata <- ale[[i]]$indices
             lastab[i,2:5] <- c(ciddata$cidade[1],
-                               cores[inddata[which(ciddata$SE==data),c("level")]],
+                               cores[inddata[which(ciddata$SE==se),c("level")]],
                                ciddata$nome[1], substring(ciddata$nome[1],1,3))
       }
       
@@ -483,16 +484,18 @@ geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), s
       meumapa@data <- merge(meumapa@data,lastab,by.x=varid,by.y="geocodigo")
       
       if(!missing(filename)){#salvar
-            png(filename, width = 16, height = 15, units="cm", res=resol)
+            png(paste(dir,filename,sep="")
+                , width = 16, height = 15, units="cm", res=resol)
       }
       
       par(mfrow=c(1,1),mai=c(0,0,0,0),mar=c(4,1,1,1))
       plot(meumapa,col=meumapa@data$cor)
       coords <- coordinates(meumapa)
       if (caption == TRUE) text(coords,label=meumapa@data$short,cex=0.6)
-      legend("bottomright",fill=cores,c("atividade baixa","Alerta","Transmissão sustentada","atividade alta"),bty="n",cex=0.6)
+      legend("bottomright",fill=cores,c("Atividade baixa","Alerta de transmissão","Transmissão sustentada",
+                                        "Atividade alta"),bty="n",cex=0.8)
       par(cex.main=0.7)
-      title(paste0(titulo, " (Semana ",substr(data,5,6)," de ",substr(data,1,4),")"),line=0)
+      title(paste0(titulo, "Semana ",substr(se,5,6)," de ",substr(se,1,4)),line=0)
       
       if(!missing(filename)) {dev.off()} #salvar
 }

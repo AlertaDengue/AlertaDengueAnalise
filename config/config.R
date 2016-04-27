@@ -1,36 +1,13 @@
 # ====================================================
-# Arquivo de configuracao do Alerta Dengue
+# Arquivo de configuracao do Alerta Dengue por Estado
 # ====================================================
-library(foreign)
-library("RPostgreSQL")
-library(xtable)
-library(knitr)
-#library(AlertTools)
-devtools::load_all()
-
 hoje = Sys.Date()
+source("../config/config_global.R") # packages e regras gerais do alerta
+
       
-# ====================================================
-## Parametros globais (para todos os municipios)
-# ====================================================
-
-## Distribuicao do tempo de geracao da dengue:
-gtdist="normal"; meangt=3; sdgt = 1.2   
-
-## Regras de mudança de nivel de alerta
-# (criterio, duracao da condicao para turnon, turnoff)
-criteria = list(
-crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 0),
-crito = c("p1 > 0.9 & inc > preseas", 2, 2),
-critr = c("inc > inccrit", 1, 2)
-)
-# ========================================================
-## Parametros locais (para municipios ou regionais)
-# ========================================================
-
-# -----------------
-# Rio de Janeiro 
-# -----------------
+# ========================================
+# Parametros do Estado do Rio de Janeiro 
+# ========================================
 #nomesregs = getRegionais("Rio de Janeiro")# use essa funcao para descobrir as regionais
 nomesregs <- c("Metropolitana I", "Metropolitana II", "Litoral Sul", "Médio Paraíba",    
                "Centro Sul", "Serrana", "Baixada Litorânea", "Norte", "Noroeste")         
@@ -54,6 +31,9 @@ RJ.shape="../report/RJ/shape/33MUE250GC_SIR.shp"  # fonte para o mapa
 RJ.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 RJ.criteria = criteria
 
+# Dados do diretorio para salvar (com / no final)
+RJ.out = "../report/RJ/figs/"
+
 # -----------------
 # Rio de Janeiro - Intra-capital: por APS 
 # -----------------
@@ -63,7 +43,3 @@ RJ.aps <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 14.15, 
 RJ.aps.shape = "../report/Rio_de_Janeiro/shape/CAPS_SMS.shp"
 RJ.aps.shapeID = "CD_GEOCMU"
 RJ.aps.criteria = criteria
-
-#########################################################
-## Alerta Estado do Parana 
-#########################################################
