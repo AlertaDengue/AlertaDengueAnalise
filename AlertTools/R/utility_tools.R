@@ -283,22 +283,34 @@ getRegionais <- function(uf, database){
 }
 
 
-# getRegionais ------------------------------------
-#'@description  consult database to get list of regionais 
-#'@title get list of regionais. 
+# getCidades ------------------------------------
+#'@description  consult database to get list of cities 
+#'@title get list of cities. 
 #'@param uf full name of the state.
+#'@param regional full name of the regional.
 #'@param database name of the database
-#'@return vector with names of the regionais.
+#'@return vector with names of the cities.
 #'@examples
 #'getCidades(regional = "Metropolitana I", uf="Rio de Janeiro")
 
 getCidades <- function(regional, uf, database){
       
-      sqlquery = paste("SELECT municipio_geocodigo, nome, nome_regional, uf 
+      if(missing(uf)) stop("getCidades requer nome da uf por extenso")
+      if(!missing(regional)){
+            sqlquery = paste("SELECT municipio_geocodigo, nome, nome_regional, uf 
                   FROM \"Dengue_global\".\"Municipio\" 
                   INNER JOIN \"Dengue_global\".regional_saude
                   ON municipio_geocodigo = geocodigo
-                  where uf = '", uf, "' AND nome_regional = '",regional ,"'", sep="")
+                  where uf = '", uf, "' AND nome_regional = '",regional ,"'", sep="")      
+      }
+      
+      if(missing(regional)){
+            sqlquery = paste("SELECT municipio_geocodigo, nome, nome_regional, uf 
+                  FROM \"Dengue_global\".\"Municipio\" 
+                  INNER JOIN \"Dengue_global\".regional_saude
+                  ON municipio_geocodigo = geocodigo
+                  where uf = '", uf, "'", sep="")      
+      }
       
       d = dbGetQuery(con, sqlquery)    
       d 

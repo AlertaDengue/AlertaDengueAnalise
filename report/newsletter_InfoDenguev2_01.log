@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.26)  26 APR 2016 14:26
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.26)  26 APR 2016 18:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1379,21 +1379,21 @@ LaTeX Font Info:    Try loading font information for TS1+bch on input line 50.
 File: ts1bch.fd 2004/10/18 font definitions for TS1/bch.
 )
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 82.
+ mdframed uses option nobreak mdframed on input line 83.
 
-<RJ/figs/Mapa_ERJ.png, id=22, 454.5783pt x 426.393pt>
+<RJ/figs/Mapa_ERJ.png, id=23, 454.5783pt x 426.393pt>
 File: RJ/figs/Mapa_ERJ.png Graphic file (type png)
 
 <use RJ/figs/Mapa_ERJ.png>
-Package pdftex.def Info: RJ/figs/Mapa_ERJ.png used on input line 94.
+Package pdftex.def Info: RJ/figs/Mapa_ERJ.png used on input line 95.
 (pdftex.def)             Requested size: 267.11241pt x 250.55472pt.
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 115.
+ mdframed uses option nobreak mdframed on input line 116.
 
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -1402,7 +1402,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \vskip 
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
@@ -1414,14 +1414,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Extra \else.
 \@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
                                                   \@bsphack \vadjust {\@rest...
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
 ! You can't use `\vadjust' in internal vertical mode.
 \@vspace ...skip \z@skip \else \@bsphack \vadjust 
                                                   {\@restorepar \vskip #1 \v...
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1431,7 +1431,7 @@ return to the right one by typing `I}' or `I$' or `I\par'.
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -1440,7 +1440,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \vskip 
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
@@ -1452,14 +1452,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Extra \fi.
 \@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
                                                   
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -1468,7 +1468,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \vskip 
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
@@ -1480,14 +1480,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Extra \else.
 \@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
                                                   \@bsphack \vadjust {\@rest...
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
 ! You can't use `\vadjust' in internal vertical mode.
 \@vspace ...skip \z@skip \else \@bsphack \vadjust 
                                                   {\@restorepar \vskip #1 \v...
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1497,14 +1497,14 @@ return to the right one by typing `I}' or `I$' or `I\par'.
 ! Extra \fi.
 <argument> \fi 
                
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -1513,7 +1513,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \vskip 
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
@@ -1525,34 +1525,22 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Extra \fi.
 \@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
                                                   
-l.127 ...MetI}{\heading{Regional Metropolitana I}}
+l.128 ...I }{\heading{Regional  Metropolitana I }}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
 
-LaTeX Warning: File `RJ/figs/mapaRJ_Metropolitana I.png' not found on input lin
-e 128.
-
-<RJ/figs/mapaRJ_Metropolitana I.png, id=24, 454.5783pt x 426.393pt>
-File: RJ/figs/mapaRJ_Metropolitana I.png Graphic file (type png)
-
-<use RJ/figs/mapaRJ_Metropolitana I.png>
-Package pdftex.def Info: RJ/figs/mapaRJ_Metropolitana I.png used on input line 
-128.
-(pdftex.def)             Requested size: 267.11241pt x 250.55472pt.
-
-
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 128.
+(caption)                particular \caption on input line 129.
 See the caption package documentation for explanation.
 
-LaTeX Font Info:    Try loading font information for T1+aess on input line 128.
+LaTeX Font Info:    Try loading font information for T1+aess on input line 129.
 
 (/usr/share/texlive/texmf-dist/tex/latex/ae/t1aess.fd
 File: t1aess.fd 1997/11/16 Font definitions for T1/aess.
 )
 LaTeX Font Info:    Font shape `T1/aess/b/n' in size <10> not available
-(Font)              Font shape `T1/aess/bx/n' tried instead on input line 128.
+(Font)              Font shape `T1/aess/bx/n' tried instead on input line 129.
 Package microtype Info: Loading generic settings for font family
 (microtype)             `aess' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
@@ -1563,1224 +1551,79 @@ File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman
 (RS)
 )
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 131.
+(Font)              <7> on input line 132.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 131.
+(Font)              <5> on input line 132.
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 148.
+ mdframed uses option nobreak mdframed on input line 143.
 Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 148.
+(babel)             in language  on input line 143.
 Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 148.
+(babel)             in language  on input line 143.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./InfoDengue2.png> <./RJ/f
 igs/Mapa_ERJ.png (PNG copy)>]
 Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 148.
+(babel)             in language  on input line 143.
 Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 148.
- [2 <./RJ/figs/mapaRJ_Metropolitana I.png (PNG copy)>]
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Extra \fi.
-<argument> \fi 
-               
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.149 ...tII}{\heading{Regional Metropolitana II}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-
-LaTeX Warning: File `RJ/figs/mapaRJ_Metropolitana II.png' not found on input li
-ne 150.
-
-<RJ/figs/mapaRJ_Metropolitana II.png, id=66, 454.5783pt x 426.393pt>
-File: RJ/figs/mapaRJ_Metropolitana II.png Graphic file (type png)
-
-<use RJ/figs/mapaRJ_Metropolitana II.png>
-Package pdftex.def Info: RJ/figs/mapaRJ_Metropolitana II.png used on input line
- 150.
-(pdftex.def)             Requested size: 267.11241pt x 250.55472pt.
-
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 150.
-See the caption package documentation for explanation.
-
-Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 170.
+(babel)             in language  on input line 143.
+ [2]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 253.
 Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 170.
+(babel)             in language  on input line 253.
 Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 170.
-[3 <./RJ/figs/mapaRJ_Metropolitana II.png (PNG copy)>]
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Extra \fi.
-<argument> \fi 
-               
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.171 ...dPar}{\heading{Regional Médio Paraíba}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-
-LaTeX Warning: File `RJ/figs/mapaRJ_M\IeC {\'e}dio Para\IeC {\'\i }ba.png' not 
-found on input line 172.
-
-
-! Package pdftex.def Error: File `RJ/figs/mapaRJ_M�dio Para�ba.png' not found.
-
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.172 ...idth]{RJ/figs/mapaRJ_Médio Paraíba.png}
-                                                  \vspace{0.5cm}\captionof{t...
-
-Using draft setting for this image.
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-LaTeX Font Info:    Try loading font information for T1+pcr on input line 172.
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
-File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
-)
-Package microtype Info: Loading generic settings for font family
-(microtype)             `pcr' (encoding: T1).
-(microtype)             For optimal results, create family-specific settings.
-(microtype)             See the microtype manual for details.
-
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 172.
-See the caption package documentation for explanation.
-
-Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 192.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 192.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 192.
-[4]
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Extra \fi.
-<argument> \fi 
-               
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.193 ...rget{CSul}{\heading{Regional Centro Sul}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-
-LaTeX Warning: File `RJ/figs/mapaRJ_Centro Sul.png' not found on input line 194
-.
-
-<RJ/figs/mapaRJ_Centro Sul.png, id=88, 454.5783pt x 426.393pt>
-File: RJ/figs/mapaRJ_Centro Sul.png Graphic file (type png)
-
-<use RJ/figs/mapaRJ_Centro Sul.png>
-Package pdftex.def Info: RJ/figs/mapaRJ_Centro Sul.png used on input line 194.
-(pdftex.def)             Requested size: 267.11241pt x 250.55472pt.
-
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 194.
-See the caption package documentation for explanation.
-
-Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 214.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 214.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 214.
-[5 <./RJ/figs/mapaRJ_Centro Sul.png (PNG copy)>]
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Extra \fi.
-<argument> \fi 
-               
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.215 ...target{Serra}{\heading{Regional Serrana}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-<RJ/figs/mapaRJ_Serrana.png, id=99, 454.5783pt x 426.393pt>
-File: RJ/figs/mapaRJ_Serrana.png Graphic file (type png)
-
-<use RJ/figs/mapaRJ_Serrana.png>
-Package pdftex.def Info: RJ/figs/mapaRJ_Serrana.png used on input line 216.
-(pdftex.def)             Requested size: 267.11241pt x 250.55472pt.
-
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 216.
-See the caption package documentation for explanation.
-
-Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 236.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 236.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 236.
-[6 <./RJ/figs/mapaRJ_Serrana.png (PNG copy)>]
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Extra \fi.
-<argument> \fi 
-               
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.237 ...t}{\heading{Regional Baixada Litorânea}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-
-LaTeX Warning: File `RJ/figs/mapaRJ_Baixada Litor\IeC {\^a}nea.png' not found o
-n input line 238.
-
-
-! Package pdftex.def Error: File `RJ/figs/mapaRJ_Baixada Litor�nea.png' not fou
-nd.
-
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.238 ...h]{RJ/figs/mapaRJ_Baixada Litorânea.png}
-                                                  \vspace{0.5cm}\captionof{t...
-
-Using draft setting for this image.
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 238.
-See the caption package documentation for explanation.
-
-Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 258.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 258.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 258.
-[7]
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Extra \fi.
-<argument> \fi 
-               
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.259 ...ertarget{Norte}{\heading{Regional Norte}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-<RJ/figs/mapaRJ_Norte.png, id=121, 454.5783pt x 426.393pt>
-File: RJ/figs/mapaRJ_Norte.png Graphic file (type png)
-
-<use RJ/figs/mapaRJ_Norte.png>
-Package pdftex.def Info: RJ/figs/mapaRJ_Norte.png used on input line 260.
-(pdftex.def)             Requested size: 267.11241pt x 250.55472pt.
-
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 260.
-See the caption package documentation for explanation.
-
-Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 280.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 280.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 280.
-[8 <./RJ/figs/mapaRJ_Norte.png (PNG copy)>]
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Extra \fi.
-<argument> \fi 
-               
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.281 ...target{Nord}{\heading{Regional Nordeste}}
-                                                  
-I'm ignoring this; it doesn't match any \if.
-
-
-LaTeX Warning: File `RJ/figs/mapaRJ_Nordeste.png' not found on input line 282.
-
-
-! Package pdftex.def Error: File `RJ/figs/mapaRJ_Nordeste.png' not found.
-
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.282 ...8\textwidth]{RJ/figs/mapaRJ_Nordeste.png}
-                                                  \vspace{0.5cm}\captionof{t...
-
-Using draft setting for this image.
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 282.
-See the caption package documentation for explanation.
-
-Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 302.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 302.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 302.
-[9]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 412.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 412.
-Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 412.
- [10]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 412.
+(babel)             in language  on input line 253.
+ [3]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 253.
  (./newsletter_InfoDenguev2_01.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 412.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 412.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 253.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 253.
 Package rerunfilecheck Info: File `newsletter_InfoDenguev2_01.out' has not chan
 ged.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 412.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 253.
  ) 
 Here is how much of TeX's memory you used:
- 25014 strings out of 495004
- 457954 string characters out of 6180662
- 562305 words of memory out of 5000000
- 27674 multiletter control sequences out of 15000+600000
- 36323 words of font info for 68 fonts, out of 8000000 for 9000
+ 24918 strings out of 495004
+ 456250 string characters out of 6180662
+ 562116 words of memory out of 5000000
+ 27617 multiletter control sequences out of 15000+600000
+ 34922 words of font info for 60 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
  70i,12n,73p,10598b,1005s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{Niguacu} has been referenced but does not exist, 
-replaced by a fixed one
-
-pdfTeX warning (dest): name{SJMeriti} has been referenced but does not exist, r
-eplaced by a fixed one
-
-pdfTeX warning (dest): name{SGoncalo} has been referenced but does not exist, r
-eplaced by a fixed one
-
-pdfTeX warning (dest): name{Mag} has been referenced but does not exist, replac
-ed by a fixed one
-
-pdfTeX warning (dest): name{Rio} has been referenced but does not exist, replac
-ed by a fixed one
-
-pdfTeX warning (dest): name{creditos} has been referenced but does not exist, r
-eplaced by a fixed one
+pdfTeX warning (dest): name{creditos} has been referenced but does not exist,
+ replaced by a fixed one
 
 pdfTeX warning (dest): name{vartab} has been referenced but does not exist, rep
 laced by a fixed one
+
+pdfTeX warning (dest): name{Nrst} has been referenced but does not exist, repla
+ced by a fixed one
+
+pdfTeX warning (dest): name{Nort} has been referenced but does not exist, repla
+ced by a fixed one
+
+pdfTeX warning (dest): name{BL\342} has been referenced but does not exist, rep
+laced by a fixed one
+
+pdfTeX warning (dest): name{Srrn} has been referenced but does not exist, repla
+ced by a fixed one
+
+pdfTeX warning (dest): name{CntS} has been referenced but does not exist, repla
+ced by a fixed one
+
+pdfTeX warning (dest): name{M\351P} has been referenced but does not exist, rep
+laced by a fixed one
+
+pdfTeX warning (dest): name{LtrS} has been referenced but does not exist, repla
+ced by a fixed one
+
+pdfTeX warning (dest): name{MtII} has been referenced but does not exist, repla
+ced by a fixed one
+
+pdfTeX warning (dest): name{MtrI} has been referenced but does not exist, repla
+ced by a fixed one
 
 pdfTeX warning (dest): name{estado} has been referenced but does not exist, rep
 laced by a fixed one
@@ -2789,12 +1632,11 @@ laced by a fixed one
 texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb></usr/share/texlive/texmf-di
 st/fonts/type1/bitstrea/charter/bchr8a.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/bitstrea/charter/bchri8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/
-courier/ucrr8a.pfb>
-Output written on newsletter_InfoDenguev2_01.pdf (10 pages, 397313 bytes).
+public/amsfonts/cm/cmssbx10.pfb>
+Output written on newsletter_InfoDenguev2_01.pdf (3 pages, 163516 bytes).
 PDF statistics:
- 180 PDF objects out of 1000 (max. 8388607)
- 152 compressed objects within 2 object streams
- 40 named destinations out of 1000 (max. 500000)
- 18484 words of extra memory for PDF output out of 20736 (max. 10000000)
+ 86 PDF objects out of 1000 (max. 8388607)
+ 72 compressed objects within 1 object stream
+ 23 named destinations out of 1000 (max. 500000)
+ 17947 words of extra memory for PDF output out of 20736 (max. 10000000)
 

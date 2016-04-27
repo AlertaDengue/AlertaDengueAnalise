@@ -2,14 +2,14 @@
 # Arquivo de execução do Alerta Dengue: Estado do Rio de Janeiro
 ESTADO = "Rio de Janeiro"
 # =============================================================================
-source("../config.R") # criterios em uso em cada regiao
+source("../config/config.R") # arquivo de configuracao do alerta (parametros)
 source("codigofiguras.R") # codigo para as figuras do relatorio
-pathrelatorio <- "../report/RJ/"
+
 
 # ---- Calcula alerta 
 con <- DenguedbConnect()
 data_relatorio = 201614
-aleRJ <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = RJ.criteria, 
+aleRJ <- update.alerta(region = names(pars.RJ)[1], pars = pars.RJ, crit = RJ.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
 #save(aleRJ, file=paste(pathrelatorio,"aleRJ.RData",sep=""))
@@ -28,14 +28,15 @@ mapa.regional(alerta=aleRJ, regionais=nomesregs, estado = ESTADO, sigla = "RJ",
 geraMapa(alerta=aleRJ, data=data_relatorio, shapefile=RJ.shape, varid=RJ.shapeID, 
          titulo="" ,filename="Mapa_ERJ.png", caption=FALSE)
 
-
-# --- Gera tabelas para relatorio
-N = length(aleRJ)
-res <- NULL
-for (i in 1:N) res <- rbind(res, write.alerta(aleRJ[[i]], write="no"))
+# --- Gera parametros para o boletim
+source('../report/RJ/configRelatorio.R')
+configRelatorio(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, alertobj=aleRJ)
 
 
-# --- Gera relatorio
+#Sweave(file = '../report/newsletter_InfoDenguev2_01.Rnw')
+
+# --- Gera boletim
+
 
 # --- Guarda resultado no banco
 

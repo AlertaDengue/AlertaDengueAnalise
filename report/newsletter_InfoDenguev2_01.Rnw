@@ -33,13 +33,12 @@
 %	CAIXA LATERAL - PRIMEIRA PAGINA
 %--------------------------------------------------------------------------------
 
-% Carregando dados para a primeira pagina
-<<echo=FALSE,results=hide>>=
+% Carregando dados  (atualmente é manual para cada estado)
+<<carrega_dados,echo=FALSE,results=hide>>=
 library("xtable")
-direct = '~/Repositorios/AlertaDengueAnalise/report/RJ/'
-source('~/Repositorios/AlertaDengueAnalise/report/RJ/configRelatorio.r')
+load('RJ/params.RData')
 
-figmapaestado = paste("RJ/figs/","Mapa_E",sigla,".png",sep="")
+figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
 @
 
 
@@ -121,7 +120,7 @@ As cores indicam niveis de atenção
 \end{description}
 \end{mdframed}
 
-\textbf{Na semana passada:} \Sexpr{namarelo1} municípios em nivel amarelo, \Sexpr{nlaranja1} em laranja e \Sexpr{nvermelho1} em vermelho.    
+ \textbf{Na semana passada:} \Sexpr{namarelo1} municípios em nivel amarelo, \Sexpr{nlaranja1} em laranja e \Sexpr{nvermelho1} em vermelho.    
 
 \end{minipage} % End the main body - first page mini page
 
@@ -132,17 +131,18 @@ As cores indicam niveis de atenção
 
 <<r,echo=FALSE,results=tex>>=
 # O loop e'feito no R e o template em latex entra como string
-
-for (i in 1:length(regs)){
+#length(regs)
+for (i in 1:1){
 
       cat("\\begin{minipage}[t]{.66\\linewidth}\n")  # inicio da minipage
       # titulo:
-      cat(paste("\\hypertarget{",nickregs[i],"}{\\heading{Regional ",regs[i],"}}\n",sep="")) 
+      cat(paste("\\hypertarget{",nickregs[i],"}{\\heading{Regional ",regs[i],"}}\n")) 
       
       # Mapa:
-      mapareg = paste("RJ/figs/","mapa",sigla,"_",regs[i],".png",sep="")
-
-      cat(paste("\\includegraphics[width=0.8\\textwidth]{",mapareg,"}",sep=""))
+      #mapareg = paste(pathrelatorio,"figs/mapa",sigla,"_",regs[i],".png",sep="")
+      #mapareg = paste(sigla,"/figs/mapa",sigla,"_",nomereg,".png",sep="")
+      
+      #cat(paste("\\includegraphics[width=0.8\\textwidth]{",mapareg,"}",sep=""))
 
       # Two-column layout inicio
 #      cat("\\begin{multicols}{2}\n")
@@ -153,12 +153,10 @@ for (i in 1:length(regs)){
       cat("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}")
       cat("\\begin{center}\n")
       
+      ta = rbind(c(1:7),c(10:16))
       xtab<-xtable(ta,label="Table1")
       print(xtab, include.rownames=FALSE,floating=FALSE)
       cat("\\end{center}\n")
-
-     # Tabela 2
-     # cat("\\textbf{Tabela 2} Variação dos níveis de alerta observados durante as últimas seis semanas epidemiológicas.\n")
       
       # Two-column layout fim
  #     cat("\\end{multicols}\n")
@@ -168,21 +166,26 @@ for (i in 1:length(regs)){
       # End second page mini page
       cat("\\end{minipage}\\hfill") 
 
-      # #-------------------------------------------------------------------------------------
+      # #--------------------------------------------------------------------------
       # #      SEGUNDA PAGINA: CAIXA LATERAL - INDICE MUNICIPIOS
-      # #------------------------------------------------------------------------------------
+      # #-------------------------------------------------------------------------
 
       # Mini page taking up 30% of the actual page
       cat("\\begin{minipage}[t]{.30\\linewidth}\n") 
       cat("\\begin{mdframed}[style=sidebar,frametitle={}]\n") # Sidebar box 
  
       cat("\\textbf{Municipios}") # titulo
-      cat("\\begin{itemize}")
-      for (j in 1:length(municip)) {
-            cat(paste("\\item \\hyperlink{",nickmunicip[j],"}{",municip[j],"}\n",sep=""))
-      }
-      cat("\\end{itemize}")
- 
+#       cat("\\begin{itemize}")
+#       
+#        municip.reg <- municipios[municipios$nome_regional==regs[i]]
+#        
+#        for (j in 1:dim(municip.reg)[1]) {
+#              linksite <- paste("https://alerta.dengue.mat.br/alerta/",
+#                                municip.reg$municipio_geocodigo[j],sep="")
+#              cat(paste("\\item \\hyperlink{",linksite,"}{",municip.reg$nome[j],"}\n",sep=""))
+#        }
+#        cat("\\end{itemize}")
+#  
       # #\BackToContents % Link back to the contents of the newsletter
       
       # fim do box e minipage
