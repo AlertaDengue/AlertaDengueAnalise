@@ -24,8 +24,20 @@
 \usepackage{booktabs} % Required for nice horizontal rules in tables
 \usepackage{wrapfig} % Required for in-line images
 \usepackage{float} % Required for forcing figures not to float with the [H] 
+\usepackage{longtable}
+\usepackage{fancyhdr} % footer 
 %parameter
 \usepackage{Sweave}
+
+%-------------
+
+% -------------
+% footer style
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0.0pt}
+\renewcommand{\footrulewidth}{0.4pt}
 
 %------------------------------------------------
 % Fonts
@@ -64,7 +76,7 @@
 %----------------------------------------------------------------------------------------
 
 \textwidth = 7 in % Text width
-\textheight = 10 in % Text height
+\textheight = 9.5 in % Text height
 \oddsidemargin = -10pt % Left side margin on odd pages
 \evensidemargin = -10pt % Left side margin on even pages
 \topmargin = -10pt % Top margin
@@ -72,19 +84,31 @@
 \headsep = 0pt % Remove the space between the header and top of the page
 \parskip = 4pt % Space between paragraph
 \parindent = 0.0in % Paragraph indentation
-\pagestyle{empty} % Disable page numbering
+%\pagestyle{empty} % Disable page numbering
 
 %----------------------------------------------------------------------------------------
 %	COLORS
 %----------------------------------------------------------------------------------------
 
 \usepackage[dvipsnames,svgnames]{xcolor} % Required to specify custom colors
-
-%\definecolor{altncolor}{rgb}{.8,0,0} % Dark red
-\definecolor{altncolor}{rgb}{.2,.4,.8} % Dark blue
-%\definecolor{altncolor}{rgb}{.84,.16,.16} % Red
+\definecolor{altncolor}{rgb}{.0,0.0,0.8} % Dark blue
+\definecolor{myred}{rgb}{.8,0,0} % Dark red
+\definecolor{myorange}{rgb}{.93,.57,.0} % Dark orange
+\definecolor{myyellow}{rgb}{.93,.93,.0} % yellow
+\definecolor{mygreen}{rgb}{.0,.55,.27} % dark green
+\definecolor{mywhite}{rgb}{1,1,1} % dark green
 
 \usepackage[colorlinks=true, linkcolor=altncolor, anchorcolor=altncolor, citecolor=altncolor, filecolor=altncolor, menucolor=altncolor, urlcolor=altncolor]{hyperref} % Use the color defined above for all links
+
+% --------------------------------------
+% Bullet styles
+\usepackage{pifont}
+\newcommand{\gsquare}{\item[\color{mygreen}\ding{110}]} 
+\newcommand{\ysquare}{\item[\color{myyellow}\ding{110}]} 
+\newcommand{\osquare}{\item[\color{myorange}\ding{110}]} 
+\newcommand{\rsquare}{\item[\color{myred}\ding{110}]} 
+\newcommand{\wsquare}{\item[\color{mywhite}\ding{110}]} 
+
 
 %----------------------------------------------------------------------------------------
 %	BOX STYLES
@@ -135,4 +159,4 @@
 }
 
 %\newcommand{\Inicio}{\hyperlink{contents}{{\small Inicio}}} % Define a command for linking back to the contents of the newsletter
-\newcommand{\BackToContents}{\hyperlink{contents}{{\small Back to Contents}}}
+\newcommand{\BackToContents}{\hyperlink{contents}{{\small Início}}}

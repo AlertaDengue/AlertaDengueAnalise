@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Boletim semanal estadual do InfoDengue
-% Adapted for InfoDengue by Claudia Codeco and Thais Riback (April 2016)
+% Adapted for InfoDengue by Claudia Codeco and Thais Riback (May 2016)
 %
 % Created by:
 % Bob Kerstetter (https://www.tug.org/texshowcase/) and extensively modified by:
@@ -16,6 +16,18 @@
 \documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
 \input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
 
+% Carregando dados  (atualmente é manual para cada estado)
+<<carrega_dados,echo=FALSE,results=hide>>=
+library("xtable")
+load('RJ/figs/paramsRJ.RData')
+
+figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
+@
+
+\fancyfoot[C]{Boletim Estadual - \Sexpr{estado}}
+\fancyfoot[R]{Semana \Sexpr{se} de \Sexpr{ano}}
+\fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
+
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
@@ -27,20 +39,11 @@
 \centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
 \end{figure}
 
-\centerline {\color{blue}\rule{1\linewidth}{2.75pt}} % Horizontal line
+\centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line
 
 %---------------------------------------------------------------------------------
 %	CAIXA LATERAL - PRIMEIRA PAGINA
 %--------------------------------------------------------------------------------
-
-% Carregando dados  (atualmente é manual para cada estado)
-<<carrega_dados,echo=FALSE,results=hide>>=
-library("xtable")
-load('RJ/params.RData')
-
-figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
-@
-
 
 \begin{minipage}[t]{.30\linewidth} % Mini page taking up 30% of the actual page
 \begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box
@@ -63,10 +66,16 @@ figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
 cat("\\begin{itemize}")
 
 for (i in 1:length(regs)) {
-      cat(paste("\\item \\hyperlink{",nickregs[i],"}{",regs[i],"}\n",sep=""))
+      cat(paste("\\item \\hyperlink{",nickregs[[i]],"}{",regs[i],"}\n",sep=""))
 }
 cat("\\end{itemize}")
 @
+
+\textbf{Municípios:}
+
+\begin{itemize}
+\item \hyperlink{municips}{Tabela de Municípios} 
+\end{itemize}
 
 \centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
 
@@ -82,7 +91,7 @@ cat("\\end{itemize}")
 
 \textbf{Contato}
 \begin{description}
-\item alerta\_dengue@fiocruz.br  
+\item \href{mailto:alerta\_dengue@fiocruz.br}{alerta\_dengue@fiocruz.br}  
 \end{description}
 
 \end{mdframed}
@@ -92,7 +101,7 @@ cat("\\end{itemize}")
 %--------------------------------------------------------------------------------
 %	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
 %-------------------------------------------------------------------------------
-\hypertarget{titulo}{\heading{Situação da Dengue no Estado do \Sexpr{estado}}{6pt}} % \hypertarget provides a label to reference using 
+\hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{estado}}{6pt}} % \hypertarget provides a label to reference using 
 
 Desde o início do ano, \Sexpr{totano} casos foram registrados no estado, sendo \Sexpr{totultse} na última semana. A figura abaixo mostra as condições de transmissão em cada município.
 
@@ -136,33 +145,29 @@ for (i in 1:length(regs)){
 
       cat("\\begin{minipage}[t]{.66\\linewidth}\n")  # inicio da minipage
       # titulo:
-      cat(paste("\\hypertarget{",nickregs[i],"}{\\heading{Regional ",regs[i],"}}\n")) 
-      
+      cat(paste("\\hypertarget{",nickregs[[i]],"}{\\heading{Regional ",regs[i],"}}\n",sep="")) 
       # Mapa:
       nomesemespaco = gsub(" ","", regs[i])
-      mapareg=paste(sigla,"/figs/","Mapa","_",nomesemespaco,".png",sep="")
-      
+      nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+      mapareg=paste(sigla,"/figs/Mapa",sigla,"_",nomesemacento,".png",sep="")
       cat(paste("\\includegraphics[width=0.8\\textwidth]{",mapareg,"}",sep=""))
-
-      # Two-column layout inicio
-#      cat("\\begin{multicols}{2}\n")
       cat("\\vspace{0.5cm}")
       
-#cat("Desde o início do ano,x casos foram registrados no estado, sendo y na última semana. A figura abaixo mostra as condições de transmissão em cada município.")
-# Tabela 1  
-      cat("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}")
+      # Tabela 
+      tabreg=paste(sigla,"/figs/","tabregional",sigla,"_",nomesemacento,
+                   ".tex",sep="")
+      cat(paste("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional",regs[i],"}"))
       cat("\\begin{center}\n")
-      
-      ta = rbind(c(1:7),c(10:16))
-      xtab<-xtable(ta,label="Table1")
-      print(xtab, include.rownames=FALSE,floating=FALSE)
+      cat(paste("\\input{",tabreg,"}\n",sep=""))
       cat("\\end{center}\n")
       
-      # Two-column layout fim
- #     cat("\\end{multicols}\n")
-
-      # Grafico:
-      #cat("\\includegraphics[width=0.9\\textwidth]{Areal.png}\n")
+       # Grafico regional:
+      figname = paste(sigla,"/figs/tweet",sigla,"_",nomesemacento,".png",sep="")
+      cat("\\vspace{0.5cm}")
+      cat("\\begin{center}\n")
+      cat(paste("\\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional",regs[i],"}"))
+      cat(paste("\\includegraphics[width=1.3\\textwidth]{",figname,"}",sep=""))
+      cat("\\end{center}\n")
       # End second page mini page
       cat("\\end{minipage}\\hfill") 
 
@@ -178,16 +183,18 @@ for (i in 1:length(regs)){
        cat("\\begin{itemize}")
        
         municip.reg <- municipios[municipios$nome_regional==regs[i],]
+        coresbullets = c(verde="\\gsquare",amarelo="\\ysquare",
+                            laranja="\\osquare",vermelho="\\rgsquare")
         
         for (j in 1:dim(municip.reg)[1]) {
-              linksite <- paste("https:/alerta.dengue.mat.br/alerta/",
-                                municip.reg$municipio_geocodigo[j],sep="")
-              cat(paste("\\item \\hyperlink{",linksite,"}{",municip.reg$nome[j],"}\n",sep=""))
+              nivel = tabelao$Nivel[tabelao$Municipio==municip.reg$nome[j]]
+              corbullet = "\\wsquare"
+              if(!is.na(nivel)) corbullet = coresbullets[nivel] 
+              cat(paste(corbullet,municip.reg$nome[j],"\n"))
         }
         cat("\\end{itemize}")
   
-      # #\BackToContents % Link back to the contents of the newsletter
-      
+       cat("\\BackToContents") 
       # fim do box e minipage
       cat("\\end{mdframed}\\hfill")
       cat("\\end{minipage}") # End of the sidebar mini page
@@ -198,63 +205,25 @@ for (i in 1:length(regs)){
 
 %-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE
 %-----------------------------------------------------------------------------------
-% \begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
-% 
-% %\hypertarget{reg1}{\heading{Regional Metropolitana 1: cidades}{6pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
-% 
-% 
-% \subsection*{Saquarema}
-% 
-% \begin{itemize}
-% \item Nivel atual: Amarelo
-% \item Probabilidade de transmissão sustentada na próxima semana: 20\%.
-% \end{itemize}
-% 
-% \begin{center}
-% %\begin{wrapfigure}[7]{l}[0pt]{0pt} % In-line figure with text wrapping around it
-% \includegraphics[width=1\textwidth]{cores_Saquarema.png}
-% %\end{wrapfigure}
-% 
-% 
-% \begin{tabular}{rrrrrrr}
-% \hline
-% SE & casos & casos estimados & temp & tweet & Rt & nivel \\ 
-% \hline
-% 201610.00 & 1074.00 & 1353.00 &   0 &   9 &   3 &   0 \\ 
-% 201611.00 & 1448.00 & 2111.00 &   0 &  11 &   1 &   0 \\ 
-% 201612.00 & 1177.00 & 2155.00 &   0 &  10 &   2 &   0 \\ 
-% 201613.00 & 1566.00 & 4689.00 &   0 &   9 &   3 &   0 \\ 
-% \hline
-% \end{tabular}
-% \end{center}
-% 
-% \subsection*{Arraial do Cabo}
-% 
-% \begin{itemize}
-% \item Nivel atual: Amarelo
-% \item Probabilidade de transmissão sustentada na próxima semana: 20\%.
-% \end{itemize}
-% 
-% \begin{center}
-% %\begin{wrapfigure}[7]{l}[0pt]{0pt} % In-line figure with text wrapping around it
-% \includegraphics[width=1\textwidth]{cores_Saquarema.png}
-% %\end{wrapfigure}
-% 
-% \begin{tabular}{rrrrrrr}
-% \hline
-% SE & casos & casos estimados & temp & tweet & Rt & nivel \\ 
-% \hline
-% 201610.00 & 1074.00 & 1353.00 &   0 &   9 &   3 &   0 \\ 
-% 201611.00 & 1448.00 & 2111.00 &   0 &  11 &   1 &   0 \\ 
-% 201612.00 & 1177.00 & 2155.00 &   0 &  10 &   2 &   0 \\ 
-% 201613.00 & 1566.00 & 4689.00 &   0 &   9 &   3 &   0 \\ 
-% \hline
-% \end{tabular}
-% \end{center}
-% 
-% \BackToContents % Link back to the contents of the newsletter
-% \end{minipage}\hfill % End of the main body - second page mini page
-% 
+ %\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+
+<<echo=FALSE>>=
+    tabelaoref=paste(sigla,"/figs/tabelao",sigla,".tex",sep="")
+@
+ 
+      \hypertarget{municips}{\heading{Resumo da situação epidemiológica da dengue nos municípios de \Sexpr{estado}, na semana \Sexpr{se} de \Sexpr{ano}}{6pt}}
+
+<<echo=FALSE>>=
+    tabelaoref=paste(sigla,"/figs/tabelao",sigla,".tex",sep="")
+@
+      
+     \begin{center}
+            \input{\Sexpr{tabelaoref}}
+     \end{center}
+
+
+      \BackToContents % Link back to the contents of the newsletter
+
 
 \newpage
 
@@ -264,10 +233,7 @@ for (i in 1:length(regs)){
 
 \begin{minipage}[t]{1\linewidth} 
 
-\centering
-\hypertarget{notas}{\heading{Notas}{6pt}} % \hypertarget provides a label to reference using 
-
-\hyperlink{vartab}{\textbf{Lista das variáveis apresentadas nas tabelas:}}
+\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}}
 
 \begin{description}
 \item[SE =] semana epidemiológica
@@ -279,29 +245,37 @@ for (i in 1:length(regs)){
 \item [p(Rt1) =] probabilidade do número reprodutivo ser maior que 1 (indica transmissão)
 \item [inc =] incidência por 100.000 habs
 \item [nivel =] nivel do alerta (1 = mais baixo, 4 = mais alto)
-\item [cor =] cor do alerta (verde, amarelo, laranja, vermelho)\\
+\item [cor =] cor do alerta (verde, amarelo, laranja, vermelho)
 \end{description}
 
-\hyperlink{notas}{\textbf{Observações}}\\
+\hypertarget{notas}{\heading{Notas}}
 
 \begin{itemize}
-\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.\\ 
-\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.\\
-\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.\\
+\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
+\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.
+\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
 \end{itemize}
 
-\textbf{Créditos}\\
+\hypertarget{creditos}{\heading{Créditos}}
+
 Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
+
 \begin{itemize}
-\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro\\
-\item Escola de Matemática Aplicada, Fundação Getúlio Vargas\\
-\item Secretarias do Estado e Município do Rio de Janeiro\\
-\item Secretaria Estadual de Saúde do Paraná\\
+\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro.
+\item Escola de Matemática Aplicada, Fundação Getúlio Vargas.
+\item Secretarias do Estado e Município do Rio de Janeiro.
+\item Observatório de Dengue da UFMG
+\item Secretaria Estadual de Saúde do Paraná.
 \end{itemize}
 
-Para mais detalhes sobre o sistema de alerta consultar: \href{http://info.dengue.mat.br}{\textit{Info Dengue}}\\
+      \BackToContents % Link back to the contents of the newsletter
 
-\textbf{Contato}: alerta\_dengue@fiocruz.br
+\vspace{1cm}
+
+\hline
+Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
+
+\textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
 \end{minipage} % fim da pagina de creditos
 
 \end{document} 

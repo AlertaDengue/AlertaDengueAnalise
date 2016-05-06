@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Boletim semanal estadual do InfoDengue
-% Adapted for InfoDengue by Claudia Codeco and Thais Riback (April 2016)
+% Adapted for InfoDengue by Claudia Codeco and Thais Riback (May 2016)
 %
 % Created by:
 % Bob Kerstetter (https://www.tug.org/texshowcase/) and extensively modified by:
@@ -16,6 +16,12 @@
 \documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
 \input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
 
+% Carregando dados  (atualmente é manual para cada estado)
+
+\fancyfoot[C]{Boletim Estadual - Rio de Janeiro}
+\fancyfoot[R]{Semana 13 de 2016}
+\fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
+
 \usepackage{Sweave}
 \begin{document}
 \input{newsletter_InfoDenguev2_01-concordance}
@@ -28,14 +34,11 @@
 \centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
 \end{figure}
 
-\centerline {\color{blue}\rule{1\linewidth}{2.75pt}} % Horizontal line
+\centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line
 
 %---------------------------------------------------------------------------------
 %	CAIXA LATERAL - PRIMEIRA PAGINA
 %--------------------------------------------------------------------------------
-
-% Carregando dados  (atualmente é manual para cada estado)
-
 
 \begin{minipage}[t]{.30\linewidth} % Mini page taking up 30% of the actual page
 \begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box
@@ -44,7 +47,7 @@
 
 \hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
 
-\textbf{Semana 14 de 2016} % se, ano, em pp.RData
+\textbf{Semana 13 de 2016} % se, ano, em pp.RData
 
 \begin{itemize}
 \item \hyperlink{estado}{O Estado} 
@@ -57,12 +60,18 @@
 \begin{itemize}\item \hyperlink{MtrI}{Metropolitana I}
 \item \hyperlink{MtII}{Metropolitana II}
 \item \hyperlink{LtrS}{Litoral Sul}
-\item \hyperlink{MéP}{Médio Paraíba}
+\item \hyperlink{MdPr}{Médio Paraíba}
 \item \hyperlink{CntS}{Centro Sul}
 \item \hyperlink{Srrn}{Serrana}
-\item \hyperlink{BLâ}{Baixada Litorânea}
+\item \hyperlink{BxdL}{Baixada Litorânea}
 \item \hyperlink{Nort}{Norte}
 \item \hyperlink{Nrst}{Noroeste}\end{itemize}
+\textbf{Municípios:}
+
+\begin{itemize}
+\item \hyperlink{municips}{Tabela de Municípios} 
+\end{itemize}
+
 \centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
 
 %-----------------------------------------------------------
@@ -77,7 +86,7 @@
 
 \textbf{Contato}
 \begin{description}
-\item alerta\_dengue@fiocruz.br  
+\item \href{mailto:alerta\_dengue@fiocruz.br}{alerta\_dengue@fiocruz.br}  
 \end{description}
 
 \end{mdframed}
@@ -87,15 +96,15 @@
 %--------------------------------------------------------------------------------
 %	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
 %-------------------------------------------------------------------------------
-\hypertarget{titulo}{\heading{Situação da Dengue no Estado do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
+\hypertarget{estado}{\heading{Situação da Dengue no Estado do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
 
-Desde o início do ano, 16098 casos foram registrados no estado, sendo 1905 na última semana. A figura abaixo mostra as condições de transmissão em cada município.
+Desde o início do ano, 43785 casos foram registrados no estado, sendo 2763 na última semana. A figura abaixo mostra as condições de transmissão em cada município.
 
 % Mapa estadual
 \includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_ERJ.png}
 %-----------------------------------------------------------
 
-Dos 92 municipios, 0 encontram-se em nivel verde, 9 em nivel amarelo, 3 em nivel laranja e 0 em nivel vermelho referentes a semana epidemiológica 14-2016. Para informações mais atualizadas
+Dos 92 municipios, 3 encontram-se em nivel verde, 4 em nivel amarelo, 3 em nivel laranja e 3 em nivel vermelho referentes a semana epidemiológica 13-2016. Para informações mais atualizadas
 sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
 
@@ -115,7 +124,7 @@ As cores indicam niveis de atenção
 \end{description}
 \end{mdframed}
 
- \textbf{Na semana passada:} 8 municípios em nivel amarelo, 4 em laranja e 0 em vermelho.    
+ \textbf{Na semana passada:} 3 municípios em nivel amarelo, 2 em laranja e 2 em vermelho.    
 
 \end{minipage} % End the main body - first page mini page
 
@@ -125,302 +134,195 @@ As cores indicam niveis de atenção
 %----------------------------------------------------------------------------------
 
 \begin{minipage}[t]{.66\linewidth}
-\hypertarget{ MtrI }{\heading{Regional  Metropolitana I }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_MetropolitanaI.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\hypertarget{MtrI}{\heading{Regional Metropolitana I}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_MetropolitanaI.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Metropolitana I }\begin{center}
+\input{RJ/figs/tabregionalRJ_MetropolitanaI.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Metropolitana I }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_MetropolitanaI.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300456}{Belford Roxo}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301702}{Duque de Caxias}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302007}{Itaguaí}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302270}{Japeri}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302502}{Magé}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302858}{Mesquita}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303203}{Nilópolis}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303500}{Nova Iguaçu}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304144}{Queimados}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304557}{Rio de Janeiro}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305109}{São João de Meriti}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305554}{Seropédica}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
-\hypertarget{ MtII }{\heading{Regional  Metropolitana II }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_MetropolitanaII.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\textbf{Municipios}\begin{itemize}\ysquare Belford Roxo 
+\osquare Duque de Caxias 
+\ysquare Itaguaí 
+\ysquare Japeri 
+\wsquare Magé 
+\ysquare Mesquita 
+\wsquare Nilópolis 
+\osquare Nova Iguaçu 
+\wsquare Queimados 
+\osquare Rio de Janeiro 
+\ysquare São João de Meriti 
+\wsquare Seropédica 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{MtII}{\heading{Regional Metropolitana II}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_MetropolitanaII.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Metropolitana II }\begin{center}
+\input{RJ/figs/tabregionalRJ_MetropolitanaII.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Metropolitana II }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_MetropolitanaII.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301900}{Itaboraí}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302700}{Maricá}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303302}{Niterói}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304300}{Rio Bonito}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304904}{São Gonçalo}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305604}{Silva Jardim}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305752}{Tanguá}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
-\hypertarget{ LtrS }{\heading{Regional  Litoral Sul }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_LitoralSul.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\textbf{Municipios}\begin{itemize}\ysquare Itaboraí 
+\ysquare Maricá 
+\ysquare Niterói 
+\ysquare Rio Bonito 
+\ysquare São Gonçalo 
+\wsquare Silva Jardim 
+\ysquare Tanguá 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{LtrS}{\heading{Regional Litoral Sul}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_LitoralSul.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Litoral Sul }\begin{center}
+\input{RJ/figs/tabregionalRJ_LitoralSul.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Litoral Sul }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_LitoralSul.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300100}{Angra dos Reis}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302601}{Mangaratiba}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303807}{Paraty}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
-\hypertarget{ MéP }{\heading{Regional  Médio Paraíba }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_MédioParaíba.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\textbf{Municipios}\begin{itemize}\gsquare Angra dos Reis 
+\wsquare Mangaratiba 
+\gsquare Paraty 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{MdPr}{\heading{Regional Médio Paraíba}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_MedioParaiba.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Médio Paraíba }\begin{center}
+\input{RJ/figs/tabregionalRJ_MedioParaiba.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Médio Paraíba }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_MedioParaiba.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302254}{Itatiaia}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304201}{Resende}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304110}{Porto Real}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304128}{Quatis}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300407}{Barra Mansa}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3306305}{Volta Redonda}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304409}{Rio Claro}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304508}{Rio das Flores}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3306107}{Valença}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300308}{Barra do Piraí}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303955}{Pinheiral}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304003}{Piraí}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
-\hypertarget{ CntS }{\heading{Regional  Centro Sul }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_CentroSul.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\textbf{Municipios}\begin{itemize}\wsquare Itatiaia 
+\rgsquare Resende 
+\wsquare Porto Real 
+\wsquare Quatis 
+\osquare Barra Mansa 
+\ysquare Volta Redonda 
+\wsquare Rio Claro 
+\wsquare Rio das Flores 
+\ysquare Valença 
+\wsquare Barra do Piraí 
+\gsquare Pinheiral 
+\rgsquare Piraí 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{CntS}{\heading{Regional Centro Sul}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_CentroSul.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Centro Sul }\begin{center}
+\input{RJ/figs/tabregionalRJ_CentroSul.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Centro Sul }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_CentroSul.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303609}{Paracambi}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302809}{Mendes}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301801}{Engenheiro Paulo de Frontin}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302908}{Miguel Pereira}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3306206}{Vassouras}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303856}{Paty do Alferes}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303708}{Paraíba do Sul}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300951}{Comendador Levy Gasparian}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3306008}{Três Rios}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300225}{Areal}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305406}{Sapucaia}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
-\hypertarget{ Srrn }{\heading{Regional  Serrana }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_Serrana.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\textbf{Municipios}\begin{itemize}\wsquare Paracambi 
+\wsquare Mendes 
+\ysquare Engenheiro Paulo de Frontin 
+\wsquare Miguel Pereira 
+\ysquare Vassouras 
+\wsquare Paty do Alferes 
+\wsquare Paraíba do Sul 
+\ysquare Comendador Levy Gasparian 
+\osquare Três Rios 
+\wsquare Areal 
+\wsquare Sapucaia 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Srrn}{\heading{Regional Serrana}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_Serrana.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Serrana }\begin{center}
+\input{RJ/figs/tabregionalRJ_Serrana.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Serrana }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_Serrana.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303906}{Petrópolis}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305802}{Teresópolis}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305158}{São José do Vale do Rio Preto}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305703}{Sumidouro}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303401}{Nova Friburgo}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300506}{Bom Jardim}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301108}{Cantagalo}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301207}{Carmo}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301603}{Duas Barras}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302452}{Macuco}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301504}{Cordeiro}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305901}{Trajano de Moraes}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304607}{Santa Maria Madalena}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305307}{São Sebastião do Alto}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301850}{Guapimirim}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300803}{Cachoeiras de Macacu}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
-\hypertarget{ BLâ }{\heading{Regional  Baixada Litorânea }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_BaixadaLitorânea.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\textbf{Municipios}\begin{itemize}\ysquare Petrópolis 
+\wsquare Teresópolis 
+\wsquare São José do Vale do Rio Preto 
+\wsquare Sumidouro 
+\ysquare Nova Friburgo 
+\wsquare Bom Jardim 
+\wsquare Cantagalo 
+\ysquare Carmo 
+\wsquare Duas Barras 
+\wsquare Macuco 
+\ysquare Cordeiro 
+\wsquare Trajano de Moraes 
+\wsquare Santa Maria Madalena 
+\wsquare São Sebastião do Alto 
+\ysquare Guapimirim 
+\wsquare Cachoeiras de Macacu 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{BxdL}{\heading{Regional Baixada Litorânea}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_BaixadaLitoranea.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Baixada Litorânea }\begin{center}
+\input{RJ/figs/tabregionalRJ_BaixadaLitoranea.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Baixada Litorânea }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_BaixadaLitoranea.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300209}{Araruama}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300233}{Armação dos Búzios}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300258}{Arraial do Cabo}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300704}{Cabo Frio}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301306}{Casimiro de Abreu}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301876}{Iguaba Grande}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304524}{Rio das Ostras}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305208}{São Pedro da Aldeia}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305505}{Saquarema}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
-\hypertarget{ Nort }{\heading{Regional  Norte }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_Norte.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\textbf{Municipios}\begin{itemize}\ysquare Araruama 
+\wsquare Armação dos Búzios 
+\ysquare Arraial do Cabo 
+\wsquare Cabo Frio 
+\ysquare Casimiro de Abreu 
+\wsquare Iguaba Grande 
+\ysquare Rio das Ostras 
+\wsquare São Pedro da Aldeia 
+\wsquare Saquarema 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Nort}{\heading{Regional Norte}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_Norte.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Norte }\begin{center}
+\input{RJ/figs/tabregionalRJ_Norte.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Norte }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_Norte.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302403}{Macaé}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301405}{Conceição de Macabu}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300936}{Carapebus}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304151}{Quissamã}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304805}{São Fidélis}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301009}{Campos dos Goytacazes}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305000}{São João da Barra}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304755}{São Francisco de Itabapoana}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
-\hypertarget{ Nrst }{\heading{Regional  Noroeste }}
-\includegraphics[width=0.8\textwidth]{RJ/figs/Mapa_Noroeste.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas.}\begin{center}
-% latex table generated in R 3.2.5 by xtable 1.8-2 package
-% Wed Apr 27 17:14:48 2016
-\begin{tabular}{rrrrrrr}
-  \hline
-1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
-  \hline
-  1 &   2 &   3 &   4 &   5 &   6 &   7 \\ 
-   10 &  11 &  12 &  13 &  14 &  15 &  16 \\ 
-   \hline
-\end{tabular}
+\textbf{Municipios}\begin{itemize}\osquare Macaé 
+\wsquare Conceição de Macabu 
+\wsquare Carapebus 
+\ysquare Quissamã 
+\wsquare São Fidélis 
+\ysquare Campos dos Goytacazes 
+\wsquare São João da Barra 
+\wsquare São Francisco de Itabapoana 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Nrst}{\heading{Regional Noroeste}}
+\includegraphics[width=0.8\textwidth]{RJ/figs/MapaRJ_Noroeste.png}\vspace{0.5cm}\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Noroeste }\begin{center}
+\input{RJ/figs/tabregionalRJ_Noroeste.tex}
 \end{center}
+\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Noroeste }\includegraphics[width=1.3\textwidth]{RJ/figs/tweetRJ_Noroeste.png}\end{center}
 \end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
 \begin{mdframed}[style=sidebar,frametitle={}]
-\textbf{Municipios}\begin{itemize}\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300159}{Aperibé}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300605}{Bom Jesus do Itabapoana}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3300902}{Cambuci}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302056}{Italva}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302106}{Itaocara}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302205}{Itaperuna}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3302304}{Laje do Muriaé}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303005}{Miracema}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3303104}{Natividade}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304102}{Porciúncula}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3304706}{Santo Antônio de Pádua}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3305133}{São José de Ubá}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3306156}{Varre-Sai}
-\item \hyperlink{https:/alerta.dengue.mat.br/alerta/3301157}{Cardoso Moreira}
-\end{itemize}\end{mdframed}\hfill\end{minipage}\newpage
+\textbf{Municipios}\begin{itemize}\wsquare Aperibé 
+\wsquare Bom Jesus do Itabapoana 
+\wsquare Cambuci 
+\wsquare Italva 
+\wsquare Itaocara 
+\ysquare Itaperuna 
+\wsquare Laje do Muriaé 
+\wsquare Miracema 
+\ysquare Natividade 
+\rgsquare Porciúncula 
+\wsquare Santo Antônio de Pádua 
+\wsquare São José de Ubá 
+\wsquare Varre-Sai 
+\wsquare Cardoso Moreira 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage
 
 %-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE
 %-----------------------------------------------------------------------------------
-% \begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
-% 
-% %\hypertarget{reg1}{\heading{Regional Metropolitana 1: cidades}{6pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
-% 
-% 
-% \subsection*{Saquarema}
-% 
-% \begin{itemize}
-% \item Nivel atual: Amarelo
-% \item Probabilidade de transmissão sustentada na próxima semana: 20\%.
-% \end{itemize}
-% 
-% \begin{center}
-% %\begin{wrapfigure}[7]{l}[0pt]{0pt} % In-line figure with text wrapping around it
-% \includegraphics[width=1\textwidth]{cores_Saquarema.png}
-% %\end{wrapfigure}
-% 
-% 
-% \begin{tabular}{rrrrrrr}
-% \hline
-% SE & casos & casos estimados & temp & tweet & Rt & nivel \\ 
-% \hline
-% 201610.00 & 1074.00 & 1353.00 &   0 &   9 &   3 &   0 \\ 
-% 201611.00 & 1448.00 & 2111.00 &   0 &  11 &   1 &   0 \\ 
-% 201612.00 & 1177.00 & 2155.00 &   0 &  10 &   2 &   0 \\ 
-% 201613.00 & 1566.00 & 4689.00 &   0 &   9 &   3 &   0 \\ 
-% \hline
-% \end{tabular}
-% \end{center}
-% 
-% \subsection*{Arraial do Cabo}
-% 
-% \begin{itemize}
-% \item Nivel atual: Amarelo
-% \item Probabilidade de transmissão sustentada na próxima semana: 20\%.
-% \end{itemize}
-% 
-% \begin{center}
-% %\begin{wrapfigure}[7]{l}[0pt]{0pt} % In-line figure with text wrapping around it
-% \includegraphics[width=1\textwidth]{cores_Saquarema.png}
-% %\end{wrapfigure}
-% 
-% \begin{tabular}{rrrrrrr}
-% \hline
-% SE & casos & casos estimados & temp & tweet & Rt & nivel \\ 
-% \hline
-% 201610.00 & 1074.00 & 1353.00 &   0 &   9 &   3 &   0 \\ 
-% 201611.00 & 1448.00 & 2111.00 &   0 &  11 &   1 &   0 \\ 
-% 201612.00 & 1177.00 & 2155.00 &   0 &  10 &   2 &   0 \\ 
-% 201613.00 & 1566.00 & 4689.00 &   0 &   9 &   3 &   0 \\ 
-% \hline
-% \end{tabular}
-% \end{center}
-% 
-% \BackToContents % Link back to the contents of the newsletter
-% \end{minipage}\hfill % End of the main body - second page mini page
-% 
+ %\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+
+ 
+      \hypertarget{municips}{\heading{Resumo da situação epidemiológica da dengue nos municípios de Rio de Janeiro, na semana 13 de 2016}{6pt}}
+
+      
+     \begin{center}
+            \input{RJ/figs/tabelaoRJ.tex}
+     \end{center}
+
+
+      \BackToContents % Link back to the contents of the newsletter
+
 
 \newpage
 
@@ -430,10 +332,7 @@ As cores indicam niveis de atenção
 
 \begin{minipage}[t]{1\linewidth} 
 
-\centering
-\hypertarget{notas}{\heading{Notas}{6pt}} % \hypertarget provides a label to reference using 
-
-\hyperlink{vartab}{\textbf{Lista das variáveis apresentadas nas tabelas:}}
+\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}}
 
 \begin{description}
 \item[SE =] semana epidemiológica
@@ -445,29 +344,37 @@ As cores indicam niveis de atenção
 \item [p(Rt1) =] probabilidade do número reprodutivo ser maior que 1 (indica transmissão)
 \item [inc =] incidência por 100.000 habs
 \item [nivel =] nivel do alerta (1 = mais baixo, 4 = mais alto)
-\item [cor =] cor do alerta (verde, amarelo, laranja, vermelho)\\
+\item [cor =] cor do alerta (verde, amarelo, laranja, vermelho)
 \end{description}
 
-\hyperlink{notas}{\textbf{Observações}}\\
+\hypertarget{notas}{\heading{Notas}}
 
 \begin{itemize}
-\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.\\ 
-\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.\\
-\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.\\
+\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
+\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.
+\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
 \end{itemize}
 
-\textbf{Créditos}\\
+\hypertarget{creditos}{\heading{Créditos}}
+
 Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
+
 \begin{itemize}
-\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro\\
-\item Escola de Matemática Aplicada, Fundação Getúlio Vargas\\
-\item Secretarias do Estado e Município do Rio de Janeiro\\
-\item Secretaria Estadual de Saúde do Paraná\\
+\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro.
+\item Escola de Matemática Aplicada, Fundação Getúlio Vargas.
+\item Secretarias do Estado e Município do Rio de Janeiro.
+\item Observatório de Dengue da UFMG
+\item Secretaria Estadual de Saúde do Paraná.
 \end{itemize}
 
-Para mais detalhes sobre o sistema de alerta consultar: \href{http://info.dengue.mat.br}{\textit{Info Dengue}}\\
+      \BackToContents % Link back to the contents of the newsletter
 
-\textbf{Contato}: alerta\_dengue@fiocruz.br
+\vspace{1cm}
+
+\hline
+Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
+
+\textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
 \end{minipage} % fim da pagina de creditos
 
 \end{document} 

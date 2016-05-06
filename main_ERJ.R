@@ -12,12 +12,14 @@ con <- DenguedbConnect()
 aleRJ <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = RJ.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
+res = write(aleRJ)
 #save(aleRJ, file=paste(pathrelatorio,"aleRJ.RData",sep=""))
 #save(aleRJ, file="aleRJ.RData")
 load("aleRJ.RData")
 
 # --- Gera parametros para o boletim
-configRelatorio(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, alert=aleRJ)
+configRelatorio(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, 
+                alert=aleRJ, dir=RJ.out, datasource=con)
 
 
 # ---- Gera e salva figuras 
@@ -31,7 +33,6 @@ geraMapa(alerta=aleRJ, se=data_relatorio, shapefile=RJ.shape, varid=RJ.shapeID,
 # Regionais
 mapa.regional(alerta=aleRJ, regionais=nomesregs, estado = "Rio de Janeiro", sigla = "RJ",
               shape = RJ.shape, shapeid = RJ.shapeID, dir=RJ.out,datasource=con )
-
 
 # --- Gera e salva mapa estadual
 

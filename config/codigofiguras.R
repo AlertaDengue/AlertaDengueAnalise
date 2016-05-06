@@ -10,26 +10,26 @@ fig.all <- function(obj){
             oobj <- obj[[i]]
             nome = na.omit(unique(oobj$data$nome))
             nick <- gsub(" ", "", nome, fixed = TRUE)
-            filename = paste("report/",nick,".png",sep="")
+            filename = paste("../report",nick,".png",sep="")
             
             png(filename, width = 16, height = 10.5, units="cm", res=100)
             layout(matrix(1:2, nrow = 2, byrow = TRUE), widths = lcm(15), 
                    heights = c(lcm(3), lcm(7)))
             
-            # Grafico superior 
-#             par(mai=c(0,0,0,0),mar=c(0,4,0,3))
-#             plot(oobj$data$casos, type="l", xlab="", ylab="", axes=FALSE)
-#             axis(1, pos=0, lty=0, lab=FALSE)
-#             axis(2,las=2)
-#             mtext(text="casos de dengue", line=2.5,side=2, cex = 0.7)
-#             maxy <- max(oobj$data$casos, na.rm=TRUE)
-#             legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
-#             par(new=T)
-#             plot(oobj$data$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
-#             lines(oobj$data$tweet, col=3, type="h") #*coefs[2] + coefs[1]
-#             axis(1, pos=0, lty=0, lab=FALSE)
-#             axis(4)
-#             mtext(text="tweets", line=2.5, side=4, cex = 0.7)
+            # Grafico superior - tweeter
+             par(mai=c(0,0,0,0),mar=c(0,4,0,3))
+             plot(oobj$data$casos, type="l", xlab="", ylab="", axes=FALSE)
+             daxis(1, pos=0, lty=0, lab=FALSE)
+             axis(2,las=2)
+             mtext(text="casos de dengue", line=2.5,side=2, cex = 0.7)
+             maxy <- max(oobj$data$casos, na.rm=TRUE)
+             legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
+             par(new=T)
+             plot(oobj$data$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+             lines(oobj$data$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+             axis(1, pos=0, lty=0, lab=FALSE)
+             axis(4,las=2)
+             mtext(text="tweets", line=2.5, side=4, cex = 0.7)
             
             # Grafico meio
             par(mai=c(0,0,0,0),mar=c(0,4,0,3))
@@ -76,8 +76,10 @@ mapa.regional <- function(alerta, regionais, estado, sigla, shape,
       for (i in regionais) {
             cidades = getCidades(regional = i, uf = estado,datasource = datasource)["nome"]
             titu = paste(sigla,":",i, sep="")
-            nomesemespaco = gsub(" ","",i) 
-            fname = paste(dir,"Mapa",sigla,"_",nomesemespaco,".png",sep="")
+            nomesemespaco = gsub(" ","",i)
+            nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+            fname = paste(dir,"Mapa",sigla,"_",nomesemacento,".png",sep="")
+            print(fname)
             geraMapa(alerta=alerta, subset=cidades, se=data_mapa,
                      shapefile=shape, varid=shapeid, 
                      titulo=titu ,filename=fname, dir="")
@@ -85,23 +87,3 @@ mapa.regional <- function(alerta, regionais, estado, sigla, shape,
 }
 
 
-xtable.regional <- function(obj, nomesregionais, estado, sigla,
-                            data_mapa = data_relatorio){
-      for (i in nomesregionais) {
-            cidades = getCidades(regional = i, uf = estado)["municipio_geocodigo"]
-            #titu = paste(sigla,":",i, sep="")
-            nomesemespaco = gsub(" ","",i)
-            fname = paste("tabregional",sigla,"_",i,".tex",sep="")
-            d <- obj[which(obj$municipio_geocodigo %in% cidades$municipio_geocodigo),]
-            tots <- tail(aggregate(cbind(casos,casos_est)~SE,FUN=sum, data=d))
-            tot1 <- tail(aggregate((nivel==1)~SE,FUN=sum, data=d))[2]
-            tot2 <- tail(aggregate((nivel==2)~SE,FUN=sum, data=d))[2]
-            tot3 <- tail(aggregate((nivel==3)~SE,FUN=sum, data=d))[2]
-            tot4 <- tail(aggregate((nivel==4)~SE,FUN=sum, data=d))[2]
-            tot <- cbind(tots,tot1,tot2,tot3,tot4)
-            names(tot) <- c("SE","casos","casos estimados","n. verde", "n.amarelo", 
-                            "n.laranja","n.vermelho")
-            
-            print(xtable(tot), type="latex", file=fname)
-      }
-}

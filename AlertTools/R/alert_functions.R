@@ -557,6 +557,9 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
                              versaojulian, sep="")
       }
       
+      d$tweet <- data$tweet
+      d$temp_min <- data$temp_min
+      
       if(write == "db"){
             # se tiver ja algum registro com mesmo geocodigo e SE, esse sera substituido pelo atualizado.
             
