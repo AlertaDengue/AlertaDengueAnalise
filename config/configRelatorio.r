@@ -2,7 +2,7 @@
 # Configuracao para o boletim do Estado do Rio de Janeiro
 # ========================================================
 
-configRelatorio <- function(uf, sigla, data, alert, dir, datasource){
+configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasource){
       # ------------
       ## Parte fixa
       # ------------
@@ -25,10 +25,16 @@ configRelatorio <- function(uf, sigla, data, alert, dir, datasource){
       nverde=0; namarelo=0;nlaranja=0;nvermelho=0
       nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
       
-      linhasdoano = which(floor(alert[[1]]$data$SE/100)==ano)
-      linhase = which(alert[[1]]$data$SE==data)
-      linhase1 = which(alert[[1]]$data$SE==data)-1
-      
+      # -------- Mapa do estado (funcao basica do alerttools)
+      geraMapa(alerta=alert, se=data, shapefile = shape,   
+               varid=varid, titulo="", 
+               filename=paste("Mapa_E", sigla,".png", sep=""),
+               dir=dir, caption=FALSE)
+               
+      # ---------Mapa Regionais (funcao customizada, no codigoFiguras.R)
+      mapa.regional(alerta=alert, regionais=nomesregs, estado = uf, sigla = sigla,
+                    data = data, shape=shape, shapeid=varid, dir=dir ,datasource=datasource)
+               
       # tabelao
       tabelao = data.frame(Municipio = character(),Regional = character(), 
                                Temperatura = numeric(), Tweets=numeric(),
@@ -37,18 +43,23 @@ configRelatorio <- function(uf, sigla, data, alert, dir, datasource){
      
       for (i in 1:nmunicipios){
             ai <- alert[[i]] 
-            totano = totano + sum(ai$data$casos[linhasdoano],na.rm=TRUE)
+            
+            linhasdoano = which(floor(ai$data$SE/100)==ano)
+            linhase = which(ai$data$SE==data)
+            linhase1 = which(ai$data$SE==data)-1
+            
+            totano = sum(c(totano, ai$data$casos[linhasdoano]),na.rm=TRUE)
             totultse = sum(c(totultse, ai$data$casos[linhase]),na.rm=TRUE)
             
             nverde = sum(c(nverde,as.numeric(ai$indices$level[linhase]==1)),na.rm=TRUE)
-            namarelo = sum(c(nverde,as.numeric(ai$indices$level[linhase]==2)),na.rm=TRUE)
-            nlaranja = sum(c(nverde,as.numeric(ai$indices$level[linhase]==3)),na.rm=TRUE)
-            nvermelho = sum(c(nverde,as.numeric(ai$indices$level[linhase]==4)),na.rm=TRUE)
+            namarelo = sum(c(namarelo,as.numeric(ai$indices$level[linhase]==2)),na.rm=TRUE)
+            nlaranja = sum(c(nlaranja,as.numeric(ai$indices$level[linhase]==3)),na.rm=TRUE)
+            nvermelho = sum(c(nvermelho,as.numeric(ai$indices$level[linhase]==4)),na.rm=TRUE)
             
             nverde1 = sum(c(nverde1,as.numeric(ai$indices$level[linhase1]==1)),na.rm=TRUE)
-            namarelo1 = sum(c(nverde1,as.numeric(ai$indices$level[linhase1]==2)),na.rm=TRUE)
-            nlaranja1 = sum(c(nverde1,as.numeric(ai$indices$level[linhase1]==3)),na.rm=TRUE)
-            nvermelho1 = sum(c(nverde1,as.numeric(ai$indices$level[linhase1]==4)),na.rm=TRUE)
+            namarelo1 = sum(c(namarelo1,as.numeric(ai$indices$level[linhase1]==2)),na.rm=TRUE)
+            nlaranja1 = sum(c(nlaranja1,as.numeric(ai$indices$level[linhase1]==3)),na.rm=TRUE)
+            nvermelho1 = sum(c(nvermelho1,as.numeric(ai$indices$level[linhase1]==4)),na.rm=TRUE)
             
             # Tabelao dos municipios
             cores=c("verde","amarelo","laranja","vermelho")

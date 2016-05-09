@@ -4,7 +4,7 @@
 source("../config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
-data_relatorio = 201613
+data_relatorio = 201614
 
 # ---- Calcula alerta: 
 con <- DenguedbConnect()
@@ -19,30 +19,10 @@ load("aleRJ.RData")
 
 # --- Gera parametros para o boletim
 configRelatorio(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, 
-                alert=aleRJ, dir=RJ.out, datasource=con)
-
-
-# ---- Gera e salva figuras 
-for (i in 1:N) fig.all(aleRJ[i])
-for (i in 1:N) fig.cores(aleRJ[i])
-
-# --- Gera mapas:
-# Estadual
-geraMapa(alerta=aleRJ, se=data_relatorio, shapefile=RJ.shape, varid=RJ.shapeID, 
-         titulo="" ,filename="Mapa_ERJ.png", dir=RJ.out ,caption=FALSE)
-# Regionais
-mapa.regional(alerta=aleRJ, regionais=nomesregs, estado = "Rio de Janeiro", sigla = "RJ",
-              shape = RJ.shape, shapeid = RJ.shapeID, dir=RJ.out,datasource=con )
-
-# --- Gera e salva mapa estadual
-
-
-
+                alert=aleRJ, shape=RJ.shape, varid=RJ.shapeID,
+                dir=RJ.out, datasource=con)
 
 #Sweave(file = '../report/newsletter_InfoDenguev2_01.Rnw')
-
-# --- Gera boletim
-
 
 # --- Guarda resultado no banco
 

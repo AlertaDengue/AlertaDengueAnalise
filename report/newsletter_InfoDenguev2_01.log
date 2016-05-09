@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.26)  6 MAY 2016 13:02
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.26)  9 MAY 2016 11:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1626,7 +1626,7 @@ See the caption package documentation for explanation.
 
 LaTeX Font Info:    Font shape `T1/aess/b/n' in size <9> not available
 (Font)              Font shape `T1/aess/bx/n' tried instead on input line 142.
-<RJ/figs/tweetRJ_MetropolitanaI.png, id=28, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_MetropolitanaI.png, id=29, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_MetropolitanaI.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_MetropolitanaI.png>
@@ -1648,12 +1648,15 @@ Package babel Info: Redefining portuges shorthand "|
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./InfoDengue2.png> <./RJ/f
 igs/Mapa_ERJ.png (PNG copy)>]
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 157.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 157.
- [2 <./RJ/figs/MapaRJ_MetropolitanaI.png (PNG copy)> <./RJ/figs/tweetRJ_Metropo
-litanaI.png (PNG copy)>]
+
+[2 <./RJ/figs/MapaRJ_MetropolitanaI.png (PNG copy)> <./RJ/figs/tweetRJ_Metropol
+itanaI.png (PNG copy)>]
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
@@ -1793,7 +1796,7 @@ l.158 ...tII}{\heading{Regional Metropolitana II}}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
-<RJ/figs/MapaRJ_MetropolitanaII.png, id=66, 454.93965pt x 426.75435pt>
+<RJ/figs/MapaRJ_MetropolitanaII.png, id=68, 454.93965pt x 426.75435pt>
 File: RJ/figs/MapaRJ_MetropolitanaII.png Graphic file (type png)
 
 <use RJ/figs/MapaRJ_MetropolitanaII.png>
@@ -1821,7 +1824,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 163.
 See the caption package documentation for explanation.
 
-<RJ/figs/tweetRJ_MetropolitanaII.png, id=67, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_MetropolitanaII.png, id=70, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_MetropolitanaII.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_MetropolitanaII.png>
@@ -1835,10 +1838,14 @@ Overfull \hbox (100.16779pt too wide) in paragraph at lines 163--163
 
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 173.
+
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 173.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 173.
+
 [3 <./RJ/figs/MapaRJ_MetropolitanaII.png (PNG copy)> <./RJ/figs/tweetRJ_Metropo
 litanaII.png (PNG copy)>]
 ! Missing number, treated as zero.
@@ -1980,7 +1987,7 @@ l.174 ...get{LtrS}{\heading{Regional Litoral Sul}}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
-<RJ/figs/MapaRJ_LitoralSul.png, id=76, 454.93965pt x 426.75435pt>
+<RJ/figs/MapaRJ_LitoralSul.png, id=80, 454.93965pt x 426.75435pt>
 File: RJ/figs/MapaRJ_LitoralSul.png Graphic file (type png)
 
 <use RJ/figs/MapaRJ_LitoralSul.png>
@@ -2007,7 +2014,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 179.
 See the caption package documentation for explanation.
 
-<RJ/figs/tweetRJ_LitoralSul.png, id=77, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_LitoralSul.png, id=82, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_LitoralSul.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_LitoralSul.png>
@@ -2021,10 +2028,14 @@ Overfull \hbox (100.16779pt too wide) in paragraph at lines 179--179
 
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 185.
+
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 185.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 185.
+
 [4 <./RJ/figs/MapaRJ_LitoralSul.png (PNG copy)> <./RJ/figs/tweetRJ_LitoralSul.p
 ng (PNG copy)>]
 ! Missing number, treated as zero.
@@ -2166,7 +2177,7 @@ l.186 ...MdPr}{\heading{Regional Médio Paraíba}}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
-<RJ/figs/MapaRJ_MedioParaiba.png, id=86, 454.93965pt x 426.75435pt>
+<RJ/figs/MapaRJ_MedioParaiba.png, id=92, 454.93965pt x 426.75435pt>
 File: RJ/figs/MapaRJ_MedioParaiba.png Graphic file (type png)
 
 <use RJ/figs/MapaRJ_MedioParaiba.png>
@@ -2194,7 +2205,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 191.
 See the caption package documentation for explanation.
 
-<RJ/figs/tweetRJ_MedioParaiba.png, id=87, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_MedioParaiba.png, id=94, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_MedioParaiba.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_MedioParaiba.png>
@@ -2206,30 +2217,16 @@ Overfull \hbox (100.16779pt too wide) in paragraph at lines 191--191
  [] 
  []
 
-! Undefined control sequence.
-l.195 \rgsquare
-                Resende
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-l.205 \rgsquare
-                Piraí
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 206.
+
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 206.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 206.
+
 [5 <./RJ/figs/MapaRJ_MedioParaiba.png (PNG copy)> <./RJ/figs/tweetRJ_MedioParai
 ba.png (PNG copy)>]
 ! Missing number, treated as zero.
@@ -2371,7 +2368,7 @@ l.207 ...rget{CntS}{\heading{Regional Centro Sul}}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
-<RJ/figs/MapaRJ_CentroSul.png, id=96, 454.93965pt x 426.75435pt>
+<RJ/figs/MapaRJ_CentroSul.png, id=104, 454.93965pt x 426.75435pt>
 File: RJ/figs/MapaRJ_CentroSul.png Graphic file (type png)
 
 <use RJ/figs/MapaRJ_CentroSul.png>
@@ -2398,7 +2395,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 212.
 See the caption package documentation for explanation.
 
-<RJ/figs/tweetRJ_CentroSul.png, id=97, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_CentroSul.png, id=106, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_CentroSul.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_CentroSul.png>
@@ -2411,10 +2408,14 @@ Overfull \hbox (100.16779pt too wide) in paragraph at lines 212--212
 
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 226.
+
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 226.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 226.
+
 [6 <./RJ/figs/MapaRJ_CentroSul.png (PNG copy)> <./RJ/figs/tweetRJ_CentroSul.png
  (PNG copy)>]
 ! Missing number, treated as zero.
@@ -2556,7 +2557,7 @@ l.227 ...rtarget{Srrn}{\heading{Regional Serrana}}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
-<RJ/figs/MapaRJ_Serrana.png, id=106, 454.93965pt x 426.75435pt>
+<RJ/figs/MapaRJ_Serrana.png, id=116, 454.93965pt x 426.75435pt>
 File: RJ/figs/MapaRJ_Serrana.png Graphic file (type png)
 
 <use RJ/figs/MapaRJ_Serrana.png>
@@ -2583,7 +2584,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 232.
 See the caption package documentation for explanation.
 
-<RJ/figs/tweetRJ_Serrana.png, id=107, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_Serrana.png, id=118, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_Serrana.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_Serrana.png>
@@ -2596,10 +2597,14 @@ Overfull \hbox (100.16779pt too wide) in paragraph at lines 232--232
 
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 251.
+
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 251.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 251.
+
 [7 <./RJ/figs/MapaRJ_Serrana.png (PNG copy)> <./RJ/figs/tweetRJ_Serrana.png (PN
 G copy)>]
 ! Missing number, treated as zero.
@@ -2741,7 +2746,7 @@ l.252 ...L}{\heading{Regional Baixada Litorânea}}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
-<RJ/figs/MapaRJ_BaixadaLitoranea.png, id=117, 454.93965pt x 426.75435pt>
+<RJ/figs/MapaRJ_BaixadaLitoranea.png, id=129, 454.93965pt x 426.75435pt>
 File: RJ/figs/MapaRJ_BaixadaLitoranea.png Graphic file (type png)
 
 <use RJ/figs/MapaRJ_BaixadaLitoranea.png>
@@ -2769,7 +2774,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 257.
 See the caption package documentation for explanation.
 
-<RJ/figs/tweetRJ_BaixadaLitoranea.png, id=118, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_BaixadaLitoranea.png, id=131, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_BaixadaLitoranea.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_BaixadaLitoranea.png>
@@ -2783,10 +2788,14 @@ Overfull \hbox (100.16779pt too wide) in paragraph at lines 257--257
 
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 269.
+
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 269.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 269.
+
 [8 <./RJ/figs/MapaRJ_BaixadaLitoranea.png (PNG copy)> <./RJ/figs/tweetRJ_Baixad
 aLitoranea.png (PNG copy)>]
 ! Missing number, treated as zero.
@@ -2928,7 +2937,7 @@ l.270 \hypertarget{Nort}{\heading{Regional Norte}}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
-<RJ/figs/MapaRJ_Norte.png, id=127, 454.93965pt x 426.75435pt>
+<RJ/figs/MapaRJ_Norte.png, id=141, 454.93965pt x 426.75435pt>
 File: RJ/figs/MapaRJ_Norte.png Graphic file (type png)
 
 <use RJ/figs/MapaRJ_Norte.png>
@@ -2955,7 +2964,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 275.
 See the caption package documentation for explanation.
 
-<RJ/figs/tweetRJ_Norte.png, id=128, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_Norte.png, id=143, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_Norte.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_Norte.png>
@@ -2968,10 +2977,14 @@ Overfull \hbox (100.16779pt too wide) in paragraph at lines 275--275
 
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 286.
+
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 286.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 286.
+
 [9 <./RJ/figs/MapaRJ_Norte.png (PNG copy)> <./RJ/figs/tweetRJ_Norte.png (PNG co
 py)>]
 ! Missing number, treated as zero.
@@ -3113,7 +3126,7 @@ l.287 ...target{Nrst}{\heading{Regional Noroeste}}
                                                   
 I'm ignoring this; it doesn't match any \if.
 
-<RJ/figs/MapaRJ_Noroeste.png, id=137, 454.93965pt x 426.75435pt>
+<RJ/figs/MapaRJ_Noroeste.png, id=154, 454.93965pt x 426.75435pt>
 File: RJ/figs/MapaRJ_Noroeste.png Graphic file (type png)
 
 <use RJ/figs/MapaRJ_Noroeste.png>
@@ -3140,7 +3153,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 292.
 See the caption package documentation for explanation.
 
-<RJ/figs/tweetRJ_Noroeste.png, id=138, 341.1144pt x 156.46455pt>
+<RJ/figs/tweetRJ_Noroeste.png, id=156, 341.1144pt x 156.46455pt>
 File: RJ/figs/tweetRJ_Noroeste.png Graphic file (type png)
 
 <use RJ/figs/tweetRJ_Noroeste.png>
@@ -3151,54 +3164,49 @@ Overfull \hbox (100.16779pt too wide) in paragraph at lines 292--292
  [] 
  []
 
-! Undefined control sequence.
-l.304 \rgsquare
-                Porciúncula
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 309.
+
+Overfull \vbox (3.15236pt too high) has occurred while \output is active []
+
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 309.
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 309.
+
 [10 <./RJ/figs/MapaRJ_Noroeste.png (PNG copy)> <./RJ/figs/tweetRJ_Noroeste.png 
 (PNG copy)>] (./RJ/figs/tabelaoRJ.tex
-Overfull \hbox (13.9194pt too wide) in alignment at lines 3--7
+Overfull \hbox (8.3594pt too wide) in alignment at lines 3--7
  [] [] [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (13.9194pt too wide) in alignment at lines 7--10
+Overfull \hbox (8.3594pt too wide) in alignment at lines 7--10
  [] [] [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (13.9194pt too wide) in alignment at lines 10--11
+Overfull \hbox (8.3594pt too wide) in alignment at lines 10--11
  [] [] [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (13.9194pt too wide) in alignment at lines 11--32
+Overfull \hbox (8.3594pt too wide) in alignment at lines 11--32
  [] [] [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (13.9194pt too wide) in alignment at lines 32--52
+Overfull \hbox (8.3594pt too wide) in alignment at lines 32--52
  [] [] [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (13.9194pt too wide) in alignment at lines 52--72
+Overfull \hbox (8.3594pt too wide) in alignment at lines 52--72
  [] [] [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (13.9194pt too wide) in alignment at lines 72--92
+Overfull \hbox (8.3594pt too wide) in alignment at lines 72--92
  [] [] [] [] [] [] [] [] 
  []
 
@@ -3207,7 +3215,7 @@ Package babel Info: Redefining portuges shorthand "|
 Package babel Info: Redefining portuges shorthand "|
 (babel)             in language  on input line 92.
 [11]
-Overfull \hbox (13.9194pt too wide) in alignment at lines 92--105
+Overfull \hbox (8.3594pt too wide) in alignment at lines 92--105
  [] [] [] [] [] [] [] [] 
  []
 
@@ -3359,7 +3367,7 @@ I'm ignoring this; it doesn't match any \if.
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -3368,7 +3376,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \vskip 
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
@@ -3380,14 +3388,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Extra \else.
 \@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
                                                   \@bsphack \vadjust {\@rest...
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 I'm ignoring this; it doesn't match any \if.
 
 ! You can't use `\vadjust' in internal vertical mode.
 \@vspace ...skip \z@skip \else \@bsphack \vadjust 
                                                   {\@restorepar \vskip #1 \v...
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -3397,7 +3405,7 @@ return to the right one by typing `I}' or `I$' or `I\par'.
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -3406,7 +3414,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \vskip 
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
@@ -3418,14 +3426,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Extra \fi.
 \@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
                                                   
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 I'm ignoring this; it doesn't match any \if.
 
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -3434,7 +3442,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \vskip 
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
@@ -3446,154 +3454,15 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Extra \else.
 \@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
                                                   \@bsphack \vadjust {\@rest...
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
 I'm ignoring this; it doesn't match any \if.
 
 ! You can't use `\vadjust' in internal vertical mode.
 \@vspace ...skip \z@skip \else \@bsphack \vadjust 
                                                   {\@restorepar \vskip #1 \v...
-l.350 \hypertarget{notas}{\heading{Notas}}
+l.351 \hypertarget{notas}{\heading{Notas}}
                                           
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Extra \fi.
-<argument> \fi 
-               
-l.350 \hypertarget{notas}{\heading{Notas}}
-                                          
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.350 \hypertarget{notas}{\heading{Notas}}
-                                          
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.350 \hypertarget{notas}{\heading{Notas}}
-                                          
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.350 \hypertarget{notas}{\heading{Notas}}
-                                          
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \fi.
-\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
-                                                  
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-I'm ignoring this; it doesn't match any \if.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   \vskip 
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \vskip 
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra \else.
-\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
-                                                  \@bsphack \vadjust {\@rest...
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
-I'm ignoring this; it doesn't match any \if.
-
-! You can't use `\vadjust' in internal vertical mode.
-\@vspace ...skip \z@skip \else \@bsphack \vadjust 
-                                                  {\@restorepar \vskip #1 \v...
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
 If you're in the wrong mode, you might be able to
@@ -3602,14 +3471,42 @@ return to the right one by typing `I}' or `I$' or `I\par'.
 ! Extra \fi.
 <argument> \fi 
                
-l.358 \hypertarget{creditos}{\heading{Créditos}}
-                                                 
+l.351 \hypertarget{notas}{\heading{Notas}}
+                                          
 I'm ignoring this; it doesn't match any \if.
 
 ! Missing number, treated as zero.
 <to be read again> 
                    \vskip 
-l.358 \hypertarget{creditos}{\heading{Créditos}}
+l.351 \hypertarget{notas}{\heading{Notas}}
+                                          
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.351 \hypertarget{notas}{\heading{Notas}}
+                                          
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra \fi.
+\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
+                                                  
+l.351 \hypertarget{notas}{\heading{Notas}}
+                                          
+I'm ignoring this; it doesn't match any \if.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \vskip 
+l.359 \hypertarget{creditos}{\heading{Créditos}}
                                                  
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -3618,7 +3515,45 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \vskip 
-l.358 \hypertarget{creditos}{\heading{Créditos}}
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra \else.
+\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
+                                                  \@bsphack \vadjust {\@rest...
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+I'm ignoring this; it doesn't match any \if.
+
+! You can't use `\vadjust' in internal vertical mode.
+\@vspace ...skip \z@skip \else \@bsphack \vadjust 
+                                                  {\@restorepar \vskip #1 \v...
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \vskip 
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.359 \hypertarget{creditos}{\heading{Créditos}}
                                                  
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
@@ -3630,19 +3565,92 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Extra \fi.
 \@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
                                                   
-l.358 \hypertarget{creditos}{\heading{Créditos}}
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+I'm ignoring this; it doesn't match any \if.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \vskip 
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra \else.
+\@vspace ...fvmode \vskip #1 \vskip \z@skip \else 
+                                                  \@bsphack \vadjust {\@rest...
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+I'm ignoring this; it doesn't match any \if.
+
+! You can't use `\vadjust' in internal vertical mode.
+\@vspace ...skip \z@skip \else \@bsphack \vadjust 
+                                                  {\@restorepar \vskip #1 \v...
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+! Extra \fi.
+<argument> \fi 
+               
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+I'm ignoring this; it doesn't match any \if.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \vskip 
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.359 \hypertarget{creditos}{\heading{Créditos}}
+                                                 
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra \fi.
+\@vspace ...skip #1 \vskip \z@skip }\@esphack \fi 
+                                                  
+l.359 \hypertarget{creditos}{\heading{Créditos}}
                                                  
 I'm ignoring this; it doesn't match any \if.
 
 ! Misplaced \noalign.
 \hline ->\noalign 
                   {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
-l.374 \hline
+l.375 \hline
             
 I expect to see \noalign only after the \cr of
 an alignment. Proceed, and I'll ignore this case.
 
-LaTeX Font Info:    Try loading font information for T1+pcr on input line 375.
+LaTeX Font Info:    Try loading font information for T1+pcr on input line 376.
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
@@ -3651,44 +3659,45 @@ Package microtype Info: Loading generic settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-Underfull \hbox (badness 10000) in paragraph at lines 375--376
+Underfull \hbox (badness 10000) in paragraph at lines 376--377
 
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 380.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 381.
 Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 380.
+(babel)             in language  on input line 381.
 Package babel Info: Redefining portuges shorthand "|
-(babel)             in language  on input line 380.
+(babel)             in language  on input line 381.
 [13]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 380.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 381.
  (./newsletter_InfoDenguev2_01.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 380.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 380.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 381.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 381.
 Package rerunfilecheck Info: File `newsletter_InfoDenguev2_01.out' has not chan
 ged.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 380.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 381.
  ) 
 Here is how much of TeX's memory you used:
- 25428 strings out of 495004
- 464988 string characters out of 6180662
- 589543 words of memory out of 5000000
+ 25431 strings out of 495004
+ 465012 string characters out of 6180662
+ 592546 words of memory out of 5000000
  28003 multiletter control sequences out of 15000+600000
- 44475 words of font info for 82 fonts, out of 8000000 for 9000
+ 44735 words of font info for 84 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
  70i,12n,73p,10598b,1005s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb></usr/share/texlive/texmf-
 dist/fonts/type1/bitstrea/charter/bchr8a.pfb></usr/share/texlive/texmf-dist/fon
 ts/type1/bitstrea/charter/bchri8a.pfb></usr/share/texlive/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/ur
-w/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/zapfding/uz
-dr.pfb>
-Output written on newsletter_InfoDenguev2_01.pdf (13 pages, 1870459 bytes).
+1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucr
+r8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on newsletter_InfoDenguev2_01.pdf (13 pages, 1875522 bytes).
 PDF statistics:
- 205 PDF objects out of 1000 (max. 8388607)
- 160 compressed objects within 2 object streams
+ 231 PDF objects out of 1000 (max. 8388607)
+ 184 compressed objects within 2 object streams
  50 named destinations out of 1000 (max. 500000)
  25205 words of extra memory for PDF output out of 29859 (max. 10000000)
 

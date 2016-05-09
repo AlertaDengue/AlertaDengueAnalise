@@ -68,6 +68,7 @@ cat("\\begin{itemize}")
 for (i in 1:length(regs)) {
       cat(paste("\\item \\hyperlink{",nickregs[[i]],"}{",regs[i],"}\n",sep=""))
 }
+
 cat("\\end{itemize}")
 @
 
@@ -81,7 +82,7 @@ cat("\\end{itemize}")
 
 %-----------------------------------------------------------
 
-\hyperlink{vartab}{Variáves nas Tabelas}
+\hyperlink{vartab}{Variáveis nas Tabelas}
 
 \hyperlink{notas}{Notas} % These link to their appropriate sections in the newsletter
 
@@ -140,12 +141,12 @@ As cores indicam niveis de atenção
 
 <<r,echo=FALSE,results=tex>>=
 # O loop e'feito no R e o template em latex entra como string
-#length(regs)
-for (i in 1:length(regs)){
 
+for (i in 1:length(regs)){
       cat("\\begin{minipage}[t]{.66\\linewidth}\n")  # inicio da minipage
       # titulo:
       cat(paste("\\hypertarget{",nickregs[[i]],"}{\\heading{Regional ",regs[i],"}}\n",sep="")) 
+      
       # Mapa:
       nomesemespaco = gsub(" ","", regs[i])
       nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
@@ -156,12 +157,14 @@ for (i in 1:length(regs)){
       # Tabela 
       tabreg=paste(sigla,"/figs/","tabregional",sigla,"_",nomesemacento,
                    ".tex",sep="")
+
       cat(paste("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional",regs[i],"}"))
       cat("\\begin{center}\n")
       cat(paste("\\input{",tabreg,"}\n",sep=""))
       cat("\\end{center}\n")
+      cat("\\small{\\hyperlink{vartab}{ver descrição das variáveis}}")
       
-       # Grafico regional:
+      # Grafico regional:
       figname = paste(sigla,"/figs/tweet",sigla,"_",nomesemacento,".png",sep="")
       cat("\\vspace{0.5cm}")
       cat("\\begin{center}\n")
@@ -179,22 +182,22 @@ for (i in 1:length(regs)){
       cat("\\begin{minipage}[t]{.30\\linewidth}\n") 
       cat("\\begin{mdframed}[style=sidebar,frametitle={}]\n") # Sidebar box 
  
-      cat("\\textbf{Municipios}") # titulo
-       cat("\\begin{itemize}")
+      cat("\\textbf{\\hyperlink{municips}{Municipios}}") # titulo
+      cat("\\begin{itemize}")
        
-        municip.reg <- municipios[municipios$nome_regional==regs[i],]
-        coresbullets = c(verde="\\gsquare",amarelo="\\ysquare",
-                            laranja="\\osquare",vermelho="\\rgsquare")
+      municip.reg <- municipios[municipios$nome_regional==regs[i],]
+      coresbullets = c(verde="\\gsquare",amarelo="\\ysquare",
+                            laranja="\\osquare",vermelho="\\rsquare")
         
-        for (j in 1:dim(municip.reg)[1]) {
+      for (j in 1:dim(municip.reg)[1]) {
               nivel = tabelao$Nivel[tabelao$Municipio==municip.reg$nome[j]]
               corbullet = "\\wsquare"
               if(!is.na(nivel)) corbullet = coresbullets[nivel] 
               cat(paste(corbullet,municip.reg$nome[j],"\n"))
-        }
-        cat("\\end{itemize}")
+      }
+      cat("\\end{itemize}")
   
-       cat("\\BackToContents") 
+      cat("\\BackToContents") 
       # fim do box e minipage
       cat("\\end{mdframed}\\hfill")
       cat("\\end{minipage}") # End of the sidebar mini page
@@ -236,16 +239,17 @@ for (i in 1:length(regs)){
 \hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}}
 
 \begin{description}
-\item[SE =] semana epidemiológica
+\item [SE =] semana epidemiológica
 \item [tweet =] número de tweets indicativos de casos de dengue na cidade
-\item [temp =] média das temperaturas mínimas da semana
-\item [casos =] casos notificados de dengue 
-\item [casos.esp =] número de casos estimados após correção pelo atraso de notificação
-\item [maxcasos =] número máximo de casos estimados (IC 95\%)
-\item [p(Rt1) =] probabilidade do número reprodutivo ser maior que 1 (indica transmissão)
-\item [inc =] incidência por 100.000 habs
-\item [nivel =] nivel do alerta (1 = mais baixo, 4 = mais alto)
-\item [cor =] cor do alerta (verde, amarelo, laranja, vermelho)
+\item [temperatura =] média das temperaturas mínimas da semana
+\item [casos notif =] casos notificados de dengue 
+\item [casos preditos =] número de casos estimados após correção pelo atraso de notificação
+\item [ICmin =] número mínimo de casos estimados (IC 95\%)
+\item [ICmax =] número máximo de casos estimados (IC 95\%)
+\item [Rt] número reprodutivo efetivo ($>$ 1 indica aumento de casos transmissão)
+\item [p(Rt1) =] probabilidade do número reprodutivo ser maior que 1 ($>0.95$ indica aumento significativo de casos)
+\item [inc =] incidência por 100.000 habitantes
+\item [Nivel =] cor do alerta (verde, amarelo, laranja, vermelho)
 \end{description}
 
 \hypertarget{notas}{\heading{Notas}}
