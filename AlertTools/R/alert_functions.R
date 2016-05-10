@@ -254,7 +254,7 @@ update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, data
             } 
             if (writedb == TRUE) {
                   res <- write.alerta(alerta, write = "db")
-                  write.csv(alerta,file=paste("memoria/", nick,hoje,".csv",sep="")) 
+                  #write.csv(alerta,file=paste("memoria/", nick,hoje,".csv",sep="")) 
             }
       }
       
@@ -577,7 +577,7 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
             stringvars = c(2,12)            
             for (li in 1:dim(d)[1]){
                   linha = as.character(d[li,1])
-                  for (i in 2:dim(d)[2]) {
+                  for (i in 2:length(sepvarnames)) {
                         if (i %in% stringvars & !is.na(as.character(d[li,i]))) {
                               value = paste("'", as.character(d[li,i]), "'", sep="")
                               linha = paste(linha, value, sep=",")

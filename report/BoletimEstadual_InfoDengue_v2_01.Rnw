@@ -14,7 +14,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
-\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+\input{reportconfig/structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
 
 % Carregando dados  (atualmente é manual para cada estado)
 <<carrega_dados,echo=FALSE,results=hide>>=
@@ -36,7 +36,7 @@ figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
 %---------------------------------------------------------------------------------
 
 \begin{figure}[H]
-\centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
+\centering\includegraphics[width=1\linewidth]{reportconfig/InfoDengue2.png}  
 \end{figure}
 
 \centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line

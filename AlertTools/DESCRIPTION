@@ -1,7 +1,7 @@
 Package: AlertTools
 Type: Package
 Title: utility functions for the Alerta Dengue System
-Version: 1.0
+Version: 1.1
 Date: 2015-10-05
 Author: Claudia Codeco
 Maintainer: Claudia Codeco <claudia.codeco@gmail.com>
@@ -13,7 +13,8 @@ Imports:
     foreign,
     RPostgreSQL,
     zoo,
-    maptools
+    maptools,
+    knitr
 Suggests:
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
