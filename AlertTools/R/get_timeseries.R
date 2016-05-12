@@ -138,7 +138,7 @@ getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource)
             sql <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE dt_digita <= ",sql1, " AND municipio_geocodigo =", city)
             dd <- dbGetQuery(datasource,sql)
             if (dim(dd)[1]==0) {
-                  message(paste("geocodigo",city,"nunca teve casos. Está correto?..."))
+                  message(paste("cidade",city,"nunca teve casos. Está correto?..."))
                   } else {
                   dd$SEM_NOT <- data2SE(dd$dt_notific, format = "%Y-%m-%d")
             }
@@ -244,10 +244,10 @@ getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
 #' station of interest.
 #'@return data.frame with all data available 
 #'@examples
-#'cas = getCases(city = 4100310, datasource = con) 
-#'tw = getTweet(city = 4100310, datasource = con)
+#'cas = getCases(city = 4100301, datasource = con) 
+#'tw = getTweet(city = 4100301, datasource = con)
 #'clima = getWU(stations = 'SBRJ', var="temp_min", datasource=con)
-#'tail(mergedata(cases = cas, tweet = tw, climate = clima))
+#'head(mergedata(cases = cas, tweet = tw, climate = clima))
 #'head(mergedata(tweet = tw, climate = clima))
 #'head(mergedata(cases = cas, climate = clima))
 #'head(mergedata(tweet = tw, cases = cas))
