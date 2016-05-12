@@ -118,7 +118,7 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
 #'@return data.frame with the data aggregated per week according to disease onset date.
 #'@examples
 #'dC0 = getCases(city = c(330455), lastday ="2014-03-10", datasource = "data/sinan.rda") 
-#'dC0 = getCases(city = 330220, datasource = con) 
+#'dC0 = getCases(city = 4100301, datasource = con) 
 #'head(dC0)
 
 getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource) {
@@ -134,11 +134,14 @@ getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource)
             sql1 <- paste("'", lastday, "'", sep = "")
             sql <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE dt_digita <= ",sql1, " AND municipio_geocodigo =", city)
             dd <- dbGetQuery(datasource,sql)
-            if (dim(dd)[1]==0) stop("geocodigo retornou zero casos. Está correto?")
+            if (dim(dd)[1]==0) {
+                  warning(paste("geocodigo",city,"retornou zero casos. Está correto? retornando NULL..."))
+                  return(NULL)
+                  } else {
+                  dd$SEM_NOT <- data2SE(dd$dt_notific, format = "%Y-%m-%d")
+            }
             
-            dd$SEM_NOT <- data2SE(dd$dt_notific, format = "%Y-%m-%d")
-            
-            
+
       } else { # one or more dbf files
             nf = length(datasource)
             dd <- read.dbf(datasource[1])[,c("ID_MUNICIP","DT_NOTIFIC","SEM_NOT",
@@ -155,6 +158,7 @@ getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource)
                   } 
             }
       }
+      
       
       sem <- seqSE(from = min(dd$SEM_NOT), to = max(dd$SEM_NOT))$SE
       nsem <- length(sem)
