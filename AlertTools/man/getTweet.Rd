@@ -16,7 +16,8 @@ to open the database connection.}
 \item{finalday}{last day. Default is the last available.}
 }
 \value{
-data.frame with weekly counts of people tweeting on dengue.
+data.frame with weekly counts of people tweeting on dengue. The function returns NA for weeks 
+before the implementation of the Observatorio, and returns 0 or positive numbers, afterwards.
 }
 \description{
 Create weekly time series from tweeter data from server. The 
@@ -24,7 +25,7 @@ source of this data is the Observatorio da Dengue (UFMG).
 }
 \examples{
 res = getTweet(city = c(330455), lastday = "2014-03-01", datasource = con)
-res = getTweet(city = c(330455), datasource = "data/tw.rda") 
+res = getTweet(city = 4100301, datasource = con) 
 tail(res)
 }
 

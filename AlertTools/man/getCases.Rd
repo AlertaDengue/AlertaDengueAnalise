@@ -23,7 +23,7 @@ Create weekly time series from case data from server. The source is the SINAN.
 }
 \examples{
 dC0 = getCases(city = c(330455), lastday ="2014-03-10", datasource = "data/sinan.rda") 
-dC0 = getCases(city = 330220, datasource = con) 
+dC0 = getCases(city = 4101200, datasource = con) 
 head(dC0)
 }
 
