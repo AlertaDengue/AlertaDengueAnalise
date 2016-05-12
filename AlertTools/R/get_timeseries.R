@@ -118,7 +118,7 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
 #'@return data.frame with the data aggregated per week according to disease onset date.
 #'@examples
 #'dC0 = getCases(city = c(330455), lastday ="2014-03-10", datasource = "data/sinan.rda") 
-#'dC0 = getCases(city = 4100301, datasource = con) 
+#'dC0 = getCases(city = 4101200, datasource = con) 
 #'head(dC0)
 
 getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource) {
@@ -160,9 +160,8 @@ getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource)
       }
       
       
-      sem <- seqSE(from = min(dd$SEM_NOT), to = max(dd$SEM_NOT))$SE
+      sem <- seqSE(from = 201001, to = data2SE(lastday,format="%Y-%m-%d"))$SE
       nsem <- length(sem)
-      
       
       st <- data.frame(SE = sem, casos = 0)
       for(i in 1:nsem) st$casos[i] <- sum(dd$SEM_NOT == st$SE[i])
@@ -243,10 +242,10 @@ getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
 #' station of interest.
 #'@return data.frame with all data available 
 #'@examples
-#'cas = getCases(city = c(330455), withdivision = FALSE, datasource = "data/sinan.rda") 
-#'tw = getTweet(city = c(330455), datasource = "data/tw.rda")
-#'clima = getWU(stations = 'SBRJ', var="temp_min", datasource="data/WUdata.rda")
-#'head(mergedata(cases = cas, tweet = tw, climate = clima))
+#'cas = getCases(city = 4100310, datasource = con) 
+#'tw = getTweet(city = 4100310, datasource = con)
+#'clima = getWU(stations = 'SBRJ', var="temp_min", datasource=con)
+#'tail(mergedata(cases = cas, tweet = tw, climate = clima))
 #'head(mergedata(tweet = tw, climate = clima))
 #'head(mergedata(cases = cas, climate = clima))
 #'head(mergedata(tweet = tw, cases = cas))
@@ -263,6 +262,7 @@ mergedata <- function(cases = c(), tweet =c(), climate=c(), ini=200952){
       # merging
       if (is.null(cases)) {
             d <- merge(climate, tweet, by=c("SE"), all = TRUE)
+            d$casos <- NA
       } else if (is.null(tweet)){
             d <- merge(cases, climate,  by=c("SE"), all = TRUE)     
       } else if (is.null(climate)) {
