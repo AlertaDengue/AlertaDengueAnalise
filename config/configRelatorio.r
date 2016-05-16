@@ -32,7 +32,7 @@ configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasourc
                dir=dir, caption=FALSE)
                
       # ---------Mapa Regionais (funcao customizada, no codigoFiguras.R)
-      mapa.regional(alerta=alert, regionais=nomesregs, estado = uf, sigla = sigla,
+      mapa.regional(alerta=alert, regionais=regs, estado = uf, sigla = sigla,
                     data = data, shape=shape, shapeid=varid, dir=dir ,datasource=datasource)
                
       # tabelao
@@ -164,5 +164,5 @@ configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasourc
       
       save(estado, sigla, se, ano, municipios, nmunicipios, regs,nickregs, totano, totultse, tabelao,
            nverde, namarelo, nlaranja, nvermelho, nverde1, namarelo1, nlaranja1, nvermelho1,
-           file=paste(RJ.out,"params",sigla,".RData",sep=""))
+           file=paste(dir,"params",sigla,".RData",sep=""))
 }

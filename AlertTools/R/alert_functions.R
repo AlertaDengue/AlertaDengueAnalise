@@ -17,9 +17,9 @@
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
-#'tw = getTweet(city = c(330455), datasource = "data/tw.rda") 
-#'cli = getWU(stations = 'SBRJ', datasource="data/WUdata.rda")
-#'cas = getCases(city = c(330455), datasource="data/sinan.rda")
+#'tw = getTweet(city = 4102000, datasource = con) 
+#'cli = getWU(stations = 'SBCA', datasource = con)
+#'cas = getCases(city = 4102000, datasource=con)
 #'casfit<-adjustIncidence(obj=cas)
 #'casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 #'d<- mergedata(cases = casr, tweet = tw, climate = cli)
@@ -308,9 +308,9 @@ alertaRio <- function(naps = 0:9, pars, crit, datasource, verbose = TRUE){
       APS <- c("APS 1", "APS 2.1", "APS 2.2", "APS 3.1", "APS 3.2", "APS 3.3"
                , "APS 4", "APS 5.1", "APS 5.2", "APS 5.3")[(naps + 1)]
       
-      p <- rev(plnorm(seq(7,20,by=7), pars$pdig[1], pars$pdig[2]))
+      p <- plnorm(seq(7,20,by=7), pars$pdig[1], pars$pdig[2])
       
-      res <- vector("list", length(APS))
+      res <- vector("list", lengthS(APS))
       names(res) <- APS
       for (i in 1:length(APS)){
             message(paste("rodando", APS[i],"..."))
@@ -325,6 +325,82 @@ alertaRio <- function(naps = 0:9, pars, crit, datasource, verbose = TRUE){
             res[[i]] <- fouralert(obj = casr, pars = pars, crit = crit, pop=cas$pop[1])
       }
             
+      res
+}
+
+
+#alertaIntraCidade ---------------------------------------------------------------------
+#'@title 4 level alert Green-Yellow-Orange-Red for sub-regions of a city.
+#'@description Yellow is raised when environmental conditions required for
+#'positive mosquito population growth are detected, green otherwise.Orange 
+#'indicates evidence of sustained transmission, red indicates evidence of 
+#'an epidemic scenario.  
+#'@param city geocode of the city.
+#'@param pars parameters of the alert.
+#'@param locs subset of vector 0:9 corresponding to the id of the APS. Default is all of them.
+#'@param datasource it is the name of the sql connection.
+#'@param verbose FALSE
+#'@return list with an alert object for each locality.
+#'@examples
+#'params <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 14.15, posseas = 18)
+#'criter <- criteria = list(
+#'crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 0),
+#'crito = c("p1 > 0.9 & inc > preseas", 2, 2),
+#'critr = c("inc > inccrit", 1, 2)
+#')
+#'alerio2 <- alertaRio(naps = c(0,1), pars=params, crit = criter, datasource=con)
+#'names(alerio2)
+
+
+alertaIntraCidade <- function(city, locs, pars, crit, datasource, verbose = TRUE){
+      
+      if(nchar(city) == 6) city <- sevendigitgeocode(city)
+      
+      # pegando informacoes das localidades
+      sql = paste("SELECT geocodigo, codigo_estacao_wu, nome
+                        FROM \"Dengue_global\".\"Municipio\" 
+                  INNER JOIN \"Dengue_global\".\"Localidade\"
+                  ON municipio_geocodigo = municipio_geocodigo
+                  where municipio_geocodigo = '", city, "'", sep="")
+      dd <- dbGetQuery(con,sql)
+      
+      message("obtendo dados de clima e tweets ...")
+      tw = getTweet(city = city, datasource = datasource) 
+      
+      estacoes <- unique(dd$codigo_estacao_wu)
+      cli <- list()
+      for (k in 1:length(estacoes)) cli[[k]] = getWU(stations = estacoes[k],var="temp_min"
+                                                     ,datasource = datasource) 
+      
+      if (verbose){
+            message("As ultimas datas no banco são:")
+            print(paste("Ultimos registros de dengue:",lastDBdate("sinan", city=city)))
+            print(paste("Ultimos registros de tweets:",lastDBdate("tweet", city=city)))
+            for (est in estacoes) print(paste("Ultimos registros de temp em",est,":",lastDBdate("clima_wu", station = "SBRJ")))
+               
+            out = readline("deseja continuar (y/n)?")
+            if(out == "n") stop("alerta interrompido pelo usuario")
+      }
+      
+      locs <- dd$nome
+      
+      p <- plnorm(seq(7,20,by=7), pars$pdig[1], pars$pdig[2])
+      
+      res <- vector("list", length(locs))
+      names(res) <- locs
+      for (i in 1:length(locs)){
+            message(paste("rodando", locs[i],"..."))
+            cas = getCasesinRio(APSid = naps[i], datasource=datasource)
+            d <- merge(cas, cli.SBRJ, by.x = "SE", by.y = "SE")
+            d <- merge(d, tw, by.x = "SE", by.y = "SE")
+            
+            casfit<-adjustIncidence(obj=d, pdig = p)
+            casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)   
+            
+            
+            res[[i]] <- fouralert(obj = casr, pars = pars, crit = crit, pop=cas$pop[1])
+      }
+      
       res
 }
 

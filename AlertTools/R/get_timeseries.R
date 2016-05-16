@@ -233,6 +233,52 @@ getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
 }
 
 
+# getCases.intracidade --------------------------------------------------------------
+#'@description Get time series of cases per locality within a city. Rio is a special case, use getCasesinRio. 
+#'@title Get cases from localities in the city and aggregate them into weekly time series. 
+#'@return data.frame with the data aggregated per health district and week
+#'@examples
+#'dC = getCases.intracidade(city = , datasource = con) # Rio de Janeiro
+#'tail(dC)
+
+getCases.intracidade <- function(city, lastday = Sys.Date(), disease = "dengue",
+                          datasource) {
+      
+      sqldate <- paste("'", lastday, "'", sep = "")
+      if(nchar(city) == 6) city <- sevendigitgeocode(city)   
+
+      pega_localidades = paste("SELECT * FROM  \"Municipio\".\"Localidade\"
+                       WHERE municipio_geocodigo = ",city)
+      localidades <- dbGetQuery(datasource,pega_localidades)
+      
+      sqlquery = paste("SELECT n.dt_notific, n.ano_notif, se_notif, l.id, l.nome
+                       FROM  \"Municipio\".\"Notificacao\" AS n 
+                       INNER JOIN \"Municipio\".\"Bairro\" AS b 
+                       ON n.bairro_nome = b.nome 
+                       INNER JOIN \"Municipio\".\"Localidade\" AS l 
+                       ON b.\"Localidade_id\" = l.id
+                       WHERE n.municipio_geocodigo = 3304557 AND l.id = ",APSid, "AND dt_digita <= ",sqldate)
+      
+      d <- dbGetQuery(datasource,sqlquery)
+      d$SEM_NOT <- d$ano_notif*100+d$se_notif 
+      d$SEM_NOT <- data2SE(d$dt_notific, format = "%Y-%m-%d")
+      
+      #Cria Serie temporal de casos
+      sem <- seqSE(from = min(d$SEM_NOT), to = max(d$SEM_NOT))$SE
+      nsem <- length(sem)
+      st <- data.frame(SE = sem, casos = 0)
+      for(i in 1:nsem) st$casos[i] <- sum(d$SEM_NOT == st$SE[i])
+      st$nome <- "Rio de Janeiro"
+      # agrega informacao de populacao da APS
+      
+      pop = NA
+      sql2 <- paste("SELECT nome,id,populacao from \"Municipio\".\"Localidade\" WHERE id =", APSid) 
+      varglobais <- dbGetQuery(datasource,sql2)
+      st$pop <- varglobais$populacao      
+      st$localidade <- varglobais$nome
+      st$localidadeid <- varglobais$id
+      st  
+}
 
 # mergedata --------------------------------------------------------------
 #'@description Merge cases, tweets and climate data for the alert  
