@@ -22,10 +22,10 @@ data.frame with all data available
 Merge cases, tweets and climate data for the alert
 }
 \examples{
-cas = getCases(city = 4100310, datasource = con) 
-tw = getTweet(city = 4100310, datasource = con)
+cas = getCases(city = 4100301, datasource = con) 
+tw = getTweet(city = 4100301, datasource = con)
 clima = getWU(stations = 'SBRJ', var="temp_min", datasource=con)
-tail(mergedata(cases = cas, tweet = tw, climate = clima))
+head(mergedata(cases = cas, tweet = tw, climate = clima))
 head(mergedata(tweet = tw, climate = clima))
 head(mergedata(cases = cas, climate = clima))
 head(mergedata(tweet = tw, cases = cas))

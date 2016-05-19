@@ -25,9 +25,9 @@ indicates evidence of sustained transmission, red indicates evidence of
 an epidemic scenario.
 }
 \examples{
-tw = getTweet(city = c(330455), datasource = "data/tw.rda") 
-cli = getWU(stations = 'SBRJ', datasource="data/WUdata.rda")
-cas = getCases(city = c(330455), datasource="data/sinan.rda")
+tw = getTweet(city = 4102000, datasource = con) 
+cli = getWU(stations = 'SBCA', datasource = con)
+cas = getCases(city = 4102000, datasource=con)
 casfit<-adjustIncidence(obj=cas)
 casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)
 d<- mergedata(cases = casr, tweet = tw, climate = cli)

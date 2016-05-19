@@ -41,6 +41,7 @@ fouralert <- function(obj, pars, crit, pop, miss="last"){
             stop("Verifique o config. Está faltando parametros em pars para rodar o alerta")} 
       
       cyellow = crit[[1]]; corange = crit[[2]]; cred = crit[[3]]
+      
       for (k in vars) {
             if (k != "pdig"){ 
                   cyellow = gsub(k,pars[[k]],cyellow)
@@ -310,7 +311,7 @@ alertaRio <- function(naps = 0:9, pars, crit, datasource, verbose = TRUE){
       
       p <- plnorm(seq(7,20,by=7), pars$pdig[1], pars$pdig[2])
       
-      res <- vector("list", lengthS(APS))
+      res <- vector("list", length(APS))
       names(res) <- APS
       for (i in 1:length(APS)){
             message(paste("rodando", APS[i],"..."))
@@ -329,8 +330,8 @@ alertaRio <- function(naps = 0:9, pars, crit, datasource, verbose = TRUE){
 }
 
 
-#alertaIntraCidade ---------------------------------------------------------------------
-#'@title 4 level alert Green-Yellow-Orange-Red for sub-regions of a city.
+#alertaIntraCidade NOT IMPLEMENTED YET------------------------------
+#'@title 4 level alert Green-Yellow-Orange-Red for sub-regions of a city. Not implemented yet.
 #'@description Yellow is raised when environmental conditions required for
 #'positive mosquito population growth are detected, green otherwise.Orange 
 #'indicates evidence of sustained transmission, red indicates evidence of 
@@ -503,7 +504,9 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
       coords[1,1] <- -43.19
       coords[2,2] <- -22.945
       #text(coords,label=mapa@data$COD_AP_SMS,cex=0.6)
-      legend("bottom",fill=cores,c("atividade baixa","condições favoraveis transmissão","transmissão sustentada","atividade alta"),bty="n",cex=0.6)
+      legend("bottom",fill=cores,c("Atividade baixa","Alerta transmissão",
+                                   "Transmissão sustentada","Atividade alta"),
+             bty="n",cex=0.6)
       par(cex.main=0.7)
       title(paste0( "Mapa MRJ por APs \n"," Semana ",substr(ultima_se,5,6)," de ",
                     substr(ultima_se,1,4)),line=-1)
@@ -523,6 +526,8 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'@param varid shapefile variable indicating the geocode of the municipalities  
 #'@param varname name of the variable to be plotted
 #'@param resol dpi png resolution, default is 200
+#'@param posleg position of the legend (default is "bottomright"). Choices are: "bottomright", "bottom",
+#' "bottomleft", "left", "topleft", "top", "topright", "right" and "center"
 #'@return a map
 #'@examples
 #'reg1 <- update.alerta(regional="Noroeste", pars = RJ.noroeste, datasource = con,sefinal=201613)
@@ -531,7 +536,8 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'varid="CD_GEOCMU", titulo="Regionais Norte e Nordeste")
 
 geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), se, datasource=con,
-                   shapefile, varid, varname, titulo="", filename, dir="",caption=TRUE, resol = 200){
+                   shapefile, varid, varname, titulo="", filename, dir="",caption=TRUE, resol = 200,
+                   posleg = "bottomright"){
       
       require(maptools,quietly = TRUE,warn.conflicts = FALSE)
       
@@ -568,7 +574,7 @@ geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), s
       plot(meumapa,col=meumapa@data$cor)
       coords <- coordinates(meumapa)
       if (caption == TRUE) text(coords,label=meumapa@data$short,cex=0.6)
-      legend("bottomright",fill=cores,c("Atividade baixa","Alerta de transmissão","Transmissão sustentada",
+      legend(posleg,fill=cores,c("Atividade baixa","Alerta de transmissão","Transmissão sustentada",
                                         "Atividade alta"),bty="n",cex=0.8)
       par(cex.main=0.7)
       title(paste0(titulo, "Semana ",substr(se,5,6)," de ",substr(se,1,4)),line=0)

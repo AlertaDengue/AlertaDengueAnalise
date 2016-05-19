@@ -19,7 +19,7 @@ load("aleRJ.RData")
 
 # --- Gera parametros para o boletim
 configRelatorio(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, 
-                alert=aleRJ, shape=RJ.shape, varid=RJ.shapeID,
+                alert=aleRJ, pars = pars.RJ, shape=RJ.shape, varid=RJ.shapeID,
                 dir=RJ.out, datasource=con)
 
 #Sweave(file = '../report/newsletter_InfoDenguev2_01.Rnw')

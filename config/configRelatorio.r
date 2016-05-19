@@ -2,7 +2,7 @@
 # Configuracao para o boletim do Estado do Rio de Janeiro
 # ========================================================
 
-configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasource){
+configRelatorio <- function(uf, sigla, data, alert, pars, shape, varid, dir, datasource){
       # ------------
       ## Parte fixa
       # ------------
@@ -33,7 +33,8 @@ configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasourc
                
       # ---------Mapa Regionais (funcao customizada, no codigoFiguras.R)
       mapa.regional(alerta=alert, regionais=regs, estado = uf, sigla = sigla,
-                    data = data, shape=shape, shapeid=varid, dir=dir ,datasource=datasource)
+                    data = data, pars=pars, shape=shape, shapeid=varid, dir=dir ,
+                    datasource=datasource)
                
       # tabelao
       tabelao = data.frame(Municipio = character(),Regional = character(), 
@@ -76,7 +77,7 @@ configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasourc
             
       }
       
-      fname = paste(RJ.out,"tabelao",sigla,".tex",sep="")
+      fname = paste(dir,"tabelao",sigla,".tex",sep="")
       tabelaox <-xtable(tabelao, align ="ll|lllllll")
       digits(tabelaox) <- c(0,0,0,1,0,0,1,1,0)
       
@@ -119,7 +120,7 @@ configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasourc
             
             nomesemespaco = gsub(" ","",k)
             nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
-            fname = paste(RJ.out,"tabregional",sigla,"_",nomesemacento,".tex",sep="")
+            fname = paste(dir,"tabregional",sigla,"_",nomesemacento,".tex",sep="")
             
             tabelax <-xtable(tabelafinal,align ="cc|ccccccc",digits = 0)
             digits(tabelax) <- 0
@@ -136,7 +137,7 @@ configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasourc
             
             serie = aggregate(cbind(tweet,casos)~data_iniSE,data=res,FUN=sum,na.rm=TRUE)
             
-            figname = paste(RJ.out,"tweet",sigla,"_",nomesemacento,".png",sep="")
+            figname = paste(dir,"tweet",sigla,"_",nomesemacento,".png",sep="")
             png(figname, width = 12, height = 5.5, units="cm", res=200)
             layout(matrix(1), widths = lcm(10),heights = c(lcm(5)))
             

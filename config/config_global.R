@@ -24,7 +24,7 @@ gtdist="normal"; meangt=3; sdgt = 1.2
 ## --------- Regras de mudança de nivel de alerta
 # (criterio, duracao da condicao para turnon, turnoff)
 criteria = list(
-crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 2),
+crity = c("temp_min > tcrit | (temp_min < tcrit & inc > posseas)", 3, 2),
 crito = c("p1 > 0.9 & inc > preseas", 2, 2),
 critr = c("inc > inccrit", 1, 2)
 )
