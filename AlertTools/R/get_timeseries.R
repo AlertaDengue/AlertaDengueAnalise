@@ -2,65 +2,6 @@
 # FUNCOES PARA ORGANIZAR SERIES
 #TEMPORAIS A PARTIR DOS DADOS BRUTOS CLAUDIA CODECO - 2015
 
-# GetWU --------------------------------------------------------
-#'@description Create weekly time series from meteorological station data in server
-#'@title Get Climate Data
-#'@param stations station code (4 digits).
-#'@param vars climate variables (default var="all": all variables available )
-#'@param finalday last day. Default is the last available. Format = %Y-%m-%d. 
-#'@param datasource Use "data/WUdata.rda" to use test dataset. #' Use the connection to the Postgresql server if using project data. See also DenguedbConnect
-#' to open the database connection. 
-#'@return data.frame with the weekly data (cidade estacao data temp_min tmed tmax umin umed umax pressaomin pressaomed pressaomax)
-#'@examples
-#'res = getWU(station = 'SBRJ', vars="temp_min", finalday = "2014-10-10", datasource= con)
-#'tail(res)
-
-getWU <- function(stations, vars = "temp_min", finalday = Sys.Date(), datasource) {
-      
-      if (!all(nchar(stations) == 4)) stop("'stations' should be a vector of 4 digit station names")
-      nsta = length(stations)
-      
-      # loading Test data -------------------------------------------
-      if (class(datasource) == "character") {
-            load(datasource)
-            cities = unique(WUdata$cidade[WUdata$Estacao_wu_estacao_id%in%stations])
-            message(paste("stations belong to city(es):", cities))
-            d <- subset(WUdata, Estacao_wu_estacao_id %in% stations)
-            d <- subset(d, as.Date(d$data, format = "%Y-%m-%d") <= finalday)
-                  
-      } else if (class(datasource) == "PostgreSQLConnection") {
-            # creating the sql query for the stations
-            sql1 = paste("'", stations[1], sep = "")
-            nsta = length(stations)
-            if (nsta > 1) for (i in 2:nsta) sql1 = paste(sql1, stations[i], sep = "','")
-            sql1 <- paste(sql1, "'", sep = "")
-            # sql query for the date
-            sql2 = paste("'", finalday, "'", sep = "")
-            
-            sql <- paste("SELECT * from \"Municipio\".\"Clima_wu\" WHERE 
-                        \"Estacao_wu_estacao_id\"
-                        IN  (", sql1, ") AND data_dia <= ",sql2)
-            d <- dbGetQuery(datasource,sql)
-      }
-      
-      names(d)[which(names(d)== "Estacao_wu_estacao_id")]<-"estacao"
-      
-      # Atribuir SE e agregar por semana-----------------------------------------
-      d$SE <- data2SE(d$data, format = "%Y-%m-%d")
-      
-      sem <- seqSE(from = min(d$SE), to = max(d$SE))$SE
-      df <- expand.grid(SE=sem, estacao = unique(d$estacao))
-      N <- length(df$SE)
-      
-      for (i in vars){
-            df[, i] <- NA
-            for (t in 1:N){
-                  subconj <- subset(d, (SE == df$SE[t] & estacao == df$estacao[t]))
-                  df[t, i] <- mean(subconj[,i])
-            }
-      }
-      df
-}
 
 # GetTweet --------------------------------------------------------------
 #'@description Create weekly time series from tweeter data from server. The 
@@ -110,6 +51,65 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
       tw.agregado
 }
 
+# GetWU --------------------------------------------------------
+#'@description Create weekly time series from meteorological station data in server
+#'@title Get Climate Data
+#'@param stations station code (4 digits).
+#'@param vars climate variables (default var="all": all variables available )
+#'@param finalday last day. Default is the last available. Format = Y-m-d. 
+#'@param datasource Use the connection to the Postgresql server if using project data. 
+#'@return data.frame with the weekly data 
+#'@examples
+#'res = getWU(station = 'SBRJ', vars="temp_min", finalday = "2014-10-10", 
+#'datasource= con)
+#'tail(res)
+
+getWU <- function(stations, vars = "temp_min", finalday = Sys.Date(), datasource) {
+      
+      if (!all(nchar(stations) == 4)) stop("'stations' should be a vector of 4 digit station names")
+      nsta = length(stations)
+      
+      # loading Test data -------------------------------------------
+      if (class(datasource) == "character") {
+            load(datasource)
+            cities = unique(WUdata$cidade[WUdata$Estacao_wu_estacao_id%in%stations])
+            message(paste("stations belong to city(es):", cities))
+            d <- subset(WUdata, Estacao_wu_estacao_id %in% stations)
+            d <- subset(d, as.Date(d$data, format = "%Y-%m-%d") <= finalday)
+            
+      } else if (class(datasource) == "PostgreSQLConnection") {
+            # creating the sql query for the stations
+            sql1 = paste("'", stations[1], sep = "")
+            nsta = length(stations)
+            if (nsta > 1) for (i in 2:nsta) sql1 = paste(sql1, stations[i], sep = "','")
+            sql1 <- paste(sql1, "'", sep = "")
+            # sql query for the date
+            sql2 = paste("'", finalday, "'", sep = "")
+            
+            sql <- paste("SELECT * from \"Municipio\".\"Clima_wu\" WHERE 
+                         \"Estacao_wu_estacao_id\"
+                         IN  (", sql1, ") AND data_dia <= ",sql2)
+            d <- dbGetQuery(datasource,sql)
+      }
+      
+      names(d)[which(names(d)== "Estacao_wu_estacao_id")]<-"estacao"
+      
+      # Atribuir SE e agregar por semana-----------------------------------------
+      d$SE <- data2SE(d$data, format = "%Y-%m-%d")
+      
+      sem <- seqSE(from = min(d$SE), to = max(d$SE))$SE
+      df <- expand.grid(SE=sem, estacao = unique(d$estacao))
+      N <- length(df$SE)
+      
+      for (i in vars){
+            df[, i] <- NA
+            for (t in 1:N){
+                  subconj <- subset(d, (SE == df$SE[t] & estacao == df$estacao[t]))
+                  df[t, i] <- mean(subconj[,i])
+            }
+      }
+      df
+}
 
 # GetCases --------------------------------------------------------------
 #'@description Create weekly time series from case data from server. The source is the SINAN. 
@@ -233,7 +233,7 @@ getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
 }
 
 
-# getCases.intracidade --------------------------------------------------------------
+# getCasesIntraCidade --------------------------------------------------------------
 #'@description Get time series of cases per locality within a city. Rio is a special case, use getCasesinRio. 
 #'@title Get cases from localities in the city and aggregate them into weekly time series. 
 #'@return data.frame with the data aggregated per health district and week
@@ -241,7 +241,7 @@ getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
 #'dC = getCases.intracidade(city = , datasource = con) # Rio de Janeiro
 #'tail(dC)
 
-getCases.intracidade <- function(city, lastday = Sys.Date(), disease = "dengue",
+getCasesIntraCidade <- function(city, lastday = Sys.Date(), disease = "dengue",
                           datasource) {
       
       sqldate <- paste("'", lastday, "'", sep = "")

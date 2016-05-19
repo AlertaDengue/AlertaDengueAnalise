@@ -29,7 +29,7 @@
 #'               critr = c("inc > inccrit", 1, 2))
 #'ale <- fouralert(d, pars = crit, pop = 1000000)
 #' # For a more useful output
-#'res <- write.alerta(ale)
+#'res <- writeAlerta(ale)
 #'tail(res)
 
 fouralert <- function(obj, pars, crit, pop, miss="last"){
@@ -132,7 +132,7 @@ fouralert <- function(obj, pars, crit, pop, miss="last"){
       return(list(data=obj, indices=indices, rules=pars, n=4))      
 }
 
-#update.alerta ---------------------------------------------------------------------
+#updateAlerta ---------------------------------------------------------------------
 #'@title Define conditions to issue a 4 level alert Green-Yellow-Orange-Red for any city or region.
 #'@description Yellow is raised when environmental conditions required for
 #'positive mosquito population growth are detected, green otherwise.Orange 
@@ -147,11 +147,11 @@ fouralert <- function(obj, pars, crit, pop, miss="last"){
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
-#'res <- update.alerta(city = 330240, pars = pars.Rio, crit = criteria, datasource = con)
-#'res <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = criteria, datasource = con,sefinal=201613)
+#'res <- updateAlerta(city = 330240, pars = pars.Rio, crit = criteria, datasource = con)
+#'res <- updateAlerta(region = names(pars.RJ), pars = pars.RJ, crit = criteria, datasource = con,sefinal=201613)
 #'tail(res$data)
 
-update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, datasource, sefinal){
+updateAlerta <- function(city, region, state, pars, crit, writedb = FALSE, datasource, sefinal){
       
       # update of a single city
       if(!missing (city)) { 
@@ -227,10 +227,10 @@ update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, data
                   parsi <- pars
             }
             
-            if(!all(names(parsi) %in% c("pdig","tcrit","inccrit","preseas","posseas",
-                                       "crity","crito","critr"))) {
-                  stop("Verifique o config dessa cidade. Está faltando parametros em pars para rodar o alerta")} 
-            
+#             if(!any(c("pdig","tcrit","inccrit","preseas","posseas",
+#                       "crity","crito","critr")) %in% names(parsi)) {
+#                   stop("Verifique o config dessa cidade. Está faltando parametros em pars para rodar o alerta")} 
+#             
             
             #d <- subset(d,SE<=sefinal)
             # preenchendo potenciais missings
@@ -254,7 +254,7 @@ update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, data
                   names(alertas)[i]<-nick
             } 
             if (writedb == TRUE) {
-                  res <- write.alerta(alerta, write = "db")
+                  res <- writeAlerta(alerta, write = "db")
                   #write.csv(alerta,file=paste("memoria/", nick,hoje,".csv",sep="")) 
             }
       }
@@ -406,7 +406,7 @@ alertaIntraCidade <- function(city, locs, pars, crit, datasource, verbose = TRUE
 }
 
 
-#plot.alert --------------------------------------------------------------------
+#plotAlerta --------------------------------------------------------------------
 #'@title Plot the time series of warnings.
 #'@description Function to plot the output of 
 #'@param obj object created by the twoalert and fouralert functions.
@@ -417,7 +417,7 @@ alertaIntraCidade <- function(city, locs, pars, crit, datasource, verbose = TRUE
 #'  # See fouralert function
 
 
-plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), 
+plotAlerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"), 
                       ini=201001, fim=202001, ylab=var, yrange){
       
       stopifnot(names(obj) == c("data", "indices", "rules","n"))
@@ -459,7 +459,7 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"),
             }
 }
       
-#map.Rio --------------------------------------------------------------------
+#mapRio --------------------------------------------------------------------
 #'@title Plot the alert map for Rio de Janeiro city.
 #'@description Function to plot a map of the alert 
 #'@param obj object created by the twoalert and fouralert functions.
@@ -467,9 +467,9 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"),
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
 #'@return a map
 #'@examples
-#'map.Rio(alerio)
+#'mapRio(alerio)
 
-map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasource=con,
+mapRio<-function(obj, cores = c("green","yellow","orange","red"), data, datasource=con,
                   shapefile = "../CAPS_SMS.shp"){
       
       stopifnot(names(obj[[1]]) == c("data", "indices", "rules","n"))
@@ -516,7 +516,7 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #geraMapa --------------------------------------------------------------------
 #'@title Plot the alert map for any state.
 #'@description Function to plot a map of the alert 
-#'@param regionais vector of alerts created by update.alerta.
+#'@param regionais vector of alerts created by updateAlerta.
 #'@param se epidemiological week (format = 201610).  
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
 #'@param titulo title of the map
@@ -530,8 +530,8 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #' "bottomleft", "left", "topleft", "top", "topright", "right" and "center"
 #'@return a map
 #'@examples
-#'reg1 <- update.alerta(regional="Noroeste", pars = RJ.noroeste, datasource = con,sefinal=201613)
-#'reg2 <- update.alerta(regional="Norte", pars = RJ.norte, datasource = con,sefinal=201613)
+#'reg1 <- updateAlerta(regional="Noroeste", pars = RJ.noroeste, datasource = con,sefinal=201613)
+#'reg2 <- updateAlerta(regional="Norte", pars = RJ.norte, datasource = con,sefinal=201613)
 #'geraMapa(c(alerta.Norte, alerta.Noroeste), data=201613, shapefile="../33MUE250GC_SIR.shp", 
 #'varid="CD_GEOCMU", titulo="Regionais Norte e Nordeste")
 
@@ -583,7 +583,7 @@ geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), s
 }
 
 
-#write.alerta --------------------------------------------------------------------
+#writeAlerta --------------------------------------------------------------------
 #'@title Write the alert into the database.
 #'@description Function to write the alert results into the database. It only writes one city at a time. It is recommended that the end data is specified.
 #'If this is the first time a city is included in the dataset, than use newcity = TRUE. This will force to insert from the beginning. Or if you want to update,
@@ -602,10 +602,10 @@ geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), s
 #'crito <- c("p1 > 0.9", 3, 3)
 #'critr <- c("inc > 100", 3, 3)
 #'alerta <- fouralert(d, cy = crity, co = crito, cr = critr, pop=1000000)
-#'res <- write.alerta(alerta, write="no")
+#'res <- writeAlerta(alerta, write="no")
 #'tail(res)
 
-write.alerta<-function(obj, write = "no", version = Sys.Date()){
+writeAlerta<-function(obj, write = "no", version = Sys.Date()){
       
       stopifnot(names(obj) == c("data", "indices", "rules","n"))
       
@@ -679,7 +679,7 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
 }
 
 
-#write.alertaRio --------------------------------------------------------------------
+#writeAlertaRio --------------------------------------------------------------------
 #'@title Write the Rio de janeiro alert into the database.
 #'@description Function to write the alert results into the database. 
 #'@param obj object created by the alertRio function and contains alerts for each APS.
@@ -688,10 +688,10 @@ write.alerta<-function(obj, write = "no", version = Sys.Date()){
 #'@return data.frame with the data to be written. 
 #'@examples
 #'alerio2 <- alertaRio(naps = c(1,2), datasource=con)
-#'res <- write.alertaRio(alerio2, write="db")
+#'res <- writeAlertaRio(alerio2, write="db")
 #'tail(res)
 
-write.alertaRio<-function(obj, write = "no", version = Sys.Date()){
+writeAlertaRio<-function(obj, write = "no", version = Sys.Date()){
       
       listaAPS <- c("APS 1", "APS 2.1", "APS 2.2", "APS 3.1", "APS 3.2", "APS 3.3"
                     , "APS 4", "APS 5.1", "APS 5.2", "APS 5.3")
@@ -865,7 +865,7 @@ isRed <- function(obj, pop, ccrit=100, lag=3){
 #'crity <- c("temp_min > 22", 3, 3)
 #'alerta <- twoalert(d, cy = crity)
 #'head(alerta$indices)
-#'plot.alerta(alerta, var="temp_min")
+#'plotAlerta(alerta, var="temp_min")
 
 twoalert <- function(obj, cy){
       le <- dim(obj)[1] 

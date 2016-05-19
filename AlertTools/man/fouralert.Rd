@@ -37,7 +37,7 @@ crit <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 14.15, po
               critr = c("inc > inccrit", 1, 2))
 ale <- fouralert(d, pars = crit, pop = 1000000)
 # For a more useful output
-res <- write.alerta(ale)
+res <- writeAlerta(ale)
 tail(res)
 }
 

@@ -32,6 +32,6 @@ d<- mergedata(tweet = tw, climate = cli)
 crity <- c("temp_min > 22", 3, 3)
 alerta <- twoalert(d, cy = crity)
 head(alerta$indices)
-plot.alerta(alerta, var="temp_min")
+plotAlerta(alerta, var="temp_min")
 }
 
