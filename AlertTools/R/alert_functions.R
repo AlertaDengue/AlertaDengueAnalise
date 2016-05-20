@@ -440,6 +440,7 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'@param regionais vector of alerts created by update.alerta.
 #'@param se epidemiological week (format = 201610).  
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
+#'@param legpos legend position. Default is bottomright. Check the other options in the function legend.
 #'@param titulo title of the map
 #'@param filename if present, the map is saved.
 #'@param dir directory where map will be saved 
@@ -449,12 +450,11 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
 #'@param resol dpi png resolution, default is 200
 #'@return a map
 #'@examples
-#'reg1 <- update.alerta(regional="Noroeste", pars = RJ.noroeste, datasource = con,sefinal=201613)
-#'reg2 <- update.alerta(regional="Norte", pars = RJ.norte, datasource = con,sefinal=201613)
-#'geraMapa(c(alerta.Norte, alerta.Noroeste), data=201613, shapefile="../33MUE250GC_SIR.shp", 
-#'varid="CD_GEOCMU", titulo="Regionais Norte e Nordeste")
+#'reg1 <- update.alerta(region="Noroeste", pars = pars.RJ, datasource = con, sefinal=201613)
+#'geraMapa(reg1, data=201613, shapefile="../report/RJ/shape/33MUE250GC_SIR.shp",
+#'se = 201613, varid="CD_GEOCMU", titulo="Regionais Norte e Nordeste \n", legpos="topright")
 
-geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), se, datasource=con,
+geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), legpos="bottomright", se, datasource=con,
                    shapefile, varid, varname, titulo="", filename, dir="",caption=TRUE, resol = 200){
       
       require(maptools,quietly = TRUE,warn.conflicts = FALSE)
@@ -492,7 +492,7 @@ geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), s
       plot(meumapa,col=meumapa@data$cor)
       coords <- coordinates(meumapa)
       if (caption == TRUE) text(coords,label=meumapa@data$short,cex=0.6)
-      legend("bottomright",fill=cores,c("Atividade baixa","Alerta de transmissão","Transmissão sustentada",
+      legend(legpos,fill=cores,c("Atividade baixa","Alerta de transmissão","Transmissão sustentada",
                                         "Atividade alta"),bty="n",cex=0.8)
       par(cex.main=0.7)
       title(paste0(titulo, "Semana ",substr(se,5,6)," de ",substr(se,1,4)),line=0)
