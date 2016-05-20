@@ -146,7 +146,7 @@ fouralert <- function(obj, pars, crit, pop, miss="last"){
 #'@return data.frame with the week condition and the number of weeks within the 
 #'last lag weeks with conditions = TRUE.
 #'@examples
-#'res <- update.alerta(city = 330240, pars = pars.Rio, crit = criteria, datasource = con)
+#'res <- update.alerta(city = 330240, pars = pars.RJ, crit = criteria, datasource = con)
 #'res <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = criteria, datasource = con,sefinal=201613)
 #'tail(res$data)
 
@@ -226,12 +226,12 @@ update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, data
                   parsi <- pars
             }
             
-            if(!all(names(parsi) %in% c("pdig","tcrit","inccrit","preseas","posseas",
-                                       "crity","crito","critr"))) {
-                  stop("Verifique o config dessa cidade. Está faltando parametros em pars para rodar o alerta")} 
+#             if(!all(names(parsi) %in% c("pdig","tcrit","inccrit","preseas","posseas",
+#                                        "crity","crito","critr"))) {
+#                   stop("Verifique o config dessa cidade. Está faltando parametros em pars para rodar o alerta")} 
+#             
             
-            
-            #d <- subset(d,SE<=sefinal)
+            d <- subset(d,SE<=sefinal)
             # preenchendo potenciais missings
             d$cidade[is.na(d$cidade)==TRUE] <- geocidade
             d$nome[is.na(d$nome)==TRUE] <- na.omit(unique(d$nome))[1]
@@ -495,7 +495,7 @@ geraMapa<-function(alerta, subset, cores = c("green","yellow","orange","red"), l
       legend(legpos,fill=cores,c("Atividade baixa","Alerta de transmissão","Transmissão sustentada",
                                         "Atividade alta"),bty="n",cex=0.8)
       par(cex.main=0.7)
-      title(paste0(titulo, "Semana ",substr(se,5,6)," de ",substr(se,1,4)),line=0)
+      title(paste0(titulo, "Semana ",substr(se,5,6)," de ",substr(se,1,4)),line=-1)
       
       if(!missing(filename)) {dev.off()} #salvar
 }
