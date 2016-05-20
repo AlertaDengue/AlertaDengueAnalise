@@ -7,8 +7,8 @@
 #'@title Get Climate Data
 #'@param stations station code (4 digits).
 #'@param vars climate variables (default var="all": all variables available )
-#'@param finalday last day. Default is the last available. Format = %Y-%m-%d. 
-#'@param datasource Use "data/WUdata.rda" to use test dataset. #' Use the connection to the Postgresql server if using project data. See also DenguedbConnect
+#'@param finalday last day. Default is the last available. Format = Y-m-d. 
+#'@param datasource Use "data/WUdata.rda" to use test dataset. Use the connection to the Postgresql server if using project data. See also DenguedbConnect
 #' to open the database connection. 
 #'@return data.frame with the weekly data (cidade estacao data temp_min tmed tmax umin umed umax pressaomin pressaomed pressaomax)
 #'@examples

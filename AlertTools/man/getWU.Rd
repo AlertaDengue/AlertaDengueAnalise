@@ -11,9 +11,9 @@ getWU(stations, vars = "temp_min", finalday = Sys.Date(), datasource)
 
 \item{vars}{climate variables (default var="all": all variables available )}
 
-\item{finalday}{last day. Default is the last available. Format = %Y-%m-%d.}
+\item{finalday}{last day. Default is the last available. Format = Y-m-d.}
 
-\item{datasource}{Use "data/WUdata.rda" to use test dataset. #' Use the connection to the Postgresql server if using project data. See also DenguedbConnect
+\item{datasource}{Use "data/WUdata.rda" to use test dataset. Use the connection to the Postgresql server if using project data. See also DenguedbConnect
 to open the database connection.}
 }
 \value{

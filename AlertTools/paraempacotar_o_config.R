@@ -19,4 +19,4 @@ system("zip -r ../alerta.zip ../alerta")
 #5. copíar para a pasta publica 
 system("cp ../alerta.zip /home/Rpublic")
 
-system("cp ../AlertTools_1.1.tar.gz /home/Rpublic")
+system("cp ../AlertTools_1.1.0.tar.gz /home/Rpublic")

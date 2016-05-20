@@ -1,7 +1,7 @@
 Package: AlertTools
 Type: Package
 Title: utility functions for the Alerta Dengue System
-Version: 1.1
+Version: 1.1.0
 Date: 2015-10-05
 Author: Claudia Codeco
 Maintainer: Claudia Codeco <claudia.codeco@gmail.com>

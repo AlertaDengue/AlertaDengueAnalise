@@ -197,7 +197,15 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
   
   sqlquery = paste("SELECT *
   FROM  \"Municipio\".\"Bairro\"")
+
   
+ sql = paste("SELECT nome_regional, uf, geocodigo, populacao
+               FROM \"Dengue_global\".\"Municipio\" 
+              INNER JOIN \"Dengue_global\".regional_saude
+              ON municipio_geocodigo = geocodigo")
+  
+  dd<- dbGetQuery(con, sql)    
+  write.csv(dd,file="regionaisPR.csv")
   # =====================
   # criar nova coluna na tabela Localidade para inserir nova divisao submunicipal
   
