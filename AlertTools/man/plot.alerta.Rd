@@ -4,8 +4,8 @@
 \alias{plot.alerta}
 \title{Plot the time series of warnings.}
 \usage{
-\method{plot}{alerta}(obj, var, cores = c("#0D6B0D", "#C8D20F", "orange",
-  "red"), ini = 201001, fim = 202001, ylab = var, yrange)
+plot.alerta(obj, var, cores = c("#0D6B0D", "#C8D20F", "orange", "red"),
+  ini = 201001, fim = 202001, ylab = var, yrange)
 }
 \arguments{
 \item{obj}{object created by the twoalert and fouralert functions.}

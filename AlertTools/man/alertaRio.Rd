@@ -4,7 +4,7 @@
 \alias{alertaRio}
 \title{4 level alert Green-Yellow-Orange-Red for Rio de Janeiro.}
 \usage{
-alertaRio(naps = 0:9, pars, crit, datasource, verbose = TRUE)
+alertaRio(naps = 0:9, pars, crit, datasource, se, verbose = TRUE)
 }
 \arguments{
 \item{naps}{subset of vector 0:9 corresponding to the id of the APS. Default is all of them.}
@@ -12,6 +12,8 @@ alertaRio(naps = 0:9, pars, crit, datasource, verbose = TRUE)
 \item{pars}{parameters of the alert.}
 
 \item{datasource}{it is the name of the sql connection.}
+
+\item{se}{last epidemiological week (format = 201401)}
 
 \item{verbose}{FALSE}
 }
@@ -31,7 +33,7 @@ crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 0),
 crito = c("p1 > 0.9 & inc > preseas", 2, 2),
 critr = c("inc > inccrit", 1, 2)
 )
-alerio2 <- alertaRio(naps = c(0,1), pars=params, crit = criter, datasource=con)
+alerio2 <- alertaRio(naps = c(0,1), pars=params, crit = criter, datasource=con, se=201604)
 names(alerio2)
 }
 

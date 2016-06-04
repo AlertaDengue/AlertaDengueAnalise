@@ -2,10 +2,11 @@
 # Arquivo de execução do Alerta Dengue: Municipio do Rio de Janeiro
 # ================================================================================
 source("../config/config.R") # criterios em uso
+se = 201621
 
 # --Calcula alerta--
 con = DenguedbConnect()
-alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, verbose=TRUE)
+alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = se, verbose=TRUE)
 res <- write.alertaRio(alerio, write="no") 
 map.Rio(alerio,shapefile = "../report/Rio_de_Janeiro/shape/CAPS_SMS.shp") 
 

@@ -73,8 +73,7 @@ getWU <- function(stations, vars = "temp_min", finalday = Sys.Date(), datasource
 #' to open the database connection. 
 #'@return data.frame with weekly counts of people tweeting on dengue.
 #'@examples
-#'res = getTweet(city = c(330455), lastday = "2014-03-01", datasource = con)
-#'res = getTweet(city = c(330455), datasource = "data/tw.rda") 
+#'res = getTweet(city = 330455, lastday = "2014-03-01", datasource = con)
 #'tail(res)
 
 getTweet <- function(city, lastday = Sys.Date(), datasource) {
@@ -88,23 +87,28 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
                 \"Municipio_geocodigo\" = ", city)
             tw <- dbGetQuery(datasource,c1)
             if (dim(tw)[1]>0) 
-            names(tw) <- c("data_dia","tweet")
+                  names(tw) <- c("data_dia","tweet")
       }
-      if (dim(tw)[1]>0){
-            tw <- subset(tw, as.Date(data_dia, format = "%Y-%m-%d") <= lastday)
-            
-            # Atribuir SE e agregar por semana-----------------------------------------
-            tw$SE <- data2SE(tw$data_dia, format = "%Y-%m-%d")
-            sem <- seqSE(from = min(tw$SE), to = max(tw$SE))$SE
-            twf <- data.frame(SE = sem, tweet = NA)
-            for (i in 1:dim(twf)[1]) twf$tweet[i] <- sum(tw$tweet[tw$SE==twf$SE[i]])  
-            twf$cidade <- city      
-      } else {
-            twf = NULL
-            print("essa cidade nao tem tweets")
-            }
       
-      twf
+      if (sum(tw$tweet)==0) message(paste("cidade",city,"nunca tweetou sobre dengue"))
+      
+      
+      # output com data de 201001 ate lastday
+      sem <- seqSE(from = 201001, to = data2SE(lastday,format="%Y-%m-%d"))$SE
+      tw.agregado <- data.frame(SE = sem, tweet = NA)
+      
+      if (dim(tw)[1]>0){
+            #      tw <- subset(tw, as.Date(data_dia, format = "%Y-%m-%d") <= lastday)
+            # transformar data em SE -----------------------------------------
+            tw$SE <- data2SE(tw$data_dia, format = "%Y-%m-%d")
+            for (i in 1:dim(tw)[1]) {
+                  twse <- tw$SE[i] 
+                  tw.agregado$tweet[tw.agregado$SE==twse] <- sum(tw$tweet[i])
+            }
+            tw.agregado$cidade <- city
+      }
+      
+      tw.agregado
 }
 
 
@@ -118,7 +122,7 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
 #'@return data.frame with the data aggregated per week according to disease onset date.
 #'@examples
 #'dC0 = getCases(city = c(330455), lastday ="2014-03-10", datasource = "data/sinan.rda") 
-#'dC0 = getCases(city = 330220, datasource = con) 
+#'dC0 = getCases(city = 4100301, datasource = con) 
 #'head(dC0)
 
 getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource) {
@@ -134,10 +138,11 @@ getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource)
             sql1 <- paste("'", lastday, "'", sep = "")
             sql <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE dt_digita <= ",sql1, " AND municipio_geocodigo =", city)
             dd <- dbGetQuery(datasource,sql)
-            if (dim(dd)[1]==0) stop("geocodigo retornou zero casos. Está correto?")
-            
-            dd$SEM_NOT <- data2SE(dd$dt_notific, format = "%Y-%m-%d")
-            
+            if (dim(dd)[1]==0) {
+                  message(paste("cidade",city,"nunca teve casos. Está correto?..."))
+            } else {
+                  dd$SEM_NOT <- data2SE(dd$dt_notific, format = "%Y-%m-%d")
+            }
             
       } else { # one or more dbf files
             nf = length(datasource)
@@ -156,9 +161,8 @@ getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource)
             }
       }
       
-      sem <- seqSE(from = min(dd$SEM_NOT), to = max(dd$SEM_NOT))$SE
+      sem <- seqSE(from = 201001, to = data2SE(lastday,format="%Y-%m-%d"))$SE
       nsem <- length(sem)
-      
       
       st <- data.frame(SE = sem, casos = 0)
       for(i in 1:nsem) st$casos[i] <- sum(dd$SEM_NOT == st$SE[i])
@@ -190,7 +194,7 @@ getCases <- function(city, lastday = Sys.Date(), disease = "dengue", datasource)
 #', 7(APS5.1), 8(APS5.2), 9(APS5.3)  
 #'@return data.frame with the data aggregated per health district and week
 #'@examples
-#'dC = getCasesinRio(APSid = 1, datasource = con) # Rio de Janeiro
+#'dC = getCasesinRio(APSid = 9, datasource = con) # Rio de Janeiro
 #'tail(dC)
 
 getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
@@ -211,7 +215,8 @@ getCasesinRio <- function(APSid, lastday = Sys.Date(), disease = "dengue",
       d$SEM_NOT <- data2SE(d$dt_notific, format = "%Y-%m-%d")
             
       #Cria Serie temporal de casos
-      sem <- seqSE(from = min(d$SEM_NOT), to = max(d$SEM_NOT))$SE
+      #sem <- seqSE(from = min(d$SEM_NOT), to = max(d$SEM_NOT))$SE
+      sem <- seqSE(from = 201001, to = data2SE(lastday,format="%Y-%m-%d"))$SE
       nsem <- length(sem)
       st <- data.frame(SE = sem, casos = 0)
       for(i in 1:nsem) st$casos[i] <- sum(d$SEM_NOT == st$SE[i])

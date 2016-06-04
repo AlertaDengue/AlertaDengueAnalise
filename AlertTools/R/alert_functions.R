@@ -36,10 +36,7 @@ fouralert <- function(obj, pars, crit, pop, miss="last"){
       le <- dim(obj)[1]
       
       vars = names(pars)
-      # verificando se pars esta bem formado:
-      if(!all(vars %in% c("pdig","tcrit","inccrit","preseas","posseas"))) {
-            stop("Verifique o config. Está faltando parametros em pars para rodar o alerta")} 
-      
+
       cyellow = crit[[1]]; corange = crit[[2]]; cred = crit[[3]]
       for (k in vars) {
             if (k != "pdig"){ 
@@ -272,6 +269,7 @@ update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, data
 #'@param pars parameters of the alert.
 #'@param naps subset of vector 0:9 corresponding to the id of the APS. Default is all of them.
 #'@param datasource it is the name of the sql connection.
+#'@param se last epidemiological week (format = 201401) 
 #'@param verbose FALSE
 #'@return list with an alert object for each APS.
 #'@examples
@@ -281,11 +279,11 @@ update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, data
 #'crito = c("p1 > 0.9 & inc > preseas", 2, 2),
 #'critr = c("inc > inccrit", 1, 2)
 #')
-#'alerio2 <- alertaRio(naps = c(0,1), pars=params, crit = criter, datasource=con)
+#'alerio2 <- alertaRio(naps = c(0,1), pars=params, crit = criter, datasource=con, se=201604)
 #'names(alerio2)
 
 
-alertaRio <- function(naps = 0:9, pars, crit, datasource, verbose = TRUE){
+alertaRio <- function(naps = 0:9, pars, crit, datasource, se, verbose = TRUE){
       
       message("obtendo dados de clima e tweets ...")
       tw = getTweet(city = 3304557, datasource = datasource) 
@@ -321,8 +319,8 @@ alertaRio <- function(naps = 0:9, pars, crit, datasource, verbose = TRUE){
             casfit<-adjustIncidence(obj=d, pdig = p)
             casr<-Rt(obj = casfit, count = "tcasesmed", gtdist="normal", meangt=3, sdgt = 1)   
             
-             
-            res[[i]] <- fouralert(obj = casr, pars = pars, crit = crit, pop=cas$pop[1])
+              
+            res[[i]] <- fouralert(obj = casr[casr$SE <= se,], pars = pars, crit = crit, pop=cas$pop[1])
       }
             
       res

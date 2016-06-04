@@ -23,8 +23,7 @@ Create weekly time series from tweeter data from server. The
 source of this data is the Observatorio da Dengue (UFMG).
 }
 \examples{
-res = getTweet(city = c(330455), lastday = "2014-03-01", datasource = con)
-res = getTweet(city = c(330455), datasource = "data/tw.rda") 
+res = getTweet(city = 330455, lastday = "2014-03-01", datasource = con)
 tail(res)
 }
 

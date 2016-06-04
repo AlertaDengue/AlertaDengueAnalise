@@ -72,7 +72,7 @@ c1 <- paste("SELECT * from \"Municipio\".\"Tweet\" WHERE
 d <- dbGetQuery(con,c1)
 head(d)
 plot(d$numero)
-sql <- "DELETE from \"Municipio\".\"Historico_alerta\" where casos_est=0"
+#sql <- "DELETE from \"Municipio\".\"Historico_alerta\" where casos_est=0"
 dbGetQuery(con, sql)
 
 #getTweet <- function(city, lastday = Sys.Date(), datasource = "data/tw.rda") {
@@ -81,7 +81,16 @@ c1 <- paste("select data_dia, numero from \"Municipio\".\"Tweet\" where
 tw <- dbGetQuery(con,c1)
 names(tw)<-c("data","tweet")
 tw <- subset(tw, as.Date(data, format = "%Y-%m-%d") <= lastday)
-  
+ 
+ 
+## tirando os dados do parana de 2016
+dbListFields(con, c("Municipio","Notificacao"))
+sql <- "SELECT * from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 4100000 AND ano_notif=2016"
+dd <- dbGetQuery(con, sql)
+
+#sql <- "DELETE from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 4100000 AND ano_notif=2016"
+#dbGetQuery(con, sql)
+
 ## getWU <- function(stations, var = "all", finalday = Sys.Date(), datasource = "data/WUdata.rda") {
   # creating the sql query for the stations
   sql1 = paste("'", stations[1], sep = "")
@@ -137,7 +146,14 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
   dbListFields(con, c("Dengue_global","regional_saude"))
   tabr <- dbReadTable(con, c("Dengue_global","regional_saude"))
   
-  newdata <- read.csv("../EPR_municipios_regional_saude.csv")
+  sql <- "SELECT * from \"Dengue_global\".regional_saude WHERE  municipio_geocodigo >= 4100000"
+  dd <- dbGetQuery(con, sql)
+  
+  sql <- "DELETE from \"Dengue_global\".regional_saude WHERE  municipio_geocodigo >= 4100000"
+  #dbGetQuery(con, sql)
+  
+  
+  newdata <- read.csv("../EPR_municipios_regional_saude1.csv")
   tail(newdata)
   
   inserelinha <- function(newd,li){
