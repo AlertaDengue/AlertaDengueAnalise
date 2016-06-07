@@ -9,7 +9,7 @@ data_relatorio = 201614
 # ---- Calcula alerta: 
 con <- DenguedbConnect()
 
-aleRJ9 <- update.alerta(region = names(pars.RJ)[9], pars = pars.RJ, crit = RJ.criteria, 
+aleRJ <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = RJ.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
 res = write(aleRJ)

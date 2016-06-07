@@ -211,8 +211,8 @@ update.alerta <- function(city, region, state, pars, crit, writedb = FALSE, data
             
             d <- mergedata(cases = dC0, climate = dW, tweet = dT)  # junta os dados
             if (!missing(sefinal)) d <- subset(d,SE<=sefinal)
-            d$temp_min <- nafill(d$temp_min, rule="linear")  # interpolacao clima NOVO
-            d$casos <- nafill(d$casos, "zero") # preenche de zeros o final da serie NOVO
+            d$temp_min <- nafill(d$temp_min, rule="linear")  # interpolacao clima
+            #d$casos <- nafill(d$casos, "zero") # preenche de zeros o final da serie NOVO
             
             # parsi e' pars de uma unica cidade. 
             # E'preciso extrair no caso de region 
@@ -386,12 +386,15 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"),
 #'@param obj object created by the twoalert and fouralert functions.
 #'@param var to be ploted in the graph, usually cases when available.  
 #'@param cores colors corresponding to the levels 1, 2, 3, 4.
+#'@param filename if present, the map is saved.
+#'@param dir directory where map will be saved. 
+#'@param resol dpi png resolution, default is 200
 #'@return a map
 #'@examples
 #'map.Rio(alerio)
 
 map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasource=con,
-                  shapefile = "../CAPS_SMS.shp"){
+                  shapefile = "../CAPS_SMS.shp", filename="", dir, resol=200){
       
       stopifnot(names(obj[[1]]) == c("data", "indices", "rules","n"))
       
@@ -429,6 +432,11 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
       par(cex.main=0.7)
       title(paste0( "Mapa MRJ por APs \n"," Semana ",substr(ultima_se,5,6)," de ",
                     substr(ultima_se,1,4)),line=-1)
+      
+      if(!missing(filename)){#salvar
+            png(paste(dir,filename, sep=""),width = 16, height = 15, units="cm", res=resol)
+      }
+      
       
 }
 

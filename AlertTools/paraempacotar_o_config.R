@@ -20,3 +20,5 @@ system("zip -r ../alerta.zip ../alerta")
 system("cp ../alerta.zip /home/Rpublic")
 
 system("cp ../AlertTools_1.1.0.tar.gz /home/Rpublic")
+
+

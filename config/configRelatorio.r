@@ -166,3 +166,198 @@ configRelatorio <- function(uf, sigla, data, alert, shape, varid, dir, datasourc
            nverde, namarelo, nlaranja, nvermelho, nverde1, namarelo1, nlaranja1, nvermelho1,
            file=paste(RJ.out,"params",sigla,".RData",sep=""))
 }
+
+configRelatorioMunicipal <- function(alert, dir.out, data, datasource=con){
+      nomecidade = alert$data$nome[1]
+      geocodigo = alert$data$cidade[1]
+      
+      regionalmun = dbGetQuery(datasource, paste("SELECT nome_regional 
+                  FROM \"Dengue_global\".regional_saude 
+                  where municipio_geocodigo = ", geocodigo, sep=""))    
+      
+      ano = floor(data/100)
+      se = data - ano*100 
+      linhasdoano = which(floor(alert$data$SE/100)==ano)
+      linhase = which(alert$data$SE==data)
+      linhase1 = which(alert$data$SE==data)-1
+            
+      totanomun = sum(alert$data$casos[linhasdoano],na.rm=TRUE)
+      totultsemun = alert$data$casos[linhase]
+      
+      cores = c("verde","amarelo","laranja","vermelho")
+      nivelmun = cores[alert$indices$level[linhase] ]  
+      
+      # cria nome do arquivo de saida
+      dirmun = gsub("/figs","",dir.out)
+      nomesemespaco = gsub(" ","",nomecidade)
+      nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+      fname = paste(dirmun,nomesemacento,"/","params",nomesemacento,".RData",sep="")
+      
+      # Figura
+      figname = paste(dirmun,nomesemacento,"/","figura",nomesemacento,".png",sep="")
+      png(figname, width = 14, height = 16, units="cm", res=300)
+      layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
+             heights = c(rep(lcm(4),2), lcm(5)))
+      
+      # separação dos eixos para casos de dengue e tweets 
+      
+      par(mai=c(0,0,0,0),mar=c(1,4,0,3))
+      
+      plot(alert$data$casos, type="l", xlab="", ylab="", axes=FALSE)
+      axis(1, pos=0, lty=0, lab=FALSE)
+      axis(2)
+      mtext(text="Casos de Dengue", line=2.5,side=2, cex = 0.7)
+      maxy <- max(alert$data$casos, na.rm=TRUE)
+      legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
+      par(new=T)
+      plot(alert$data$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+      lines(alert$data$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+      axis(1, pos=0, lty=0, lab=FALSE)
+      axis(4)
+      mtext(text="Tweets", line=2.5, side=4, cex = 0.7)
+      
+      par(mai=c(0,0,0,0),mar=c(1,4,0,3))
+      plot(alert$data$temp_min, type="l", xlab="", ylab ="Temperatura",axes=FALSE)
+      legend(x="topleft",lty=c(2),col=c("black"),
+             legend=c("limiar favorável transmissão"),cex=0.85,bty="n")
+      axis(2)
+      abline(h=22, lty=2)
+      
+      par(mai=c(0,0,0,0),mar=c(1,4,0,4))
+      #par(mar=c(4,4,1,1))
+      plot.alerta(alert, var="tcasesmed",ini=201301,fim=max(alert$data$SE))
+      abline(h=100/100000*alert$data$pop[1],lty=3)
+      legend(x="topright",lty=c(3,2,2),col=c("black","red","darkgreen"),
+             legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
+      dev.off()
+      
+      message(paste("figura",figname,"salva"))
+      save(nomecidade, regionalmun, alert, totanomun, totultsemun, nivelmun, se, file=fname)
+}
+
+
+geraRelatorioMunicipal<-function(dir, alert, rnwfile = "BoletimMunicipal_InfoDengue_v01.Rnw",
+                                 dirbase=diralerta, data=data_relatorio){  
+      
+      rnwdir = paste(dirbase, "report/reportconfig/",sep="")
+      # parametros estaduais
+      load(paste(dir,"/paramsRJ.RData",sep=""))
+      
+      # diretorio do municipio
+      nomecidade = alert$data$nome[1]
+      dirmun = gsub("/figs","",dir)
+      nomesemespaco = gsub(" ","",nomecidade)
+      nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+      dirmun = paste(dirmun,nomesemacento,sep="")
+      
+      load(paste(dirmun,'/params',nomesemacento,'.RData',sep=""))
+      figmapaestado = paste(dir,'Mapa_E',sigla,'.png',sep="")
+      figmunicipio = paste(dirmun,'/figura',nomesemacento,'.png',sep="")
+      temp <<- environment()
+      Sweave(paste(rnwdir,rnwfile,sep=""), encoding = "UTF8")     
+      require(tools)  
+      
+      # arquivo tex gerado
+      texfile = paste(unlist(strsplit(rnwfile,"[.]"))[1],".tex",sep="")
+      texi2dvi(file = texfile, pdf = TRUE, quiet=TRUE, clean=TRUE) 
+}
+
+
+### Rio de Janeiro - cidade ###
+# por razoes historicas, temos funcoes separadas para a cidade do Rio de Janeiro
+
+geraRelatorioRio<-function(dir, alert, rnwfile = "BoletimMunicipal_InfoDengue_v01.Rnw",
+                                 dirbase=diralerta, data=data_relatorio){  
+      
+      rnwdir = paste(dirbase, "report/reportconfig/",sep="")
+      # parametros estaduais
+      load(paste(dir,"/paramsRJ.RData",sep=""))
+      
+      # diretorio do municipio
+      nomecidade = alert$data$nome[1]
+      dirmun = gsub("/figs","",dir)
+      nomesemespaco = gsub(" ","",nomecidade)
+      nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+      dirmun = paste(dirmun,nomesemacento,sep="")
+      
+      load(paste(dirmun,'/params',nomesemacento,'.RData',sep=""))
+      figmapaestado = paste(dir,'Mapa_E',sigla,'.png',sep="")
+      figmunicipio = paste(dirmun,'/figura',nomesemacento,'.png',sep="")
+      temp <<- environment()
+      Sweave(paste(rnwdir,rnwfile,sep=""), encoding = "UTF8")     
+      require(tools)  
+      
+      # arquivo tex gerado
+      texfile = paste(unlist(strsplit(rnwfile,"[.]"))[1],".tex",sep="")
+      texi2dvi(file = texfile, pdf = TRUE, quiet=TRUE, clean=TRUE) 
+}
+
+
+
+configRelatorioRio <- function(alert, dir.out, data, datasource=con){
+      nomecidade = alert$data$nome[1]
+      geocodigo = alert$data$cidade[1]
+      
+      regionalmun = dbGetQuery(datasource, paste("SELECT nome_regional 
+                                                 FROM \"Dengue_global\".regional_saude 
+                                                 where municipio_geocodigo = ", geocodigo, sep=""))    
+      
+      ano = floor(data/100)
+      se = data - ano*100 
+      linhasdoano = which(floor(alert$data$SE/100)==ano)
+      linhase = which(alert$data$SE==data)
+      linhase1 = which(alert$data$SE==data)-1
+      
+      totanomun = sum(alert$data$casos[linhasdoano],na.rm=TRUE)
+      totultsemun = alert$data$casos[linhase]
+      
+      cores = c("verde","amarelo","laranja","vermelho")
+      nivelmun = cores[alert$indices$level[linhase] ]  
+      
+      # cria nome do arquivo de saida
+      dirmun = gsub("/figs","",dir.out)
+      nomesemespaco = gsub(" ","",nomecidade)
+      nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+      fname = paste(dirmun,nomesemacento,"/","params",nomesemacento,".RData",sep="")
+      
+      # Figura
+      figname = paste(dirmun,nomesemacento,"/","figura",nomesemacento,".png",sep="")
+      png(figname, width = 14, height = 16, units="cm", res=300)
+      layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
+             heights = c(rep(lcm(4),2), lcm(5)))
+      
+      # separação dos eixos para casos de dengue e tweets 
+      
+      par(mai=c(0,0,0,0),mar=c(1,4,0,3))
+      
+      plot(alert$data$casos, type="l", xlab="", ylab="", axes=FALSE)
+      axis(1, pos=0, lty=0, lab=FALSE)
+      axis(2)
+      mtext(text="Casos de Dengue", line=2.5,side=2, cex = 0.7)
+      maxy <- max(alert$data$casos, na.rm=TRUE)
+      legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
+      par(new=T)
+      plot(alert$data$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+      lines(alert$data$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+      axis(1, pos=0, lty=0, lab=FALSE)
+      axis(4)
+      mtext(text="Tweets", line=2.5, side=4, cex = 0.7)
+      
+      par(mai=c(0,0,0,0),mar=c(1,4,0,3))
+      plot(alert$data$temp_min, type="l", xlab="", ylab ="Temperatura",axes=FALSE)
+      legend(x="topleft",lty=c(2),col=c("black"),
+             legend=c("limiar favorável transmissão"),cex=0.85,bty="n")
+      axis(2)
+      abline(h=22, lty=2)
+      
+      par(mai=c(0,0,0,0),mar=c(1,4,0,4))
+      #par(mar=c(4,4,1,1))
+      plot.alerta(alert, var="tcasesmed",ini=201301,fim=max(alert$data$SE))
+      abline(h=100/100000*alert$data$pop[1],lty=3)
+      legend(x="topright",lty=c(3,2,2),col=c("black","red","darkgreen"),
+             legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
+      dev.off()
+      
+      message(paste("figura",figname,"salva"))
+      save(nomecidade, regionalmun, alert, totanomun, totultsemun, nivelmun, se, file=fname)
+}
