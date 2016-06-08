@@ -394,7 +394,7 @@ plot.alerta<-function(obj, var, cores = c("#0D6B0D","#C8D20F","orange","red"),
 #'map.Rio(alerio)
 
 map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasource=con,
-                  shapefile = "../CAPS_SMS.shp", filename="", dir, resol=200){
+                  shapefile = "../report/Rio_de_Janeiro/shape/CAPS_SMS.shp", filename="", dir, resol=200){
       
       stopifnot(names(obj[[1]]) == c("data", "indices", "rules","n"))
       
@@ -421,8 +421,13 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
       lastab$APS2 <-  as.numeric(gsub("APS ","",lastab$APS))
       mapa@data$COD_AP_SMS <- as.numeric(as.character(mapa@data$COD_AP_SMS))
       mapa@data <- merge(mapa@data,lastab,by.x="COD_AP_SMS",by.y="APS2",all=TRUE)
-      par(mfrow=c(1,1),mai=c(0,0,0,0),mar=c(4,1,1,1))
       
+      if(!missing(filename)){#salvar
+            figname = paste(dir,filename, sep="") 
+            png(figname, width = 16, height = 15, units="cm", res=resol)
+            message("mapa salvo em como  ", figname)
+      }
+      par(mfrow=c(1,1),mai=c(0,0,0,0),mar=c(4,1,1,1))
       plot(mapa,col=mapa@data$cor)
       coords <- coordinates(mapa)
       coords[1,1] <- -43.19
@@ -433,9 +438,8 @@ map.Rio<-function(obj, cores = c("green","yellow","orange","red"), data, datasou
       title(paste0( "Mapa MRJ por APs \n"," Semana ",substr(ultima_se,5,6)," de ",
                     substr(ultima_se,1,4)),line=-1)
       
-      if(!missing(filename)){#salvar
-            png(paste(dir,filename, sep=""),width = 16, height = 15, units="cm", res=resol)
-      }
+    
+      if(!missing(filename)) {dev.off()} #salvar
       
       
 }

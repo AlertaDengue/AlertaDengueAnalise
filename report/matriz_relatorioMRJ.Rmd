@@ -11,7 +11,7 @@ fontsize: 12pt
 ```
 
 ```{r setup, include=FALSE}
-opts_chunk$set(dev = 'pdf')
+#opts_chunk$set(dev = 'pdf')
 ```
 
 ```{r echo=FALSE}
@@ -53,9 +53,7 @@ Confira a situação da dengue na cidade do Rio de Janeiro. Mais detalhes, ver: 
 
 As sub-divisões são as áreas programáticas da saúde. Verde indica atividade baixa, amarelo indica vulnerabilidade, laranja indica transmissão sustentada e vermelho indica incidência acima do percentil 90.
 
-```{r fig.align='center',  echo=FALSE, message=TRUE, warning=TRUE}
-map.Rio(alerio, shapefile = "../report/Rio_de_Janeiro/shape/CAPS_SMS.shp")
-```
+![](Rio_de_Janeiro/mapaRio.png)
 
 Veja o mapa interativo em [Alerta Dengue](http://alerta.dengue.mat.br)
 <br> </br>

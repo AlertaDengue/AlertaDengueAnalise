@@ -5,7 +5,7 @@
 
 \documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
 \SweaveOpts{keep.source=TRUE}
-\input{../report/reportconfig/structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
 
 % Carregando dados  (atualmente é manual)
 <<carrega_dados,echo=FALSE,results=hide>>=
@@ -13,14 +13,15 @@ options(useFancyQuotes=FALSE)
 library('xtable')
 
 load('../RJ/figs/paramsRJ.RData') #parametros do estado e regionais 
-#load('RJ/CamposdosGoytacazes/paramsCamposdosGoytacazes.RData') # parametros do municipio
+load('../Rio_de_Janeiro/paramsRio.RData') # parametros do municipio
 
 figmapaestado = paste("../",sigla,'/figs/','Mapa_E',sigla,'.png',sep='')
+figmapamunicipio = paste("../",sigla,'/figs/','Mapa_E',sigla,'.png',sep='')
 #figmunicipio = 'RJ/CamposdosGoytacazes/figuraCamposdosGoytacazes.png'
 @
 
 \fancyfoot[C]{Boletim Municipal - Rio de Janeiro}
-\fancyfoot[R]{SE \Sexpr{se} de \Sexpr{ano}}
+\fancyfoot[R]{SE \Sexpr{(se+1)} de \Sexpr{ano}}
 \fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
 
 \begin{document}
@@ -48,28 +49,14 @@ figmapaestado = paste("../",sigla,'/figs/','Mapa_E',sigla,'.png',sep='')
 
 \hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
 
-\textbf{Semana \Sexpr{se} de \Sexpr{ano}} % se, ano, em pp.RData
+\textbf{Semana \Sexpr{(se+1)} de \Sexpr{ano}} % se, ano, em pp.RData
 
 \begin{itemize}
-\item \hyperlink{estado}{O Estado} 
-\item \hyperlink{regional}{A Regional de Saúde}
-\item \hyperlink{municipio}{O Município}
+ \item \hyperlink{estado}{O Estado} 
+ \item \hyperlink{regional}{A Regional Metropolitana I}
+ \item \hyperlink{mun}{O Município}
+ \item \hyperlink{aps}{Áreas Programáticas da Saúde}
 \end{itemize}
-
-\textbf{Áreas Programáticas da Saúde}
-\begin{itemize}
-\item \hyperlink{ap1}{APS 1.0} 
-\item \hyperlink{ap21}{APS 2.1} 
-\item \hyperlink{ap22}{APS 2.2} 
-\item \hyperlink{ap31}{APS 3.1} 
-\item \hyperlink{ap32}{APS 3.2} 
-\item \hyperlink{ap33}{APS 3.3} 
-\item \hyperlink{ap4}{APS 4.0} 
-\item \hyperlink{ap51}{APS 5.1} 
-\item \hyperlink{ap52}{APS 5.2} 
-\item \hyperlink{ap53}{APS 5.3} 
-\end{itemize}
-
 \centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
 
 %-----------------------------------------------------------
@@ -96,7 +83,7 @@ figmapaestado = paste("../",sigla,'/figs/','Mapa_E',sigla,'.png',sep='')
 %-------------------------------------------------------------------------------
 \hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{estado}}{6pt}} % \hypertarget provides a label to reference using 
 
-Desde o início do ano, \Sexpr{totano} casos foram registrados no estado, sendo \Sexpr{totultse} na última semana. A figura abaixo mostra as condições de transmissão em cada município.
+Desde o início do ano, \Sexpr{totano} casos foram registrados no estado, sendo \Sexpr{totultse} na semana \Sexpr{se}. A figura abaixo mostra as condições de transmissão em cada município.
 
 % Mapa estadual
 \includegraphics[width=0.8\textwidth]{\Sexpr{figmapaestado}}
@@ -128,16 +115,16 @@ As cores indicam niveis de atenção
 
 
 %----------------------------------------------------------------------------------
-%	SEGUNDA PAGINA: TEXTO PRINCIPAL - LOOP PELAS REGIONAIS
+%	SEGUNDA PAGINA: TEXTO PRINCIPAL - REGIONAL
 %----------------------------------------------------------------------------------
 
 <<r,echo=FALSE,results=tex>>=
 # O loop e'feito no R e o template em latex entra como string
-
-i  = "Metropolitana I"  
+i  = which(regs=="Metropolitana I")
+   
       cat('\\begin{minipage}[t]{.66\\linewidth}\n')  # inicio da minipage
       # titulo:
-      cat(paste('\\hypertarget{',nickregs[[i]],'}{\\heading{Situação da Dengue na Regional ',regs[i],'}{6pt}}\n',sep='')); 
+      cat(paste('\\hypertarget{regional}{\\heading{Situação da Dengue na Regional ',regs[i],'}{6pt}}\n',sep='')); 
       
       # Mapa:
       nomesemespaco = gsub(' ','', regs[i])
@@ -202,26 +189,129 @@ i  = "Metropolitana I"
 @
 
 
-%-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE
+%-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE - PARTE PRINCIPAL - Municipio
 %-----------------------------------------------------------------------------------
- %\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
-\hypertarget{municipio}{\heading{Situação da Dengue na Cidade do Rio de Janeiro}{6pt}} % \hypertarget 
-
-Desde o início do ano, X casos foram registrados na cidade, sendo Y na última semana. 
-
-A cidade encontra-se em \textbf{nivel Z}. 
-
+ \begin{minipage}[t]{0.6\linewidth} % Mini page taking up 100% of the actual page
+\hypertarget{mun}{\heading{Situação da Dengue na Cidade do Rio de Janeiro: Mapa}{6pt}} % \hypertarget 
 
 %A figura abaixo mostra a série histórica do município: (TOPO) Série temporal de casos suspeitos de dengue e série temporal de dengue mencionada em rede social; (MEIO) Perfil da temperatura; (BAIXO) histórico do alerta. 
 
-\includegraphics[width=1\textwidth]{\Sexpr{figmunicipio}}
+\includegraphics[width=0.95\textwidth]{../Rio_de_Janeiro/mapaRio.png}
 
+\small{Veja o mapa interativo em http://alerta.dengue.mat.br/rio}
 
+\vspace{2cm}
+
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas}
+\begin{center}
+\input{../Rio_de_Janeiro/tabelaRio.tex}
+\end{center}
+
+\BackToContents % Link back to the contents of the newsletter
+\end{minipage}
+\begin{minipage}[t]{.26\linewidth} 
+\begin{mdframed}[style=sidebar,frametitle={}] 
+
+%%--------------------------------------------------------------------------
+%%      TERCEIRA PAGINA: CAIXA LATERAL - INDICE APS
+%%-------------------------------------------------------------------------
+
+\textbf{Áreas Programáticas da Saúde} 
+
+<<bulletsaps,echo=FALSE,results=tex>>=
+cat('\\begin{itemize}')
+       
+aps <- unique(res$aps)
+coresbullets = c(verde='\\gsquare',amarelo='\\ysquare',
+                            laranja='\\osquare',vermelho='\\rsquare')
+for (j in 1:10) {
+      nivel = res$nivel[res$aps == aps[j] & res$se==data_relatorio]
+      corbullet = '\\wsquare'
+      if(!is.na(nivel)) corbullet = coresbullets[nivel] 
+      cat(paste(corbullet,"APS ",aps[j],'\n'))
+      }
+cat('\\end{itemize}')
+@
+
+\end{mdframed} 
+\end{minipage}
+\newpage
+
+%-----------------------------------------------------------------------------------%	
+% MAIN BODY - FOURTH PAGE - Situação da cidade
+%-----------------------------------------------------------------------------------
+
+\hypertarget{municipio}{\heading{Situação da Dengue na Cidade do Rio de Janeiro: Séries Históricas}{6pt}} % \hypertarget 
+
+\vspace{2cm}
+\includegraphics[width=0.8\textwidth]{../Rio_de_Janeiro/figcidade.png}
+
+A linha tracejada verde indica o limiar pré-epidêmico; a linha tracejada vermelha indica o limiar de atividade alta (acima do qual é acionado o alerta vermelho). 
 
 \BackToContents % Link back to the contents of the newsletter
 
 
 \newpage
+
+%-----------------------------------------------------------------------------------%	
+% MAIN BODY - FOURTH PAGE - Situação por APS - graficos
+%-----------------------------------------------------------------------------------
+
+\hypertarget{aps}{\heading{Situação nas Áreas Programáticas de Saúde}{6pt}} % \hypertarget 
+
+\vspace{2cm}
+\includegraphics[width=0.8\textwidth]{../Rio_de_Janeiro/figaps1.png}
+
+(cont.)
+
+\newpage
+
+\heading{Situação nas Áreas Programáticas de Saúde (cont.)}{6pt}} 
+
+\vspace{2cm}
+\includegraphics[width=0.8\textwidth]{../Rio_de_Janeiro/figaps2.png}
+
+\newpage
+
+%-----------------------------------------------------------------------------------%	
+% MAIN BODY - FIFTH PAGE - Situação por APS - tabelas
+%-----------------------------------------------------------------------------------
+
+\heading{Situação nas Áreas Programáticas de Saúde: Tabelas}{6pt}
+
+<<tabelas_saps,echo=FALSE,results=tex>>=
+aps <- unique(res$aps)
+cat(paste('\\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas nas Áreas Programáticas de Saúde}\n'))
+cat('\\begin{center}\n')
+for (i in 1:5){
+      cat(paste('\\captionof{table}{APS',aps[i],'}\n'))
+      tabaps=paste('../Rio_de_Janeiro/tabela',i,'.tex',sep='')
+      cat(paste('\\input{',tabaps,'}\n',sep=''))
+}
+cat('\\end{center}\n')
+cat('\\small{\\hyperlink{vartab}{ver descrição das variáveis}}\n')
+
+
+@
+(cont.)
+\newpage
+
+\heading{Situação nas Áreas Programáticas de Saúde: Tabelas (cont.)}{6pt}
+
+<<tabelas_saps,echo=FALSE,results=tex>>=
+aps <- unique(res$aps)
+cat(paste('\\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas na Regional',regs[i],'}\n'))
+cat('\\begin{center}\n')
+for (i in 6:10){
+      cat(paste('\\captionof{table}{APS',aps[i],'}\n'))
+      tabaps=paste('../Rio_de_Janeiro/tabela',i,'.tex',sep='')
+      cat(paste('\\input{',tabaps,'}\n',sep=''))
+}
+cat('\\end{center}\n')
+cat('\\small{\\hyperlink{vartab}{ver descrição das variáveis}}\n')
+
+
+@
 
 %---------------------------------------------------------------------------------
 %	Variáves nas Tabelas, Créditos e Contato

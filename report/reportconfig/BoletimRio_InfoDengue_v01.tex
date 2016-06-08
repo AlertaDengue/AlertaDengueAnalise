@@ -5,12 +5,12 @@
 
 \documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
 
-\input{../report/reportconfig/structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
 
 % Carregando dados  (atualmente é manual)
 
 \fancyfoot[C]{Boletim Municipal - Rio de Janeiro}
-\fancyfoot[R]{SE 14 de 2016}
+\fancyfoot[R]{SE 22 de 2016}
 \fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
 
 \usepackage{Sweave}
@@ -39,28 +39,14 @@
 
 \hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
 
-\textbf{Semana 14 de 2016} % se, ano, em pp.RData
+\textbf{Semana 22 de 2016} % se, ano, em pp.RData
 
 \begin{itemize}
-\item \hyperlink{estado}{O Estado} 
-\item \hyperlink{regional}{A Regional de Saúde}
-\item \hyperlink{municipio}{O Município}
+ \item \hyperlink{estado}{O Estado} 
+ \item \hyperlink{regional}{A Regional Metropolitana I}
+ \item \hyperlink{mun}{O Município}
+ \item \hyperlink{aps}{Áreas Programáticas da Saúde}
 \end{itemize}
-
-\textbf{Áreas Programáticas da Saúde}
-\begin{itemize}
-\item \hyperlink{ap1}{APS 1.0} 
-\item \hyperlink{ap21}{APS 2.1} 
-\item \hyperlink{ap22}{APS 2.2} 
-\item \hyperlink{ap31}{APS 3.1} 
-\item \hyperlink{ap32}{APS 3.2} 
-\item \hyperlink{ap33}{APS 3.3} 
-\item \hyperlink{ap4}{APS 4.0} 
-\item \hyperlink{ap51}{APS 5.1} 
-\item \hyperlink{ap52}{APS 5.2} 
-\item \hyperlink{ap53}{APS 5.3} 
-\end{itemize}
-
 \centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
 
 %-----------------------------------------------------------
@@ -87,13 +73,13 @@
 %-------------------------------------------------------------------------------
 \hypertarget{estado}{\heading{Situação da Dengue no Estado do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
 
-Desde o início do ano, 50707 casos foram registrados no estado, sendo 1983 na última semana. A figura abaixo mostra as condições de transmissão em cada município.
+Desde o início do ano, 80474 casos foram registrados no estado, sendo 682 na semana 21. A figura abaixo mostra as condições de transmissão em cada município.
 
 % Mapa estadual
 \includegraphics[width=0.8\textwidth]{../RJ/figs/Mapa_ERJ.png}
 %-----------------------------------------------------------
 
-Dos 92 municipios, 8 encontram-se em nivel verde, 72 em nivel amarelo, 3 em nivel laranja e 9 em nivel vermelho referentes a semana epidemiológica 14-2016. Para informações mais atualizadas
+Dos 92 municipios, 67 encontram-se em nivel verde, 22 em nivel amarelo, 0 em nivel laranja e 3 em nivel vermelho referentes a semana epidemiológica 21-2016. Para informações mais atualizadas
 sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
 
@@ -113,104 +99,187 @@ As cores indicam niveis de atenção
 \end{description}
 \end{mdframed}
 
-\textbf{Na semana passada:} 65 municípios em nivel amarelo, 7 em laranja e 12 em vermelho.  
+\textbf{Na semana passada:} 30 municípios em nivel amarelo, 0 em laranja e 0 em vermelho.  
 
 \end{minipage} % End the main body - first page mini page
 
 
 %----------------------------------------------------------------------------------
-%	SEGUNDA PAGINA: TEXTO PRINCIPAL - LOOP PELAS REGIONAIS
+%	SEGUNDA PAGINA: TEXTO PRINCIPAL - REGIONAL
 %----------------------------------------------------------------------------------
 
-\begin{minipage}[t]{.66\linewidth}\hypertarget{MtrI}{\heading{Situação da Dengue na Regional NA}{6pt}}\includegraphics[\width=8\textwidth]{/home/administrador/Repositorios/AlertaDengueAnalise/report/RJ/figs/MapaRJ_NA.png}\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas na Regional NA }\begin{center}\input{/home/administrador/Repositorios/AlertaDengueAnalise/report/RJ/figs/tabregionalRJ_NA.tex}\end{center}\small{\hyperlink{vartab}{ver descrição das variáveis}}\begin{center}\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional NA }\includegraphics[width=1.3\textwidth]{/home/administrador/Repositorios/AlertaDengueAnalise/report/RJ/figs/tweetRJ_NA.png}\end{center}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}\begin{mdframed}[style=sidebar,frametitle={}]\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA 
-\wsquare NA \end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage
+\begin{minipage}[t]{.66\linewidth}\hypertarget{regional}{\heading{Situação da Dengue na Regional Metropolitana I}{6pt}}\includegraphics[\width=8\textwidth]{/home/administrador/Repositorios/AlertaDengueAnalise/report/RJ/figs/MapaRJ_MetropolitanaI.png}\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas na Regional Metropolitana I }\begin{center}\input{/home/administrador/Repositorios/AlertaDengueAnalise/report/RJ/figs/tabregionalRJ_MetropolitanaI.tex}\end{center}\small{\hyperlink{vartab}{ver descrição das variáveis}}\begin{center}\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Metropolitana I }\includegraphics[width=1.3\textwidth]{/home/administrador/Repositorios/AlertaDengueAnalise/report/RJ/figs/tweetRJ_MetropolitanaI.png}\end{center}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}\begin{mdframed}[style=sidebar,frametitle={}]\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Belford Roxo 
+\ysquare Duque de Caxias 
+\gsquare Itaguaí 
+\gsquare Japeri 
+\gsquare Magé 
+\gsquare Mesquita 
+\gsquare Nilópolis 
+\gsquare Nova Iguaçu 
+\gsquare Queimados 
+\ysquare Rio de Janeiro 
+\gsquare São João de Meriti 
+\ysquare Seropédica \end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage
+
+%-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE - PARTE PRINCIPAL - Municipio
+%-----------------------------------------------------------------------------------
+ \begin{minipage}[t]{0.6\linewidth} % Mini page taking up 100% of the actual page
+\hypertarget{mun}{\heading{Situação da Dengue na Cidade do Rio de Janeiro: Mapa}{6pt}} % \hypertarget 
+
+%A figura abaixo mostra a série histórica do município: (TOPO) Série temporal de casos suspeitos de dengue e série temporal de dengue mencionada em rede social; (MEIO) Perfil da temperatura; (BAIXO) histórico do alerta. 
+
+\includegraphics[width=0.95\textwidth]{../Rio_de_Janeiro/mapaRio.png}
+
+\small{Veja o mapa interativo em http://alerta.dengue.mat.br/rio}
+
+\vspace{2cm}
+
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas}
+\begin{center}
+\input{../Rio_de_Janeiro/tabelaRio.tex}
+\end{center}
+
+\BackToContents % Link back to the contents of the newsletter
+\end{minipage}
+\begin{minipage}[t]{.26\linewidth} 
+\begin{mdframed}[style=sidebar,frametitle={}] 
+
+%%--------------------------------------------------------------------------
+%%      TERCEIRA PAGINA: CAIXA LATERAL - INDICE APS
+%%-------------------------------------------------------------------------
+
+\textbf{Áreas Programáticas da Saúde} 
+
+\begin{itemize}\gsquare APS  1.0 
+\gsquare APS  2.1 
+\ysquare APS  2.2 
+\ysquare APS  3.1 
+\gsquare APS  3.2 
+\gsquare APS  3.3 
+\gsquare APS  4.0 
+\gsquare APS  5.1 
+\gsquare APS  5.2 
+\gsquare APS  5.3 \end{itemize}
+\end{mdframed} 
+\end{minipage}
+\newpage
+
+%-----------------------------------------------------------------------------------%	
+% MAIN BODY - FOURTH PAGE - Situação da cidade
+%-----------------------------------------------------------------------------------
+
+\hypertarget{municipio}{\heading{Situação da Dengue na Cidade do Rio de Janeiro: Séries Históricas}{6pt}} % \hypertarget 
+
+\vspace{2cm}
+\includegraphics[width=0.8\textwidth]{../Rio_de_Janeiro/figcidade.png}
+
+A linha tracejada verde indica o limiar pré-epidêmico; a linha tracejada vermelha indica o limiar de atividade alta (acima do qual é acionado o alerta vermelho). 
+
+\BackToContents % Link back to the contents of the newsletter
+
+
+\newpage
+
+%-----------------------------------------------------------------------------------%	
+% MAIN BODY - FOURTH PAGE - Situação por APS - graficos
+%-----------------------------------------------------------------------------------
+
+\hypertarget{aps}{\heading{Situação nas Áreas Programáticas de Saúde}{6pt}} % \hypertarget 
+
+\vspace{2cm}
+\includegraphics[width=0.8\textwidth]{../Rio_de_Janeiro/figaps1.png}
+
+(cont.)
+
+\newpage
+
+\heading{Situação nas Áreas Programáticas de Saúde (cont.)}{6pt}} 
+
+\vspace{2cm}
+\includegraphics[width=0.8\textwidth]{../Rio_de_Janeiro/figaps2.png}
+
+\newpage
+
+%-----------------------------------------------------------------------------------%	
+% MAIN BODY - FIFTH PAGE - Situação por APS - tabelas
+%-----------------------------------------------------------------------------------
+
+\heading{Situação nas Áreas Programáticas de Saúde: Tabelas}{6pt}
+
+\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas nas Áreas Programáticas de Saúde}\begin{center}\captionof{table}{APS 1.0 }
+\input{../Rio_de_Janeiro/tabela1.tex}
+\captionof{table}{APS 2.1 }
+\input{../Rio_de_Janeiro/tabela2.tex}
+\captionof{table}{APS 2.2 }
+\input{../Rio_de_Janeiro/tabela3.tex}
+\captionof{table}{APS 3.1 }
+\input{../Rio_de_Janeiro/tabela4.tex}
+\captionof{table}{APS 3.2 }
+\input{../Rio_de_Janeiro/tabela5.tex}\end{center}\small{\hyperlink{vartab}{ver descrição das variáveis}}(cont.)
+\newpage
+
+\heading{Situação nas Áreas Programáticas de Saúde: Tabelas (cont.)}{6pt}
+
+\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas na Regional Centro Sul }\begin{center}\captionof{table}{APS 3.3 }
+\input{../Rio_de_Janeiro/tabela6.tex}
+\captionof{table}{APS 4.0 }
+\input{../Rio_de_Janeiro/tabela7.tex}
+\captionof{table}{APS 5.1 }
+\input{../Rio_de_Janeiro/tabela8.tex}
+\captionof{table}{APS 5.2 }
+\input{../Rio_de_Janeiro/tabela9.tex}
+\captionof{table}{APS 5.3 }
+\input{../Rio_de_Janeiro/tabela10.tex}\end{center}\small{\hyperlink{vartab}{ver descrição das variáveis}}
+%---------------------------------------------------------------------------------
+%	Variáves nas Tabelas, Créditos e Contato
+%---------------------------------------------------------------------------------
+
+\begin{minipage}[t]{1\linewidth} 
+
+\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}}
+
+\begin{description}
+\item [SE =] semana epidemiológica
+\item [tweet =] número de tweets indicativos de casos de dengue na cidade
+\item [temperatura =] média das temperaturas mínimas da semana
+\item [casos notif =] casos notificados de dengue 
+\item [casos preditos =] número de casos estimados após correção pelo atraso de notificação
+\item [ICmin =] número mínimo de casos estimados (IC 95\%)
+\item [ICmax =] número máximo de casos estimados (IC 95\%)
+\item [Rt] número reprodutivo efetivo ($>$ 1 indica aumento de casos transmissão)
+\item [p(Rt1) =] probabilidade do número reprodutivo ser maior que 1 ($>0.95$ indica aumento significativo de casos)
+\item [inc =] incidência por 100.000 habitantes
+\item [Nivel =] cor do alerta (verde, amarelo, laranja, vermelho)
+\end{description}
+
+\hypertarget{notas}{\heading{Notas}}
+
+\begin{itemize}
+\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
+\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.
+\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
+\end{itemize}
+
+\hypertarget{creditos}{\heading{Créditos}}
+
+Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
+
+\begin{itemize}
+\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro.
+\item Escola de Matemática Aplicada, Fundação Getúlio Vargas.
+\item Secretarias do Estado e Município do Rio de Janeiro.
+\item Observatório de Dengue da UFMG
+\item Secretaria Estadual de Saúde do Paraná.
+\end{itemize}
+
+      \BackToContents % Link back to the contents of the newsletter
+
+\vspace{1cm}
+
+\hline
+Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
+
+\textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
+\end{minipage} % fim da pagina de creditos
+
+\end{document} 
