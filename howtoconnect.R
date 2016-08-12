@@ -52,13 +52,21 @@ dim(tw)
 c1 <- paste("SELECT * from \"Dengue_global\".\"regional_saude\" WHERE 
                 \"municipio_geocodigo\" >", 4100000)
 d <- dbGetQuery(con,c1)
+dd<-subset(d, uf=="São Paulo")[,c("geocodigo","nome","populacao","uf")]
 
-# municipio
-c1 <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE 
-               municipio_geocodigo = 4102000")
+save(dd, file="pop_SP.RData")
 
+#Selecionando todas as cidades de sao paulo
+c1 <- paste("SELECT * from \"Dengue_global\".\"Municipio\" WHERE 
+                geocodigo > 3000000")
 d <- dbGetQuery(con,c1)
 
+# municipio
+c1 <- paste("SELECT * from \"Municipio\".\"Tweet\" WHERE 
+               \"Municipio_geocodigo\" = 3304557")
+
+d <- dbGetQuery(con,c1)
+names(d)
 
 # locs
 poligs <- dbReadTable(con, c("Municipio","Localidade"))
@@ -260,5 +268,25 @@ character varying(5) DEFAULT NULL"
   inserelinha(newdata,1)
   
   for (i in 1:dim(newdata)[1]) inserelinha(newdata,i)
+  
+  
+  ## Query para Suzy, Giovani
+  # inner join notificacao com regional
+  
+  mun<-getCidades(regional = "Metropolitana I", uf="Rio de Janeiro",datasource=con)$municipio_geocodigo
+  
+  
+  sql <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo in (3300456,3301702,
+               3302007,3302270,3302502,3302858,3303203,3303500,3304144,3304557,3305109,3305554)")
+  
+  dd <- dbGetQuery(con,sql)
+  ddd <- dd[,c("dt_notific","ano_notif","dt_sin_pri","dt_digita","municipio_geocodigo")]
+  
+  
+  c1 <- paste("select data_dia, numero from \"Municipio\".\"Tweet\" where 
+                \"Municipio_geocodigo\" between ", city,"0", sep = "", " ", "and", " ",city,"9")
+  tw <- dbGetQuery(con,c1)
+  names(tw)<-c("data","tweet")
+  tw <- subset(tw, as.Date(data, format = "%Y-%m-%d") <= lastday)
   
   

@@ -15,13 +15,14 @@ library('xtable')
 load('../RJ/figs/paramsRJ.RData') #parametros do estado e regionais 
 load('../Rio_de_Janeiro/paramsRio.RData') # parametros do municipio
 
+datarel = data_relatorio - ano*100
 figmapaestado = paste("../",sigla,'/figs/','Mapa_E',sigla,'.png',sep='')
 figmapamunicipio = paste("../",sigla,'/figs/','Mapa_E',sigla,'.png',sep='')
 #figmunicipio = 'RJ/CamposdosGoytacazes/figuraCamposdosGoytacazes.png'
 @
 
 \fancyfoot[C]{Boletim Municipal - Rio de Janeiro}
-\fancyfoot[R]{SE \Sexpr{(se+1)} de \Sexpr{ano}}
+\fancyfoot[R]{SE \Sexpr{(datarel)} de \Sexpr{ano}}
 \fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
 
 \begin{document}
@@ -49,7 +50,7 @@ figmapamunicipio = paste("../",sigla,'/figs/','Mapa_E',sigla,'.png',sep='')
 
 \hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
 
-\textbf{Semana \Sexpr{(se+1)} de \Sexpr{ano}} % se, ano, em pp.RData
+\textbf{Semana \Sexpr{(datarel)} de \Sexpr{ano}} % se, ano, em pp.RData
 
 \begin{itemize}
  \item \hyperlink{estado}{O Estado} 
@@ -187,8 +188,6 @@ i  = which(regs=="Metropolitana I")
       cat('\\end{minipage}') # End of the sidebar mini page
       cat('\\newpage')
 @
-
-
 %-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE - PARTE PRINCIPAL - Municipio
 %-----------------------------------------------------------------------------------
  \begin{minipage}[t]{0.6\linewidth} % Mini page taking up 100% of the actual page

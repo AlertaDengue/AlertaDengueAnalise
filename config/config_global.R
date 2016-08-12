@@ -25,8 +25,8 @@ gtdist="normal"; meangt=3; sdgt = 1.2
 # (criterio, duracao da condicao para turnon, turnoff)
 criteria = list(
 #crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 2),
-crity = c("temp_min > tcrit", 3, 2),
+crity = c("temp_min > tcrit", 3, 1),
 crito = c("p1 > 0.95 & inc > preseas & temp_min >= tcrit", 3, 1),
-critr = c("inc > inccrit", 1, 2)
+critr = c("inc > inccrit", 2, 2)
 )
 

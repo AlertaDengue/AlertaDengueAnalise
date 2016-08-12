@@ -306,7 +306,7 @@ alertaRio <- function(naps = 0:9, pars, crit, datasource, se, verbose = TRUE){
       APS <- c("APS 1", "APS 2.1", "APS 2.2", "APS 3.1", "APS 3.2", "APS 3.3"
                , "APS 4", "APS 5.1", "APS 5.2", "APS 5.3")[(naps + 1)]
       
-      p <- rev(plnorm(seq(7,20,by=7), pars$pdig[1], pars$pdig[2]))
+      p <- plnorm(seq(7,20,by=7), pars$pdig[1], pars$pdig[2])
       
       res <- vector("list", length(APS))
       names(res) <- APS

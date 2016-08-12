@@ -101,9 +101,11 @@ getTweet <- function(city, lastday = Sys.Date(), datasource) {
             #      tw <- subset(tw, as.Date(data_dia, format = "%Y-%m-%d") <= lastday)
             # transformar data em SE -----------------------------------------
             tw$SE <- data2SE(tw$data_dia, format = "%Y-%m-%d")
-            for (i in 1:dim(tw)[1]) {
-                  twse <- tw$SE[i] 
-                  tw.agregado$tweet[tw.agregado$SE==twse] <- sum(tw$tweet[i])
+            obsSE <- unique(tw$SE)
+            for (i in obsSE) {
+                  #twse <- tw$SE[i] 
+                  tw.agregado$tweet[tw.agregado$SE==i] <- sum(tw$numero[tw$SE==i])
+                  #tw.agregado$tweet[tw.agregado$SE==twse] <- tw.agregado$tweet[tw.agregado$SE==twse] + sum(tw$tweet[i])
             }
             tw.agregado$cidade <- city
       }
