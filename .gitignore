@@ -7,3 +7,4 @@ GeraAlerta/figure/*.*
 *.pdf
 *~
 .Rproj.user
+.idea
