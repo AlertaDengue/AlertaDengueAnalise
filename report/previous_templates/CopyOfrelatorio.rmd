@@ -1,0 +1,241 @@
+---
+title: "Info Dengue"
+author: "Relatório de situação da dengue no Estado do Rio de Janeiro"
+output: pdf_document
+geometry: margin=0.5in
+fontsize: 11pt
+---
+
+```{r echo=FALSE}
+# <a name="voltaini"></a>
+```
+
+
+```{r echo=FALSE}
+hoje <- Sys.Date()
+#SEhoje <- data2SE(hoje, format="%Y-%m-%d")
+
+library(pander)
+panderOptions('table.split.table', Inf)
+```
+
+**Data: `r as.character(hoje)`**
+
+Esta é uma versão piloto do relatório e contem apenas dados parciais.
+
+## Índice {#top}
+* [Campos dos Goytacazes](#campos)
+* [Duque de Caxias](#caxias)
+* [Macaé](#macae)
+* [Niteroi](#niteroi)
+* [Resende](#resende)
+* [Volta Redonda](#vredonda)
+* [Notas](#notas)
+
+
+
+```{r echo=FALSE, eval=FALSE}
+
+tab <- tail(cidade,n=6)
+rownames(tab) <- NULL
+pander(tab,compact=TRUE,)
+```
+
+```{r echo=FALSE, eval=FALSE}
+#[volta para o início](#voltaini)
+```
+
+<br> </br>
+<br> </br>
+
+```{r echo=FALSE, eval=FALSE}
+
+### <a name="volta"></a>
+
+```
+
+
+\subsection{Código de Cores do Alerta}
+
+O Sistema de alerta utilizado tem quatro niveis definidos pelas condições de transmissão do virus na população. O verde indica baixa ou nenhuma transmissão,
+amarelo indica condições ambientais favoráveis à transmissão; laranja indica ocorrência de transmissão estável, e vermelho indica incidência alta. Os critérios para definição do nivel leva em consideração vários fatores: 
+
+\hrulefill
+
+VERDE = Baixa atividade
+
+Características: temperatura mínima desfavoravel para aumento da população de Aedes aegypti ,  atividade de tweet normal (não aumentada), sem evidência transmissão sustentada 
+
+AMARELO = Atenção, há condições para transmissão
+
+Características: temperatura favoravel ao aumento da população de Aedes aegypti, atividade de tweet aumentada
+
+LARANJA = Transmissão
+
+Característica: número reprodutivo >1 por 3 semanas
+
+VERMELHO = Atividade alta
+
+Característica: incidência > 100:100.000
+
+\hrulefill
+
+\newpage
+
+```{r echo=FALSE}
+panderOptions('table.split.table', Inf)
+options(digits = 2, scipen=5)
+
+make.table <- function(d){ # d = objeto alerta
+      last <- max(which(!is.na(d$data$casos)))
+      ale <- cbind(d$data[1:last,c("SE","tweet","temp_min","casos","tcasesmed","tcasesICmax","p1","inc")],
+                   level=d$indice[1:last,"level"])
+      ale$p1 <- round(ale$p1,digits = 2)
+      cores <- c("verde","amarelo","laranja","vermelho")
+      ale$nivel <- cores[ale$level]
+      tab <- tail(ale[,], n=5)
+      names(tab)<-c("SE","tweet","temp","casos","casos.esp","maxcasos","p(Rt1)","inc","nivel","cor")
+      rownames(tab) <- NULL      
+      tab
+}
+
+```
+
+### Campos dos Goytacazes {#campos}
+
+![campos](Campos.png)
+
+<br> </br>
+
+Histórico
+```{r echo=FALSE}
+load("Campos.RData")
+tabela <- make.table(alerta)
+emphasize.strong.cols(1)
+pander(tabela, style="simple")
+rm(alerta, tabela)
+```
+
+
+[volta](#top)
+
+\newpage
+
+### Duque de Caxias {#caxias}
+
+![caxias](Caxias.png)
+
+<br> </br>
+
+Histórico
+```{r echo=FALSE}
+load("Caxias.RData")
+tabela <- make.table(alerta)
+emphasize.strong.cols(1)
+pander(tabela, style="simple")
+rm(alerta, tabela)
+```
+
+[volta](#top)
+
+\newpage
+
+### Macaé {#macae}
+
+![macae](Macae.png)
+
+<br> </br>
+
+Histórico
+```{r echo=FALSE}
+load("Macae.RData")
+tabela <- make.table(alerta)
+emphasize.strong.cols(1)
+pander(tabela, style="simple")
+rm(alerta, tabela)
+```
+
+[volta](#top)
+
+\newpage
+
+### Niteroi {#niteroi}
+
+![niteroi](Niteroi.png)
+
+<br> </br>
+
+Histórico
+```{r echo=FALSE}
+load("Niteroi.RData")
+tabela <- make.table(alerta)
+emphasize.strong.cols(1)
+pander(tabela, style="simple")
+rm(alerta, tabela)
+```
+
+[volta](#top)
+
+\newpage
+
+### Resende {#resende}
+
+![resende](Resende.png)
+
+<br> </br>
+
+Histórico
+```{r echo=FALSE}
+load("Resende.RData")
+tabela <- make.table(alerta)
+emphasize.strong.cols(1)
+pander(tabela, style="simple")
+rm(alerta, tabela)
+```
+
+[volta](#top)
+
+\newpage
+
+### Volta Redonda {#vredonda}
+
+![vredonda](VRedonda.png)
+
+<br> </br>
+
+Histórico
+```{r echo=FALSE}
+load("VRedonda.RData")
+tabela <- make.table(alerta)
+emphasize.strong.cols(1)
+pander(tabela, style="simple")
+rm(alerta, tabela)
+```
+
+
+[volta](#top)
+
+\newpage
+
+### Notas {#notas}
+
+
+- Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos
+notificados considerando o tempo ate os casos serem digitados.
+- Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue
+- Algumas vezes, os casos da última semana ainda não estao disponiveis, nesse caso, usa-se uma estimação com base na tendência de variação da serie 
+
+Créditos
+------
+Esse e um projeto desenvolvido em parceria pela Fiocruz, FGV, Estado e Prefeitura do Rio de Janeiro, com apoio da SVS/MS
+
+Mais detalhes do projeto , ver: [www.dengue.mat.br](www.dengue.mat.br) 
+
+<br> </br>
+------------
+<br> </br>
+
+
+
+
+[volta](#top)

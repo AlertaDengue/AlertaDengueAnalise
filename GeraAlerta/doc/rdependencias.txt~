@@ -1,2 +1,0 @@
-install.packages(c("knitr","markdown","foreign","rmongodb"),dependencies=TRUE)
-
