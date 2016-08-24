@@ -9,9 +9,8 @@ library("RPostgreSQL")
 library(xtable)
 library(knitr)
 library(AlertTools)
-#devtools::load_all()
-source("alerta/config/codigofiguras.R")
-source("alerta/config/configRelatorio.r")
+source("AlertaDengueAnalise/config/codigofiguras.R")
+source("AlertaDengueAnalise/config/configRelatorio.r")
 
 # ====================================================
 ## Parametros globais do alerta

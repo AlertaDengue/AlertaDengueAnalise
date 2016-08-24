@@ -27,12 +27,12 @@ pars.RJ[["Noroeste"]] <- list(pdig = c(2.791400,0.9913278), tcrit=22, inccrit=12
 #                   preseas=18.59, posseas=14.15) # cidade como um todo
 
 # Dados para o mapa
-RJ.shape="alerta/report/RJ/shape/33MUE250GC_SIR.shp"  # fonte para o mapa
+RJ.shape="AlertaDengueAnalise/report/RJ/shape/33MUE250GC_SIR.shp"  # fonte para o mapa
 RJ.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 RJ.criteria = criteria
 
 # Dados do diretorio para salvar (com / no final)
-RJ.out = "alerta/report/RJ/figs/"
+RJ.out = "AlertaDengueAnalise/report/RJ/figs/"
 
 # ===================================================
 # Rio de Janeiro - Intra-capital: por APS 
@@ -40,7 +40,7 @@ RJ.out = "alerta/report/RJ/figs/"
 # Criterios
 
 RJ.aps <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 18, posseas = 40)
-RJ.aps.shape = "alerta/report/Rio_de_Janeiro/shape/CAPS_SMS.shp"
+RJ.aps.shape = "AlertaDengueAnalise/report/Rio_de_Janeiro/shape/CAPS_SMS.shp"
 RJ.aps.shapeID = "CD_GEOCMU"
 RJ.aps.criteria = criteria
 
@@ -78,11 +78,11 @@ pars.PR[["Ivaiporã"]] <- list(pdig = c(2.146987,0.9084783), tcrit=22, inccrit=1
 
 
 # Dados para o mapa
-PR.shape="alerta/report/PR/shape/41MUE250GC_SIR.shp"  # fonte para o mapa
+PR.shape="AlertaDengueAnalise/report/PR/shape/41MUE250GC_SIR.shp"  # fonte para o mapa
 PR.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 PR.criteria = criteria
 
 # Dados do diretorio para salvar (com / no final)
-PR.out = "alerta/report/PR/figs/"
+PR.out = "AlertaDengueAnalise/report/PR/figs/"
 
 
