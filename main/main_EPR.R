@@ -1,7 +1,7 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Paraná
 # =============================================================================
-source("alerta/config/config.R") # arquivo de configuracao do alerta (parametros)
+source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ---- Calcula alerta: 
 con <- DenguedbConnect()
@@ -13,8 +13,8 @@ data_relatorio = 201633
 alePR <- update.alerta(region = names(pars.PR), pars = pars.PR, crit = PR.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
-save(alePR, file="alerta/report/PR/alePR.RData")
-#load("alerta/report/PR/alePR.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
+save(alePR, file="AlertaDengueAnalise/report/PR/alePR.RData")
+#load("AlertaDengueAnalise/report/PR/alePR.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
 
 # --- Gera parametros para o boletim
 configRelatorio(uf="Paraná", sigla = "PR", data=data_relatorio, 
@@ -22,11 +22,11 @@ configRelatorio(uf="Paraná", sigla = "PR", data=data_relatorio,
                 dir=PR.out, datasource=con)
 
 
-# Va para a pasta report/RJ e knit BoletimEstadual_InfoDengue_EPR.Rnw (botao) . gerara pdf
+# Va para a pasta report/PR e knit BoletimEstadual_InfoDengue_EPR.Rnw (botao) . gerara pdf
 # do relatorio na mesma pasta
 
 nome = "EPR-2016-teste.pdf"
-system(paste("cp alerta/report/PR/BoletimEstadual_InfoDengue_EPR.pdf Relatorio/PR/EPR/",nome,sep=""))
+system(paste("cp AlertaDengueAnalise/report/PR/BoletimEstadual_InfoDengue_EPR.pdf Relatorio/PR/EPR/",nome,sep=""))
 
 # --- Guarda resultado no historico_alerta (e atualizar o mapa no site)
 for (i in 1:length(alePR)) res=write.alerta(alePR[[i]], write="db")  
@@ -34,7 +34,7 @@ for (i in 1:length(alePR)) res=write.alerta(alePR[[i]], write="db")
 #-----
 res1=write.alerta(alePR[[1]], write="no")  
 for (i in 2:length(alePR)) res1=rbind(res1,write.alerta(alePR[[i]], write="no")  )
-save(res1, file="alerta/report/PR/res1.RData")
+save(res1, file="AlertaDengueAnalise/report/PR/res1.RData")
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

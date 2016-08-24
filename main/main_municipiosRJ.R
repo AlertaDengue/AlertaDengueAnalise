@@ -1,9 +1,8 @@
-#=============================
 ## Alertas municipais do Estado do Rio de Janeiro
 #==============================
 setwd("~/")
 con <- DenguedbConnect()
-source("alerta/config/config.R") # arquivo de configuracao do alerta (parametros)
+source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 data_relatorio = 201633
 
 
@@ -13,17 +12,17 @@ alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = da
   
 res <- write.alertaRio(alerio, write="no")                  # organiza os dados do alerta no objeto res
   
-save(alerio,res,data_relatorio, file="alerta/report/Rio_de_Janeiro/figs/paramsRio.RData")     # salva res
+save(alerio,res,data_relatorio, file="AlertaDengueAnalise/report/Rio_de_Janeiro/figs/paramsRio.RData")     # salva res
   
-map.Rio(alerio,shapefile = "alerta/report/Rio_de_Janeiro/shape/CAPS_SMS.shp")            # faz mapa (so para visualizar)
+map.Rio(alerio,shapefile = "AlertaDengueAnalise/report/Rio_de_Janeiro/shape/CAPS_SMS.shp")            # faz mapa (so para visualizar)
   
 configRelatorioRio(alert=alerio, tres = res, data=data_relatorio, 
-                     dirout="alerta/report/Rio_de_Janeiro/figs/")     # gera figs e tabelas para o relatorio
+                     dirout="AlertaDengueAnalise/report/Rio_de_Janeiro/figs/")     # gera figs e tabelas para o relatorio
 
 # Abrir o arquivo report/Rio_de_Janeiro/BoletimRio.Rnw e executar. 
 
 nome = "Rio-2016-teste.pdf"
-system(paste("cp alerta/report/Rio_de_Janeiro/BoletimRio.pdf Relatorio/RJ/RiodeJaneiro/",nome,sep=""))
+system(paste("cp AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.pdf Relatorio/RJ/RiodeJaneiro/",nome,sep=""))
 
 res <- write.alertaRio(alerio, write="db")    # salva resultado no Banco de Dados
 

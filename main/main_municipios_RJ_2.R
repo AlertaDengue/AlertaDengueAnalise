@@ -1,7 +1,7 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Municipios do Rio de Janeiro
 # =============================================================================
-diralerta = "../" # trocar por "alerta/" para usar com o pacote AlertTools 
+diralerta = "AlertaDengueAnalise/" # trocar por "alerta/" para usar com o pacote AlertTools 
 source(paste(diralerta,"config/config.R",sep="")) # arquivo de configuracao do alerta (parametros)
 data_relatorio = 201621
 con <- DenguedbConnect()

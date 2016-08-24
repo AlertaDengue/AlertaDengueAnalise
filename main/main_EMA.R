@@ -1,7 +1,7 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Maranhão
 # =============================================================================
-source("alerta/config/config.R") # arquivo de configuracao do alerta (parametros)
+source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
 data_relatorio = 201631
@@ -12,8 +12,8 @@ con <- DenguedbConnect()
 aleMA <- update.alerta(region = names(pars.MA), pars = pars.MA, crit = MA.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
-save(aleMA, file="alerta/report/MA/aleMA.RData")
-#load("alerta/report/MA/aleMA.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
+save(aleMA, file="AlertaDengueAnalise/report/MA/aleMA.RData")
+#load("AlertaDengueAnalise/report/MA/aleMA.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
 
 # --- Gera parametros para o boletim
 configRelatorio(uf="Maranhão", sigla = "MA", data=data_relatorio, 
@@ -24,7 +24,7 @@ configRelatorio(uf="Maranhão", sigla = "MA", data=data_relatorio,
 # do relatorio na mesma pasta
 
 nome = "EMA-2016-teste.pdf"
-system(paste("cp alerta/report/MA/BoletimEstadual_MA.pdf Relatorio/MA/EMA/",nome,sep=""))
+system(paste("cp AlertaDengueAnalise/report/MA/BoletimEstadual_MA.pdf Relatorio/MA/EMA/",nome,sep=""))
 
 # --- Guarda resultado no historico_alerta (e atualizar o mapa no site)
 for (i in 1:length(aleMA)) res=write.alerta(aleMA[[i]], write="db")  
