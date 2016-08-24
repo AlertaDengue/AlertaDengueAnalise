@@ -8,3 +8,5 @@ GeraAlerta/figure/*.*
 *~
 .Rproj.user
 .idea
+.log
+.gz

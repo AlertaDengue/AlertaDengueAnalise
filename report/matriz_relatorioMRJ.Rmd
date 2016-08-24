@@ -11,7 +11,7 @@ fontsize: 12pt
 ```
 
 ```{r setup, include=FALSE}
-#opts_chunk$set(dev = 'pdf')
+opts_chunk$set(dev = 'pdf')
 ```
 
 ```{r echo=FALSE}
@@ -53,7 +53,9 @@ Confira a situação da dengue na cidade do Rio de Janeiro. Mais detalhes, ver: 
 
 As sub-divisões são as áreas programáticas da saúde. Verde indica atividade baixa, amarelo indica vulnerabilidade, laranja indica transmissão sustentada e vermelho indica incidência acima do percentil 90.
 
-![](Rio_de_Janeiro/mapaRio.png)
+```{r fig.align='center',  echo=FALSE, message=TRUE, warning=TRUE}
+map.Rio(alerio, shapefile = "../report/Rio_de_Janeiro/shape/CAPS_SMS.shp")
+```
 
 Veja o mapa interativo em [Alerta Dengue](http://alerta.dengue.mat.br)
 <br> </br>
@@ -158,6 +160,7 @@ for (i in 6:10) {
 ```
 
 \newpage
+
 ### Tabelas com os dados das últimas quatro semanas por APS
 
 casos not = casos notificados, casos est = casos estimados após correção do atraso de notificação, tmin = temperatura mínima da semana, Rt = número reprodutivo, se maior que 1, indica que os casos estão com tendência de aumento, prob(Rt > 1) = p-valor do teste se Rt >1,
@@ -196,7 +199,6 @@ pander(tab)
 ```
 
 
-
 ```{r echo=FALSE}
 message("Área Programática da Saúde 2.2")
 ap=apsnomes[3]
@@ -223,7 +225,6 @@ rownames(tab) <- NULL
 
 <br> </br>
 
-\newpage
 
 ```{r echo=FALSE}
 pander(tab)
@@ -241,15 +242,16 @@ rownames(tab) <- NULL
 
 <br> </br>
 
+\newpage
 
 ```{r echo=FALSE}
 pander(tab)
 ```
 
-```{r echo=FALSE}
-ap=apsnomes[6]
 
+```{r echo=FALSE}
 message("Área Programática da Saúde 3.3")
+ap=apsnomes[6]
 tab<-tail(res[res$aps==ap,c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
 names(tab)<-c("SE","casos not","casos est","tmin","Rt","prob(Rt>1)","inc","nivel")
 rownames(tab) <- NULL
@@ -261,10 +263,10 @@ rownames(tab) <- NULL
 pander(tab)
 ```
 
-```{r echo=FALSE}
-ap=apsnomes[7]
 
+```{r echo=FALSE}
 message("Área Programática da Saúde 4.0")
+ap=apsnomes[7]
 tab<-tail(res[res$aps==ap,c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
 names(tab)<-c("SE","casos not","casos est","tmin","Rt","prob(Rt>1)","inc","nivel")
 rownames(tab) <- NULL
@@ -279,7 +281,6 @@ pander(tab)
 
 
 ```{r echo=FALSE}
-
 message("Área Programática da Saúde 5.1")
 ap=apsnomes[8]
 tab<-tail(res[res$aps==ap,c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
@@ -293,7 +294,6 @@ rownames(tab) <- NULL
 ```{r echo=FALSE}
 pander(tab)
 ```
-
 
 
 ```{r echo=FALSE}
@@ -314,9 +314,8 @@ pander(tab)
 
 
 ```{r echo=FALSE}
-ap=apsnomes[10]
-
 message("Área Programática da Saúde 5.3")
+ap=apsnomes[10]
 tab<-tail(res[res$aps==ap,c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
 names(tab)<-c("SE","casos not","casos est","tmin","Rt","prob(Rt>1)","inc","nivel")
 rownames(tab) <- NULL

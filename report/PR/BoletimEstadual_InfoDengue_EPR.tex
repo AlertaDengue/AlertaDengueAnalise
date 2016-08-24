@@ -1,0 +1,818 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Boletim semanal estadual do InfoDengue
+% Adapted for InfoDengue by Claudia Codeco and Thais Riback (May 2016)
+%
+% Created by:
+% Bob Kerstetter (https://www.tug.org/texshowcase/) and extensively modified by:
+% Vel (vel@latextemplates.com)
+% 
+% Original template downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
+\input{../reportconfig/structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+
+% Carregando dados  (atualmente é manual para cada estado)
+
+\fancyfoot[C]{Boletim Estadual - Paraná}
+\fancyfoot[R]{Semana 33 de 2016}
+\fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
+
+\usepackage{Sweave}
+\begin{document}
+\input{BoletimEstadual_InfoDengue_EPR-concordance}
+
+%---------------------------------------------------------------------------------
+%	HEADER IMAGE
+%---------------------------------------------------------------------------------
+
+\begin{figure}[H]
+\centering\includegraphics[width=1\linewidth]{../reportconfig/InfoDengue2.png}  
+\end{figure}
+
+\centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line
+
+%---------------------------------------------------------------------------------
+%	CAIXA LATERAL - PRIMEIRA PAGINA
+%--------------------------------------------------------------------------------
+
+\begin{minipage}[t]{.30\linewidth} % Mini page taking up 30% of the actual page
+\begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box
+
+%-----------------------------------------------------------
+
+\hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
+
+\textbf{Semana 33 de 2016} % se, ano, em pp.RData
+
+\begin{itemize}
+\item \hyperlink{estado}{O Estado} 
+\end{itemize}
+
+
+\textbf{Regionais de Saúde:}
+
+
+\begin{itemize}\item \hyperlink{Prng}{Paranaguá}
+\item \hyperlink{Crtb}{Curitiba}
+\item \hyperlink{PntG}{Ponta Grossa}
+\item \hyperlink{Irat}{Iratí}
+\item \hyperlink{Grpv}{Guarapuava}
+\item \hyperlink{UndV}{União da Vitória}
+\item \hyperlink{PtBr}{Pato Branco}
+\item \hyperlink{FrnB}{Francisco Beltrão}
+\item \hyperlink{FzdI}{Foz do Iguaçu}
+\item \hyperlink{Cscv}{Cascavel}
+\item \hyperlink{CmpM}{Campo Mourão}
+\item \hyperlink{Umrm}{Umuarama}
+\item \hyperlink{Cnrt}{Cianorte}
+\item \hyperlink{Prnv}{Paranavaí}
+\item \hyperlink{Mrng}{Maringá}
+\item \hyperlink{Apcr}{Apucarana}
+\item \hyperlink{Lndr}{Londrina}
+\item \hyperlink{CrnP}{Cornélio Procópio}
+\item \hyperlink{Jcrz}{Jacarezinho}
+\item \hyperlink{Told}{Toledo}
+\item \hyperlink{TlmB}{Telêmaco Borba}
+\item \hyperlink{Ivpr}{Ivaiporã}\end{itemize}
+\textbf{Municípios:}
+
+\begin{itemize}
+\item \hyperlink{municips}{Tabela de Municípios} 
+\end{itemize}
+
+\centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
+
+%-----------------------------------------------------------
+
+\hyperlink{vartab}{Variáveis nas Tabelas}
+
+\hyperlink{notas}{Notas} % These link to their appropriate sections in the newsletter
+
+\hyperlink{creditos}{Creditos} % These link to their appropriate sections in the newsletter
+
+\centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
+
+\textbf{Contato}
+\begin{description}
+\item \href{mailto:alerta\_dengue@fiocruz.br}{alerta\_dengue@fiocruz.br}  
+\end{description}
+
+\end{mdframed}
+\end{minipage}\hfill % End the sidebar mini page 
+\begin{minipage}[t]{.66\linewidth} % Nao pode colocar espaco acima senao ela nao fica lado a lado
+
+%--------------------------------------------------------------------------------
+%	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
+%-------------------------------------------------------------------------------
+\hypertarget{estado}{\heading{Situação da Dengue no Estado do Paraná}{6pt}} % \hypertarget provides a label to reference using 
+
+Desde o início do ano, 190263 casos foram registrados no estado, sendo 113 na última semana. A figura abaixo mostra as condições de transmissão em cada município.
+
+% Mapa estadual
+\includegraphics[width=0.8\textwidth]{figs/Mapa_EPR.png}
+%-----------------------------------------------------------
+
+Dos 399 municipios, 399 encontram-se em nivel verde, 0 em nivel amarelo, 0 em nivel laranja e 0 em nivel vermelho referentes a semana epidemiológica 33-2016. Para informações mais atualizadas
+sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
+
+
+%--------------------------------------------------------------------------------
+%	PRIMEIRA PAGINA : BOX - CODIGO DE CORES
+%--------------------------------------------------------------------------------
+\vspace{1cm}
+\begin{mdframed}[style=intextbox,frametitle={}] % Sidebar box
+
+\hypertarget{descriptivebox}{\heading{O código de Cores}{1pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
+As cores indicam niveis de atenção
+\begin{description}
+\item[Verde:] temperaturas amenas, baixa incidência de casos.      
+\item[Amarelo:] temperatura propícia para a população do vetor e transmissão da dengue.
+\item[Laranja:] transmissão aumentada e sustentada de dengue. 
+\item[Vermelho:] incidência alta de dengue, acima dos 90\% históricos.
+\end{description}
+\end{mdframed}
+
+ \textbf{Na semana passada:} 0 municípios em nivel amarelo, 0 em laranja e 0 em vermelho.    
+
+\end{minipage} % End the main body - first page mini page
+
+
+%----------------------------------------------------------------------------------
+%	SEGUNDA PAGINA: TEXTO PRINCIPAL - LOOP PELAS REGIONAIS
+%----------------------------------------------------------------------------------
+
+\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Prng}{\heading{Regional Paranaguá}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Paranagua.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Paranaguá }\includegraphics[width=1\textwidth]{figs/tweetPR_Paranagua.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Paranaguá }\begin{center}
+\input{figs/tabregionalPR_Paranagua.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Antonina 
+\gsquare Guaraqueçaba 
+\gsquare Guaratuba 
+\gsquare Matinhos 
+\gsquare Morretes 
+\gsquare Paranaguá 
+\gsquare Pontal do Paraná 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Crtb}{\heading{Regional Curitiba}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Curitiba.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Curitiba }\includegraphics[width=1\textwidth]{figs/tweetPR_Curitiba.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Curitiba }\begin{center}
+\input{figs/tabregionalPR_Curitiba.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Adrianópolis 
+\gsquare Agudos do Sul 
+\gsquare Almirante Tamandaré 
+\gsquare Araucária 
+\gsquare Balsa Nova 
+\gsquare Bocaiúva do Sul 
+\gsquare Campina Grande do Sul 
+\gsquare Campo do Tenente 
+\gsquare Campo Largo 
+\gsquare Campo Magro 
+\gsquare Cerro Azul 
+\gsquare Colombo 
+\gsquare Contenda 
+\gsquare Curitiba 
+\gsquare Doutor Ulysses 
+\gsquare Fazenda Rio Grande 
+\gsquare Itaperuçu 
+\gsquare Lapa 
+\gsquare Mandirituba 
+\gsquare Piên 
+\gsquare Pinhais 
+\gsquare Piraquara 
+\gsquare Quatro Barras 
+\gsquare Quitandinha 
+\gsquare Rio Branco do Sul 
+\gsquare Rio Negro 
+\gsquare São José dos Pinhais 
+\gsquare Tijucas do Sul 
+\gsquare Tunas do Paraná 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{PntG}{\heading{Regional Ponta Grossa}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_PontaGrossa.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Ponta Grossa }\includegraphics[width=1\textwidth]{figs/tweetPR_PontaGrossa.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Ponta Grossa }\begin{center}
+\input{figs/tabregionalPR_PontaGrossa.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Arapoti 
+\gsquare Carambeí 
+\gsquare Castro 
+\gsquare Ipiranga 
+\gsquare Ivaí 
+\gsquare Jaguariaíva 
+\gsquare Palmeira 
+\gsquare Piraí do Sul 
+\gsquare Ponta Grossa 
+\gsquare Porto Amazonas 
+\gsquare São João do Triunfo 
+\gsquare Sengés 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Irat}{\heading{Regional Iratí}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Irati.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Iratí }\includegraphics[width=1\textwidth]{figs/tweetPR_Irati.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Iratí }\begin{center}
+\input{figs/tabregionalPR_Irati.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Fernandes Pinheiro 
+\gsquare Guamiranga 
+\gsquare Imbituva 
+\gsquare Inácio Martins 
+\gsquare Irati 
+\gsquare Mallet 
+\gsquare Rebouças 
+\gsquare Rio Azul 
+\gsquare Teixeira Soares 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Grpv}{\heading{Regional Guarapuava}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Guarapuava.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Guarapuava }\includegraphics[width=1\textwidth]{figs/tweetPR_Guarapuava.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Guarapuava }\begin{center}
+\input{figs/tabregionalPR_Guarapuava.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Boa Ventura de São Roque 
+\gsquare Campina do Simão 
+\gsquare Candói 
+\gsquare Cantagalo 
+\gsquare Foz do Jordão 
+\gsquare Goioxim 
+\gsquare Guarapuava 
+\gsquare Laranjal 
+\gsquare Laranjeiras do Sul 
+\gsquare Marquinho 
+\gsquare Nova Laranjeiras 
+\gsquare Palmital 
+\gsquare Pinhão 
+\gsquare Pitanga 
+\gsquare Porto Barreiro 
+\gsquare Prudentópolis 
+\gsquare Reserva do Iguaçu 
+\gsquare Rio Bonito do Iguaçu 
+\gsquare Turvo 
+\gsquare Virmond 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{UndV}{\heading{Regional União da Vitória}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_UniaodaVitoria.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional União da Vitória }\includegraphics[width=1\textwidth]{figs/tweetPR_UniaodaVitoria.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional União da Vitória }\begin{center}
+\input{figs/tabregionalPR_UniaodaVitoria.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Antônio Olinto 
+\gsquare Bituruna 
+\gsquare Cruz Machado 
+\gsquare General Carneiro 
+\gsquare Paula Freitas 
+\gsquare Paulo Frontin 
+\gsquare Porto Vitória 
+\gsquare São Mateus do Sul 
+\gsquare União da Vitória 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{PtBr}{\heading{Regional Pato Branco}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_PatoBranco.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Pato Branco }\includegraphics[width=1\textwidth]{figs/tweetPR_PatoBranco.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Pato Branco }\begin{center}
+\input{figs/tabregionalPR_PatoBranco.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Bom Sucesso do Sul 
+\gsquare Chopinzinho 
+\gsquare Clevelândia 
+\gsquare Coronel Domingos Soares 
+\gsquare Coronel Vivida 
+\gsquare Honório Serpa 
+\gsquare Itapejara d'Oeste 
+\gsquare Mangueirinha 
+\gsquare Mariópolis 
+\gsquare Palmas 
+\gsquare Pato Branco 
+\gsquare São João 
+\gsquare Saudade do Iguaçu 
+\gsquare Sulina 
+\gsquare Vitorino 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{FrnB}{\heading{Regional Francisco Beltrão}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_FranciscoBeltrao.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Francisco Beltrão }\includegraphics[width=1\textwidth]{figs/tweetPR_FranciscoBeltrao.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Francisco Beltrão }\begin{center}
+\input{figs/tabregionalPR_FranciscoBeltrao.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Ampére 
+\gsquare Barracão 
+\gsquare Bela Vista da Caroba 
+\gsquare Boa Esperança do Iguaçu 
+\gsquare Bom Jesus do Sul 
+\gsquare Capanema 
+\gsquare Cruzeiro do Iguaçu 
+\gsquare Dois Vizinhos 
+\gsquare Enéas Marques 
+\gsquare Flor da Serra do Sul 
+\gsquare Francisco Beltrão 
+\gsquare Manfrinópolis 
+\gsquare Marmeleiro 
+\gsquare Nova Esperança do Sudoeste 
+\gsquare Nova Prata do Iguaçu 
+\gsquare Pérola d'Oeste 
+\gsquare Pinhal de São Bento 
+\gsquare Planalto 
+\gsquare Pranchita 
+\gsquare Realeza 
+\gsquare Renascença 
+\gsquare Salgado Filho 
+\gsquare Salto do Lontra 
+\gsquare Santa Izabel do Oeste 
+\gsquare Santo Antônio do Sudoeste 
+\gsquare São Jorge d'Oeste 
+\gsquare Verê 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{FzdI}{\heading{Regional Foz do Iguaçu}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_FozdoIguacu.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Foz do Iguaçu }\includegraphics[width=1\textwidth]{figs/tweetPR_FozdoIguacu.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Foz do Iguaçu }\begin{center}
+\input{figs/tabregionalPR_FozdoIguacu.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Foz do Iguaçu 
+\gsquare Itaipulândia 
+\gsquare Matelândia 
+\gsquare Medianeira 
+\gsquare Missal 
+\gsquare Ramilândia 
+\gsquare Santa Terezinha de Itaipu 
+\gsquare São Miguel do Iguaçu 
+\gsquare Serranópolis do Iguaçu 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Cscv}{\heading{Regional Cascavel}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Cascavel.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Cascavel }\includegraphics[width=1\textwidth]{figs/tweetPR_Cascavel.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Cascavel }\begin{center}
+\input{figs/tabregionalPR_Cascavel.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Anahy 
+\gsquare Boa Vista da Aparecida 
+\gsquare Braganey 
+\gsquare Cafelândia 
+\gsquare Campo Bonito 
+\gsquare Capitão Leônidas Marques 
+\gsquare Cascavel 
+\gsquare Catanduvas 
+\gsquare Céu Azul 
+\gsquare Corbélia 
+\gsquare Diamante do Sul 
+\gsquare Espigão Alto do Iguaçu 
+\gsquare Formosa do Oeste 
+\gsquare Guaraniaçu 
+\gsquare Ibema 
+\gsquare Iguatu 
+\gsquare Iracema do Oeste 
+\gsquare Jesuítas 
+\gsquare Lindoeste 
+\gsquare Nova Aurora 
+\gsquare Quedas do Iguaçu 
+\gsquare Santa Lúcia 
+\gsquare Santa Tereza do Oeste 
+\gsquare Três Barras do Paraná 
+\gsquare Vera Cruz do Oeste 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{CmpM}{\heading{Regional Campo Mourão}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_CampoMourao.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Campo Mourão }\includegraphics[width=1\textwidth]{figs/tweetPR_CampoMourao.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Campo Mourão }\begin{center}
+\input{figs/tabregionalPR_CampoMourao.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Altamira do Paraná 
+\gsquare Araruna 
+\gsquare Barbosa Ferraz 
+\gsquare Boa Esperança 
+\gsquare Campina da Lagoa 
+\gsquare Campo Mourão 
+\gsquare Corumbataí do Sul 
+\gsquare Engenheiro Beltrão 
+\gsquare Farol 
+\gsquare Fênix 
+\gsquare Goioerê 
+\gsquare Iretama 
+\gsquare Janiópolis 
+\gsquare Juranda 
+\gsquare Luiziana 
+\gsquare Mamborê 
+\gsquare Moreira Sales 
+\gsquare Nova Cantu 
+\gsquare Peabiru 
+\gsquare Quarto Centenário 
+\gsquare Quinta do Sol 
+\gsquare Rancho Alegre D'Oeste 
+\gsquare Roncador 
+\gsquare Terra Boa 
+\gsquare Ubiratã 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Umrm}{\heading{Regional Umuarama}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Umuarama.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Umuarama }\includegraphics[width=1\textwidth]{figs/tweetPR_Umuarama.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Umuarama }\begin{center}
+\input{figs/tabregionalPR_Umuarama.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Alto Paraíso 
+\gsquare Alto Piquiri 
+\gsquare Altônia 
+\gsquare Brasilândia do Sul 
+\gsquare Cafezal do Sul 
+\gsquare Cruzeiro do Oeste 
+\gsquare Douradina 
+\gsquare Esperança Nova 
+\gsquare Francisco Alves 
+\gsquare Icaraíma 
+\gsquare Iporã 
+\gsquare Ivaté 
+\gsquare Maria Helena 
+\gsquare Mariluz 
+\gsquare Nova Olímpia 
+\gsquare Perobal 
+\gsquare Pérola 
+\gsquare São Jorge do Patrocínio 
+\gsquare Tapira 
+\gsquare Umuarama 
+\gsquare Xambrê 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Cnrt}{\heading{Regional Cianorte}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Cianorte.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Cianorte }\includegraphics[width=1\textwidth]{figs/tweetPR_Cianorte.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Cianorte }\begin{center}
+\input{figs/tabregionalPR_Cianorte.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Cianorte 
+\gsquare Cidade Gaúcha 
+\gsquare Guaporema 
+\gsquare Indianópolis 
+\gsquare Japurá 
+\gsquare Jussara 
+\gsquare Rondon 
+\gsquare São Manoel do Paraná 
+\gsquare São Tomé 
+\gsquare Tapejara 
+\gsquare Tuneiras do Oeste 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Prnv}{\heading{Regional Paranavaí}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Paranavai.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Paranavaí }\includegraphics[width=1\textwidth]{figs/tweetPR_Paranavai.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Paranavaí }\begin{center}
+\input{figs/tabregionalPR_Paranavai.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Alto Paraná 
+\gsquare Amaporã 
+\gsquare Cruzeiro do Sul 
+\gsquare Diamante do Norte 
+\gsquare Guairaçá 
+\gsquare Inajá 
+\gsquare Itaúna do Sul 
+\gsquare Jardim Olinda 
+\gsquare Loanda 
+\gsquare Marilena 
+\gsquare Mirador 
+\gsquare Nova Aliança do Ivaí 
+\gsquare Nova Londrina 
+\gsquare Paraíso do Norte 
+\gsquare Paranapoema 
+\gsquare Paranavaí 
+\gsquare Planaltina do Paraná 
+\gsquare Porto Rico 
+\gsquare Querência do Norte 
+\gsquare Santa Cruz de Monte Castelo 
+\gsquare Santa Isabel do Ivaí 
+\gsquare Santa Mônica 
+\gsquare Santo Antônio do Caiuá 
+\gsquare São Carlos do Ivaí 
+\gsquare São João do Caiuá 
+\gsquare São Pedro do Paraná 
+\gsquare Tamboara 
+\gsquare Terra Rica 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Mrng}{\heading{Regional Maringá}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Maringa.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Maringá }\includegraphics[width=1\textwidth]{figs/tweetPR_Maringa.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Maringá }\begin{center}
+\input{figs/tabregionalPR_Maringa.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Ângulo 
+\gsquare Astorga 
+\gsquare Atalaia 
+\gsquare Colorado 
+\gsquare Doutor Camargo 
+\gsquare Floraí 
+\gsquare Floresta 
+\gsquare Flórida 
+\gsquare Iguaraçu 
+\gsquare Itaguajé 
+\gsquare Itambé 
+\gsquare Ivatuba 
+\gsquare Lobato 
+\gsquare Mandaguaçu 
+\gsquare Mandaguari 
+\gsquare Marialva 
+\gsquare Maringá 
+\gsquare Munhoz de Melo 
+\gsquare Nossa Senhora das Graças 
+\gsquare Nova Esperança 
+\gsquare Ourizona 
+\gsquare Paiçandu 
+\gsquare Paranacity 
+\gsquare Presidente Castelo Branco 
+\gsquare Santa Fé 
+\gsquare Santa Inês 
+\gsquare Santo Inácio 
+\gsquare São Jorge do Ivaí 
+\gsquare Sarandi 
+\gsquare Uniflor 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Apcr}{\heading{Regional Apucarana}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Apucarana.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Apucarana }\includegraphics[width=1\textwidth]{figs/tweetPR_Apucarana.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Apucarana }\begin{center}
+\input{figs/tabregionalPR_Apucarana.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Apucarana 
+\gsquare Arapongas 
+\gsquare Bom Sucesso 
+\gsquare Borrazópolis 
+\gsquare Califórnia 
+\gsquare Cambira 
+\gsquare Faxinal 
+\gsquare Grandes Rios 
+\gsquare Jandaia do Sul 
+\gsquare Kaloré 
+\gsquare Marilândia do Sul 
+\gsquare Marumbi 
+\gsquare Mauá da Serra 
+\gsquare Novo Itacolomi 
+\gsquare Rio Bom 
+\gsquare Sabáudia 
+\gsquare São Pedro do Ivaí 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Lndr}{\heading{Regional Londrina}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Londrina.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Londrina }\includegraphics[width=1\textwidth]{figs/tweetPR_Londrina.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Londrina }\begin{center}
+\input{figs/tabregionalPR_Londrina.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Alvorada do Sul 
+\gsquare Assaí 
+\gsquare Bela Vista do Paraíso 
+\gsquare Cafeara 
+\gsquare Cambé 
+\gsquare Centenário do Sul 
+\gsquare Florestópolis 
+\gsquare Guaraci 
+\gsquare Ibiporã 
+\gsquare Jaguapitã 
+\gsquare Jataizinho 
+\gsquare Londrina 
+\gsquare Lupionópolis 
+\gsquare Miraselva 
+\gsquare Pitangueiras 
+\gsquare Porecatu 
+\gsquare Prado Ferreira 
+\gsquare Primeiro de Maio 
+\gsquare Rolândia 
+\gsquare Sertanópolis 
+\gsquare Tamarana 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{CrnP}{\heading{Regional Cornélio Procópio}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_CornelioProcopio.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Cornélio Procópio }\includegraphics[width=1\textwidth]{figs/tweetPR_CornelioProcopio.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Cornélio Procópio }\begin{center}
+\input{figs/tabregionalPR_CornelioProcopio.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Abatiá 
+\gsquare Andirá 
+\gsquare Bandeirantes 
+\gsquare Congonhinhas 
+\gsquare Cornélio Procópio 
+\gsquare Itambaracá 
+\gsquare Leópolis 
+\gsquare Nova América da Colina 
+\gsquare Nova Fátima 
+\gsquare Nova Santa Bárbara 
+\gsquare Rancho Alegre 
+\gsquare Ribeirão do Pinhal 
+\gsquare Santa Amélia 
+\gsquare Santa Cecília do Pavão 
+\gsquare Santa Mariana 
+\gsquare Santo Antônio do Paraíso 
+\gsquare São Jerônimo da Serra 
+\gsquare São Sebastião da Amoreira 
+\gsquare Sapopema 
+\gsquare Sertaneja 
+\gsquare Uraí 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Jcrz}{\heading{Regional Jacarezinho}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Jacarezinho.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Jacarezinho }\includegraphics[width=1\textwidth]{figs/tweetPR_Jacarezinho.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Jacarezinho }\begin{center}
+\input{figs/tabregionalPR_Jacarezinho.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Barra do Jacaré 
+\gsquare Cambará 
+\gsquare Carlópolis 
+\gsquare Conselheiro Mairinck 
+\gsquare Figueira 
+\gsquare Guapirama 
+\gsquare Ibaiti 
+\gsquare Jaboti 
+\gsquare Jacarezinho 
+\gsquare Japira 
+\gsquare Joaquim Távora 
+\gsquare Jundiaí do Sul 
+\gsquare Pinhalão 
+\gsquare Quatiguá 
+\gsquare Ribeirão Claro 
+\gsquare Salto do Itararé 
+\gsquare Santana do Itararé 
+\gsquare Santo Antônio da Platina 
+\gsquare São José da Boa Vista 
+\gsquare Siqueira Campos 
+\gsquare Tomazina 
+\gsquare Wenceslau Braz 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Told}{\heading{Regional Toledo}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Toledo.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Toledo }\includegraphics[width=1\textwidth]{figs/tweetPR_Toledo.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Toledo }\begin{center}
+\input{figs/tabregionalPR_Toledo.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Assis Chateaubriand 
+\gsquare Diamante D'Oeste 
+\gsquare Entre Rios do Oeste 
+\gsquare Guaíra 
+\gsquare Marechal Cândido Rondon 
+\gsquare Maripá 
+\gsquare Mercedes 
+\gsquare Nova Santa Rosa 
+\gsquare Ouro Verde do Oeste 
+\gsquare Palotina 
+\gsquare Pato Bragado 
+\gsquare Quatro Pontes 
+\gsquare Santa Helena 
+\gsquare São José das Palmeiras 
+\gsquare São Pedro do Iguaçu 
+\gsquare Terra Roxa 
+\gsquare Toledo 
+\gsquare Tupãssi 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{TlmB}{\heading{Regional Telêmaco Borba}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_TelemacoBorba.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Telêmaco Borba }\includegraphics[width=1\textwidth]{figs/tweetPR_TelemacoBorba.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Telêmaco Borba }\begin{center}
+\input{figs/tabregionalPR_TelemacoBorba.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Curiúva 
+\gsquare Imbaú 
+\gsquare Ortigueira 
+\gsquare Reserva 
+\gsquare Telêmaco Borba 
+\gsquare Tibagi 
+\gsquare Ventania 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage\begin{minipage}[t]{.66\linewidth}
+\hypertarget{Ivpr}{\heading{Regional Ivaiporã}}
+\includegraphics[width=0.8\textwidth]{figs/MapaPR_Ivaipora.png}\vspace{0.5cm}\vspace{0.5cm}\begin{center}
+\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Ivaiporã }\includegraphics[width=1\textwidth]{figs/tweetPR_Ivaipora.png}\end{center}
+\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional Ivaiporã }\begin{center}
+\input{figs/tabregionalPR_Ivaipora.tex}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}
+\begin{mdframed}[style=sidebar,frametitle={}]
+\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Arapuã 
+\gsquare Ariranha do Ivaí 
+\gsquare Cândido de Abreu 
+\gsquare Cruzmaltina 
+\gsquare Godoy Moreira 
+\gsquare Ivaiporã 
+\gsquare Jardim Alegre 
+\gsquare Lidianópolis 
+\gsquare Lunardelli 
+\gsquare Manoel Ribas 
+\gsquare Mato Rico 
+\gsquare Nova Tebas 
+\gsquare Rio Branco do Ivaí 
+\gsquare Rosário do Ivaí 
+\gsquare Santa Maria do Oeste 
+\gsquare São João do Ivaí 
+\end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage
+
+%-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE
+%-----------------------------------------------------------------------------------
+ %\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+
+ 
+      \hypertarget{municips}{\heading{Resumo da situação epidemiológica da dengue nos municípios de Paraná, na semana 33 de 2016}{6pt}}
+
+      
+     \begin{center}
+            \input{figs/tabelaoPR.tex}
+     \end{center}
+
+
+      \BackToContents % Link back to the contents of the newsletter
+
+
+\newpage
+
+%---------------------------------------------------------------------------------
+%	Variáves nas Tabelas, Créditos e Contato
+%---------------------------------------------------------------------------------
+
+\begin{minipage}[t]{1\linewidth} 
+
+\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}}
+
+\begin{description}
+\item [SE =] semana epidemiológica
+\item [tweet =] número de tweets indicativos de casos de dengue na cidade
+\item [temperatura =] média das temperaturas mínimas da semana
+\item [casos notif =] casos notificados de dengue 
+\item [casos preditos =] número de casos estimados após correção pelo atraso de notificação
+\item [ICmin =] número mínimo de casos estimados (IC 95\%)
+\item [ICmax =] número máximo de casos estimados (IC 95\%)
+\item [Rt] número reprodutivo efetivo ($>$ 1 indica aumento de casos transmissão)
+\item [p(Rt1) =] probabilidade do número reprodutivo ser maior que 1 ($>0.95$ indica aumento significativo de casos)
+\item [inc =] incidência por 100.000 habitantes
+\item [Nivel =] cor do alerta (verde, amarelo, laranja, vermelho)
+\end{description}
+
+\hypertarget{notas}{\heading{Notas}}
+
+\begin{itemize}
+\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
+\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.
+\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
+\end{itemize}
+
+\hypertarget{creditos}{\heading{Créditos}}
+
+Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
+
+\begin{itemize}
+\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro.
+\item Escola de Matemática Aplicada, Fundação Getúlio Vargas.
+\item Secretarias do Estado e Município do Rio de Janeiro.
+\item Observatório de Dengue da UFMG
+\item Secretaria Estadual de Saúde do Paraná.
+\end{itemize}
+
+      \BackToContents % Link back to the contents of the newsletter
+
+\vspace{1cm}
+
+\hline
+Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
+
+\textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
+\end{minipage} % fim da pagina de creditos
+
+\end{document} 

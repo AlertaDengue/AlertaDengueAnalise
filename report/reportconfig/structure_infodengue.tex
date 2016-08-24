@@ -19,7 +19,6 @@
 %----------------------------------------------------------------------------------------
 
 \usepackage{graphicx} % Required for including images
-\usepackage[utf8]{inputenc}
 \usepackage{microtype} % Improved typography
 \usepackage{multicol} % Used for the two-column layout of the document
 \usepackage{booktabs} % Required for nice horizontal rules in tables
@@ -154,9 +153,9 @@
 %----------------------------------------------------------------------------------------
 
 \newcommand{\heading}[2]{ % Define the \heading command
-%\vspace{#2} % White space above the heading
+\vspace{#2} % White space above the heading
 {\begin{center}\Large\textbf{#1}\end{center}} % The heading style
-%\vspace{#2} % White space below the heading
+\vspace{#2} % White space below the heading
 }
 
 %\newcommand{\Inicio}{\hyperlink{contents}{{\small Inicio}}} % Define a command for linking back to the contents of the newsletter
