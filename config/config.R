@@ -2,7 +2,7 @@
 # Arquivo de configuracao do Alerta Dengue por Estado
 # ====================================================
 hoje = Sys.Date()
-source("alerta/config/config_global.R") # packages e regras gerais do alerta
+source("AlertaDengueAnalise/config/config_global.R") # packages e regras gerais do alerta
 
       
 # ========================================
