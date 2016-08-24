@@ -6,7 +6,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 data_relatorio = 201633
 
 
-### Cidade do Rio de Janeiro
+### Cidade do Rio de Janeiro - 
 
 alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = data_relatorio, verbose=TRUE)        # calcula o alerta
   
