@@ -9,7 +9,8 @@ library("RPostgreSQL")
 library(xtable)
 library(knitr)
 library(AlertTools)
-#devtools::load_all()
+
+
 source("AlertaDengueAnalise/config/codigofiguras.R")
 source("AlertaDengueAnalise/config/configRelatorio.r")
 

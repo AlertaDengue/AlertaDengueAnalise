@@ -1,16 +1,15 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Rio de Janeiro
 # =============================================================================
-con <- DenguedbConnect()
-
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
+con <- DenguedbConnect()
 
 # ----- data do relatorio:
 data_relatorio = 201632
 
 # ---- Calcula alerta: 
 
-aleRJ <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = RJ.criteria, 
+aleRJ <- update.alerta(region = names(pars.RJ)[1], pars = pars.RJ, crit = RJ.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
 save(aleRJ, file="AlertaDengueAnalise/report/RJ/aleRJ.RData")

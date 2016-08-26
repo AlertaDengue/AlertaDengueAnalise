@@ -287,7 +287,7 @@ geraRelatorioMunicipal<-function(dir, alert, rnwfile = "BoletimMunicipal_InfoDen
 
 configRelatorioRio<-function(alert, tres, dir, datasource=con, data, dirout){
   
-  map.Rio(alerio, data=data_relatorio, filename="mapaRio.png", dir=dirout, shapefile = "alerta/report/Rio_de_Janeiro/shape/CAPS_SMS.shp")
+  map.Rio(alerio, data=data_relatorio, filename="mapaRio.png", dir=dirout, shapefile = "AlertaDengueAnalise/report/Rio_de_Janeiro/shape/CAPS_SMS.shp")
   
   totcrude <- aggregate(tres$casos,by=list(tres$se),sum)
   totest<-aggregate(tres$casos_est,by=list(tres$se),sum)
