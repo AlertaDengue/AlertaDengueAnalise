@@ -161,7 +161,7 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
   #dbGetQuery(con, sql)
   
   
-  newdata <- read.csv("../EPR_municipios_regional_saude1.csv")
+  newdata <- read.csv("../../EPR_municipios_regional_saude1.csv")
   tail(newdata)
   
   inserelinha <- function(newd,li){

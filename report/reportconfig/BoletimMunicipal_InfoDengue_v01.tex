@@ -4,27 +4,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
-\SweaveOpts{keep.source=TRUE}
+
 \input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
 
 % Carregando dados  (atualmente é manual)
-<<carrega_dados,echo=FALSE,results=hide>>=
-options(useFancyQuotes=FALSE)
-library('xtable')
 
-load('../RJ/figs/paramsRJ.RData') #parametros do estado e regionais 
-load('../RJ/paramsCamposdosGoytacazes.RData') # parametros do municipio
-
-figmapaestado = paste('../',sigla,'/figs/','Mapa_E',sigla,'.png',sep='')
-figmunicipio = '../RJ/figs/figuraCamposdosGoytacazes.png'
-@
-
-\fancyfoot[C]{Boletim Municipal - \Sexpr{nomecidade}}
-\fancyfoot[R]{SE \Sexpr{se} de \Sexpr{ano}}
+\fancyfoot[C]{Boletim Municipal - Campos dos Goytacazes}
+\fancyfoot[R]{SE 32 de 2016}
 \fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
 
+\usepackage{Sweave}
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+\input{BoletimMunicipal_InfoDengue_v01-concordance}
 
 %---------------------------------------------------------------------------------
 %	HEADER IMAGE
@@ -45,11 +36,11 @@ figmunicipio = '../RJ/figs/figuraCamposdosGoytacazes.png'
 \begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box
 
 %-----------------------------------------------------------
-\textbf{{\LARGE{\Sexpr{nomecidade}}}}
+\textbf{{\LARGE{Campos dos Goytacazes}}}
 
 \hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
 
-\textbf{Semana \Sexpr{se} de \Sexpr{ano}} % se, ano, em pp.RData
+\textbf{Semana 32 de 2016} % se, ano, em pp.RData
 
 \begin{itemize}
 \item \hyperlink{estado}{O Estado} 
@@ -81,15 +72,15 @@ figmunicipio = '../RJ/figs/figuraCamposdosGoytacazes.png'
 %--------------------------------------------------------------------------------
 %	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
 %-------------------------------------------------------------------------------
-\hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{estado}}{6pt}} % \hypertarget provides a label to reference using 
+\hypertarget{estado}{\heading{Situação da Dengue no Estado do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
 
-Desde o início do ano, \Sexpr{totano} casos foram registrados no estado, sendo \Sexpr{totultse} na última semana. A figura abaixo mostra as condições de transmissão em cada município.
+Desde o início do ano, 99675 casos foram registrados no estado, sendo 119 na última semana. A figura abaixo mostra as condições de transmissão em cada município.
 
 % Mapa estadual
-\includegraphics[width=0.8\textwidth]{\Sexpr{figmapaestado}}
+\includegraphics[width=0.8\textwidth]{../RJ/figs/Mapa_ERJ.png}
 %-----------------------------------------------------------
 
-Dos \Sexpr{nmunicipios} municipios, \Sexpr{nverde} encontram-se em nivel verde, \Sexpr{namarelo} em nivel amarelo, \Sexpr{nlaranja} em nivel laranja e \Sexpr{nvermelho} em nivel vermelho referentes a semana epidemiológica \Sexpr{se}-\Sexpr{ano}. Para informações mais atualizadas
+Dos 92 municipios, 92 encontram-se em nivel verde, 0 em nivel amarelo, 0 em nivel laranja e 0 em nivel vermelho referentes a semana epidemiológica 32-2016. Para informações mais atualizadas
 sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
 
@@ -109,7 +100,7 @@ As cores indicam niveis de atenção
 \end{description}
 \end{mdframed}
 
-\textbf{Na semana passada:} \Sexpr{namarelo1} municípios em nivel amarelo, \Sexpr{nlaranja1} em laranja e \Sexpr{nvermelho1} em vermelho.  
+\textbf{Na semana passada:} 1 municípios em nivel amarelo, 0 em laranja e 0 em vermelho.  
 
 \end{minipage} % End the main body - first page mini page
 
@@ -118,89 +109,27 @@ As cores indicam niveis de atenção
 %	SEGUNDA PAGINA: TEXTO PRINCIPAL - LOOP PELAS REGIONAIS
 %----------------------------------------------------------------------------------
 
-<<r,echo=FALSE,results=tex>>=
-# O loop e'feito no R e o template em latex entra como string
-
-i  = which(regs==as.character(regionalmun))  
-      cat('\\begin{minipage}[t]{.66\\linewidth}\n')  # inicio da minipage
-      # titulo:
-      cat(paste('\\hypertarget{',nickregs[[i]],'}{\\heading{Situação da Dengue na Regional ',regs[i],'}{6pt}}\n',sep='')); 
-      
-      # Mapa:
-      nomesemespaco = gsub(' ','', regs[i])
-      nomesemacento = iconv(nomesemespaco, to = 'ASCII//TRANSLIT')
-      #mapareg=paste(sigla,'/figs/Mapa',sigla,'_',nomesemacento,'.png',sep='')
-      mapareg=paste('../RJ/figs/Mapa',sigla,'_',nomesemacento,'.png',sep='')
-      #cat(paste('\\includegraphics[width=0.8\\textwidth]{',mapareg,'}',sep=''))
-      cat(paste('\\includegraphics[\\width=8\\textwidth]{',mapareg,'}\n',sep=''));
-      #cat('\\vspace{0.5cm}')
-      
-      # Tabela 
-      #tabreg=paste(sigla,'/figs/','tabregional',sigla,'_',nomesemacento,
-      #             '.tex',sep='')
-      tabreg=paste('../RJ/figs/',
-                   'tabregional',sigla,'_',nomesemacento, '.tex',sep='')
-      
-      cat(paste('\\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas na Regional',regs[i],'}\n'))
-      cat('\\begin{center}\n')
-      cat(paste('\\input{',tabreg,'}\n',sep=''))
-      cat('\\end{center}\n')
-      cat('\\small{\\hyperlink{vartab}{ver descrição das variáveis}}\n')
-      
-      # Grafico regional:
-      figname = paste('../RJ/figs/tweet',sigla,'_',nomesemacento,'.png',sep='')
-      #figname = paste(sigla,'/figs/tweet',sigla,'_',nomesemacento,'.png',sep='')
-      #cat('\\vspace{0.5cm}')
-      cat('\\begin{center}\n')
-      cat(paste('\\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional',regs[i],'}\n'))
-      cat(paste('\\includegraphics[width=1.3\\textwidth]{',figname,'}\n',sep=''))
-      cat('\\end{center}\n')
-      # End second page mini page
-      cat('\\end{minipage}\\hfill') 
-
-      # #--------------------------------------------------------------------------
-      # #      SEGUNDA PAGINA: CAIXA LATERAL - INDICE MUNICIPIOS
-      # #-------------------------------------------------------------------------
-
-      # Mini page taking up 30% of the actual page
-      cat('\\begin{minipage}[t]{.30\\linewidth}\n') 
-      cat('\\begin{mdframed}[style=sidebar,frametitle={}]\n') # Sidebar box 
- 
-      cat('\\textbf{\\hyperlink{municips}{Municipios}}') # titulo
-      cat('\\begin{itemize}')
-       
-      municip.reg <- municipios[municipios$nome_regional==regs[i],]
-      coresbullets = c(verde='\\gsquare',amarelo='\\ysquare',
-                            laranja='\\osquare',vermelho='\\rsquare')
-        
-      for (j in 1:dim(municip.reg)[1]) {
-              nivel = tabelao$Nivel[tabelao$Municipio==municip.reg$nome[j]]
-              corbullet = '\\wsquare'
-              if(!is.na(nivel)) corbullet = coresbullets[nivel] 
-              cat(paste(corbullet,municip.reg$nome[j],'\n'))
-      }
-      cat('\\end{itemize}')
-  
-      cat('\\BackToContents') 
-      # fim do box e minipage
-      cat('\\end{mdframed}\\hfill')
-      cat('\\end{minipage}') # End of the sidebar mini page
-      cat('\\newpage')
-@
-
+\begin{minipage}[t]{.66\linewidth}\hypertarget{Nort}{\heading{Situação da Dengue na Regional Norte}{6pt}}\includegraphics[\width=8\textwidth]{../RJ/figs/MapaRJ_Norte.png}\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas na Regional Norte }\begin{center}\input{../RJ/figs/tabregionalRJ_Norte.tex}\end{center}\small{\hyperlink{vartab}{ver descrição das variáveis}}\begin{center}\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional Norte }\includegraphics[width=1.3\textwidth]{../RJ/figs/tweetRJ_Norte.png}\end{center}\end{minipage}\hfill\begin{minipage}[t]{.30\linewidth}\begin{mdframed}[style=sidebar,frametitle={}]\textbf{\hyperlink{municips}{Municipios}}\begin{itemize}\gsquare Macaé 
+\gsquare Conceição de Macabu 
+\gsquare Carapebus 
+\gsquare Quissamã 
+\gsquare São Fidélis 
+\gsquare Campos dos Goytacazes 
+\gsquare São João da Barra 
+\gsquare São Francisco de Itabapoana \end{itemize}\BackToContents\end{mdframed}\hfill\end{minipage}\newpage
 
 %-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE
 %-----------------------------------------------------------------------------------
  %\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
-\hypertarget{municipio}{\heading{Situação da Dengue em \Sexpr{nomecidade}}{6pt}} % \hypertarget 
+\hypertarget{municipio}{\heading{Situação da Dengue em Campos dos Goytacazes}{6pt}} % \hypertarget 
 
-Desde o início do ano, \Sexpr{totanomun} casos foram registrados na cidade, sendo \Sexpr{totultsemun} na última semana. 
+Desde o início do ano, 1221 casos foram registrados na cidade, sendo 0 na última semana. 
 
-A cidade encontra-se em \textbf{nivel \Sexpr{nivelmun}}. 
+A cidade encontra-se em \textbf{nivel verde}. 
 
 A figura abaixo mostra a série histórica do município: (TOPO) Série temporal de casos suspeitos de dengue e série temporal de dengue mencionada em rede social; (MEIO) Perfil da temperatura; (BAIXO) histórico do alerta. 
 
-\includegraphics[width=1\textwidth]{\Sexpr{figmunicipio}}
+\includegraphics[width=1\textwidth]{../RJ/figs/figuraCamposdosGoytacazes.png}
 
 
 
