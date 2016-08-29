@@ -2,17 +2,28 @@
 # Configuracao para o boletim do Estado do Rio de Janeiro
 # ========================================================
 
-configRelatorio <- function(uf, sigla, data, alert, pars, shape, varid, dir, datasource){
+configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid, dir, datasource){
       # ------------
       ## Parte fixa
       # ------------
       
-      estado = uf
-      sigla = sigla
-      municipios = getCidades(uf=estado,datasource=con)
-      nmunicipios = dim(municipios)[1]
-      regs = getRegionais(uf = estado) 
-      nickregs = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
+  if(missing(regional)){ # se for estadual
+    estado = uf
+    sigla = sigla
+    municipios = getCidades(uf=estado,datasource=con)
+    nmunicipios = dim(municipios)[1]
+    regs = getRegionais(uf = estado) 
+    nickregs = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
+  }
+  
+  if(!(missing(regional))){ # se for regional
+    estado = uf
+    sigla = sigla
+    municipios = getCidades(regional=regional, uf=estado,datasource=con)
+    nmunicipios = dim(municipios)[1]
+    regs = regional 
+    nickregs = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
+  }    
       
       # -----------
       ## Parte que muda
@@ -26,12 +37,15 @@ configRelatorio <- function(uf, sigla, data, alert, pars, shape, varid, dir, dat
       nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
       
       # -------- Mapa do estado (funcao basica do alerttools)
-      geraMapa(alerta=alert, se=data, shapefile = shape,   
+      if(missing(regional)){ # se for estadual
+        geraMapa(alerta=alert, se=data, shapefile = shape,   
                varid=varid, titulo="", 
                filename=paste("Mapa_E", sigla,".png", sep=""),
                dir=dir, caption=FALSE)
-               
+      }    
+      
       # ---------Mapa Regionais (funcao customizada, no codigoFiguras.R)
+       
       mapa.regional(alerta=alert, regionais=regs, estado = uf, sigla = sigla,
                     data = data, pars=pars, shape=shape, shapeid=varid, dir=dir ,
                     datasource=datasource)
@@ -129,7 +143,7 @@ configRelatorio <- function(uf, sigla, data, alert, pars, shape, varid, dir, dat
             print(tabelax, type="latex", file=fname, floating=FALSE, latex.environments = NULL,
                   include.rownames=FALSE)
             
-            
+       
             # --------------------------------
             # Gera e salva figuras-resumo das regionais 
             # --------------------------------
@@ -181,6 +195,7 @@ configRelatorio <- function(uf, sigla, data, alert, pars, shape, varid, dir, dat
       
       
       
+      
       save(estado, sigla, se, ano, municipios, nmunicipios, regs,nickregs, totano, totultse, tabelao,
            nverde, namarelo, nlaranja, nvermelho, nverde1, namarelo1, nlaranja1, nvermelho1,
            file=paste(dir,"params",sigla,".RData",sep=""))
@@ -212,10 +227,10 @@ configRelatorioMunicipal <- function(alert, dir.out, data, datasource=con){
   dirmun = gsub("/figs","",dir.out)
   nomesemespaco = gsub(" ","",nomecidade)
   nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
-  fname = paste(dirmun,nomesemacento,"/","params",nomesemacento,".RData",sep="")
+  fname = paste(dirmun,"params",nomesemacento,".RData",sep="")
   
   # Figura
-  figname = paste(dirmun,nomesemacento,"/","figura",nomesemacento,".png",sep="")
+  figname = paste(dirmun,"figs/","figura",nomesemacento,".png",sep="")
   png(figname, width = 14, height = 16, units="cm", res=300)
   layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
          heights = c(rep(lcm(4),2), lcm(5)))

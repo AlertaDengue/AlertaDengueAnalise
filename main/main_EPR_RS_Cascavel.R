@@ -10,16 +10,16 @@ lastDBdate("tweet", city=410690)
 
 # ----- data do relatorio:
 data_relatorio = 201633
-alePR_RS_Cascavel <- update.alerta(region = names(pars.PR), pars = pars.PR[["Cascavel"]], crit = PR.criteria, 
+alePR_RS_Cascavel <- update.alerta(region = "Cascavel", pars = pars.PR, crit = PR.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
-save(alePR_RS_Cascavel, file="AlertaDengueAnalise/report/PR/alePR_RS_Cascavel.RData")
+save(alePR_RS_Cascavel, file="AlertaDengueAnalise/report/PR-RS-Cascavel/alePR_RS_Cascavel.RData")
 #load("AlertaDengueAnalise/report/PR/alePR.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
 
 # --- Gera parametros para o boletim
-configRelatorio(uf="Paraná", sigla = "PR", data=data_relatorio, 
+configRelatorio(uf="Paraná", regional="Cascavel", sigla = "PR", data=data_relatorio, 
                 alert=alePR_RS_Cascavel, pars = pars.PR, shape=PR.shape, varid=PR.shapeID,
-                dir=PR.out, datasource=con)
+                dir=PR.Cascavel.out, datasource=con)
 
 
 # Va para a pasta report/PR e knit BoletimEstadual_InfoDengue_EPR.Rnw (botao) . gerara pdf
