@@ -14,7 +14,7 @@ options(useFancyQuotes=FALSE)
 library('xtable')
 
 load('../RJ/figs/paramsRJ.RData') #parametros do estado e regionais 
-load('figs/paramsRio.RData') # parametros do municipio
+load('figs/paramsRio.RData') # parametros dos municipio
 
 datarel = data_relatorio - ano*100
 figmapaestado = paste("../",sigla,'/figs/','Mapa_E',sigla,'.png',sep='')

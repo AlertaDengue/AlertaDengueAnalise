@@ -22,6 +22,10 @@ configRelatorio(uf="Paraná", regional="Cascavel", sigla = "PR", data=data_relat
                 dir=PR.Cascavel.out, datasource=con)
 
 
+cidades <- names(alePR_RS_Cascavel)
+
+for(cid in cidades) configRelatorioMunicipal(alert=alePR_RS_Cascavel[[cid]], dir.out=PR.Cascavel.out, data=data_relatorio)
+
 # Va para a pasta report/PR e knit BoletimEstadual_InfoDengue_EPR.Rnw (botao) . gerara pdf
 # do relatorio na mesma pasta
 

@@ -110,8 +110,7 @@ Desde o início do ano, \Sexpr{totano} casos foram registrados no estado, sendo 
 \includegraphics[width=0.8\textwidth]{\Sexpr{figmapaestado}}
 %-----------------------------------------------------------
 
-Dos \Sexpr{nmunicipios} municipios, \Sexpr{nverde} encontram-se em nivel verde, \Sexpr{namarelo} em nivel amarelo, \Sexpr{nlaranja} em nivel laranja e \Sexpr{nvermelho} em nivel vermelho referentes a semana epidemiológica \Sexpr{se}-\Sexpr{ano}. Para informações mais atualizadas
-sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
+Dos \Sexpr{nmunicipios} municipios, \Sexpr{nverde} encontram-se em nivel verde, \Sexpr{namarelo} em nivel amarelo, \Sexpr{nlaranja} em nivel laranja e \Sexpr{nvermelho} em nivel vermelho referentes a semana epidemiológica \Sexpr{se}-\Sexpr{ano}. Para informações mais atualizadas e acesso ao mapa interativo de outras localidads consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
 
 %--------------------------------------------------------------------------------

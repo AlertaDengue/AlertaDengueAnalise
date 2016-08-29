@@ -14,6 +14,7 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid
     nmunicipios = dim(municipios)[1]
     regs = getRegionais(uf = estado) 
     nickregs = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
+    nickmun = abbreviate(iconv(municipios$nome, to = "ASCII//TRANSLIT"))
   }
   
   if(!(missing(regional))){ # se for regional
@@ -23,6 +24,7 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid
     nmunicipios = dim(municipios)[1]
     regs = regional 
     nickregs = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
+    nickmun = abbreviate(iconv(municipios$nome, to = "ASCII//TRANSLIT"))
   }    
       
       # -----------
