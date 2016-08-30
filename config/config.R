@@ -84,7 +84,7 @@ PR.criteria = criteria
 
 # Dados do diretorio para salvar (com / no final)
 PR.out = "AlertaDengueAnalise/report/PR/figs/"
-PR.Cascavel.out = "AlertaDengueAnalise/report/PR-RS-Cascavel/figs/"
+PR.Cascavel.out = "AlertaDengueAnalise/report/PR/Regionais/Cascavel/figs/"
 
 
 
