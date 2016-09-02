@@ -13,8 +13,8 @@ data_relatorio = 201633
 alePR_RS_Cascavel <- update.alerta(region = "Cascavel", pars = pars.PR, crit = PR.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
-save(alePR_RS_Cascavel, file="AlertaDengueAnalise/report/PR-RS-Cascavel/alePR_RS_Cascavel.RData")
-#load("AlertaDengueAnalise/report/PR/alePR.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
+save(alePR_RS_Cascavel, file="AlertaDengueAnalise/report/PR/Regionais/Cascavel/alePR_RS_Cascavel.RData")
+load("AlertaDengueAnalise/report/PR/Regionais/Cascavel/alePR_RS_Cascavel.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
 
 # --- Gera parametros para o boletim
 configRelatorio(uf="Paraná", regional="Cascavel", sigla = "PR", data=data_relatorio, 

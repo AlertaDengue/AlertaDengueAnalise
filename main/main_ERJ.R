@@ -5,12 +5,12 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 # ----- data do relatorio:
-data_relatorio = 201632
+data_relatorio = 201634
 
 # ---- Calcula alerta: 
 
-aleRJ <- update.alerta(region = names(pars.RJ)[1], pars = pars.RJ, crit = RJ.criteria, 
-                       datasource = con, sefinal=data_relatorio, writedb = FALSE)
+aleRJ <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = RJ.criteria, 
+                       datasource = con, sefinal=data_relatorio, writedb = FALSE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
 
 save(aleRJ, file="AlertaDengueAnalise/report/RJ/aleRJ.RData")
 #load("AlertaDengueAnalise/report/RJ/aleRJ.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
