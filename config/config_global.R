@@ -10,6 +10,8 @@ library(xtable)
 library(knitr)
 library(AlertTools)
 
+# explicita o diretorio base
+basedir = system("pwd", intern=TRUE)
 
 source("AlertaDengueAnalise/config/codigofiguras.R")
 source("AlertaDengueAnalise/config/configRelatorio.r")

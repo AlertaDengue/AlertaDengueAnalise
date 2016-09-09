@@ -145,7 +145,7 @@ As cores indicam niveis de atenção
 for (i in 1:length(regs)){
       cat("\\begin{minipage}[t]{.66\\linewidth}\n")  # inicio da minipage
       # titulo:
-      cat(paste("\\hypertarget{",nickregs[[i]],"}{\\heading{Regional ",regs[i],"}}\n",sep="")) 
+      cat(paste("\\hypertarget{",nickregs[[i]],"}{\\heading{Regional ",regs[i],"}{6pt}}\n",sep="")) 
       
       # Mapa:
       nomesemespaco = gsub(" ","", regs[i])
@@ -233,7 +233,7 @@ for (i in 1:length(regs)){
 
 \begin{minipage}[t]{1\linewidth} 
 
-\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}}
+\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}{6pt}}
 
 \begin{description}
 \item [SE =] semana epidemiológica
@@ -249,7 +249,7 @@ for (i in 1:length(regs)){
 \item [Nivel =] cor do alerta (verde, amarelo, laranja, vermelho)
 \end{description}
 
-\hypertarget{notas}{\heading{Notas}}
+\hypertarget{notas}{\heading{Notas}{6pt}}
 
 \begin{itemize}
 \item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
@@ -257,7 +257,7 @@ for (i in 1:length(regs)){
 \item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
 \end{itemize}
 
-\hypertarget{creditos}{\heading{Créditos}}
+\hypertarget{creditos}{\heading{Créditos}{6pt}}
 
 Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
 
@@ -273,7 +273,7 @@ Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
 
 \vspace{1cm}
 
-\hline
+\hrule
 Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
 
 \textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }

@@ -1,0 +1,249 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Boletim semanal municipal do InfoDengue
+% Adapted by Claudia Codeco (Jun 2016)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
+\SweaveOpts{keep.source=TRUE}
+\usepackage[utf8]{inputenc}
+\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+
+% Os objetos R para esse script estao no ambiente env criado pela funcao geraPDF. 
+
+<<carrega_dados,echo=FALSE,results=hide>>=
+options(useFancyQuotes=FALSE)
+library('xtable')
+@
+
+\fancyfoot[C]{Boletim Municipal - \Sexpr{env$nomecidade}}
+\fancyfoot[R]{SE \Sexpr{env$se} de \Sexpr{env$ano}}
+\fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+%---------------------------------------------------------------------------------
+%	HEADER IMAGE
+%---------------------------------------------------------------------------------
+
+\begin{figure}[H]
+\centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
+\end{figure}
+
+\centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line
+
+
+%---------------------------------------------------------------------------------
+%	CAIXA LATERAL - PRIMEIRA PAGINA
+%--------------------------------------------------------------------------------
+
+\begin{minipage}[t]{.30\linewidth} % Mini page taking up 30% of the actual page
+\begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box
+
+%-----------------------------------------------------------
+\textbf{{\LARGE{\Sexpr{env$nomecidade}}}}
+
+\hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
+
+\textbf{Semana \Sexpr{env$se} de \Sexpr{env$ano}} % se, ano, em pp.RData
+
+\begin{itemize}
+\item \hyperlink{estado}{O Estado} 
+\item \hyperlink{regional}{A Regional de Saúde}
+\item \hyperlink{municipio}{O Município}
+\end{itemize}
+
+\centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
+
+%-----------------------------------------------------------
+
+\hyperlink{vartab}{Variáveis nas Tabelas}
+
+\hyperlink{notas}{Notas} % These link to their appropriate sections in the newsletter
+
+\hyperlink{creditos}{Creditos} % These link to their appropriate sections in the newsletter
+
+\centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
+
+\textbf{Contato}
+\begin{description}
+\item \href{mailto:alerta\_dengue@fiocruz.br}{alerta\_dengue@fiocruz.br}  
+\end{description}
+
+\end{mdframed}
+\end{minipage}\hfill % End the sidebar mini page 
+\begin{minipage}[t]{.66\linewidth} % Nao pode colocar espaco acima senao ela nao fica lado a lado
+
+%--------------------------------------------------------------------------------
+%	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
+%-------------------------------------------------------------------------------
+\hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{env$estado}}{6pt}} % \hypertarget provides a label to reference using 
+
+Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, sendo \Sexpr{env$totultseUF} na última semana. A figura abaixo mostra as condições de transmissão em cada município a semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}.
+
+% Mapa estadual
+\includegraphics[width=0.8\textwidth]{\Sexpr{env$figmapaestado}}
+%-----------------------------------------------------------
+
+Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho. Para informações mais atualizadas
+e ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
+
+
+%--------------------------------------------------------------------------------
+%	PRIMEIRA PAGINA : BOX - CODIGO DE CORES
+%--------------------------------------------------------------------------------
+\vspace{1cm}
+\begin{mdframed}[style=intextbox,frametitle={}] % Sidebar box
+
+\hypertarget{descriptivebox}{\heading{O código de Cores}{1pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
+As cores indicam niveis de atenção
+\begin{description}
+\item[Verde:] temperaturas amenas, baixa incidência de casos.      
+\item[Amarelo:] temperatura propícia para a população do vetor e transmissão da dengue.
+\item[Laranja:] transmissão aumentada e sustentada de dengue. 
+\item[Vermelho:] incidência alta de dengue, acima dos 90\% históricos.
+\end{description}
+\end{mdframed}
+
+\textbf{Na semana passada:} O estado tinha \Sexpr{env$namarelo1UF} município(s) em nivel amarelo, \Sexpr{env$nlaranja1UF} em laranja e \Sexpr{env$nvermelho1UF} em vermelho.  
+
+\end{minipage} % End the main body - first page mini page
+
+\newpage
+%----------------------------------------------------------------------------------
+%	SEGUNDA PAGINA: TEXTO PRINCIPAL - REGIONAL
+%----------------------------------------------------------------------------------
+
+\begin{minipage}[t]{.66\linewidth}
+
+\hypertarget{\Sexpr{env$linkregional}}{\heading{Situação da Dengue na Regional \Sexpr{env$regionalmun}}{6pt}} % titulo
+
+% Mapa da regional
+\captionof{figure}[figregional]{Mapa da Regional de Saúde}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{\Sexpr{env$mapareg}} 
+\end{center}
+\vspace{0.5cm}
+
+% tabela da regional 
+\captionof{table}[tabregional]{Resumo das últimas seis semanas epidemiológicas na Regional \Sexpr{env$regionalmun}}
+\begin{center}
+\input{\Sexpr{env$tabreg}}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}
+\vspace{0.5cm}
+
+\end{minipage}
+\begin{minipage}[t]{.30\linewidth}
+%--------------------------------------------------------------------------
+%      SEGUNDA PAGINA: CAIXA LATERAL - INDICE MUNICIPIOS
+%-------------------------------------------------------------------------
+
+% Mini page taking up 30% of the actual page
+ 
+\begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box 
+
+\textbf{\hyperlink{municips}{Municipios}} % titulo
+\begin{itemize}
+
+<<r,echo=FALSE,results=tex>>=
+coresbullets = c(verde='\\gsquare',amarelo='\\ysquare',
+                 laranja='\\osquare',vermelho='\\rsquare')
+
+for (j in 1:dim(env$municip.reg)[1]) {
+  nivel = env$tabelao$Nivel[env$tabelao$Municipio==env$municip.reg$nome[j]]
+  corbullet = '\\wsquare'
+  if(!is.na(nivel)) corbullet = coresbullets[nivel] 
+  cat(paste(corbullet,env$municip.reg$nome[j],'\n'))
+}
+@
+
+\end{itemize}
+\BackToContents 
+% fim do box e minipage
+\end{mdframed}\hfill
+\end{minipage}%  End of the sidebar mini page
+\newpage
+
+%-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE
+%-----------------------------------------------------------------------------------
+ %\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+\hypertarget{municipio}{\heading{Situação da Dengue em \Sexpr{env$nomecidade}}{6pt}} % \hypertarget 
+
+Desde o início do ano, \Sexpr{env$totanomun} casos foram registrados na cidade, sendo \Sexpr{env$totultsemun} na última semana. 
+
+A cidade encontra-se em \textbf{nivel \Sexpr{env$nivelmun}}. 
+
+\captionof{figure}[figmun]{(TOPO) Série temporal de casos suspeitos de dengue e série temporal de dengue mencionada em rede social; (MEIO) Perfil da temperatura; (BAIXO) histórico do alerta.}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{\Sexpr{env$figmunicipio}}
+\end{center}
+
+% tabela municipal
+\captionof{table}[tabmun]{Resumo das últimas seis semanas epidemiológicas no município.}
+\begin{center}
+\input{\Sexpr{env$tabmun}}
+\end{center}
+\small{\hyperlink{vartab}{ver descrição das variáveis}}
+\vspace{0.5cm}
+
+
+\BackToContents % Link back to the contents of the newsletter
+
+
+\newpage
+
+%---------------------------------------------------------------------------------
+%	Variáves nas Tabelas, Créditos e Contato
+%---------------------------------------------------------------------------------
+
+\begin{minipage}[t]{1\linewidth} 
+
+\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}{6pt}}
+
+\begin{description}
+\item [SE] semana epidemiológica
+\item [tweet] número de tweets indicativos de casos de dengue na cidade
+\item [temperatura] média das temperaturas mínimas da semana
+\item [casos notif] casos notificados de dengue 
+\item [casos preditos] número de casos estimados após correção pelo atraso de notificação
+\item [ICmin] número mínimo de casos estimados (IC 95\%)
+\item [ICmax] número máximo de casos estimados (IC 95\%)
+\item [Rt] número reprodutivo efetivo ($>$ 1 indica aumento de casos transmissão)
+\item [pr(aumento)] probabilidade de aumento de incidência. Acima de \%90 é um indicador importante.
+\item [inc] incidência por 100.000 habitantes
+\item [Nivel] cor do alerta (verde, amarelo, laranja, vermelho)
+\end{description}
+
+\hypertarget{notas}{\heading{Notas}{6pt}}
+
+\begin{itemize}
+\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
+\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.
+\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
+\end{itemize}
+
+\hypertarget{creditos}{\heading{Créditos}{6pt}}
+
+Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
+
+\begin{itemize}
+\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro.
+\item Escola de Matemática Aplicada, Fundação Getúlio Vargas.
+\item Secretarias do Estado e Município do Rio de Janeiro.
+\item Observatório de Dengue da UFMG
+\item Secretaria Estadual de Saúde do Paraná.
+\end{itemize}
+
+\BackToContents % Link back to the contents of the newsletter
+
+\vspace{1cm}
+
+\hrule
+
+Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
+
+\textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
+\end{minipage} % fim da pagina de creditos
+
+\end{document} 

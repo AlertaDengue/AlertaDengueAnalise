@@ -1,8 +1,9 @@
 ## Alertas municipais do Estado do Rio de Janeiro
 #==============================
 setwd("~/")
-con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
+con <- DenguedbConnect()
+
 data_relatorio = 201634
 
 #***********************************
@@ -20,22 +21,35 @@ map.Rio(alerio,shapefile = "AlertaDengueAnalise/report/Rio_de_Janeiro/shape/CAPS
 configRelatorioRio(alert=alerio, tres = res, data=data_relatorio, 
                      dirout="AlertaDengueAnalise/report/Rio_de_Janeiro/figs/")     # gera figs e tabelas para o relatorio
 
-# Abrir o arquivo report/Rio_de_Janeiro/BoletimRio.Rnw e executar. 
-
-nome = "Rio-2016-teste.pdf"
+# Abrir o arquivo report/Rio_de_Janeiro/BoletimRio.Rnw e executar (unica parte ainda manual) 
+# Para renomear e copiar para a pasta RiodeJaneiro/boletins
+nome = paste("RJ-mn-RiodeJaneiro",Sys.Date(),".pdf",sep="")
+system(paste("cp AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.pdf AlertaDengueAnalise/report/Rio_de_Janeiro/boletins",nome,sep=""))
 system(paste("cp AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.pdf Relatorio/RJ/RiodeJaneiro/",nome,sep=""))
 
+# Para apagar arquivos temporarios 
+system("rm AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.pdf")
+system("rm AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.tex")
+system("rm AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.log")
+system("rm AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio-concordance.tex")
+
+# Para fazer o update no site
 res <- write.alertaRio(alerio, write="db")    # salva resultado no Banco de Dados
 
 #***************************************************
 # Cidade de Campos de Goytacazes
 #***************************************************
 
-### Campos de Goitacazes (ja esta escrevendo direto no banco o resultado: writedb=TRUE)
 aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
                            datasource = con, sefinal=data_relatorio, writedb = TRUE)
 
+res=configRelatorioMunicipal(alert = aleCampos, siglaUF = "RJ", data = data_relatorio, 
+                             dir.out = RJ_CamposdosGoytacazes.out)
+
+  
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
+
+
 

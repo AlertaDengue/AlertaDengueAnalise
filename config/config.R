@@ -44,6 +44,11 @@ RJ.aps.shape = "AlertaDengueAnalise/report/Rio_de_Janeiro/shape/CAPS_SMS.shp"
 RJ.aps.shapeID = "CD_GEOCMU"
 RJ.aps.criteria = criteria
 
+# ============================
+# Rio de Janeiro - Municipios
+# ============================
+RJ_CamposdosGoytacazes.out = "AlertaDengueAnalise/report/RJ/Campos_dos_Goytacazes"
+
 
 # ========================================
 # Parametros do Estado do Paraná 
@@ -81,10 +86,12 @@ pars.PR[["Ivaiporã"]] <- list(pdig = c(2.146987,0.9084783), tcrit=22, inccrit=1
 PR.shape="AlertaDengueAnalise/report/PR/shape/41MUE250GC_SIR.shp"  # fonte para o mapa
 PR.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 PR.criteria = criteria
-
-# Dados do diretorio para salvar (com / no final)
 PR.out = "AlertaDengueAnalise/report/PR/figs/"
-PR.Cascavel.out = "AlertaDengueAnalise/report/PR/Regionais/Cascavel/figs/"
+
+###====================================
+## Parana - Regionais
+### ===================================
+PR.Cascavel.out = "AlertaDengueAnalise/report/PR/Regionais/Cascavel"
 
 
 
