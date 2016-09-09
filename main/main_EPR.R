@@ -1,12 +1,11 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Paraná
 # =============================================================================
+setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ---- Calcula alerta: 
 con <- DenguedbConnect()
-lastDBdate("sinan", city=410690)
-lastDBdate("tweet", city=410690)
 
 # ----- data do relatorio:
 data_relatorio = 201633
