@@ -2,7 +2,9 @@
 *.html
 *.RData
 *.Rhistory
-GeraAlerta/figure/*.*
+*.tex
+*.log
+*.gz
 *.png
 *.pdf
 *~
