@@ -4,7 +4,7 @@
 hoje = Sys.Date()
 source("AlertaDengueAnalise/config/config_global.R") # packages e regras gerais do alerta
 
-      
+#**********************************************************************************************************************************      
 # ========================================
 # Parametros do Estado do Rio de Janeiro 
 # ========================================
@@ -49,7 +49,7 @@ RJ.aps.criteria = criteria
 # ============================
 RJ_CamposdosGoytacazes.out = "AlertaDengueAnalise/report/RJ/Campos_dos_Goytacazes"
 
-
+#**********************************************************************************************************************************
 # ========================================
 # Parametros do Estado do Paraná 
 # ========================================
@@ -93,5 +93,22 @@ PR.out = "AlertaDengueAnalise/report/PR/figs/"
 ### ===================================
 PR.Cascavel.out = "AlertaDengueAnalise/report/PR/Regionais/Cascavel"
 
+#***********************************************************************************************************************************
+# ========================================
+# Parametros do Estado do Espírito Santo 
+# ========================================
+#nomesregs = getRegionais("Espírito Santo")# use essa funcao para descobrir as regionais
+nomesregs.ES <- c("ES-MN-AlfredoChaves")         
+pars.ES <- NULL
+pars.ES[nomesregs.ES] <- list(NULL)
+pars.ES[["ES-MN-AlfredoChaves"]] <- list(pdig = c(0.9134618,0.9105709),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+
+# Dados para o mapa
+ES.shape="AlertaDengueAnalise/report/ES/shape/32MUE250GC_SIR.shp"  # fonte para o mapa
+ES.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
+ES.criteria = criteria
+
+# Dados do diretorio para salvar (com / no final)
+ES.MN.AlfredoChaves.out = "AlertaDengueAnalise/report/ES/Municipios/ES-MN-AlfredoChaves/"
 
 
