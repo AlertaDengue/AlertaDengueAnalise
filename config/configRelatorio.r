@@ -214,6 +214,9 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid
 }
 
 
+# ==============================================
+# Gera objetos para o Boletim Regional
+# ==============================================
 
 configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
   
@@ -420,25 +423,29 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
              nomemapareg = nomemapareg, nometabreg = nometabreg, nometabelao = nometabelao,
              tabelao = tabelao)
   
+  # -----------------------------
+  # salvando o boletim
+  # ----------------------------
+  nomebol = NULL
   if (geraPDF==TRUE){
     message("gerando PDF...")
-    geraPDF(tipo="regional", obj = res, dir.boletim = paste(dir,"boletins",sep="/"))
+    nomebol=geraPDF(tipo="regional", obj = res, dir.boletim = paste(dir,"boletins",sep="/"))
   } 
   
   #message(paste("salvando RData em",filename))
   #save(estado, sigla, se, ano, municipios, nmunicipios, regional,nickreg, totano, totultse, tabelao, nverde, namarelo, nlaranja, nvermelho, nverde1, namarelo1, nlaranja1, nvermelho1, data,
   #     file=filename)
-  res
+  nomebol
 }
 
 
-## -----------------------------------------------
+## ===========================================================
 ## FUN configRelatorioMunicipal
 
 # gera objetos necessarios para o boletim Municipal
 # alert - objeto gerado pelo update.alerta, siglaUF = "RJ", dir.out = pasta mestre do municipio,
 # data - data do relatorio. Duas opcoes, relatorio completo ou simples
-
+## ============================================================
 configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, datasource=con,
                                      dirb=basedir,geraPDF=TRUE){
   
@@ -522,7 +529,7 @@ nomebol = NULL
 }
 
 
-## -----------------------------------------------
+## ===============================================================
 ## FUN geraPDF
 
 # executa o Sweave com o Rnw selecionado (municipal, regional, estadual) alimentado com os objetos gerados
@@ -530,7 +537,7 @@ nomebol = NULL
 # obj - lista gerada pelo configRelatorioMunicipal (por enquanto)
 # tipo = um de "municipal", "regional", "estadual"
 # dir.report = diretorio onde esta a pasta report
-
+# =================================================================
 
 geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report",
                   bdir = basedir){  
@@ -670,8 +677,9 @@ geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report
   }
 
 
-
-
+## ===================================================
+## Relatorio do Rio de Janeiro
+## ===================================================
 
 configRelatorioRio<-function(alert, tres, dir, datasource=con, data, dirout){
   
@@ -759,12 +767,29 @@ configRelatorioRio<-function(alert, tres, dir, datasource=con, data, dirout){
   
 }
 
-publicarAlerta <- function(ale, pdf, dir){
+
+## ==========================================================
+## Funcao para publicar o Alerta no site
+## ==========================================================
+publicarAlerta <- function(ale, pdf, dir, dirb = basedir){
+  
+  # ---------------------------------------------------------
   # copia o alerta da tabela de historico do Banco de dados
   message("atualizando a tabela do historico...")
-  res <- write.alerta(ale, write = "db")
-  # Copia o boletim para a pagina do site
-  comando <- paste ("cp", pdf, dir) 
+  
+  if(c("indices") %in% names(ale)) { # detecta se munic. unico
+    res <- write.alerta(ale, write = "db") 
+  } else {
+    for (i in 1:length(ale)) {
+      print(names(ale)[i])
+      res=write.alerta(ale[[i]], write="db") 
+    }
+  }
+  
+  message("Copia o boletim para a pagina do site...")
+  strip <- strsplit(pdf,"/")[[1]]
+  nomebol = strip[length(strip)] # nome do boletim
+  bolpath <- paste(basedir,dir,nomebol,sep="/") # boletim com path completo
+  comando <- paste ("cp", pdf, bolpath) 
   system(comando) 
-  message("mapa e boletim atualizados no site")
 }
