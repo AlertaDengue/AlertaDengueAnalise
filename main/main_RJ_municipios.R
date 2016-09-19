@@ -43,10 +43,12 @@ res <- write.alertaRio(alerio, write="db")    # salva resultado no Banco de Dado
 aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
                            datasource = con, sefinal=data_relatorio, writedb = TRUE)
 
-res=configRelatorioMunicipal(alert = aleCampos, siglaUF = "RJ", data = data_relatorio, 
-                             dir.out = RJ_CamposdosGoytacazes.out)
+bolCampos <- configRelatorioMunicipal(alert = aleCampos, tipo = "simples", siglaUF = "RJ", data = data_relatorio, 
+                                             dir.out = RJ_CamposdosGoytacazes.out, geraPDF = TRUE)
 
-  
+publicarAlerta(ale = aleCampos, pdf = bolCampos, dir = "Relatorio/RJ/Municipios/CamposdosGoytacazes")
+
+
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
