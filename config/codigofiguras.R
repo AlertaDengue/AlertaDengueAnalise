@@ -108,6 +108,7 @@ figuramunicipio <- function(obj){
   maxy <- max(objc$casos, na.rm=TRUE)
   legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
   par(new=T)
+  if(sum(is.na(objc$tweet))==nrow(objc)) objc$tweet = 0 # 
   plot(objc$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
   lines(obj$tweet, col=3, type="h") #*coefs[2] + coefs[1]
   axis(1, pos=0, lty=0, lab=FALSE)

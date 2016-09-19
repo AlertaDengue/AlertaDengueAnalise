@@ -437,9 +437,9 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
 
 # gera objetos necessarios para o boletim Municipal
 # alert - objeto gerado pelo update.alerta, siglaUF = "RJ", dir.out = pasta mestre do municipio,
-# data - data do relatorio
+# data - data do relatorio. Duas opcoes, relatorio completo ou simples
 
-configRelatorioMunicipal <- function(alert, siglaUF, dir.out, data, datasource=con,
+configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, datasource=con,
                                      dirb=basedir,geraPDF=TRUE){
   
   # Identificacao da cidade
@@ -474,7 +474,7 @@ configRelatorioMunicipal <- function(alert, siglaUF, dir.out, data, datasource=c
   # Gera nome do arquivo de saida paramsNomedaCidade.RData
   nomesemespaco = gsub(" ","",nomecidade)
   nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
-  fname = paste(dir.out,"/figs/params",nomesemacento,".RData",sep="")
+  fname = paste(dirb,"/",dir.out,"/figs/params",nomesemacento,".RData",sep="")
   
   # Gera figura chamada figuraNomedaCidade.png com 3 subfiguras
   figname = paste(dirb,"/",dir.out,"/figs/figura",nomesemacento,".png",sep="")
@@ -484,12 +484,16 @@ configRelatorioMunicipal <- function(alert, siglaUF, dir.out, data, datasource=c
   dev.off()  # fim da figura ----------
   
   # Gera tabela resumo das ultimas semanas
+  # ---------------------------------------
+  tamanhotabela = 16  # n. linhas na tabela
   varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesICmax","p1")
-  tab <- tail(alert$data[,varstab])
+  tab <- tail(alert$data[,varstab], n=tamanhotabela)
   tab$p1 <- tab$p1*100
-  names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "incidência max","pr(aumento)")
+  cores <- c("verde","amarelo","laranja","vermelho")
+  tab <- cbind(tab,cores[tail(alert$indices$level,n=tamanhotabela)])
+  names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "incidência max","pr(incid. subir)","nivel")
   tabname <- paste(dirb,"/",dir.out,"/figs/tabela",nomesemacento,".tex",sep="")
-  tabelax <-xtable(tab,align ="cc|cccccc",digits = 0)
+  tabelax <-xtable(tab,align ="cc|ccccccc",digits = 0)
   digits(tabelax) <- 0
   print(tabelax, type="latex", file=tabname, floating=FALSE, latex.environments = NULL,
         include.rownames=FALSE)
@@ -501,8 +505,21 @@ configRelatorioMunicipal <- function(alert, siglaUF, dir.out, data, datasource=c
     
   message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
   save(res, file=fname)
-  res
-  }
+  
+  # -----------------------------
+  # salvando o boletim
+  # ----------------------------
+nomebol = NULL  
+  if (geraPDF==TRUE){
+    message("gerando PDF...")
+    dirdoboletim = paste(dir.out,"boletins",sep="/")
+    if(missing(tipo)) message("indique se o tipo = simples ou completo. Simples se for municipio isolado.")
+    if(tipo == "completo") nomebol=geraPDF(tipo="municipal", obj = res, dir.boletim =dirdoboletim) 
+    if(tipo == "simples") nomebol=geraPDF(tipo="municipalsimples", obj = res, dir.boletim = dirdoboletim)
+  } 
+  
+  nomebol
+}
 
 
 ## -----------------------------------------------
@@ -529,6 +546,10 @@ geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report
     rnwfile = "BoletimMunicipal_InfoDengue.Rnw"
     nomeboletim = paste(bdir,"/",dir.boletim, "/",obj$sigla,"-mn-",obj$nomecidadeiconv,"-",Sys.Date(),".pdf",sep="")
   }
+  if(tipo == "municipalsimples") {
+    rnwfile = "BoletimMunicipalSimples_InfoDengue.Rnw"
+    nomeboletim = paste(bdir,"/",dir.boletim, "/",obj$sigla,"-mn-",obj$nomecidadeiconv,"-",Sys.Date(),".pdf",sep="")
+  }
   if(tipo == "regional") {
     rnwfile = "BoletimRegional_InfoDengue.Rnw"
     nomeboletim = paste(bdir,"/",dir.boletim, "/",obj$sigla,"-RS-",obj$nomeregiconv,"-",Sys.Date(),".pdf",sep="")
@@ -538,76 +559,95 @@ geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report
     nomeboletim = paste(dir.boletim, "/E",obj$sigla,"-",Sys.Date(),".pdf",sep="")
   }
   
-  #-------------------------
-  # Carrega parametros estaduais (todos os relatorios usam)
-  # -------------------------
-  # PS. Guardar inicialmente esses parametros no ambiente envUF, porque nem todos vao para os municipios
-  envUF <- new.env() # ambiente para guardar todos os objetos do estado
-  dir.estado = paste(bdir,dir.report,obj$sigla,"figs",sep="/") # diretorio da UF
-  load(paste(dir.estado,"/params",obj$sigla,".RData",sep=""),envir = envUF) # carrega dados da UF 
-  envUF$figmapaestado = paste(dir.estado,"/Mapa_E",obj$sigla,".png", sep="") # mapa estadual
-  
   # -------------------------------------------
   # Cria Ambiente com objetos para o relatorio
   # -------------------------------------------
   env <<- new.env() # ambiente que vai ser usado no relatorio, imprescindivel para o sweave funcionar
-
-  # Alimenta env com parametros estaduais que serao (eventualmente) usados
-  # ------------------------------------------------------
-  env$estado <- envUF$estado  # nome do estado
-  env$regionaisUF <- envUF$regs # lista de regionais
-  env$totanoUF <- envUF$totano  # total de casos no ano
-  env$totultseUF <- envUF$totultse  # total de casos na ultima semana
-  env$figmapaestado <- envUF$figmapaestado
-  env$nmunicipios <- envUF$nmunicipios # n. municipios no estado
-  env$nverdeUF <- envUF$nverde  # numero de municipios verdes na ultima semana
-  env$namareloUF <- envUF$namarelo
-  env$nlaranjaUF <- envUF$nlaranja
-  env$nvermelhoUF <- envUF$nvermelho
-  env$namarelo1UF <- envUF$namarelo1  # numero de munic. amarelos na semana anterior
-  env$nlaranja1UF <- envUF$nlaranja1
-  env$nvermelho1UF <- envUF$nvermelho1
-  env$seUF <- envUF$se # ultima semana em que rodou o alerta estadual
-  env$anoUF <- envUF$ano # ano em que rodou o alerta estadual
-  env$tabelao <- envUF$tabelao  # tabela com alertas municipais (todos os municipios da UF)
   
-  # alimenta env com os parametros da Regional de Saude (if regional) 
-  # ---------------------------------------------------------
-  if(tipo == "regional"){
-  env$regional <- obj$regional  
-  env$se <- obj$se
-  env$ano <- obj$ano
-  env$mapareg <- obj$nomemapareg
-  env$tabreg <- obj$nometabreg
-  env$municipiosRS <- obj$municipios
-  env$nmunicipiosRS <- obj$nmunicipios
-  env$nometabelaoRS <- obj$nometabelao
-  env$tabelaoRS <- obj$tabelao
-  env$nomemunfigurasRS <- obj$nomemunfiguras
+  #-------------------------
+  # Carrega parametros estaduais (todos os relatorios usam, exceto o simples)
+  # -------------------------
+  if(tipo!="municipalsimples"){
+    # PS. Guardar inicialmente esses parametros no ambiente envUF, porque nem todos vao para os municipios
+    envUF <- new.env() # ambiente para guardar todos os objetos do estado
+    dir.estado = paste(bdir,dir.report,obj$sigla,"figs",sep="/") # diretorio da UF
+    load(paste(dir.estado,"/params",obj$sigla,".RData",sep=""),envir = envUF) # carrega dados da UF 
+    envUF$figmapaestado = paste(dir.estado,"/Mapa_E",obj$sigla,".png", sep="") # mapa estadual
     
     
+    # Alimenta env com parametros estaduais que serao (eventualmente) usados
+    # ------------------------------------------------------
+    env$estado <- envUF$estado  # nome do estado
+    env$regionaisUF <- envUF$regs # lista de regionais
+    env$totanoUF <- envUF$totano  # total de casos no ano
+    env$totultseUF <- envUF$totultse  # total de casos na ultima semana
+    env$figmapaestado <- envUF$figmapaestado
+    env$nmunicipios <- envUF$nmunicipios # n. municipios no estado
+    env$nverdeUF <- envUF$nverde  # numero de municipios verdes na ultima semana
+    env$namareloUF <- envUF$namarelo
+    env$nlaranjaUF <- envUF$nlaranja
+    env$nvermelhoUF <- envUF$nvermelho
+    env$namarelo1UF <- envUF$namarelo1  # numero de munic. amarelos na semana anterior
+    env$nlaranja1UF <- envUF$nlaranja1
+    env$nvermelho1UF <- envUF$nvermelho1
+    env$seUF <- envUF$se # ultima semana em que rodou o alerta estadual
+    env$anoUF <- envUF$ano # ano em que rodou o alerta estadual
+    env$tabelao <- envUF$tabelao  # tabela com alertas municipais (todos os municipios da UF)
+    
+    # alimenta env com os parametros da Regional de Saude (if regional) 
+    # ---------------------------------------------------------
+    if(tipo == "regional"){
+      env$regional <- obj$regional  
+      env$se <- obj$se
+      env$ano <- obj$ano
+      env$mapareg <- obj$nomemapareg
+      env$tabreg <- obj$nometabreg
+      env$municipiosRS <- obj$municipios
+      env$nmunicipiosRS <- obj$nmunicipios
+      env$nometabelaoRS <- obj$nometabelao
+      env$tabelaoRS <- obj$tabelao
+      env$nomemunfigurasRS <- obj$nomemunfiguras
+      
+      
+    }
+    
+    # alimenta env com os parametros municipais (if municipal completo) 
+    # ---------------------------------------------------------
+    if(tipo == "municipal"){
+      env$nomecidade <- obj$nomecidade
+      env$totanomun <- obj$totanomun   # total de casos no ano no municipio
+      env$totultsemun <-obj$totultsemun # casos na ultima semana
+      env$nivelmun <- obj$nivelmun # nivel atual
+      env$figmunicipio <- obj$figname  # Figura do alerta municipal
+      env$tabmun <- obj$nometabmun
+      
+      # Dados da regional a que ele pertence
+      env$regionalmun <- obj$regionalmun # nome da regional
+      env$linkregional <- as.character(envUF$nickregs[[env$regionalmun]]) # nickname da regional para usar como link
+      env$municip.reg <- obj$municip.reg # municipios na mesma regional 
+      
+      # Mapa da regional 
+      regsemespaco = gsub(' ','', env$regionalmun)
+      regsemacento = iconv(regsemespaco, to = 'ASCII//TRANSLIT')
+      env$mapareg=paste(dir.estado,"/Mapa",obj$sigla,"_",regsemacento,'.png',sep='') # mapa
+      env$tabreg=paste(dir.estado,'/tabregional',obj$sigla,'_',regsemacento, '.tex',sep='') #tabela
+    }
   }
   
-  # alimenta env com os parametros municipais (if municipal) 
-  # ---------------------------------------------------------
-  if(tipo == "municipal"){
+  # ---------------------------------------------
+  # Caso especifico do municipal simples, que nao tem dados de estadual ou regional
+  # ---------------------------------------------
+  if(tipo == "municipalsimples"){
+    env$ano <- obj$ano
+    env$se <- obj$se
+    env$estado <- obj$estado
+    env$sigla <- obj$sigla
     env$nomecidade <- obj$nomecidade
     env$totanomun <- obj$totanomun   # total de casos no ano no municipio
     env$totultsemun <-obj$totultsemun # casos na ultima semana
     env$nivelmun <- obj$nivelmun # nivel atual
     env$figmunicipio <- obj$figname  # Figura do alerta municipal
     env$tabmun <- obj$nometabmun
-    
-    # Dados da regional a que ele pertence
-    env$regionalmun <- obj$regionalmun # nome da regional
-    env$linkregional <- as.character(envUF$nickregs[[env$regionalmun]]) # nickname da regional para usar como link
-    env$municip.reg <- obj$municip.reg # municipios na mesma regional 
-    
-   # Mapa da regional 
-    regsemespaco = gsub(' ','', env$regionalmun)
-    regsemacento = iconv(regsemespaco, to = 'ASCII//TRANSLIT')
-    env$mapareg=paste(dir.estado,"/Mapa",obj$sigla,"_",regsemacento,'.png',sep='') # mapa
-    env$tabreg=paste(dir.estado,'/tabregional',obj$sigla,'_',regsemacento, '.tex',sep='') #tabela
   }
   
   
@@ -626,6 +666,7 @@ geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report
   
   setwd(bdir)
   remove(list=ls(),envir = env)
+  return(nomeboletim)
   }
 
 
@@ -716,4 +757,14 @@ configRelatorioRio<-function(alert, tres, dir, datasource=con, data, dirout){
           include.rownames=FALSE)
   }
   
+}
+
+publicarAlerta <- function(ale, pdf, dir){
+  # copia o alerta da tabela de historico do Banco de dados
+  message("atualizando a tabela do historico...")
+  res <- write.alerta(ale, write = "db")
+  # Copia o boletim para a pagina do site
+  comando <- paste ("cp", pdf, dir) 
+  system(comando) 
+  message("mapa e boletim atualizados no site")
 }

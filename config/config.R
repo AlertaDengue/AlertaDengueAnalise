@@ -102,13 +102,15 @@ nomesregs.ES <- c("ES-MN-AlfredoChaves")
 pars.ES <- NULL
 pars.ES[nomesregs.ES] <- list(NULL)
 pars.ES[["ES-MN-AlfredoChaves"]] <- list(pdig = c(0.9134618,0.9105709),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+ES.out = "AlertaDengueAnalise/report/ES/figs/"
 
 # Dados para o mapa
 ES.shape="AlertaDengueAnalise/report/ES/shape/32MUE250GC_SIR.shp"  # fonte para o mapa
 ES.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 ES.criteria = criteria
 
+
 # Dados do diretorio para salvar (com / no final)
-ES.MN.AlfredoChaves.out = "AlertaDengueAnalise/report/ES/Municipios/ES-MN-AlfredoChaves/"
+ES.MN.AlfredoChaves.out = "AlertaDengueAnalise/report/ES/Municipios/AlfredoChaves"
 
 
