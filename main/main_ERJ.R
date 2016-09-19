@@ -14,7 +14,7 @@ aleRJ <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = RJ.criter
                        datasource = con, sefinal=data_relatorio, writedb = FALSE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
 
 save(aleRJ, file="AlertaDengueAnalise/report/RJ/aleRJ.RData")
-#load("AlertaDengueAnalise/report/RJ/aleRJ.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
+load("AlertaDengueAnalise/report/RJ/aleRJ.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
 
 # --- Gera parametros para o boletim
 res=configRelatorio(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, 
