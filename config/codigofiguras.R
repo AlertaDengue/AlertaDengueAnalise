@@ -131,3 +131,77 @@ figuramunicipio <- function(obj){
          legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
   
 }
+
+# -----------------------------
+# figuraRio
+
+figuraRio <- function(cid){
+  par(mfrow=c(3,1),mar=c(4,4,1,1))
+  ymax <- max(110,max(cid$inc))
+  plot(1:dim(cid)[1],cid$tweet,type="h",ylab="",axes=FALSE,xlab="",main="Tweets sobre dengue")
+  axis(2)
+  plot(1:dim(cid)[1],cid$inc, type="l", xlab="",ylab="incidência (por 100.000)",axes=FALSE,main="Dengue",ylim=c(0,ymax))
+  abline(h=14, lty=2, col="blue")
+  abline(h=100, lty=2, col="red")
+  text(mean(1:dim(cid)[1]),14,"limiar pré epidêmico",col="blue",cex=0.8)
+  text(mean(1:dim(cid)[1]),100,"limiar alta atividade",col="red",cex=0.8)
+  axis(2)
+  
+  plot(1:dim(cid)[1],cid$tmin,type="l",ylab="temperatura",axes=FALSE,xlab="",main="Temperatura mínima")
+  abline(h=22, lty=2, col=2)
+  axis(2)
+  le=dim(cid)[1]
+  axis(1,at=rev(seq(le,1,by=-12)),labels=cid$se[rev(seq(le,1,by=-12))],las=2)
+  text(mean(1:dim(cid)[1]),22,"temp crítica",col=2, cex=0.8)
+}
+
+# -------------------------------
+# fazTabelao com dados da ultima semana das Regionais ou do estado
+# -------------------------------
+
+faztabelaoRS <- function(ale,ano,data){
+  totano=0; totultse=0
+  nverde=0; namarelo=0;nlaranja=0;nvermelho=0
+  nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
+  
+  # ----- começo do tabelao
+  tabelao = data.frame(Municipio = character(),Regional = character(), 
+                       Temperatura = numeric(), Tweets=numeric(),
+                       Casos = integer(), Incidencia=numeric(),Rt=numeric(),
+                       Nivel=character(),stringsAsFactors = FALSE)
+  N = length(names(ale))
+  for (i in 1:N){
+    ai <- ale[[i]] 
+    
+    linhasdoano = which(floor(ai$data$SE/100)==ano)
+    linhase = which(ai$data$SE==data)
+    linhase1 = which(ai$data$SE==data)-1
+    
+    totano = sum(c(totano, ai$data$casos[linhasdoano]),na.rm=TRUE)
+    totultse = sum(c(totultse, ai$data$casos[linhase]),na.rm=TRUE)
+    
+    nverde = sum(c(nverde,as.numeric(ai$indices$level[linhase]==1)),na.rm=TRUE)
+    namarelo = sum(c(namarelo,as.numeric(ai$indices$level[linhase]==2)),na.rm=TRUE)
+    nlaranja = sum(c(nlaranja,as.numeric(ai$indices$level[linhase]==3)),na.rm=TRUE)
+    nvermelho = sum(c(nvermelho,as.numeric(ai$indices$level[linhase]==4)),na.rm=TRUE)
+    
+    nverde1 = sum(c(nverde1,as.numeric(ai$indices$level[linhase1]==1)),na.rm=TRUE)
+    namarelo1 = sum(c(namarelo1,as.numeric(ai$indices$level[linhase1]==2)),na.rm=TRUE)
+    nlaranja1 = sum(c(nlaranja1,as.numeric(ai$indices$level[linhase1]==3)),na.rm=TRUE)
+    nvermelho1 = sum(c(nvermelho1,as.numeric(ai$indices$level[linhase1]==4)),na.rm=TRUE)
+    
+    cores=c("verde","amarelo","laranja","vermelho")
+    paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
+                              Regional = as.character(ai$data$nome_regional[1]),
+                              Temperatura = ai$data$temp_min[linhase],
+                              Tweets = ai$data$tweet[linhase],
+                              Casos = ai$data$casos[linhase], 
+                              Incidencia=ai$data$inc[linhase],
+                              Rt=ai$data$Rt[linhase],
+                              Nivel=as.character(cores[ai$indices$level[linhase]]),
+                              stringsAsFactors = FALSE)
+    tabelao[i,] = paratabelao
+    
+  }
+  tabelao
+}

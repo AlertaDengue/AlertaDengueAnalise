@@ -248,7 +248,7 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
                   datasource=datasource)
   
   # ------------------------    
-  # Tabelao com resultado do alerta por municipio da Regional e totais 
+  # Tabelao com resultado do alerta por municipio da Regional e totais : trocar depois por cod no configRelatorio
   # ------------------------
   totano=0; totultse=0
   nverde=0; namarelo=0;nlaranja=0;nvermelho=0
@@ -447,7 +447,7 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
 # data - data do relatorio. Duas opcoes, relatorio completo ou simples
 ## ============================================================
 configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, datasource=con,
-                                     dirb=basedir,geraPDF=TRUE){
+                                     dirb=basedir, geraPDF=TRUE){
   
   # Identificacao da cidade
   nomecidade = alert$data$nome[1]
@@ -528,6 +528,129 @@ nomebol = NULL
   nomebol
 }
 
+## ===================================================
+## Relatorio do Rio de Janeiro
+## ===================================================
+
+configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=basedir, geraPDF=FALSE){
+  
+  # ------------------
+  # Dados da regional
+  # ------------------
+  municip.reg <- getCidades(regional = "Metropolitana I",uf="Rio de Janeiro",datasource=con)$nome
+  
+  # ------------------
+  # Diretorio para salvar figs e tabs
+  # ------------------
+  dirfigs = paste(bdir,dirout,"figs/",sep="/")
+  print(dirfigs)
+  # ------------------
+  # Mapa da Cidade
+  # ------------------
+  nomemapario = paste(dirfigs, "mapaRio.png", sep="")
+  message("nome do mapa:",nomemapario)
+  map.Rio(alert, data=data, filename="mapaRio.png", dir=dirfigs, 
+          shapefile = shape)
+  
+  # ------------------
+  # Dados da Cidade
+  # ------------------
+  tres <- write.alertaRio(alert, write="no")
+  totcrude <- aggregate(tres$casos,by=list(tres$se),sum)
+  totest<-aggregate(tres$casos_est,by=list(tres$se),sum)
+  totmin<-aggregate(tres$casos_est_min,by=list(tres$se),sum)
+  totmax<-aggregate(tres$casos_est_max,by=list(tres$se),sum)
+  
+  # -----------------
+  # Grafico da cidade 
+  # -----------------
+  figname = paste(dirfigs,"figcidade.png",sep="")
+  png(figname, width = 12, height = 16, units = "cm",res=200)
+  
+  cidade<-cbind(totcrude,totest$x,totmin$x,totmax$x)
+  names(cidade)<-c("se","casos","casos.estimados","ICmin","ICmax")
+  cidade$inc <- cidade$casos/6.5e6*100000
+  dt<-subset(tres,aps=="1.0")[,c("se","tweet")]  # tweets
+  dc <- aggregate(tres[,"tmin"],by=list(se=tres$se),FUN=mean,na.rm=TRUE) #clima
+  names(dc)[2]<-"tmin"
+  cidade<- merge(cidade,dt,by="se")
+  cidade<- merge(cidade,dc,by="se")
+  cidade <- subset(cidade,se>=201101)
+  figuraRio(cidade)
+  dev.off()
+  
+  # -----------------
+  # Grafico das APS 
+  # -----------------
+  
+  ### grafico APS 1/2 ------------------
+  png(paste(dirfigs,"figaps1.png",sep=""),width = 12, height = 16, units = "cm",res=200)
+  inid = 201224
+  par(mfrow=c(5,1),mar=c(5,0,0,5))
+  for (i in 1:5) {
+    plot.alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
+    mtext(names(alert)[i],line=-1, cex=0.7)
+  }
+  dev.off()
+  
+  ### grafico APS 2/2 ------------------
+  png(paste(dirfigs,"figaps2.png",sep=""),width = 12, height = 16, units = "cm",res=200)
+  inid = 201224
+  par(mfrow=c(5,1),mar=c(5,0,0,5))
+  for (i in 6:10) {
+    plot.alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
+    mtext(names(alert)[i],line=-1, cex=0.7)
+  }
+  dev.off()
+  
+  # --------------------------------
+  # Gera e salva tabela da cidade
+  # --------------------------------
+  nometab = paste(dirfigs,"tabelaRio.tex",sep="") 
+  message("tabela", nometab, "salva")
+  tabelax <-xtable(tail(cidade),align ="cc|ccccccc",digits = c(0,0,0,0,0,0,1,0,1))
+  print(tabelax, type="latex", file=nometab, floating=FALSE, latex.environments = NULL,
+        include.rownames=FALSE)
+  
+  # --------------------------------
+  # Gera e salva tabelas das APS
+  # --------------------------------
+  cores = c("verde","amarelo","laranja","vermelho")
+  listaaps <- unique(tres$aps)
+  
+  for(ap in 1:10){
+    tabapname = paste(dirfigs,"tabela",ap,".tex",sep="")
+    tab<-tail(tres[tres$aps==listaaps[ap],c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
+    names(tab)[6]<-"pr(inc. subir)"
+    tab$nivel<-cores[tab$nivel]
+    
+    tabelay <- xtable(tab,align="cc|ccccccc",digits = c(0,0,0,0,1,1,2,1,0))
+    print(tabelay, type="latex", file=tabapname, floating=FALSE, latex.environments = NULL,
+          include.rownames=FALSE)
+  }
+  
+  # objeto que e' retornado pela funcao e lido pelo geraPDF (tambem e salvo como RData)
+  res = list(nomecidade="Rio de Janeiro", estado="Rio de Janeiro", nomecidadeiconv = "RiodeJaneiro", 
+             regionalmun="Metropolitana I", sigla = "RJ", alert=alert, nomemapario = nomemapario,
+             nometab = nometab, municip.reg=municip.reg, dirout=dirout, tabaps=tres)
+  
+  message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
+  #save(res, file=fname)
+  
+  # -----------------------------
+  # salvando o boletim
+  # ----------------------------
+  nomebol = NULL  
+  if (geraPDF==TRUE){
+    message("gerando PDF...")
+    dirdoboletim = paste(dirout,"boletins",sep="/")
+    nomebol=geraPDF(tipo="Rio", obj = res, dir.boletim = dirdoboletim)
+  } 
+  
+  nomebol
+  
+}
+
 
 ## ===============================================================
 ## FUN geraPDF
@@ -539,7 +662,7 @@ nomebol = NULL
 # dir.report = diretorio onde esta a pasta report
 # =================================================================
 
-geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report",
+geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="AlertaDengueAnalise/report",
                   bdir = basedir){  
   
   # -----------------------------------
@@ -564,6 +687,10 @@ geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report
   if(tipo == "estadual") {
     rnwfile = "BoletimEstadual_InfoDengue_v01.Rnw"
     nomeboletim = paste(dir.boletim, "/E",obj$sigla,"-",Sys.Date(),".pdf",sep="")
+  }
+  if(tipo == "Rio"){
+    rnwfile = "BoletimRio_InfoDengue.Rnw"
+    nomeboletim = paste(bdir,"/",dir.boletim, "/",obj$sigla,"-mn-",obj$nomecidadeiconv,"-",Sys.Date(),".pdf",sep="")
   }
   
   # -------------------------------------------
@@ -657,6 +784,49 @@ geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report
     env$tabmun <- obj$nometabmun
   }
   
+  # --------------------------------------------------
+  # Rio de Janeiro
+  # --------------------------------------------------
+  if(tipo == "Rio"){
+    env$se <- obj$se
+    env$ano <- obj$ano
+    env$data_relatorio <- data
+    
+    # objetos da regional
+    load(paste(dir.estado,"/paramsRJ.RData",sep=""),envir = envUF)
+    
+    # Dados da regional a que ele pertence
+    env$regionalmun <- "Metropolitana I" # nome da regional
+    env$linkregional <- "MetI" # nickname da regional para usar como link
+    env$municip.reg <-  obj$municip.reg # municipios na mesma regional
+    env$nmunicipiosRS <- length(env$municip.reg)
+    env$tabelaoRS <- envUF$tabelao[envUF$tabelao$Regional=="Metropolitana I",]
+    
+    # Mapa da regional 
+    env$mapareg=paste(dir.estado,"/MapaRJ_MetropolitanaI.png",sep='') # mapa
+    env$tabreg=paste(dir.estado,"/tabregionalRJ_MetropolitanaI.tex",sep='') #tabela
+    
+    # Objetos da Cidade
+    env$nomemapario <- obj$nomemapario
+    env$tabelaRio <- obj$nometab
+    env$tabaps = obj$tabaps 
+    dirfigs <- paste(bdir,obj$dirout,"figs",sep="/")
+    env$figcidade <- paste(dirfigs,"/figcidade.png",sep="")
+    env$figaps1 <- paste(dirfigs,"/figaps1.png",sep="")
+    env$figaps2 <- paste(dirfigs,"/figaps2.png",sep="")
+    env$tabela1 <- paste(dirfigs,"/tabela",1,".tex",sep="")
+    env$tabela2 <- paste(dirfigs,"/tabela",2,".tex",sep="")
+    env$tabela3 <- paste(dirfigs,"/tabela",3,".tex",sep="")
+    env$tabela4 <- paste(dirfigs,"/tabela",4,".tex",sep="")
+    env$tabela5 <- paste(dirfigs,"/tabela",5,".tex",sep="")
+    env$tabela6 <- paste(dirfigs,"/tabela",6,".tex",sep="")
+    env$tabela7 <- paste(dirfigs,"/tabela",7,".tex",sep="")
+    env$tabela8 <- paste(dirfigs,"/tabela",8,".tex",sep="")
+    env$tabela9 <- paste(dirfigs,"/tabela",9,".tex",sep="")
+    env$tabela10<- paste(dirfigs,"/tabela",10,".tex",sep="")
+    
+    
+  }
   
   require(tools)  
   #env <<- environment() # necessario para o Sweave ler os objetos criados na funcao
@@ -677,119 +847,37 @@ geraPDF<-function(tipo, obj, dir.boletim, dir.report="AlertaDengueAnalise/report
   }
 
 
-## ===================================================
-## Relatorio do Rio de Janeiro
-## ===================================================
-
-configRelatorioRio<-function(alert, tres, dir, datasource=con, data, dirout){
-  
-  map.Rio(alerio, data=data_relatorio, filename="mapaRio.png", dir=dirout, shapefile = "AlertaDengueAnalise/report/Rio_de_Janeiro/shape/CAPS_SMS.shp")
-  
-  totcrude <- aggregate(tres$casos,by=list(tres$se),sum)
-  totest<-aggregate(tres$casos_est,by=list(tres$se),sum)
-  totmin<-aggregate(tres$casos_est_min,by=list(tres$se),sum)
-  totmax<-aggregate(tres$casos_est_max,by=list(tres$se),sum)
-  
-  # Grafico da cidade ------------------------
-  cidade<-cbind(totcrude,totest$x,totmin$x,totmax$x)
-  names(cidade)<-c("se","casos","casos.estimados","ICmin","ICmax")
-  cidade$inc <- cidade$casos/6.5e6*100000
-  dt<-subset(tres,aps=="1.0")[,c("se","tweet")]  # tweets
-  dc <- aggregate(tres[,"tmin"],by=list(se=tres$se),FUN=mean,na.rm=TRUE) #clima
-  names(dc)[2]<-"tmin"
-  cidade<- merge(cidade,dt,by="se")
-  cidade<- merge(cidade,dc,by="se")
-  cidade <- subset(cidade,se>=201101)
-  ymax <- max(110,max(cidade$inc))
-  
-  png(paste(dirout,"figcidade.png",sep=""),width = 12, height = 16, units = "cm",res=200)
-  par(mfrow=c(3,1),mar=c(4,4,1,1))
-  plot(1:dim(cidade)[1],cidade$tweet,type="h",ylab="",axes=FALSE,xlab="",main="Tweets sobre dengue")
-  axis(2)
-  plot(1:dim(cidade)[1],cidade$inc, type="l", xlab="",ylab="incidência (por 100.000)",axes=FALSE,main="Dengue",ylim=c(0,ymax))
-  abline(h=14, lty=2, col="blue")
-  abline(h=100, lty=2, col="red")
-  text(mean(1:dim(cidade)[1]),14,"limiar pré epidêmico",col="blue",cex=0.8)
-  text(mean(1:dim(cidade)[1]),100,"limiar alta atividade",col="red",cex=0.8)
-  axis(2)
-  
-  plot(1:dim(cidade)[1],cidade$tmin,type="l",ylab="temperatura",axes=FALSE,xlab="",main="Temperatura mínima")
-  abline(h=22, lty=2, col=2)
-  axis(2)
-  le=dim(cidade)[1]
-  axis(1,at=rev(seq(le,1,by=-12)),labels=cidade$se[rev(seq(le,1,by=-12))],las=2)
-  text(mean(1:dim(cidade)[1]),22,"temp crítica",col=2, cex=0.8)
-  dev.off()
-  # fim do grafico da cidade -------------
-  
-  ### grafico APS 1/2 ------------------
-  png(paste(dirout,"figaps1.png",sep=""),width = 12, height = 16, units = "cm",res=200)
-  inid = 201224
-  par(mfrow=c(5,1),mar=c(5,0,0,5))
-  for (i in 1:5) {
-    plot.alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
-    mtext(names(alert)[i],line=-1, cex=0.7)
-  }
-  dev.off()
-  
-  ### grafico APS 2/2 ------------------
-  png(paste(dirout,"figaps2.png",sep=""),width = 12, height = 16, units = "cm",res=200)
-  inid = 201224
-  par(mfrow=c(5,1),mar=c(5,0,0,5))
-  for (i in 6:10) {
-    plot.alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
-    mtext(names(alert)[i],line=-1, cex=0.7)
-  }
-  dev.off()
-  
-  # --------------------------------
-  # Gera e salva tabela da cidade
-  # --------------------------------
-  fname = paste(dirout,"tabelaRio.tex",sep="")
-  tabelax <-xtable(tail(cidade),align ="cc|ccccccc",digits = 0)
-  digits(tabelax) <- 0
-  print(tabelax, type="latex", file=fname, floating=FALSE, latex.environments = NULL,
-        include.rownames=FALSE)
-  
-  # --------------------------------
-  # Gera e salva tabelas das APS
-  # --------------------------------
-  listaaps <- unique(res$aps)
-  
-  for(ap in 1:10){
-    fname = paste(dirout,"tabela",ap,".tex",sep="")
-    tab<-tail(res[res$aps==listaaps[ap],c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
-    tabelay <- xtable(tab,align="cc|ccccccc",digits = 0)
-    digits(tabelay) <- 0
-    print(tabelay, type="latex", file=fname, floating=FALSE, latex.environments = NULL,
-          include.rownames=FALSE)
-  }
-  
-}
-
 
 ## ==========================================================
 ## Funcao para publicar o Alerta no site
 ## ==========================================================
-publicarAlerta <- function(ale, pdf, dir, dirb = basedir){
+publicarAlerta <- function(ale, pdf, dir, bdir = basedir){
   
   # ---------------------------------------------------------
   # copia o alerta da tabela de historico do Banco de dados
   message("atualizando a tabela do historico...")
   
-  if(c("indices") %in% names(ale)) { # detecta se munic. unico
-    res <- write.alerta(ale, write = "db") 
-  } else {
-    for (i in 1:length(ale)) {
-      print(names(ale)[i])
-      res=write.alerta(ale[[i]], write="db") 
+  # Se é um municipio isolado
+  #---------------------------
+    if("indices" %in% names(ale)) { 
+      res <- write.alerta(ale, write = "db") 
+    } else {
+      # Ou se e'o Rio de Janeiro com suas APS
+      # --------------------------------------
+      if("APS 1" %in% names(ale)) {res=write.alertaRio(ale, write="db") 
+        }else{
+          # todos os outros - regionais e estados 
+          for (i in 1:length(ale)) {
+            print(names(ale)[i])
+            res=write.alerta(ale[[i]], write="db") 
+          }
+        }
     }
-  }
   
   message("Copia o boletim para a pagina do site...")
   strip <- strsplit(pdf,"/")[[1]]
-  nomebol = strip[length(strip)] # nome do boletim
-  bolpath <- paste(basedir,dir,nomebol,sep="/") # boletim com path completo
+  nomeb = strip[length(strip)] # nome do boletim
+  bolpath <- paste(bdir,dir,nomeb,sep="/") # boletim com path completo
   comando <- paste ("cp", pdf, bolpath) 
   system(comando) 
 }
