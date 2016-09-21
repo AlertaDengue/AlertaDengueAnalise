@@ -25,7 +25,7 @@ configRelatorioRio(alert=alerio, tres = res, data=data_relatorio,
 # Para renomear e copiar para a pasta RiodeJaneiro/boletins
 nome = paste("RJ-mn-RiodeJaneiro",Sys.Date(),".pdf",sep="")
 system(paste("cp AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.pdf AlertaDengueAnalise/report/Rio_de_Janeiro/boletins",nome,sep=""))
-system(paste("cp AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.pdf Relatorio/RJ/RiodeJaneiro/",nome,sep=""))
+system(paste("cp AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.pdf Relatorio/RJ/Municipios/RiodeJaneiro/",nome,sep=""))
 
 # Para apagar arquivos temporarios 
 system("rm AlertaDengueAnalise/report/Rio_de_Janeiro/BoletimRio.pdf")
