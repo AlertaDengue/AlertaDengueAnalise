@@ -4,22 +4,22 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201636
+data_relatorio = 201638
 
 #***********************************
 ### Cidade do Rio de Janeiro 
 #***********************************
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = data_relatorio, verbose=FALSE)        # calcula o alerta
-=======
+#=======
 alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = data_relatorio, verbose=TRUE)        # calcula o alerta
   
 res <- write.alertaRio(alerio, write="no")                  # organiza os dados do alerta no objeto res
   
 save(alerio,res,data_relatorio, file="AlertaDengueAnalise/report/Rio_de_Janeiro/figs/paramsRio.RData")     # salva res
   
-map.Rio(alerio,shapefile = "AlertaDengueAnalise/report/Rio_de_Janeiro/shape/CAPS_SMS.shp")            # faz mapa (so para visualizar)
+map.Rio(alerio,shapefile = "AlertaDengueAnalise/report/Rio_de_Janeiro/shape/CAPS_SMS.shp") # faz mapa (so para visualizar)
   
 configRelatorioRio(alert=alerio, tres = res, data=data_relatorio, 
                      dirout="AlertaDengueAnalise/report/Rio_de_Janeiro/figs/")     # gera figs e tabelas para o relatorio

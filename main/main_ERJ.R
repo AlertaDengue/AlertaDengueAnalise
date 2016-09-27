@@ -6,7 +6,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 # ----- data do relatorio:
-data_relatorio = 201637
+data_relatorio = 201638
 
 # ---- Calcula alerta: 
 
