@@ -21,7 +21,7 @@ publicarAlerta(ale = aleAlfredoChaves, pdf = bolAlfredoChaves, dir = "Relatorio/
 
 
 #***************************************************
-# Cidade de Santa Maria de Jetiba
+# Cidade de Linhares
 #***************************************************
 
 aleLinhares <- update.alerta(city = 3203205, pars = pars.ES[["ES-MN-Linhares"]], crit = ES.criteria, 
