@@ -115,3 +115,23 @@ ES.criteria = criteria
 ES.MN.AlfredoChaves.out = "AlertaDengueAnalise/report/ES/Municipios/AlfredoChaves"
 
 
+#***********************************************************************************************************************************
+# ========================================
+# Parametros do Estado de Minas Gerais 
+# ========================================
+#nomesregs = getRegionais("Espírito Santo")# use essa funcao para descobrir as regionais
+nomesregs.MG <- c("Sete Lagoas")         
+pars.MG <- NULL
+pars.MG[nomesregs.MG] <- list(NULL)
+pars.MG[["SeteLagoas"]] <- list(pdig = c(2.708049,1.373673),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+MG.out = "AlertaDengueAnalise/report/MG/figs/"
+
+# Dados para o mapa
+MG.shape="AlertaDengueAnalise/report/MG/shape/31MUE250GC_SIR.shp"  # fonte para o mapa
+MG.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
+MG.criteria = criteria
+
+
+# Dados do diretorio para salvar (com / no final)
+MG.SeteLagoas.out = "AlertaDengueAnalise/report/MG/Regionais/SeteLagoas"
+
