@@ -123,7 +123,7 @@ ES.MN.AlfredoChaves.out = "AlertaDengueAnalise/report/ES/Municipios/AlfredoChave
 nomesregs.MG <- c("Sete Lagoas")         
 pars.MG <- NULL
 pars.MG[nomesregs.MG] <- list(NULL)
-pars.MG[["SeteLagoas"]] <- list(pdig = c(2.708049,1.373673),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+pars.MG[["Sete Lagoas"]] <- list(pdig = c(2.708049,1.373673),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
 MG.out = "AlertaDengueAnalise/report/MG/figs/"
 
 # Dados para o mapa
