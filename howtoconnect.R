@@ -157,7 +157,7 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
   sql <- "SELECT * from \"Dengue_global\".regional_saude WHERE  municipio_geocodigo >= 4100000"
   dd <- dbGetQuery(con, sql)
   
-  sql <- "DELETE from \"Dengue_global\".regional_saude WHERE  municipio_geocodigo >= 4100000"
+  #sql <- "DELETE from \"Dengue_global\".regional_saude WHERE  municipio_geocodigo = 3117836"
   #dbGetQuery(con, sql)
   
   

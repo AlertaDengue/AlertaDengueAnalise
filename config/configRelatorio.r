@@ -217,9 +217,9 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid
 # ==============================================
 # Gera objetos para o Boletim Regional
 # ==============================================
-
-configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
-  
+# data = data final do relatorio, tsdur = tamanho da serie plotada
+configRelatorioRegional <- function(uf, regional, sigla, data, tsdur=104, alert, pars, shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
+  setwd("~/")
   # ------------
   ## Dados da regional
   # ------------
@@ -346,7 +346,8 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
     
     res = write.alerta(alert[[1]])
     for (n in 2:nmunicipios) res = rbind(res, write.alerta(alert[[n]]))
-    
+    print(head(res))
+    res$tweet[is.na(res$tweet)] <- 0 # colocando 0 onde não há tweets, so para o grafico
     serie = aggregate(cbind(tweet,casos)~data_iniSE,data=res,FUN=sum,na.rm=TRUE)
     
     figname = paste(dirfigs,"figuraRS_",nomeregfiguras,".png",sep="")
@@ -354,7 +355,7 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
     layout(matrix(1), widths = lcm(10),heights = c(lcm(5)))
     
     n = dim(serie)[1]
-    seriefinal = serie[(n-104):n,]
+    seriefinal = serie[(n-tsdur):n,]
     
     par(mai=c(0,0,0,0),mar=c(3,0.5,0.5,0.5))
     plot(seriefinal$casos, type="l", xlab="", ylab="", axes=FALSE,bty="o")
