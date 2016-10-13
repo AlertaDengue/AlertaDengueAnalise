@@ -539,7 +539,8 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
   # Dados da regional
   # ------------------
   municip.reg <- getCidades(regional = "Metropolitana I",uf="Rio de Janeiro",datasource=con)$nome
-  
+  ano = floor(data/100)
+  se = data - ano*100
   # ------------------
   # Diretorio para salvar figs e tabs
   # ------------------
@@ -632,7 +633,7 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
   
   # objeto que e' retornado pela funcao e lido pelo geraPDF (tambem e salvo como RData)
   res = list(nomecidade="Rio de Janeiro", estado="Rio de Janeiro", nomecidadeiconv = "RiodeJaneiro", 
-             regionalmun="Metropolitana I", sigla = "RJ", alert=alert, nomemapario = nomemapario,
+             regionalmun="Metropolitana I", sigla = "RJ", se=se, ano=ano,alert=alert, nomemapario = nomemapario,
              nometab = nometab, municip.reg=municip.reg, dirout=dirout, tabaps=tres)
   
   message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
@@ -832,7 +833,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
   if(tipo == "Rio"){
     env$se <- obj$se
     env$ano <- obj$ano
-    env$data_relatorio <- data
+    env$datarel <- obj$se
     
     # objetos da regional
     load(paste(dir.estado,"/paramsRJ.RData",sep=""),envir = envUF)
