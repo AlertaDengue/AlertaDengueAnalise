@@ -94,11 +94,14 @@ mapa.regional <- function(alerta, regionais, estado, sigla, pars, shape,
 # obj é o alerta do municipio gerado pelo update.alerta
 # USO: figuramunicipio(alePR_RS_Cascavel[["CéuAzul"]])
 
-figuramunicipio <- function(obj){
+figuramunicipio <- function(obj, tsdur=104){
   layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
          heights = c(rep(lcm(4),2), lcm(5)))
   
-  objc <- obj$data[obj$data$SE>=201301,] 
+  n = dim(obj$data)[1]
+  objc = obj$data[(n-tsdur):n,]
+  
+  #objc <- obj$data[obj$data$SE>=201301,] 
   # Subfigura do topo (serie temporal dengue e tweets)
   par(mai=c(0,0,0,0),mar=c(1,4,0,3))
   plot(objc$casos, type="l", xlab="", ylab="", axes=FALSE)
@@ -110,7 +113,7 @@ figuramunicipio <- function(obj){
   par(new=T)
   if(sum(is.na(objc$tweet))==nrow(objc)) objc$tweet = 0 # 
   plot(objc$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
-  lines(obj$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+  lines(objc$tweet, col=3, type="h") #*coefs[2] + coefs[1]
   axis(1, pos=0, lty=0, lab=FALSE)
   axis(4)
   mtext(text="Tweets", line=2.5, side=4, cex = 0.7)
@@ -125,7 +128,7 @@ figuramunicipio <- function(obj){
   
   # subfigura de baixo: alerta colorido
   par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-  plot.alerta(obj, var="tcasesmed",ini=201301,fim=max(obj$data$SE))
+  plot.alerta(obj, var="tcasesmed",ini=min(objc$SE),fim=max(objc$SE))
   abline(h=100/100000*obj$data$pop[1],lty=3)
   legend(x="topright",lty=c(3,2,2),col=c("black","red","darkgreen"),
          legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")

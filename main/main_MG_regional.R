@@ -14,7 +14,8 @@ data_relatorio = 201630
 aleMG_RS_SeteLagoas <- update.alerta(region = "Sete Lagoas", pars = pars.MG, crit = MG.criteria, 
                                    datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
-bolSeteLagoas=configRelatorioRegional(uf="Minas Gerais", regional="Sete Lagoas", sigla = "MG", data=data_relatorio, 
+
+bolSeteLagoas=configRelatorioRegional(tipo="simples",uf="Minas Gerais", regional="Sete Lagoas", sigla = "MG", data=data_relatorio, 
                                     alert=aleMG_RS_SeteLagoas, pars = pars.MG, shape=MG.shape, varid=MG.shapeID,
                                     dir=MG.SeteLagoas.out, datasource=con, geraPDF=TRUE)
 

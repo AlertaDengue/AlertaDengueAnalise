@@ -25,12 +25,10 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid
   # ----------------------------------------------- 
   # Mapa do estado (funcao basica do alerttools)
   # -----------------------------------------------
-  if(missing(regional)){ # se for estadual
-    geraMapa(alerta=alert, se=data, shapefile = shape,   
+  geraMapa(alerta=alert, se=data, shapefile = shape,   
              varid=varid, titulo="", 
              filename=paste("Mapa_E", sigla,".png", sep=""),
              dir=dirfigs, caption=FALSE)
-  }    
   
   # -----------------------------------------------
   # Mapas de todas as Regionais (funcao customizada, no codigoFiguras.R)
@@ -217,9 +215,9 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid
 # ==============================================
 # Gera objetos para o Boletim Regional
 # ==============================================
-
-configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
-  
+# data = data final do relatorio, tsdur = tamanho da serie plotada
+configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, data, tsdur=104, alert, pars, shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
+  setwd("~/")
   # ------------
   ## Dados da regional
   # ------------
@@ -347,14 +345,15 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
     res = write.alerta(alert[[1]])
     for (n in 2:nmunicipios) res = rbind(res, write.alerta(alert[[n]]))
     
+    res$tweet[is.na(res$tweet)] <- 0 # colocando 0 onde não há tweets, so para o grafico
     serie = aggregate(cbind(tweet,casos)~data_iniSE,data=res,FUN=sum,na.rm=TRUE)
     
-    figname = paste(dirfigs,"figuraRS_",nomeregfiguras,".png",sep="")
-    png(figname, width = 12, height = 5.5, units="cm", res=200)
+    figregname = paste(dirfigs,"figuraRS_",nomeregfiguras,".png",sep="")
+    png(figregname, width = 12, height = 5.5, units="cm", res=200)
     layout(matrix(1), widths = lcm(10),heights = c(lcm(5)))
     
     n = dim(serie)[1]
-    seriefinal = serie[(n-104):n,]
+    seriefinal = serie[(n-tsdur):n,]
     
     par(mai=c(0,0,0,0),mar=c(3,0.5,0.5,0.5))
     plot(seriefinal$casos, type="l", xlab="", ylab="", axes=FALSE,bty="o")
@@ -421,7 +420,7 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
              nlaranja=nlaranja, nvermelho=nvermelho, nverde1=nverde1, namarelo1=namarelo1, 
              nlaranja1=nlaranja1, nvermelho1=nvermelho1, data_relatorio=data, dir=filename,
              nomemapareg = nomemapareg, nometabreg = nometabreg, nometabelao = nometabelao,
-             tabelao = tabelao)
+             tabelao = tabelao, figreg = figregname)
   
   # -----------------------------
   # salvando o boletim
@@ -429,7 +428,9 @@ configRelatorioRegional <- function(uf, regional, sigla, data, alert, pars, shap
   nomebol = NULL
   if (geraPDF==TRUE){
     message("gerando PDF...")
-    nomebol=geraPDF(tipo="regional", obj = res, dir.boletim = paste(dir,"boletins",sep="/"))
+    if(missing(tipo)) message("indique se o tipo = simples ou completo. Simples se for municipio isolado.")
+    if(tipo == "completo") nomebol=geraPDF(tipo="regional", obj = res, dir.boletim =paste(dir,"boletins",sep="/")) 
+    if(tipo == "simples") nomebol=geraPDF(tipo="regionalsimples", obj = res, dir.boletim = paste(dir,"boletins",sep="/"))
   } 
   
   #message(paste("salvando RData em",filename))
@@ -538,7 +539,8 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
   # Dados da regional
   # ------------------
   municip.reg <- getCidades(regional = "Metropolitana I",uf="Rio de Janeiro",datasource=con)$nome
-  
+  ano = floor(data/100)
+  se = data - ano*100
   # ------------------
   # Diretorio para salvar figs e tabs
   # ------------------
@@ -631,7 +633,7 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
   
   # objeto que e' retornado pela funcao e lido pelo geraPDF (tambem e salvo como RData)
   res = list(nomecidade="Rio de Janeiro", estado="Rio de Janeiro", nomecidadeiconv = "RiodeJaneiro", 
-             regionalmun="Metropolitana I", sigla = "RJ", alert=alert, nomemapario = nomemapario,
+             regionalmun="Metropolitana I", sigla = "RJ", se=se, ano=ano,alert=alert, nomemapario = nomemapario,
              nometab = nometab, municip.reg=municip.reg, dirout=dirout, tabaps=tres)
   
   message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
@@ -664,7 +666,7 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
 
 geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="AlertaDengueAnalise/report",
                   bdir = basedir){  
-  
+  message(tipo)
   # -----------------------------------
   # Identifica o .Rnw a ser executado e onde pdf vai ser salvo
   # -----------------------------------
@@ -684,6 +686,10 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     rnwfile = "BoletimRegional_InfoDengue.Rnw"
     nomeboletim = paste(bdir,"/",dir.boletim, "/",obj$sigla,"-RS-",obj$nomeregiconv,"-",Sys.Date(),".pdf",sep="")
   }
+  if(tipo == "regionalsimples") {
+    rnwfile = "BoletimRegionalSimples_InfoDengue.Rnw"
+    nomeboletim = paste(bdir,"/",dir.boletim, "/",obj$sigla,"-RS-",obj$nomeregiconv,"-",Sys.Date(),".pdf",sep="")
+  }
   if(tipo == "estadual") {
     rnwfile = "BoletimEstadual_InfoDengue_v01.Rnw"
     nomeboletim = paste(dir.boletim, "/E",obj$sigla,"-",Sys.Date(),".pdf",sep="")
@@ -699,9 +705,9 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
   env <<- new.env() # ambiente que vai ser usado no relatorio, imprescindivel para o sweave funcionar
   
   #-------------------------
-  # Carrega parametros estaduais (todos os relatorios usam, exceto o simples)
+  # Carrega parametros estaduais (todos os relatorios usam, exceto os simples)
   # -------------------------
-  if(tipo!="municipalsimples"){
+  if(tipo!="municipalsimples"&tipo!="regionalsimples"){
     # PS. Guardar inicialmente esses parametros no ambiente envUF, porque nem todos vao para os municipios
     envUF <- new.env() # ambiente para guardar todos os objetos do estado
     dir.estado = paste(bdir,dir.report,obj$sigla,"figs",sep="/") # diretorio da UF
@@ -730,18 +736,28 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     
     # alimenta env com os parametros da Regional de Saude (if regional) 
     # ---------------------------------------------------------
+    
     if(tipo == "regional"){
       env$regional <- obj$regional  
       env$se <- obj$se
       env$ano <- obj$ano
       env$mapareg <- obj$nomemapareg
       env$tabreg <- obj$nometabreg
+      env$figreg <- obj$figreg 
       env$municipiosRS <- obj$municipios
       env$nmunicipiosRS <- obj$nmunicipios
       env$nometabelaoRS <- obj$nometabelao
       env$tabelaoRS <- obj$tabelao
       env$nomemunfigurasRS <- obj$nomemunfiguras
-      
+      env$totanoRS <- obj$totano
+      env$totultseRS <- obj$totultse
+      env$nverdeRS <- obj$nverde 
+      env$namareloRS <- obj$namarelo
+      env$nlaranjaRS <- obj$nlaranja
+      env$nvermelhoRS <- obj$nvermelho
+      env$namarelo1RS <- obj$namarelo1
+      env$nlaranja1RS <- obj$nlaranja1
+      env$nvermelho1RS <- obj$nvermelho1
       
     }
     
@@ -784,13 +800,40 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$tabmun <- obj$nometabmun
   }
   
+  # -------------------------------------------------------
+  # caso especifico em que a regional esta sozinha
+  # --------------------------------------------------
+  
+  if(tipo == "regionalsimples"){
+    env$regional <- obj$regional  
+    env$se <- obj$se
+    env$ano <- obj$ano
+    env$mapareg <- obj$nomemapareg
+    env$tabreg <- obj$nometabreg
+    env$figreg <- obj$figreg
+    env$municipiosRS <- obj$municipios
+    env$nmunicipiosRS <- obj$nmunicipios
+    env$nometabelaoRS <- obj$nometabelao
+    env$tabelaoRS <- obj$tabelao
+    env$nomemunfigurasRS <- obj$nomemunfiguras
+    env$totanoRS <- obj$totano
+    env$totultseRS <- obj$totultse
+    env$nverdeRS <- obj$nverde 
+    env$namareloRS <- obj$namarelo
+    env$nlaranjaRS <- obj$nlaranja
+    env$nvermelhoRS <- obj$nvermelho
+    env$namarelo1RS <- obj$namarelo1
+    env$nlaranja1RS <- obj$nlaranja1
+    env$nvermelho1RS <- obj$nvermelho1
+  }
+    
   # --------------------------------------------------
   # Rio de Janeiro
   # --------------------------------------------------
   if(tipo == "Rio"){
     env$se <- obj$se
     env$ano <- obj$ano
-    env$data_relatorio <- data
+    env$datarel <- obj$se
     
     # objetos da regional
     load(paste(dir.estado,"/paramsRJ.RData",sep=""),envir = envUF)
