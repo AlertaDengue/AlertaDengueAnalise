@@ -5,7 +5,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201641
+data_relatorio = 201642
 
 #***************************************************
 # Cidade de Alfredo Chaves
