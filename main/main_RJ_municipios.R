@@ -10,10 +10,7 @@ data_relatorio = 201640
 ### Cidade do Rio de Janeiro 
 #***********************************
 
-<<<<<<< HEAD
-=======
 
->>>>>>> ced65075a1bcd45f86907e0a0a4c90c7dbbac1d4
 alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = data_relatorio, verbose=FALSE)        # calcula o alerta
 
 bolrio <- configRelatorioRio( data=data_relatorio, alert=alerio, shape=RJ.aps.shape,

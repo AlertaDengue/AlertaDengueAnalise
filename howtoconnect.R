@@ -49,12 +49,14 @@ str(tw)
 dim(tw)
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
-c1 <- paste("SELECT * from \"Dengue_global\".\"regional_saude\" WHERE 
-                \"municipio_geocodigo\" >", 4100000)
+c1 <- paste("SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
+                \"municipio_geocodigo\" =", 3304557)
 d <- dbGetQuery(con,c1)
 dd<-subset(d, uf=="São Paulo")[,c("geocodigo","nome","populacao","uf")]
 
-save(dd, file="pop_SP.RData")
+c1 <- paste("SELECT * from \"Municipio\".\"alerta_mrj\"")
+d <- dbGetQuery(con,c1)
+
 
 #Selecionando todas as cidades de sao paulo
 c1 <- paste("SELECT * from \"Dengue_global\".\"Municipio\" WHERE 

@@ -201,9 +201,9 @@ aps <- unique(env$tabaps$aps)
 coresbullets = c(verde='\\gsquare',amarelo='\\ysquare',
                  laranja='\\osquare',vermelho='\\rsquare')
 for (j in 1:10) {
-  nivel = env$tabaps$nivel[env$tabaps$aps == aps[j] & env$tabaps$se==env$data_relatorio]
+  nivel = env$tabaps$nivel[env$tabaps$aps == aps[j] & env$tabaps$se==env$datarel]
   corbullet = '\\wsquare'
-  if(!is.na(nivel)) corbullet = coresbullets[nivel] 
+  corbullet = coresbullets[nivel] 
   cat(paste(corbullet,"APS ",aps[j],'\n'))
 }
 @
