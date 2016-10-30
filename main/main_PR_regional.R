@@ -5,11 +5,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-<<<<<<< HEAD
 data_relatorio = 201642
-=======
-data_relatorio = 201635
->>>>>>> 253682e2a38b4b4994f809f9fdb9d1b5be89f600
 
 
 # ------------------------------- 

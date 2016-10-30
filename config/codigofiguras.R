@@ -162,7 +162,7 @@ figuraRio <- function(cid){
 # fazTabelao com dados da ultima semana das Regionais ou do estado
 # -------------------------------
 
-faztabelaoRS <- function(ale,ano,data){
+faztabelaoRS <- function(ale,ano,data,tex=F){
   totano=0; totultse=0
   nverde=0; namarelo=0;nlaranja=0;nvermelho=0
   nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
@@ -206,5 +206,80 @@ faztabelaoRS <- function(ale,ano,data){
     tabelao[i,] = paratabelao
     
   }
-  tabelao
+  if(tex==T){
+    tabelaox <-xtable(tabelao, align ="ll|lllllll")
+    digits(tabelaox) <- c(0,0,0,1,0,0,1,1,0)
+    return(tabelaox)
+  }else{
+    return(list(tabelao=tabelao,totano=totano,totultse=totultse,nverde=nverde,
+                namarelo=namarelo,nlaranja=nlaranja,nvermelho=nvermelho,
+                nverde1=nverde1,namarelo1=namarelo1,nlaranja1=nlaranja1
+                ,nvermelho1=nvermelho1))
+    }
 }
+
+##---------------------------------
+# faz tabela resumo dos municipios indicados 
+## --------------------------------
+
+faztabelaresumo <- function(municipios, nmunicipios,tex=F){
+  cidadessemespaco = gsub(" ","",municipios$nome)
+  linhascidades <- which(names(alert) %in% cidadessemespaco)
+  
+  tabela = tail(alert[[linhascidades[1]]]$data[,c("SE","casos","pop","tweet","temp_min",
+                                                  "tcasesICmin","tcasesmed","tcasesICmax")])
+  for (n in 2:nmunicipios){
+    
+    newtabela = tail(alert[[linhascidades[n]]]$data[,c("SE","casos","pop","tweet","temp_min",
+                                                       "tcasesICmin","tcasesmed","tcasesICmax")])
+    tabela[,2:8] <- tabela[,2:8]+newtabela[,2:8]
+  }
+  tabela$temp_min <- tabela$temp_min/nmunicipios   #media das temperaturas 
+  tabela$inc <- tabela$casos/tabela$pop*100000
+  tabelafinal <- tail(tabela[,c("SE","temp_min","tweet","casos","tcasesmed","tcasesICmin","tcasesICmax","inc")])
+  names(tabelafinal)<-c("SE","temperatura","tweet","casos notif","casos preditos","ICmin","ICmax","incidência")
+  if(tex==TRUE){
+    tabelax <-xtable(tabelafinal,align ="cc|ccccccc",digits = 0,size="\\small")
+    digits(tabelax) <- 0
+    return(tabelax)
+  }else{return(tabelafinal)}
+  
+}
+
+## ---------------------------
+## Figura regional
+## ---------------------------
+
+fazfiguraregional <- function(ale, nmunicipios, tsdur){
+  
+res = write.alerta(ale[[1]])
+for (n in 2:nmunicipios) res = rbind(res, write.alerta(ale[[n]]))
+
+res$tweet[is.na(res$tweet)] <- 0 # colocando 0 onde não há tweets, so para o grafico
+serie = aggregate(cbind(tweet,casos)~data_iniSE,data=res,FUN=sum,na.rm=TRUE)
+
+layout(matrix(1), widths = lcm(10),heights = c(lcm(5)))
+n = dim(serie)[1]
+seriefinal = serie[(n-tsdur):n,]
+
+par(mai=c(0,0,0,0),mar=c(3,0.5,0.5,0.5))
+plot(seriefinal$casos, type="l", xlab="", ylab="", axes=FALSE,bty="o")
+axis(1, pos=-2, las=2, at=seq(1,length(seriefinal$casos),by=8),
+     tcl=-0.25,labels=FALSE) #pos=0 , labels=seriefinal$data_iniSE[seq(1,length(seriefinal$casos),by=10)], at=seq(1,length(seriefinal$casos),by=12)
+axis(1, pos=0, las=2, at=seq(1,length(seriefinal$casos),by=8), 
+     labels=seriefinal$data_iniSE[seq(1,length(seriefinal$casos),by=8)],
+     cex.axis=0.6,lwd=0,tcl=-0.25) #pos=0 
+
+axis(2,las=1,pos=-0.4,tck=-.05,lab=FALSE)
+axis(2,las=1,pos=4,lwd=0,cex.axis=0.6)
+mtext(text="casos de dengue", line=1,side=2, cex = 0.7) # line=3.5 (original)
+maxy <- max(seriefinal$casos, na.rm=TRUE)
+legend(25, maxy, c("casos","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
+par(new=T)
+plot(seriefinal$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+lines(seriefinal$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+axis(4,las=1,pos=106,tck=-.05,lab=FALSE)
+axis(4,las=1,pos=103,lwd=0,cex.axis=0.6)
+mtext(text="tweets", line=0.5, side=4, cex = 0.7)
+}
+
