@@ -8,7 +8,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 # ----- data do relatorio:
-data_relatorio = 201640
+data_relatorio = 201642
 alePR <- update.alerta(region = names(pars.PR), pars = pars.PR, crit = PR.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
@@ -37,4 +37,7 @@ save(res1, file="AlertaDengueAnalise/report/PR/res1.RData")
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
+
+
+
 
