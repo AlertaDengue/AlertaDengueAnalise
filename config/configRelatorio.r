@@ -499,7 +499,7 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
   tab$p1 <- tab$p1*100
   cores <- c("verde","amarelo","laranja","vermelho")
   tab <- cbind(tab,cores[tail(alert$indices$level,n=tamanhotabela)])
-  names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "incidência max","pr(incid. subir)","nivel")
+  names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência obs.", "max casos estimados","pr(incid. subir)","nivel")
   tabname <- paste(dirb,"/",dir.out,"/figs/tabela",nomesemacento,".tex",sep="")
   tabelax <-xtable(tab,align ="cc|ccccccc",digits = 0)
   digits(tabelax) <- 0
