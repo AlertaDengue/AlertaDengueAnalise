@@ -12,7 +12,7 @@ data_relatorio = 201644
 #***************************************************
 
 aleAlfredoChaves <- update.alerta(city = 3200300, pars = pars.ES[["ES-MN-AlfredoChaves"]], crit = ES.criteria, 
-                           datasource = con, sefinal=data_relatorio, writedb = FALSE)
+                           datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
 
 bolAlfredoChaves <- configRelatorioMunicipal(alert = aleAlfredoChaves, tipo = "simples", siglaUF = "ES", data = data_relatorio, 
                              dir.out = ES.MN.AlfredoChaves.out, geraPDF = TRUE)
@@ -25,7 +25,7 @@ publicarAlerta(ale = aleAlfredoChaves, pdf = bolAlfredoChaves, dir = "Relatorio/
 #***************************************************
 
 aleLinhares <- update.alerta(city = 3203205, pars = pars.ES[["ES-MN-Linhares"]], crit = ES.criteria, 
-                                     datasource = con, sefinal=data_relatorio, writedb = FALSE)
+                                     datasource = con, sefinal=data_relatorio, writedb = FALSE,adjustdelay = FALSE)
 
 bolLinhares <- configRelatorioMunicipal(alert = aleLinhares, tipo = "simples", siglaUF = "ES", data = data_relatorio, 
                                                 dir.out = ES.MN.Linhares.out, geraPDF = TRUE)
