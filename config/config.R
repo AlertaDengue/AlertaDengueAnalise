@@ -32,7 +32,7 @@ RJ.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 RJ.criteria = criteria
 
 # Dados do diretorio para salvar (com / no final)
-RJ.out = "AlertaDengueAnalise/report/RJ/figs/"
+RJ.out = "AlertaDengueAnalise/report/RJ"
 
 # ===================================================
 # Rio de Janeiro - Intra-capital: por APS 
@@ -87,7 +87,7 @@ pars.PR[["Ivaiporã"]] <- list(pdig = c(2.146987,0.9084783), tcrit=22, inccrit=1
 PR.shape="AlertaDengueAnalise/report/PR/shape/41MUE250GC_SIR.shp"  # fonte para o mapa
 PR.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 PR.criteria = criteria
-PR.out = "AlertaDengueAnalise/report/PR/figs/"
+PR.out = "AlertaDengueAnalise/report/PR"
 
 ###====================================
 ## Parana - Regionais

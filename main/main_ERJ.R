@@ -6,29 +6,20 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 # ----- data do relatorio:
-data_relatorio = 201642
+data_relatorio = 201644
 
 # ---- Calcula alerta: 
 
 aleRJ <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = RJ.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
 
-save(aleRJ, file="AlertaDengueAnalise/report/RJ/aleRJ.RData")
-#load("AlertaDengueAnalise/report/RJ/aleRJ.RData") # se precisar parar e retornar depois, rode esse para nao precisar refazer o calculo do alerta
+bolRJ=configRelatorioEstadual(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, tsdur=104,
+                              alert=aleRJ, pars = pars.RJ, shape=RJ.shape, varid=RJ.shapeID,
+                              dir=RJ.out, datasource=con, geraPDF=TRUE)
 
-# --- Gera parametros para o boletim
-res=configRelatorio(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, 
-                alert=aleRJ, pars = pars.RJ, shape=RJ.shape, varid=RJ.shapeID,
-                dir=RJ.out, datasource=con)
+publicarAlerta(ale = aleRJ, pdf = bolRJ, dir = "Relatorio/RJ/estadual")
 
-# Va para a pasta report/RJ e knit Boletim_Estadual_RJ.Rnw (botao) . gerara pdf
-# do relatorio na mesma pasta
-
-nome = "ERJ-2016-teste.pdf"
-system(paste("cp AlertaDengueAnalise/report/RJ/BoletimEstadual_RJ.pdf Relatorio/RJ/Estado/",sep=""))#,nome
-
-# --- Guarda resultado no historico_alerta (e atualizar o mapa no site)
-for (i in 1:length(aleRJ)) res=write.alerta(aleRJ[[i]], write="db")  
+rm(aleRJ,bolRJ)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
