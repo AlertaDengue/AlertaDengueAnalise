@@ -2,73 +2,73 @@
 ## Graficos e Mapas para relatorios
 ###############################################
 
-fig.all <- function(obj){
-      
-      ncidades = length(obj)
-      
-      for (i in 1:ncidades){
-            oobj <- obj[[i]]
-            nome = na.omit(unique(oobj$data$nome))
-            nick <- gsub(" ", "", nome, fixed = TRUE)
-            filename = paste("../report",nick,".png",sep="")
-            
-            png(filename, width = 16, height = 10.5, units="cm", res=100)
-            layout(matrix(1:2, nrow = 2, byrow = TRUE), widths = lcm(15), 
-                   heights = c(lcm(3), lcm(7)))
-            
-            # Grafico superior - tweeter
-             par(mai=c(0,0,0,0),mar=c(0,4,0,3))
-             plot(oobj$data$casos, type="l", xlab="", ylab="", axes=FALSE)
-             daxis(1, pos=0, lty=0, lab=FALSE)
-             axis(2,las=2)
-             mtext(text="casos de dengue", line=2.5,side=2, cex = 0.7)
-             maxy <- max(oobj$data$casos, na.rm=TRUE)
-             legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
-             par(new=T)
-             plot(oobj$data$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
-             lines(oobj$data$tweet, col=3, type="h") #*coefs[2] + coefs[1]
-             axis(1, pos=0, lty=0, lab=FALSE)
-             axis(4,las=2)
-             mtext(text="tweets", line=2.5, side=4, cex = 0.7)
-            
-            # Grafico meio
-            par(mai=c(0,0,0,0),mar=c(0,4,0,3))
-            plot(oobj$data$temp_min, type="l", xlab="", ylab ="temperatura",axes=FALSE,col="darkgreen")
-            axis(2, las=2)
-            clip(1,length(oobj$data$temp_min),oobj$rules$tcrit,100)
-            lines(oobj$data$temp_min, col='yellow', type='l')
-            abline(h=obj$rules$tcrit, lty=2)
-             
-            
-            # Grafico baixo
-            par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-            plot.alerta(oobj, var="inc",ini=201352,fim=max(oobj$data$SE))
-            dev.off()
-            message(paste("Figura salva da cidade", nick))
-      }
-}
+# fig.all <- function(obj){
+#       
+#       ncidades = length(obj)
+#       
+#       for (i in 1:ncidades){
+#             oobj <- obj[[i]]
+#             nome = na.omit(unique(oobj$data$nome))
+#             nick <- gsub(" ", "", nome, fixed = TRUE)
+#             filename = paste("../report",nick,".png",sep="")
+#             
+#             png(filename, width = 16, height = 10.5, units="cm", res=100)
+#             layout(matrix(1:2, nrow = 2, byrow = TRUE), widths = lcm(15), 
+#                    heights = c(lcm(3), lcm(7)))
+#             
+#             # Grafico superior - tweeter
+#              par(mai=c(0,0,0,0),mar=c(0,4,0,3))
+#              plot(oobj$data$casos, type="l", xlab="", ylab="", axes=FALSE)
+#              daxis(1, pos=0, lty=0, lab=FALSE)
+#              axis(2,las=2)
+#              mtext(text="casos de dengue", line=2.5,side=2, cex = 0.7)
+#              maxy <- max(oobj$data$casos, na.rm=TRUE)
+#              legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
+#              par(new=T)
+#              plot(oobj$data$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+#              lines(oobj$data$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+#              axis(1, pos=0, lty=0, lab=FALSE)
+#              axis(4,las=2)
+#              mtext(text="tweets", line=2.5, side=4, cex = 0.7)
+#             
+#             # Grafico meio
+#             par(mai=c(0,0,0,0),mar=c(0,4,0,3))
+#             plot(oobj$data$temp_min, type="l", xlab="", ylab ="temperatura",axes=FALSE,col="darkgreen")
+#             axis(2, las=2)
+#             clip(1,length(oobj$data$temp_min),oobj$rules$tcrit,100)
+#             lines(oobj$data$temp_min, col='yellow', type='l')
+#             abline(h=obj$rules$tcrit, lty=2)
+#              
+#             
+#             # Grafico baixo
+#             par(mai=c(0,0,0,0),mar=c(1,4,0,4))
+#             plot.alerta(oobj, var="inc",ini=201352,fim=max(oobj$data$SE))
+#             dev.off()
+#             message(paste("Figura salva da cidade", nick))
+#       }
+# }
 
 # -----------------------------------------------
-fig.cores <- function(obj){
-      
-      ncidades = length(obj)
-      
-      for (i in 1:ncidades){
-            oobj <- obj[[i]]
-            nome = na.omit(unique(oobj$data$nome))
-            nick <- gsub(" ", "", nome, fixed = TRUE)
-            filename = paste("report/cores_",nick,".png",sep="")
-            
-            png(filename, width = 16, height = 5.5, units="cm", res=100)
-            layout(matrix(1), widths = lcm(15), 
-                   heights = c(lcm(5)))
-            # Grafico baixo
-            par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-            plot.alerta(oobj, var="inc",ini=201352,fim=max(oobj$data$SE))
-            dev.off()
-            message(paste("Figura salva da cidade", nick))
-      }
-}
+# fig.cores <- function(obj){
+#       
+#       ncidades = length(obj)
+#       
+#       for (i in 1:ncidades){
+#             oobj <- obj[[i]]
+#             nome = na.omit(unique(oobj$data$nome))
+#             nick <- gsub(" ", "", nome, fixed = TRUE)
+#             filename = paste("report/cores_",nick,".png",sep="")
+#             
+#             png(filename, width = 16, height = 5.5, units="cm", res=100)
+#             layout(matrix(1), widths = lcm(15), 
+#                    heights = c(lcm(5)))
+#             # Grafico baixo
+#             par(mai=c(0,0,0,0),mar=c(1,4,0,4))
+#             plot.alerta(oobj, var="inc",ini=201352,fim=max(oobj$data$SE))
+#             dev.off()
+#             message(paste("Figura salva da cidade", nick))
+#       }
+# }
 
 # --------- Mapa das regionais --------------------------------------
 mapa.regional <- function(alerta, regionais, estado, sigla, pars, shape, 
@@ -80,11 +80,12 @@ mapa.regional <- function(alerta, regionais, estado, sigla, pars, shape,
     nomesemespaco = gsub(" ","",i)
     nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
     fname = paste(dir,"Mapa",sigla,"_",nomesemacento,".png",sep="")
-    message("mapa criado:", fname)
+    
     geraMapa(alerta=alerta, subset=cidades, se=data, legpos = pars[[i]]$legpos,  
              shapefile=shape, varid=shapeid, 
              titulo=titu ,filename=fname, dir="")
   }
+  message("mapa criado:", fname)
   fname
 }
 
@@ -162,7 +163,7 @@ figuraRio <- function(cid){
 # fazTabelao com dados da ultima semana das Regionais ou do estado
 # -------------------------------
 
-faztabelaoRS <- function(ale,ano,data){
+faztabelaoRS <- function(ale,ano,data,tex=F){
   totano=0; totultse=0
   nverde=0; namarelo=0;nlaranja=0;nvermelho=0
   nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
@@ -206,5 +207,80 @@ faztabelaoRS <- function(ale,ano,data){
     tabelao[i,] = paratabelao
     
   }
-  tabelao
+  if(tex==T){
+    tabelaox <-xtable(tabelao, align ="ll|lllllll")
+    digits(tabelaox) <- c(0,0,0,1,0,0,1,1,0)
+    return(tabelaox)
+  }else{
+    return(list(tabelao=tabelao,totano=totano,totultse=totultse,nverde=nverde,
+                namarelo=namarelo,nlaranja=nlaranja,nvermelho=nvermelho,
+                nverde1=nverde1,namarelo1=namarelo1,nlaranja1=nlaranja1
+                ,nvermelho1=nvermelho1))
+    }
 }
+
+##---------------------------------
+# faz tabela resumo dos municipios indicados 
+## --------------------------------
+
+faztabelaresumo <- function(alert,municipios, nmunicipios,tex=F){
+  cidadessemespaco = gsub(" ","",municipios$nome)
+  linhascidades <- which(names(alert) %in% cidadessemespaco)
+  
+  tabela = tail(alert[[linhascidades[1]]]$data[,c("SE","casos","pop","tweet","temp_min",
+                                                  "tcasesICmin","tcasesmed","tcasesICmax")])
+  for (n in 2:nmunicipios){
+    
+    newtabela = tail(alert[[linhascidades[n]]]$data[,c("SE","casos","pop","tweet","temp_min",
+                                                       "tcasesICmin","tcasesmed","tcasesICmax")])
+    tabela[,2:8] <- tabela[,2:8]+newtabela[,2:8]
+  }
+  tabela$temp_min <- tabela$temp_min/nmunicipios   #media das temperaturas 
+  tabela$inc <- tabela$casos/tabela$pop*100000
+  tabelafinal <- tail(tabela[,c("SE","temp_min","tweet","casos","tcasesmed","tcasesICmin","tcasesICmax","inc")])
+  names(tabelafinal)<-c("SE","temperatura","tweet","casos notif","casos preditos","ICmin","ICmax","incidência")
+  if(tex==TRUE){
+    tabelax <-xtable(tabelafinal,align ="cc|ccccccc",digits = 0,size="\\small")
+    digits(tabelax) <- 0
+    return(tabelax)
+  }else{return(tabelafinal)}
+  
+}
+
+## ---------------------------
+## Figura regional
+## ---------------------------
+
+fazfiguraregional <- function(ale, nmunicipios, tsdur){
+  
+res = write.alerta(ale[[1]])
+for (n in 2:nmunicipios) res = rbind(res, write.alerta(ale[[n]]))
+
+res$tweet[is.na(res$tweet)] <- 0 # colocando 0 onde não há tweets, so para o grafico
+serie = aggregate(cbind(tweet,casos)~data_iniSE,data=res,FUN=sum,na.rm=TRUE)
+
+layout(matrix(1), widths = lcm(10),heights = c(lcm(5)))
+n = dim(serie)[1]
+seriefinal = serie[(n-tsdur):n,]
+
+par(mai=c(0,0,0,0),mar=c(3,0.5,0.5,0.5))
+plot(seriefinal$casos, type="l", xlab="", ylab="", axes=FALSE,bty="o")
+axis(1, pos=-2, las=2, at=seq(1,length(seriefinal$casos),by=8),
+     tcl=-0.25,labels=FALSE) #pos=0 , labels=seriefinal$data_iniSE[seq(1,length(seriefinal$casos),by=10)], at=seq(1,length(seriefinal$casos),by=12)
+axis(1, pos=0, las=2, at=seq(1,length(seriefinal$casos),by=8), 
+     labels=seriefinal$data_iniSE[seq(1,length(seriefinal$casos),by=8)],
+     cex.axis=0.6,lwd=0,tcl=-0.25) #pos=0 
+
+axis(2,las=1,pos=-0.4,tck=-.05,lab=FALSE)
+axis(2,las=1,pos=4,lwd=0,cex.axis=0.6)
+mtext(text="casos de dengue", line=1,side=2, cex = 0.7) # line=3.5 (original)
+maxy <- max(seriefinal$casos, na.rm=TRUE)
+legend(25, maxy, c("casos","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
+par(new=T)
+plot(seriefinal$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+lines(seriefinal$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+axis(4,las=1,pos=106,tck=-.05,lab=FALSE)
+axis(4,las=1,pos=103,lwd=0,cex.axis=0.6)
+mtext(text="tweets", line=0.5, side=4, cex = 0.7)
+}
+

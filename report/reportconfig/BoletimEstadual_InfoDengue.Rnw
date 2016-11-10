@@ -8,24 +8,22 @@
 % 
 % Original template downloaded from:
 % http://www.LaTeXTemplates.com
-%
-% License:
-% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
-\input{reportconfig/structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+\SweaveOpts{keep.source=TRUE}
+\usepackage[utf8]{inputenc}
+\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
 
-% Carregando dados  (atualmente é manual para cada estado)
+% Os objetos R para esse script estao no ambiente env criado pela funcao geraPDF. 
+
 <<carrega_dados,echo=FALSE,results=hide>>=
-library("xtable")
-load('RJ/figs/paramsRJ.RData')
-
-figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
+options(useFancyQuotes=FALSE)
+library('xtable')
 @
 
-\fancyfoot[C]{Boletim Estadual - \Sexpr{estado}}
-\fancyfoot[R]{Semana \Sexpr{se} de \Sexpr{ano}}
+\fancyfoot[C]{Boletim Estadual - \Sexpr{env$estado}}
+\fancyfoot[R]{Semana \Sexpr{env$seUF} de \Sexpr{env$anoUF}}
 \fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
 
 \begin{document}
@@ -36,7 +34,7 @@ figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
 %---------------------------------------------------------------------------------
 
 \begin{figure}[H]
-\centering\includegraphics[width=1\linewidth]{reportconfig/InfoDengue2.png}  
+\centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
 \end{figure}
 
 \centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line
@@ -52,7 +50,7 @@ figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
 
 \hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
 
-\textbf{Semana \Sexpr{se} de \Sexpr{ano}} % se, ano, em pp.RData
+\textbf{Semana \Sexpr{env$seUF} de \Sexpr{env$anoUF}} % se, ano, em pp.RData
 
 \begin{itemize}
 \item \hyperlink{estado}{O Estado} 
@@ -65,8 +63,8 @@ figmapaestado = paste(sigla,"/figs/","Mapa_E",sigla,".png",sep="")
 <<echo=FALSE,results=tex>>=
 cat("\\begin{itemize}")
 
-for (i in 1:length(regs)) {
-      cat(paste("\\item \\hyperlink{",nickregs[[i]],"}{",regs[i],"}\n",sep=""))
+for (i in 1:length(env$regionais)) {
+      cat(paste("\\item \\hyperlink{",env$nickregs[i],"}{",env$regionais[i],"}\n",sep=""))
 }
 
 cat("\\end{itemize}")
@@ -102,15 +100,15 @@ cat("\\end{itemize}")
 %--------------------------------------------------------------------------------
 %	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
 %-------------------------------------------------------------------------------
-\hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{estado}}{6pt}} % \hypertarget provides a label to reference using 
+\hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{env$estado}}{6pt}} % \hypertarget provides a label to reference using 
 
-Desde o início do ano, \Sexpr{totano} casos foram registrados no estado, sendo \Sexpr{totultse} na última semana. A figura abaixo mostra as condições de transmissão em cada município.
+Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, sendo \Sexpr{env$totultseUF} na última semana. A figura abaixo mostra as condições de transmissão em cada município.
 
 % Mapa estadual
-\includegraphics[width=0.8\textwidth]{\Sexpr{figmapaestado}}
+\includegraphics[width=0.8\textwidth]{\Sexpr{env$figmapaestado}}
 %-----------------------------------------------------------
 
-Dos \Sexpr{nmunicipios} municipios, \Sexpr{nverde} encontram-se em nivel verde, \Sexpr{namarelo} em nivel amarelo, \Sexpr{nlaranja} em nivel laranja e \Sexpr{nvermelho} em nivel vermelho referentes a semana epidemiológica \Sexpr{se}-\Sexpr{ano}. Para informações mais atualizadas
+Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho referentes a semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}. Para informações mais atualizadas
 sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
 
@@ -130,7 +128,7 @@ As cores indicam niveis de atenção
 \end{description}
 \end{mdframed}
 
- \textbf{Na semana passada:} \Sexpr{namarelo1} municípios em nivel amarelo, \Sexpr{nlaranja1} em laranja e \Sexpr{nvermelho1} em vermelho.    
+ \textbf{Na semana passada:} \Sexpr{env$namarelo1} municípios em nivel amarelo, \Sexpr{env$nlaranja1} em laranja e \Sexpr{env$nvermelho1} em vermelho.    
 
 \end{minipage} % End the main body - first page mini page
 
@@ -142,34 +140,27 @@ As cores indicam niveis de atenção
 <<r,echo=FALSE,results=tex>>=
 # O loop e'feito no R e o template em latex entra como string
 
-for (i in 1:length(regs)){
+for (i in 1:length(env$regionais)){
       cat("\\begin{minipage}[t]{.66\\linewidth}\n")  # inicio da minipage
       # titulo:
-      cat(paste("\\hypertarget{",nickregs[[i]],"}{\\heading{Regional ",regs[i],"}}\n",sep="")) 
+      cat(paste("\\hypertarget{",env$nickregs[i],"}{\\heading{Regional ",env$regionais[i],"}{6pt}}\n",sep="")) 
       
       # Mapa:
-      nomesemespaco = gsub(" ","", regs[i])
-      nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
-      mapareg=paste(sigla,"/figs/Mapa",sigla,"_",nomesemacento,".png",sep="")
-      cat(paste("\\includegraphics[width=0.8\\textwidth]{",mapareg,"}",sep=""))
+      cat("\\begin{center}\n")
+      cat(paste("\\includegraphics[width=0.8\\textwidth]{",env$nomesmapareg[i],"}",sep=""))
       cat("\\vspace{0.5cm}")
       
       # Tabela 
-      tabreg=paste(sigla,"/figs/","tabregional",sigla,"_",nomesemacento,
-                   ".tex",sep="")
-
-      cat(paste("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional",regs[i],"}"))
-      cat("\\begin{center}\n")
-      cat(paste("\\input{",tabreg,"}\n",sep=""))
-      cat("\\end{center}\n")
+      
+      cat(paste("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional",env$regionais[i],"}"))
+      
+      cat(paste("\\input{",env$nomestabreg[i],"}\n",sep=""))
       cat("\\small{\\hyperlink{vartab}{ver descrição das variáveis}}")
       
       # Grafico regional:
-      figname = paste(sigla,"/figs/tweet",sigla,"_",nomesemacento,".png",sep="")
       cat("\\vspace{0.5cm}")
-      cat("\\begin{center}\n")
-      cat(paste("\\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional",regs[i],"}"))
-      cat(paste("\\includegraphics[width=1.3\\textwidth]{",figname,"}",sep=""))
+      cat(paste("\\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional",env$regionais[i],"}"))
+      cat(paste("\\includegraphics[width=1\\textwidth]{",env$nomesfigreg[i],"}",sep=""))
       cat("\\end{center}\n")
       # End second page mini page
       cat("\\end{minipage}\\hfill") 
@@ -182,15 +173,15 @@ for (i in 1:length(regs)){
       cat("\\begin{minipage}[t]{.30\\linewidth}\n") 
       cat("\\begin{mdframed}[style=sidebar,frametitle={}]\n") # Sidebar box 
  
-      cat("\\textbf{\\hyperlink{municips}{Municipios}}") # titulo
+      cat("\\textbf{\\hyperlink{municips}{Municípios}}") # titulo
       cat("\\begin{itemize}")
        
-      municip.reg <- municipios[municipios$nome_regional==regs[i],]
+      municip.reg <- env$municipios[env$municipios$nome_regional==env$regionais[i],]
       coresbullets = c(verde="\\gsquare",amarelo="\\ysquare",
                             laranja="\\osquare",vermelho="\\rsquare")
         
       for (j in 1:dim(municip.reg)[1]) {
-              nivel = tabelao$Nivel[tabelao$Municipio==municip.reg$nome[j]]
+              nivel = env$tabelao$Nivel[env$tabelao$Municipio==municip.reg$nome[j]]
               corbullet = "\\wsquare"
               if(!is.na(nivel)) corbullet = coresbullets[nivel] 
               cat(paste(corbullet,municip.reg$nome[j],"\n"))
@@ -211,18 +202,12 @@ for (i in 1:length(regs)){
 %-----------------------------------------------------------------------------------
  %\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
 
-<<echo=FALSE>>=
-    tabelaoref=paste(sigla,"/figs/tabelao",sigla,".tex",sep="")
-@
- 
-      \hypertarget{municips}{\heading{Resumo da situação epidemiológica da dengue nos municípios de \Sexpr{estado}, na semana \Sexpr{se} de \Sexpr{ano}}{6pt}}
 
-<<echo=FALSE>>=
-    tabelaoref=paste(sigla,"/figs/tabelao",sigla,".tex",sep="")
-@
-      
+      \hypertarget{municips}{\heading{Resumo da situação epidemiológica da dengue nos municípios de \Sexpr{env$estado}, na semana \Sexpr{env$seUF} de \Sexpr{env$anoUF}}{6pt}}
+
+
      \begin{center}
-            \input{\Sexpr{tabelaoref}}
+            \input{\Sexpr{env$nometabelao}}
      \end{center}
 
 
@@ -237,7 +222,7 @@ for (i in 1:length(regs)){
 
 \begin{minipage}[t]{1\linewidth} 
 
-\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}}
+\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}{6pt}}
 
 \begin{description}
 \item [SE =] semana epidemiológica
@@ -253,7 +238,7 @@ for (i in 1:length(regs)){
 \item [Nivel =] cor do alerta (verde, amarelo, laranja, vermelho)
 \end{description}
 
-\hypertarget{notas}{\heading{Notas}}
+\hypertarget{notas}{\heading{Notas}{6pt}}
 
 \begin{itemize}
 \item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
@@ -261,7 +246,7 @@ for (i in 1:length(regs)){
 \item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
 \end{itemize}
 
-\hypertarget{creditos}{\heading{Créditos}}
+\hypertarget{creditos}{\heading{Créditos}{6pt}}
 
 Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
 
@@ -277,7 +262,7 @@ Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
 
 \vspace{1cm}
 
-\hline
+\hrule
 Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
 
 \textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
