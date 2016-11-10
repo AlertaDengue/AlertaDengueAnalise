@@ -99,10 +99,12 @@ PR.Cascavel.out = "AlertaDengueAnalise/report/PR/Regionais/Cascavel"
 # Parametros do Estado do Espírito Santo 
 # ========================================
 #nomesregs = getRegionais("Espírito Santo")# use essa funcao para descobrir as regionais
-nomesregs.ES <- c("ES-MN-AlfredoChaves")         
+nomesregs.ES <- c("ES-MN-AlfredoChaves")
+nomesregs.ES <- c("ES-MN-SantaMariaJetiba")
 pars.ES <- NULL
 pars.ES[nomesregs.ES] <- list(NULL)
 pars.ES[["ES-MN-AlfredoChaves"]] <- list(pdig = c(0.9134618,0.9105709),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+pars.ES[["ES-MN-SantaMariaJetiba"]] <- list(tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
 ES.out = "AlertaDengueAnalise/report/ES/figs/"
 
 # Dados para o mapa
@@ -113,7 +115,7 @@ ES.criteria = criteria
 
 # Dados do diretorio para salvar (com / no final)
 ES.MN.AlfredoChaves.out = "AlertaDengueAnalise/report/ES/Municipios/AlfredoChaves"
-
+ES.MN.SantaMariaJetiba.out = "AlertaDengueAnalise/report/ES/Municipios/SantaMariaJetiba"
 
 #***********************************************************************************************************************************
 # ========================================

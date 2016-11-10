@@ -5,7 +5,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201642
+data_relatorio = 201643
 
 #***************************************************
 # Cidade de Alfredo Chaves
@@ -39,12 +39,12 @@ publicarAlerta(ale = aleLinhares, pdf = bolLinhares, dir = "Relatorio/ES/Municip
 #***************************************************
 
 aleSantaMariaJetiba <- update.alerta(city = 3204559, pars = pars.ES[["ES-MN-SantaMariaJetiba"]], crit = ES.criteria, 
-                                  datasource = con, sefinal=data_relatorio, writedb = FALSE)
+                                  datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
 
 bolSantaMariaJetiba <- configRelatorioMunicipal(alert = aleSantaMariaJetiba, tipo = "simples", siglaUF = "ES", data = data_relatorio, 
                                              dir.out = ES.MN.SantaMariaJetiba.out, geraPDF = TRUE)
 
-publicarAlerta(ale = aleSantaMariaJetiba, pdf = bolSantaMariaJetiba, dir = "Relatorio/ES/Municipios/SantaMariaJetiba")
+publicarAlerta(ale = aleSantaMariaJetiba, pdf = bolSantaMariaJetiba, dir = "Relatorio/ES/Municipios/SantaMariadeJetiba")
 
 
 # ----- Fechando o banco de dados
