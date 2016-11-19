@@ -7,7 +7,6 @@
 library(foreign)
 library("RPostgreSQL")
 library(xtable)
-library(knitr)
 library(AlertTools)
 
 # explicita o diretorio base
