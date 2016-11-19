@@ -99,11 +99,14 @@ PR.Cascavel.out = "AlertaDengueAnalise/report/PR/Regionais/Cascavel"
 # Parametros do Estado do Espírito Santo 
 # ========================================
 #nomesregs = getRegionais("Espírito Santo")# use essa funcao para descobrir as regionais
-nomesregs.ES <- c("ES-MN-AlfredoChaves")         
+nomesregs.ES <- c("Central","Metropolitana","Norte","Sul")
 pars.ES <- NULL
 pars.ES[nomesregs.ES] <- list(NULL)
-pars.ES[["ES-MN-AlfredoChaves"]] <- list(pdig = c(0.9134618,0.9105709),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
-ES.out = "AlertaDengueAnalise/report/ES/figs/"
+pars.ES[["Central"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+pars.ES[["Metropolitana"]] <- list(pdig = c(3.110015,1.292324),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+pars.ES[["Norte"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+pars.ES[["Sul"]] <- list(pdig = c(1.101711,1.078064),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+ES.out = "AlertaDengueAnalise/report/ES/Estado/figs/"
 
 # Dados para o mapa
 ES.shape="AlertaDengueAnalise/report/ES/shape/32MUE250GC_SIR.shp"  # fonte para o mapa
@@ -113,7 +116,7 @@ ES.criteria = criteria
 
 # Dados do diretorio para salvar (com / no final)
 ES.MN.AlfredoChaves.out = "AlertaDengueAnalise/report/ES/Municipios/AlfredoChaves"
-
+ES.MN.SantaMariaJetiba.out = "AlertaDengueAnalise/report/ES/Municipios/SantaMariaJetiba"
 
 #***********************************************************************************************************************************
 # ========================================
