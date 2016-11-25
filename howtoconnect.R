@@ -97,8 +97,8 @@ str(tw)
 dim(tw)
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
-c1 <- paste("SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
-                \"municipio_geocodigo\" =", 3304557)
+c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
+                \"municipio_geocodigo\" > 3200000 "
 d <- dbGetQuery(con,c1)
 dd<-subset(d, uf=="São Paulo")[,c("geocodigo","nome","populacao","uf")]
 
@@ -126,7 +126,7 @@ dim(tw)
 
 # 2b. Selecionando pelo valor de uma das variaveis, é preciso usar SQL
 c1 <- paste("SELECT * from \"Municipio\".\"Tweet\" WHERE 
-                \"Municipio_geocodigo\" =", 4118204 )
+                \"Municipio_geocodigo\" =", 118056 )
 d <- dbGetQuery(con,c1)
 head(d)
 plot(d$numero)
@@ -143,12 +143,17 @@ tw <- subset(tw, as.Date(data, format = "%Y-%m-%d") <= lastday)
  
 ## tirando os dados do parana de 2016
 dbListFields(con, c("Municipio","Notificacao"))
-sql <- "SELECT * from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 3200000 AND ano_notif=2106"
+sql <- "SELECT * from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000 AND ano_notif=2106"
 dd <- dbGetQuery(con, sql)
 
 #sql <- "DELETE from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 4100000 AND ano_notif=2016"
 #dbGetQuery(con, sql)
 
+
+## dados da regional do ES
+dbListFields(con, c("Dengue_global","regional_saude"))
+sql <- "SELECT * from \"Dengue_global\".\"regional_saude\" WHERE  municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000"
+dbGetQuery(con, sql)
 
 ## dados da regional do ES
 dbListFields(con, c("Dengue_global","regional_saude"))
@@ -182,6 +187,8 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
 
   sql <- paste("SELECT nome,populacao,uf from \"Dengue_global\".\"Municipio\" WHERE geocodigo = 3302205")
   d <- dbGetQuery(con,sql)
+  
+  sql <- paste("DELETE from \"Dengue_global\".\"historico_alerta\" WHERE municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000")
   
   # ====================
   # criando tabela teste

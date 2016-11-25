@@ -95,7 +95,7 @@ mapa.regional <- function(alerta, regionais, estado, sigla, pars, shape,
 # obj é o alerta do municipio gerado pelo update.alerta
 # USO: figuramunicipio(alePR_RS_Cascavel[["CéuAzul"]])
 
-figuramunicipio <- function(obj, tsdur=104){
+figuramunicipio <- function(obj, param, tsdur=104){
   layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
          heights = c(rep(lcm(4),2), lcm(5)))
   
@@ -125,14 +125,14 @@ figuramunicipio <- function(obj, tsdur=104){
   legend(x="topleft",lty=c(2),col=c("black"),
          legend=c("limiar favorável transmissão"),cex=0.85,bty="n")
   axis(2)
-  abline(h=22, lty=2)
+  abline(h=param[[1]]$tcrit, lty=2)
   
   # subfigura de baixo: alerta colorido
   par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-  plot.alerta(obj, var="tcasesmed",ini=min(objc$SE),fim=max(objc$SE))
-  abline(h=100/100000*obj$data$pop[1],lty=3)
-  legend(x="topright",lty=c(3,2,2),col=c("black","red","darkgreen"),
-         legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
+  plot.alerta(obj, var="inc",ini=min(objc$SE),fim=max(objc$SE))
+  abline(h=param$posseas*obj$data$pop[1],lty=2)
+  legend(x="topright",lty=c(3,2,2),col=c("red","darkgreen","black"),
+  legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
   
 }
 
@@ -229,15 +229,25 @@ faztabelaresumo <- function(alert,municipios, nmunicipios,tex=F){
   
   tabela = tail(alert[[linhascidades[1]]]$data[,c("SE","casos","pop","tweet","temp_min",
                                                   "tcasesICmin","tcasesmed","tcasesICmax")])
+  tabelaregional <- data.frame(SE=tabela$SE)
+  
   for (n in 2:nmunicipios){
     
     newtabela = tail(alert[[linhascidades[n]]]$data[,c("SE","casos","pop","tweet","temp_min",
                                                        "tcasesICmin","tcasesmed","tcasesICmax")])
-    tabela[,2:8] <- tabela[,2:8]+newtabela[,2:8]
+    #tabela[,2:8] <- tabela[,2:8]+newtabela[,2:8]
+    tabela = rbind(tabela,newtabela)
+    
   }
-  tabela$temp_min <- tabela$temp_min/nmunicipios   #media das temperaturas 
-  tabela$inc <- tabela$casos/tabela$pop*100000
-  tabelafinal <- tail(tabela[,c("SE","temp_min","tweet","casos","tcasesmed","tcasesICmin","tcasesICmax","inc")])
+  tabelaregional$temp_min <- tapply(tabela$temp_min, tabela$SE, mean, na.rm=TRUE)
+  tabelaregional$casos <- tapply(tabela$casos, tabela$SE, sum)
+  tabelaregional$pop <-tapply(tabela$pop, tabela$SE, sum)
+  tabelaregional$tweet <-tapply(tabela$tweet, tabela$SE, sum)
+  tabelaregional$tcasesICmin <-tapply(tabela$tcasesICmin, tabela$SE, sum)
+  tabelaregional$tcasesmed <-tapply(tabela$tcasesmed, tabela$SE, sum)
+  tabelaregional$tcasesICmax <-tapply(tabela$tcasesICmax, tabela$SE, sum)
+  tabelaregional$inc <- tabelaregional$casos/tabelaregional$pop*100000
+  tabelafinal <- tail(tabelaregional[,c("SE","temp_min","tweet","casos","tcasesmed","tcasesICmin","tcasesICmax","inc")])
   names(tabelafinal)<-c("SE","temperatura","tweet","casos notif","casos preditos","ICmin","ICmax","incidência")
   if(tex==TRUE){
     tabelax <-xtable(tabelafinal,align ="cc|ccccccc",digits = 0,size="\\small")
@@ -251,10 +261,11 @@ faztabelaresumo <- function(alert,municipios, nmunicipios,tex=F){
 ## Figura regional
 ## ---------------------------
 
-fazfiguraregional <- function(ale, nmunicipios, tsdur){
+fazfiguraregional <- function(ale, municipreg, tsdur){
   
-res = write.alerta(ale[[1]])
-for (n in 2:nmunicipios) res = rbind(res, write.alerta(ale[[n]]))
+nmunreg = length(municipreg)
+res = write.alerta(ale[[municipreg[1]]])
+for (n in 2:nmunreg) res = rbind(res, write.alerta(ale[[municipreg[n]]]))
 
 res$tweet[is.na(res$tweet)] <- 0 # colocando 0 onde não há tweets, so para o grafico
 serie = aggregate(cbind(tweet,casos)~data_iniSE,data=res,FUN=sum,na.rm=TRUE)

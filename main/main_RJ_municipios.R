@@ -25,7 +25,7 @@ rm(alerio,bolrio)
 aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
                            datasource = con, sefinal=data_relatorio, writedb = FALSE)
 
-bolCampos <- configRelatorioMunicipal(alert = aleCampos, tipo = "simples", siglaUF = "RJ", data = data_relatorio, 
+bolCampos <- configRelatorioMunicipal(alert = aleCampos, tipo = "simples", siglaUF = "RJ", data = data_relatorio, pars = pars.RJ[["Norte"]],
                                              dir.out = RJ_CamposdosGoytacazes.out, geraPDF = TRUE)
 
 publicarAlerta(ale = aleCampos, pdf = bolCampos, dir = "Relatorio/RJ/Municipios/CamposdosGoytacazes")
