@@ -915,7 +915,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$linkregional <- "MetI" # nickname da regional para usar como link
     env$municip.reg <-  obj$municip.reg # municipios na mesma regional
     env$nmunicipiosRS <- length(env$municip.reg)
-    env$tabelaoRS <- envUF$tabelao[envUF$tabelao$Regional=="Metropolitana I",]
+    env$tabelaoRS <- envUF$res$tabelao[envUF$res$tabelao$Regional=="Metropolitana I",]
     
     # Mapa da regional 
     env$mapareg=paste(dir.estado,"/MapaRJ_MetropolitanaI.png",sep='') # mapa
