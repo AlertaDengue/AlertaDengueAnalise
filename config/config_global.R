@@ -7,7 +7,6 @@
 library(foreign)
 library("RPostgreSQL")
 library(xtable)
-library(knitr)
 library(AlertTools)
 
 # explicita o diretorio base
@@ -34,8 +33,8 @@ gtdist="normal"; meangt=3; sdgt = 1.2
 
 criteria = list(
   #crity = c("temp_min > tcrit | (temp_min < tcrit & inc > preseas)", 3, 2),
-  crity = c("temp_min > tcrit", 3, 1),
+  crity = c("temp_min > tcrit & inc > 0", 3, 1),
   crito = c("p1 > 0.95 & inc > preseas & temp_min >= tcrit", 3, 1),
-  critr = c("inc > inccrit", 2, 2)
+  critr = c("inc > inccrit & casos > 5", 2, 2)
 )
 

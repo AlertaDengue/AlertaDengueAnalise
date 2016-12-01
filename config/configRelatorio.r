@@ -286,9 +286,10 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, data
     # Figura-resumo da regional 
     # --------------------------------
     
+  munreg = which(municipios$nome_regional == regional)
   figregname = paste(dirfigs,"figuraRS_",nomeregfiguras,".png",sep="")
   png(figregname, width = 12, height = 5.5, units="cm", res=200)
-  fazfiguraregional(alert,nmunicipios, tsdur=104)
+  fazfiguraregional(alert,munreg, tsdur=104)
   dev.off()  
         
   filename = paste(dirfigs,"paramsRS_",nomeregfiguras,".RData",sep="")
@@ -303,7 +304,7 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, data
     figname = paste(dirfigs,"figMun_",nomemunfiguras[cid],".png",sep="")
   
     png(figname, width = 14, height = 16, units="cm", res=300)  # inicio da figura -----
-    figuramunicipio(alert[[cidadessemespaco]])
+    figuramunicipio(alert[[cidadessemespaco]],param=pars)
     municipios$figname[cid] <- figname
     dev.off()  
   }
@@ -454,9 +455,10 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104, alert, pars, sha
   for (i in 1:length(regs)){
     nomefigreg = paste(dirfigs,"figuraRS_",nomeregfiguras[i],".png",sep="")
     nomesfigreg <- c(nomesfigreg, nomefigreg)
-    nmunreg = length(munreg)
+    munreg = which(municipios$nome_regional == regs[i])
+    
     png(nomefigreg, width = 12, height = 5.5, units="cm", res=200)
-    fazfiguraregional(alert,nmunreg, tsdur=104)
+    fazfiguraregional(alert,munreg, tsdur=104)
     dev.off()  
   }
   message("figuras regionais criadas")
@@ -501,7 +503,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104, alert, pars, sha
 # alert - objeto gerado pelo update.alerta, siglaUF = "RJ", dir.out = pasta mestre do municipio,
 # data - data do relatorio. Duas opcoes, relatorio completo ou simples
 ## ============================================================
-configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, datasource=con,
+configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, pars, datasource=con,
                                      dirb=basedir, geraPDF=TRUE){
   
   # Identificacao da cidade
@@ -542,7 +544,7 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
   figname = paste(dirb,"/",dir.out,"/figs/figura",nomesemacento,".png",sep="")
   
   png(figname, width = 14, height = 16, units="cm", res=300)  # inicio da figura -----
-  figuramunicipio(alert)
+  figuramunicipio(alert,param=pars)
   dev.off()  # fim da figura ----------
   
   # Gera tabela resumo das ultimas semanas
@@ -913,7 +915,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$linkregional <- "MetI" # nickname da regional para usar como link
     env$municip.reg <-  obj$municip.reg # municipios na mesma regional
     env$nmunicipiosRS <- length(env$municip.reg)
-    env$tabelaoRS <- envUF$tabelao[envUF$tabelao$Regional=="Metropolitana I",]
+    env$tabelaoRS <- envUF$res$tabelao[envUF$res$tabelao$Regional=="Metropolitana I",]
     
     # Mapa da regional 
     env$mapareg=paste(dir.estado,"/MapaRJ_MetropolitanaI.png",sep='') # mapa

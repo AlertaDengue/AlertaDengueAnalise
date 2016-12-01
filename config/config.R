@@ -106,10 +106,14 @@ pars.ES[["Central"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, pos
 pars.ES[["Metropolitana"]] <- list(pdig = c(3.110015,1.292324),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
 pars.ES[["Norte"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
 pars.ES[["Sul"]] <- list(pdig = c(1.101711,1.078064),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+<<<<<<< HEAD
 ES.out = "AlertaDengueAnalise/report/ES/Estado"
+=======
+ES.out = "AlertaDengueAnalise/report/ES"
+>>>>>>> 1ee88bb120ad9db4942a7a64d98b317bd8cacee0
 
 # Dados para o mapa
-ES.shape="AlertaDengueAnalise/report/ES/shape/32MUE250GC_SIR.shp"  # fonte para o mapa
+ES.shape="AlertaDengueAnalise/report/ES/shape/32MUE250GC_SIRm.shp"  # fonte para o mapa
 ES.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 ES.criteria = criteria
 
@@ -126,7 +130,7 @@ ES.MN.SantaMariaJetiba.out = "AlertaDengueAnalise/report/ES/Municipios/SantaMari
 nomesregs.MG <- c("Sete Lagoas")         
 pars.MG <- NULL
 pars.MG[nomesregs.MG] <- list(NULL)
-pars.MG[["Sete Lagoas"]] <- list(pdig = c(2.708049,1.373673),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+pars.MG[["Sete Lagoas"]] <- list(pdig = c(2.708049,1.373673),tcrit=20, inccrit = 100, preseas=10, posseas = 10, legpos="bottomright")
 MG.out = "AlertaDengueAnalise/report/MG/figs/"
 
 # Dados para o mapa

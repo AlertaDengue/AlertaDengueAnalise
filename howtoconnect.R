@@ -21,6 +21,7 @@ con <- dbConnect(dbDriver("PostgreSQL"), user=user,
 # Listar as tabelas disponiveis
 dbListTables(con) # lista de tabelas (elas estao em diferentes schemas)
 
+
 # As tabelas estão dentro de schemas.  Listando as variaveis nas tabelas do schema "Municipio" 
 dbListFields(con, c("Municipio","Notificacao"))
 dbListFields(con, c("Municipio","Bairro"))
@@ -28,6 +29,53 @@ dbListFields(con, c("Municipio","Historico_alerta"))
 dbListFields(con, c("Municipio","Tweet"))
 dbListFields(con, c("Municipio","alerta_mrj"))
 dbListFields(con, c("Municipio","Localidade")) # APS do Rio de Janeiro
+
+# 
+dbListFields(con, c("Municipio","Estacao_cemaden")) 
+dbListFields(con, c("Municipio","Clima_cemaden")) 
+
+dbListFields(con, c("Municipio","Estacao_wu")) 
+dbListFields(con, c("Municipio","Clima_wu")) 
+
+sqlquery = paste("SELECT  *
+  FROM  \"Municipio\".\"Estacao_cemaden\" AS e 
+  INNER JOIN \"Municipio\".\"Clima_cemaden\" AS c 
+  ON e.codestacao = c.\"Estacao_cemaden_codestacao\" WHERE e.municipio =", "'RIO DE JANEIRO'")
+  
+dd <- dbGetQuery(con, sqlquery)
+
+sqlquery = paste("SELECT  *
+  FROM  \"Municipio\".\"Estacao_wu\" AS e 
+  INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBRJ'")
+
+sbrj <- dbGetQuery(con, sqlquery)
+
+sqlquery = paste("SELECT  *
+  FROM  \"Municipio\".\"Estacao_wu\" AS e 
+  INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBGL'")
+
+sbgl <- dbGetQuery(con, sqlquery)
+
+sqlquery = paste("SELECT  *
+  FROM  \"Municipio\".\"Estacao_wu\" AS e 
+  INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBJR'")
+
+sbjr <- dbGetQuery(con, sqlquery)
+
+sqlquery = paste("SELECT  *
+  FROM  \"Municipio\".\"Estacao_wu\" AS e 
+  INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBAF'")
+
+sbaf <- dbGetQuery(con, sqlquery)
+
+tempwu <- rbind(sbrj,sbgl,sbjr, sbaf)
+save(tempwu, file="tempwu-rio.csv",row.names=F)
+
+
 
 # Acessando a tabela "Municipio" dentro do "DengueGlobal" 
 dbListFields(con, c("Dengue_global","Municipio"))
@@ -49,8 +97,8 @@ str(tw)
 dim(tw)
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
-c1 <- paste("SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
-                \"municipio_geocodigo\" =", 3304557)
+c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
+                \"municipio_geocodigo\" > 3200000 "
 d <- dbGetQuery(con,c1)
 dd<-subset(d, uf=="São Paulo")[,c("geocodigo","nome","populacao","uf")]
 
@@ -78,7 +126,7 @@ dim(tw)
 
 # 2b. Selecionando pelo valor de uma das variaveis, é preciso usar SQL
 c1 <- paste("SELECT * from \"Municipio\".\"Tweet\" WHERE 
-                \"Municipio_geocodigo\" =", 4118204 )
+                \"Municipio_geocodigo\" =", 118056 )
 d <- dbGetQuery(con,c1)
 head(d)
 plot(d$numero)
@@ -95,11 +143,23 @@ tw <- subset(tw, as.Date(data, format = "%Y-%m-%d") <= lastday)
  
 ## tirando os dados do parana de 2016
 dbListFields(con, c("Municipio","Notificacao"))
-sql <- "SELECT * from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 4100000 AND ano_notif=2016"
+sql <- "SELECT * from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000 AND ano_notif=2106"
 dd <- dbGetQuery(con, sql)
 
 #sql <- "DELETE from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 4100000 AND ano_notif=2016"
 #dbGetQuery(con, sql)
+
+
+## dados da regional do ES
+dbListFields(con, c("Dengue_global","regional_saude"))
+sql <- "SELECT * from \"Dengue_global\".\"regional_saude\" WHERE  municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000"
+dbGetQuery(con, sql)
+
+## dados da regional do ES
+dbListFields(con, c("Dengue_global","regional_saude"))
+sql <- "SELECT * from \"Dengue_global\".\"regional_saude\" WHERE  municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000"
+dbGetQuery(con, sql)
+
 
 ## getWU <- function(stations, var = "all", finalday = Sys.Date(), datasource = "data/WUdata.rda") {
   # creating the sql query for the stations
@@ -127,6 +187,8 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
 
   sql <- paste("SELECT nome,populacao,uf from \"Dengue_global\".\"Municipio\" WHERE geocodigo = 3302205")
   d <- dbGetQuery(con,sql)
+  
+  sql <- paste("DELETE from \"Dengue_global\".\"historico_alerta\" WHERE municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000")
   
   # ====================
   # criando tabela teste
