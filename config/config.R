@@ -106,7 +106,7 @@ pars.ES[["Central"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, pos
 pars.ES[["Metropolitana"]] <- list(pdig = c(3.110015,1.292324),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
 pars.ES[["Norte"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
 pars.ES[["Sul"]] <- list(pdig = c(1.101711,1.078064),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
-ES.out = "AlertaDengueAnalise/report/ES/Estado/figs/"
+ES.out = "AlertaDengueAnalise/report/ES/Estado"
 
 # Dados para o mapa
 ES.shape="AlertaDengueAnalise/report/ES/shape/32MUE250GC_SIR.shp"  # fonte para o mapa

@@ -6,18 +6,18 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 # ----- data do relatorio:
-data_relatorio = 201645
+data_relatorio = 201647
 
 # ---- Calcula alerta: 
 
-aleRJ <- update.alerta(region = names(pars.RJ), pars = pars.RJ, crit = RJ.criteria, 
+aleRJ <- update.alerta(state="Rio de Janeiro", region = names(pars.RJ), pars = pars.RJ, crit = RJ.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
 
 bolRJ=configRelatorioEstadual(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, tsdur=104,
                               alert=aleRJ, pars = pars.RJ, shape=RJ.shape, varid=RJ.shapeID,
                               dir=RJ.out, datasource=con, geraPDF=TRUE)
 
-publicarAlerta(ale = aleRJ, pdf = bolRJ, dir = "Relatorio/RJ/estadual")
+publicarAlerta(ale = aleRJ, pdf = bolRJ, dir = "Relatorio/RJ/Estado")
 
 rm(aleRJ,bolRJ)
 
