@@ -42,7 +42,7 @@ library('xtable')
 
 \hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
 
-\textbf{Semana \Sexpr{(env$datarel)} de \Sexpr{env$ano}} % se, ano
+\textbf{Semana \Sexpr{(env$se)} de \Sexpr{env$ano}} % se, ano
 
 \begin{itemize}
 \item \hyperlink{estado}{O Estado} 

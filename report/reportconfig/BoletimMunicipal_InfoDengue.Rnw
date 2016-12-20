@@ -88,6 +88,7 @@ Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, 
 Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho. Para informações mais atualizadas
 e ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
+\textbf{Na semana passada:} O estado tinha \Sexpr{env$namarelo1UF} município(s) em nivel amarelo, \Sexpr{env$nlaranja1UF} em laranja e \Sexpr{env$nvermelho1UF} em vermelho. 
 
 %--------------------------------------------------------------------------------
 %	PRIMEIRA PAGINA : BOX - CODIGO DE CORES
@@ -105,8 +106,6 @@ As cores indicam niveis de atenção
 \end{description}
 \end{mdframed}
 
-\textbf{Na semana passada:} O estado tinha \Sexpr{env$namarelo1UF} município(s) em nivel amarelo, \Sexpr{env$nlaranja1UF} em laranja e \Sexpr{env$nvermelho1UF} em vermelho.  
-
 \end{minipage} % End the main body - first page mini page
 
 \newpage
@@ -117,6 +116,8 @@ As cores indicam niveis de atenção
 \begin{minipage}[t]{.66\linewidth}
 
 \hypertarget{\Sexpr{env$linkregional}}{\heading{Situação da Dengue na Regional \Sexpr{env$regionalmun}}{6pt}} % titulo
+
+Desde o início do ano, \Sexpr{env$totanoRS} casos foram registrados na regional, sendo \Sexpr{env$totultseSE} na última semana. A figura abaixo mostra as condições de transmissão em cada município na semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}.
 
 % Mapa da regional
 \captionof{figure}[figregional]{Mapa da Regional de Saúde}

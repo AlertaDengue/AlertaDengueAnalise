@@ -5,7 +5,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201649
+data_relatorio = 201650
 
 #***************************************************
 # Cidade de Alfredo Chaves
@@ -16,7 +16,7 @@ aleAlfredoChaves <- update.alerta(city = 3200300, pars = pars.ES[["Sul"]], crit 
 
 bolAlfredoChaves <- configRelatorioMunicipal(alert = aleAlfredoChaves, tipo = "simples", siglaUF = "ES", 
                                              data = data_relatorio, pars = pars.ES, 
-                                             dir.out = ES.MN.AlfredoChaves.out, geraPDF = TRUE)
+                                             dir.out = ES.MN.AlfredoChaves.out, geraPDF = TRUE) #
 
 publicarAlerta(ale = aleAlfredoChaves, pdf = bolAlfredoChaves, dir = "Relatorio/ES/Municipios/AlfredoChaves")
 
