@@ -71,7 +71,7 @@ cat("\\end{itemize}")
 
 \hyperlink{notas}{Notas} % These link to their appropriate sections in the newsletter
 
-\hyperlink{creditos}{Creditos} % These link to their appropriate sections in the newsletter
+\hyperlink{creditos}{Créditos} % These link to their appropriate sections in the newsletter
 
 \centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
 
@@ -89,15 +89,15 @@ cat("\\end{itemize}")
 %-------------------------------------------------------------------------------
 \hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{env$estado}}{6pt}} % \hypertarget provides a label to reference using 
 
-Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, sendo \Sexpr{env$totultseUF} na última semana. A figura abaixo mostra as condições de transmissão em cada município a semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}.
+Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, sendo \Sexpr{env$totultseUF} na última semana. A figura abaixo mostra as condições de transmissão em cada município na semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}.
 
 % Mapa estadual
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figmapaestado}}
 %-----------------------------------------------------------
 
-Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho. Para informações mais atualizadas
-e ter acesso ao mapa interativo do estado consultar \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
+Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho. Para informações mais atualizadas e ter acesso ao mapa interativo do estado e de outras localidades, consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
+\textbf{Na semana passada:} O estado tinha \Sexpr{env$namarelo1UF} município(s) em nivel amarelo, \Sexpr{env$nlaranja1UF} em laranja e \Sexpr{env$nvermelho1UF} em vermelho. 
 
 %--------------------------------------------------------------------------------
 %	PRIMEIRA PAGINA : BOX - CODIGO DE CORES
@@ -115,8 +115,6 @@ As cores indicam niveis de atenção
 \end{description}
 \end{mdframed}
 
-\textbf{Na semana passada:} O estado tinha \Sexpr{env$namarelo1UF} município(s) em nivel amarelo, \Sexpr{env$nlaranja1UF} em laranja e \Sexpr{env$nvermelho1UF} em vermelho.  
-
 \end{minipage} % End the main body - first page mini page
 
 \newpage
@@ -130,7 +128,7 @@ As cores indicam niveis de atenção
 
 % Mapa da regional
 \vspace{2cm}
-\captionof{table}[tabregional]{Mapa de Alerta da Regional de Saúde}
+\captionof{Mapa de Alerta da Regional de Saúde} %{table}[tabregional]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{\Sexpr{env$mapareg}} 
 \vspace{2cm}

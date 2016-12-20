@@ -102,14 +102,14 @@ PR.Cascavel.out = "AlertaDengueAnalise/report/PR/Regionais/Cascavel"
 nomesregs.ES <- c("Central","Metropolitana","Norte","Sul")
 pars.ES <- NULL
 pars.ES[nomesregs.ES] <- list(NULL)
-pars.ES[["Central"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
-pars.ES[["Metropolitana"]] <- list(pdig = c(3.110015,1.292324),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
-pars.ES[["Norte"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
-pars.ES[["Sul"]] <- list(pdig = c(1.101711,1.078064),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomright")
+pars.ES[["Central"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomleft")
+pars.ES[["Metropolitana"]] <- list(pdig = c(3.110015,1.292324),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomleft")
+pars.ES[["Norte"]] <- list(pdig=c(1,1),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="bottomleft")
+pars.ES[["Sul"]] <- list(pdig = c(1.101711,1.078064),tcrit=22, inccrit = 100, preseas=5, posseas = 10, legpos="topright")
 #<<<<<<< HEAD
-#ES.out = "AlertaDengueAnalise/report/ES/Estado"
-#=======
 ES.out = "AlertaDengueAnalise/report/ES"
+#=======
+#ES.out = "AlertaDengueAnalise/report/ES"
 #>>>>>>> 1ee88bb120ad9db4942a7a64d98b317bd8cacee0
 
 # Dados para o mapa

@@ -100,16 +100,17 @@ cat("\\end{itemize}")
 %--------------------------------------------------------------------------------
 %	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
 %-------------------------------------------------------------------------------
-\hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{env$estado}}{6pt}} % \hypertarget provides a label to reference using 
+  \hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{env$estado}}{6pt}} % \hypertarget provides a label to reference using 
 
-Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, sendo \Sexpr{env$totultseUF} na última semana. A figura abaixo mostra as condições de transmissão em cada município.
+Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, sendo \Sexpr{env$totultseUF} na última semana. A figura abaixo mostra as condições de transmissão em cada município na semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}.
 
 % Mapa estadual
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figmapaestado}}
 %-----------------------------------------------------------
 
-Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho referentes a semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}. Para informações mais atualizadas
-sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
+Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho referentes a semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}. Para informações mais atualizadas e ter acesso ao mapa interativo do estado e de outras localidades, consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
+
+\textbf{Na semana passada:} \Sexpr{env$namarelo1} municípios em nivel amarelo, \Sexpr{env$nlaranja1} em laranja e \Sexpr{env$nvermelho1} em vermelho. % frase estava abaixo do box
 
 
 %--------------------------------------------------------------------------------
@@ -119,7 +120,7 @@ sobre o município do Rio de Janeiro ter acesso ao mapa interativo do estado con
 \begin{mdframed}[style=intextbox,frametitle={}] % Sidebar box
 
 \hypertarget{descriptivebox}{\heading{O código de Cores}{1pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
-As cores indicam niveis de atenção
+As cores indicam os seguintes níveis de atenção:
 \begin{description}
 \item[Verde:] temperaturas amenas, baixa incidência de casos.      
 \item[Amarelo:] temperatura propícia para a população do vetor e transmissão da dengue.
@@ -127,8 +128,6 @@ As cores indicam niveis de atenção
 \item[Vermelho:] incidência alta de dengue, acima dos 90\% históricos.
 \end{description}
 \end{mdframed}
-
- \textbf{Na semana passada:} \Sexpr{env$namarelo1} municípios em nivel amarelo, \Sexpr{env$nlaranja1} em laranja e \Sexpr{env$nvermelho1} em vermelho.    
 
 \end{minipage} % End the main body - first page mini page
 
@@ -150,20 +149,20 @@ for (i in 1:length(env$regionais)){
       cat(paste("\\includegraphics[width=0.8\\textwidth]{",env$nomesmapareg[i],"}",sep=""))
       cat("\\vspace{0.5cm}")
       
-      # Tabela 
-      
-      cat(paste("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional",env$regionais[i],"}"))
-      
-      cat(paste("\\input{",env$nomestabreg[i],"}\n",sep=""))
-      cat("\\small{\\hyperlink{vartab}{ver descrição das variáveis}}")
-      
       # Grafico regional:
       cat("\\vspace{0.5cm}")
       cat(paste("\\captionof{figure}{Casos notificados de dengue e Índice de menção em midia social sobre dengue na Regional",env$regionais[i],"}"))
       cat(paste("\\includegraphics[width=1\\textwidth]{",env$nomesfigreg[i],"}",sep=""))
       cat("\\end{center}\n")
-      # End second page mini page
+           
+      # Tabela 
+      
+      cat(paste("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional",env$regionais[i],"}"))
+      cat(paste("\\input{",env$nomestabreg[i],"}\n",sep=""))
+      cat("\\small{\\hyperlink{vartab}{ver descrição das variáveis}}")
+       # End second page mini page
       cat("\\end{minipage}\\hfill") 
+
 
       # #--------------------------------------------------------------------------
       # #      SEGUNDA PAGINA: CAIXA LATERAL - INDICE MUNICIPIOS
@@ -226,24 +225,24 @@ for (i in 1:length(env$regionais)){
 
 \begin{description}
 \item [SE =] semana epidemiológica
-\item [tweet =] número de tweets indicativos de casos de dengue na cidade
-\item [temperatura =] média das temperaturas mínimas da semana
-\item [casos notif =] casos notificados de dengue 
-\item [casos preditos =] número de casos estimados após correção pelo atraso de notificação
+\item [Temperatura =] média das temperaturas mínimas da semana
+\item [Tweet =] número de tweets indicativos de casos de dengue na cidade
+\item [Casos notif =] casos notificados de dengue 
+\item [Casos preditos =] número de casos estimados após correção pelo atraso de notificação
 \item [ICmin =] número mínimo de casos estimados (IC 95\%)
 \item [ICmax =] número máximo de casos estimados (IC 95\%)
-\item [Rt] número reprodutivo efetivo ($>$ 1 indica aumento de casos transmissão)
+\item [Rt =] número reprodutivo efetivo ($>$ 1 indica aumento de casos transmissão)
 \item [p(Rt1) =] probabilidade do número reprodutivo ser maior que 1 ($>0.95$ indica aumento significativo de casos)
-\item [inc =] incidência por 100.000 habitantes
-\item [Nivel =] cor do alerta (verde, amarelo, laranja, vermelho)
+\item [Incidência =] incidência por 100.000 habitantes
+\item [Nível =] cor do alerta (verde, amarelo, laranja, vermelho)
 \end{description}
 
 \hypertarget{notas}{\heading{Notas}{6pt}}
 
 \begin{itemize}
-\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
+\item Os dados do SINAN mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
 \item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.
-\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
+\item Algumas vezes, os casos da última semana ainda não estão disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
 \end{itemize}
 
 \hypertarget{creditos}{\heading{Créditos}{6pt}}
@@ -253,9 +252,8 @@ Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
 \begin{itemize}
 \item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro.
 \item Escola de Matemática Aplicada, Fundação Getúlio Vargas.
-\item Secretarias do Estado e Município do Rio de Janeiro.
+\item Secretarias Estaduais, Municipiais e Regionais de Saúde.
 \item Observatório de Dengue da UFMG
-\item Secretaria Estadual de Saúde do Paraná.
 \end{itemize}
 
       \BackToContents % Link back to the contents of the newsletter
@@ -264,6 +262,7 @@ Este é um projeto desenvolvido com apoio da SVS/MS em parceria com:
 
 \hrule
 Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
+Para acessar os boletins gerados pelo sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br/relatorios/}\\
 
 \textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
 \end{minipage} % fim da pagina de creditos
