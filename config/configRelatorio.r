@@ -411,6 +411,11 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104, alert, pars, sha
   # -------------------------
   descrgerais <- faztabelaoRS(alert,ano,data,tex=FALSE)
   
+  # -------------------------
+  # Descritores gerais regionais (nverde, namarelo, totultse, etc) 
+  # -------------------------
+  tabelasomatorios <- tabSomatorio(alert,ano,data,agregaregional = TRUE)
+  
   # ------------------------    
   # Tabelao com resultado do alerta por municipio e totais (funcao no configfiguras)
   # ------------------------
@@ -477,7 +482,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104, alert, pars, sha
                       nomemapareg = nomemapareg,nomestabreg = nomestabreg, totano=descrgerais$totano,
              totultse=descrgerais$totultse, nverde=descrgerais$nverde, 
              namarelo=descrgerais$namarelo, nlaranja=descrgerais$nlaranja, tabelao=tabelaox, 
-             nomesfigreg = nomesfigreg,nometabelao=nometabelao,
+             nomesfigreg = nomesfigreg,nometabelao=nometabelao,tabelasomatoriosRS=tabelasomatorios,
              nvermelho=descrgerais$nvermelho, nverde1=descrgerais$nverde1, 
              namarelo1=descrgerais$namarelo1, nlaranja1=descrgerais$nlaranja1, 
              nvermelho1=descrgerais$nvermelho1)
@@ -804,6 +809,8 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
       env$nomesfigreg <- obj$nomesfigreg
       env$nometabelao <- obj$nometabelao
       env$municipios <- obj$municipios
+      env$somasregionais <- obj$tabelasomatorios
+      
     }
     
     # alimenta env com os parametros da Regional de Saude (if regional) 
@@ -836,6 +843,8 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     # alimenta env com os parametros municipais (if municipal completo) 
     # ---------------------------------------------------------
     if(tipo == "municipal"){
+      env$se <- obj$se
+      env$ano <- obj$ano
       env$nomecidade <- obj$nomecidade
       env$totanomun <- obj$totanomun   # total de casos no ano no municipio
       env$totultsemun <-obj$totultsemun # casos na ultima semana
@@ -851,8 +860,8 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
       # Mapa da regional 
       regsemespaco = gsub(' ','', env$regionalmun)
       regsemacento = iconv(regsemespaco, to = 'ASCII//TRANSLIT')
-      env$mapareg=paste(dir.estado,"/Mapa",obj$sigla,"_",regsemacento,'.png',sep='') # mapa
-      env$tabreg=paste(dir.estado,'/tabregional',obj$sigla,'_',regsemacento, '.tex',sep='') #tabela
+      env$mapareg=paste(dir.estado,"Mapa",obj$sigla,"_",regsemacento,'.png',sep='') # mapa
+      env$tabreg=paste(dir.estado,'tabregional_',regsemacento, '.tex',sep='') #tabela
     }
   }
   

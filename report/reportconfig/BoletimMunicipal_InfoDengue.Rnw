@@ -166,7 +166,7 @@ for (j in 1:dim(env$municip.reg)[1]) {
 \end{minipage}%  End of the sidebar mini page
 \newpage
 
-%-----------------------------------------------------------------------------------%	MAIN BODY - THIRD PAGE
+%----------------------------------------%	MAIN BODY - THIRD PAGE
 %-----------------------------------------------------------------------------------
  %\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
 \hypertarget{municipio}{\heading{Situação da Dengue em \Sexpr{env$nomecidade}}{6pt}} % \hypertarget 
@@ -179,6 +179,11 @@ A cidade encontra-se em \textbf{nivel \Sexpr{env$nivelmun}}.
 \begin{center}
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figmunicipio}}
 \end{center}
+
+\newpage
+
+%----------------------------------------%	MAIN BODY - FOURTH PAGE
+%-----------------------------------------------------------------------------------
 
 % tabela municipal
 \captionof{table}[tabmun]{Resumo das últimas seis semanas epidemiológicas no município.}
@@ -206,15 +211,17 @@ A cidade encontra-se em \textbf{nivel \Sexpr{env$nivelmun}}.
 \item [SE] semana epidemiológica
 \item [tweet] número de tweets indicativos de casos de dengue na cidade
 \item [temperatura] média das temperaturas mínimas da semana
-\item [casos notif] casos notificados de dengue 
+\item [casos notif] casos notificados de dengue registrados pela Secretaria de Saúde
 \item [casos preditos] número de casos estimados após correção pelo atraso de notificação
 \item [ICmin] número mínimo de casos estimados (IC 95\%)
 \item [ICmax] número máximo de casos estimados (IC 95\%)
-\item [Rt] número reprodutivo efetivo ($>$ 1 indica aumento de casos transmissão)
-\item [pr(aumento)] probabilidade de aumento de incidência. Acima de \%90 é um indicador importante.
-\item [inc] incidência por 100.000 habitantes
+\item [Rt] número reprodutivo efetivo ($>$ 1 indica tendência de aumento de casos)
+\item [pr(incidência subir)] probabilidade de aumento de incidência. Acima de \%90 é um indicador importante.
+\item [inc] casos por 100.000 habitantes
 \item [Nivel] cor do alerta (verde, amarelo, laranja, vermelho)
 \end{description}
+
+PS. Nem sempre todas as vaáriveis estarão presentes nas tabelas, pois depende do tipo de relatório.
 
 \hypertarget{notas}{\heading{Notas}{6pt}}
 

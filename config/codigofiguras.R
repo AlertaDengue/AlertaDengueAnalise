@@ -160,6 +160,54 @@ figuraRio <- function(cid){
 }
 
 # -------------------------------
+# fazSomatorio casos nos municipios para calcular totais anuais por municipio, regional
+# -------------------------------
+
+tabSomatorio <- function(ale,ano,data,agregaregional=FALSE){
+
+  tabSoma = data.frame(nome = names(ale), Municipio = NA, Regional = NA, 
+                       totano = NA, totultse = NA,
+                       nivel=NA,nivel1 = NA, stringsAsFactors = FALSE)
+  N = length(names(ale))
+  for (i in 1:N){
+    ai <- ale[[i]] 
+    
+    linhasdoano = which(floor(ai$data$SE/100)==ano)
+    linhase = which(ai$data$SE==data)
+    linhase1 = which(ai$data$SE==data)-1
+    
+    tabSoma$Municipio[i]=unique(ai$data$nome)
+    tabSoma$Regional[i]=unique(ai$data$nome_regional)
+    tabSoma$totano[i] = sum(ai$data$casos[linhasdoano],na.rm=TRUE)
+    tabSoma$totultse[i] = ai$data$casos[linhase]
+    tabSoma$nivel[i] = ai$indices$level[linhase]
+    tabSoma$nivel1[i] = ai$indices$level[linhase1]
+    
+   
+  }
+  
+  if(agregaregional==TRUE){
+    tabSomaRS = data.frame(Regional = tapply(tabSoma$Regional,tabSoma$Regional,unique))
+    tabSomaRS$totano = tapply(tabSoma$totano,tabSoma$Regional, sum)
+    tabSomaRS$totultse = tapply(tabSoma$totultse,tabSoma$Regional, sum)
+
+    tabSomaRS$nverde = tapply(tabSoma$nivel==1,tabSoma$Regional, sum)
+    tabSomaRS$namarelo = tapply(tabSoma$nivel==2,tabSoma$Regional, sum)
+    tabSomaRS$nlaranja = tapply(tabSoma$nivel==3,tabSoma$Regional, sum)
+    tabSomaRS$nvermelho = tapply(tabSoma$nivel==4,tabSoma$Regional, sum)
+
+    tabSomaRS$nverde1 = tapply(tabSoma$nivel1==1,tabSoma$Regional, sum)
+    tabSomaRS$namarelo1 = tapply(tabSoma$nivel1==2,tabSoma$Regional, sum)
+    tabSomaRS$nlaranja1 = tapply(tabSoma$nivel1==3,tabSoma$Regional, sum)
+    tabSomaRS$nvermelho1 = tapply(tabSoma$nivel1==4,tabSoma$Regional, sum)
+  
+    return(tabSomaRS)
+  }
+  return(tabSoma)
+}
+
+
+# -------------------------------
 # fazTabelao com dados da ultima semana das Regionais ou do estado
 # -------------------------------
 
@@ -240,18 +288,20 @@ faztabelaresumo <- function(alert,municipios, nmunicipios,tex=F){
     
   }
   tabelaregional$temp_min <- tapply(tabela$temp_min, tabela$SE, mean, na.rm=TRUE)
-  tabelaregional$casos <- tapply(tabela$casos, tabela$SE, sum)
+  tabelaregional$casos <- tapply(tabela$casos, tabela$SE, sum,na.rm=T)
   tabelaregional$pop <-tapply(tabela$pop, tabela$SE, sum)
-  tabelaregional$tweet <-tapply(tabela$tweet, tabela$SE, sum)
+  tabelaregional$tweet <-tapply(tabela$tweet, tabela$SE, sum,na.rm=T)
   tabelaregional$tcasesICmin <-tapply(tabela$tcasesICmin, tabela$SE, sum)
   tabelaregional$tcasesmed <-tapply(tabela$tcasesmed, tabela$SE, sum)
   tabelaregional$tcasesICmax <-tapply(tabela$tcasesICmax, tabela$SE, sum)
   tabelaregional$inc <- tabelaregional$casos/tabelaregional$pop*100000
-  tabelafinal <- tail(tabelaregional[,c("SE","temp_min","tweet","casos","tcasesmed","tcasesICmin","tcasesICmax","inc")])
-  names(tabelafinal)<-c("SE","temperatura","tweet","casos notif","casos preditos","ICmin","ICmax","incidência")
+  
+  #tabelafinal <- tail(tabelaregional[,c("SE","temp_min","tweet","casos","tcasesmed","tcasesICmin","tcasesICmax","inc")])
+  tabelafinal <- tail(tabelaregional[,c("SE","temp_min","tweet","casos","tcasesmed")])
+  names(tabelafinal)<-c("SE","temperatura","tweet","casos notif","casos preditos")
   if(tex==TRUE){
-    tabelax <-xtable(tabelafinal,align ="cc|ccccccc",digits = 0,size="\\small")
-    digits(tabelax) <- 0
+    tabelax <-xtable(tabelafinal,align ="cc|cccc",digits = c(0,1,0,0,0,0),size="\\small")
+    #digits(tabelax) <- 0
     return(tabelax)
   }else{return(tabelafinal)}
   

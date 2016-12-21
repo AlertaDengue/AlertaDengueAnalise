@@ -144,6 +144,9 @@ for (i in 1:length(env$regionais)){
       # titulo:
       cat(paste("\\hypertarget{",env$nickregs[i],"}{\\heading{Regional ",env$regionais[i],"}{6pt}}\n",sep="")) 
       
+      cat(paste( "Desde o início do ano,", env$somasregionais$totano[i], "casos de dengue foram registrados na Regional de Saúde, sendo",env$somasregionais$totultse[i], "na última semana.\n"),sep="")
+      
+      
       # Mapa:
       cat("\\begin{center}\n")
       cat(paste("\\includegraphics[width=0.8\\textwidth]{",env$nomesmapareg[i],"}",sep=""))
@@ -159,7 +162,8 @@ for (i in 1:length(env$regionais)){
       
       cat(paste("\\captionof{table}{Resumo das últimas seis semanas epidemiológicas na Regional",env$regionais[i],"}"))
       cat(paste("\\input{",env$nomestabreg[i],"}\n",sep=""))
-      cat("\\small{\\hyperlink{vartab}{ver descrição das variáveis}}")
+      cat("\\")
+      cat("\\hyperlink{vartab}{ver descrição das variáveis}")
        # End second page mini page
       cat("\\end{minipage}\\hfill") 
 
