@@ -1,5 +1,5 @@
 # =============================================================================
-# Arquivo de execução do Alerta Dengue: Estado do Rio de Janeiro
+# Arquivo de execução do Alerta Dengue: Estado do Espírito Santo
 # =============================================================================
 setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
@@ -7,7 +7,7 @@ con <- DenguedbConnect()
 
 # ----- data do relatorio:
 
-data_relatorio = 201649
+data_relatorio = 201651
 
 
 # ---- Calcula alerta: 

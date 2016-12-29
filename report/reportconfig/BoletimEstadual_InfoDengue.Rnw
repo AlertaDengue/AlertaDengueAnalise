@@ -110,7 +110,7 @@ Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, 
 
 Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho referentes a semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}. Para informações mais atualizadas e ter acesso ao mapa interativo do estado e de outras localidades, consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
-\textbf{Na semana passada:} \Sexpr{env$namarelo1} municípios em nivel amarelo, \Sexpr{env$nlaranja1} em laranja e \Sexpr{env$nvermelho1} em vermelho. % frase estava abaixo do box
+\textbf{Na semana passada:} \Sexpr{env$namarelo1UF} municípios em nivel amarelo, \Sexpr{env$nlaranja1UF} em laranja e \Sexpr{env$nvermelho1UF} em vermelho. % frase estava abaixo do box
 
 
 %--------------------------------------------------------------------------------
