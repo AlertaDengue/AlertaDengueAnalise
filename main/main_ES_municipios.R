@@ -5,7 +5,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201650
+data_relatorio = 201704
 
 #***************************************************
 # Cidade de Alfredo Chaves
@@ -97,6 +97,8 @@ bolConceicaoCastelo <- configRelatorioMunicipal(alert = aleConceicaoCastelo, tip
                                               dir.out = ES.MN.ConceicaoCastelo.out, pars = pars.ES, geraPDF = TRUE)
 
 publicarAlerta(ale = aleConceicaoCastelo, pdf = bolConceicaoCastelo, dir = "Relatorio/ES/Municipios/Conceicao_do_Castelo")
+
+rm(aleConceicaoCastelo,bolConceicaoCastelo)
 
 #***************************************************
 # Cidade de Domingos Martins
@@ -241,19 +243,6 @@ bolVilaVelha <- configRelatorioMunicipal(alert = aleVilaVelha, tipo = "completo"
 publicarAlerta(ale = aleVilaVelha, pdf = bolVilaVelha, dir = "Relatorio/ES/Municipios/Vila_Velha")
 
 rm(aleVilaVelha,bolVilaVelha)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
