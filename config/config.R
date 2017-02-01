@@ -121,6 +121,22 @@ ES.criteria = criteria
 # Dados do diretorio para salvar (com / no final)
 ES.MN.AlfredoChaves.out = "AlertaDengueAnalise/report/ES/Municipios/AlfredoChaves"
 ES.MN.SantaMariaJetiba.out = "AlertaDengueAnalise/report/ES/Municipios/SantaMariaJetiba"
+ES.MN.Anchieta.out = "AlertaDengueAnalise/report/ES/Municipios/Anchieta"
+ES.MN.Aracruz.out = "AlertaDengueAnalise/report/ES/Municipios/Aracruz"
+ES.MN.AtilioVivacqua.out = "AlertaDengueAnalise/report/ES/Municipios/AtilioVivacqua"
+ES.MN.ConceicaoCastelo.out = "AlertaDengueAnalise/report/ES/Municipios/ConceicaoCastelo"
+ES.MN.DomingosMartins.out = "AlertaDengueAnalise/report/ES/Municipios/DomingosMartins"
+ES.MN.Itaguacu.out = "AlertaDengueAnalise/report/ES/Municipios/Itaguacu"
+ES.MN.JeronimoMonteiro.out = "AlertaDengueAnalise/report/ES/Municipios/JeronimoMonteiro"
+ES.MN.LaranjaTerra.out = "AlertaDengueAnalise/report/ES/Municipios/LaranjaTerra"
+ES.MN.Linhares.out = "AlertaDengueAnalise/report/ES/Municipios/Linhares"
+ES.MN.MarechalFloriano.out = "AlertaDengueAnalise/report/ES/Municipios/MarechalFloriano"
+ES.MN.MimosoSul.out = "AlertaDengueAnalise/report/ES/Municipios/MimosoSul"
+ES.MN.Mucurici.out = "AlertaDengueAnalise/report/ES/Municipios/Mucurici"
+ES.MN.Muqui.out = "AlertaDengueAnalise/report/ES/Municipios/Muqui"
+ES.MN.Pinheiros.out = "AlertaDengueAnalise/report/ES/Municipios/Pinheiros"
+ES.MN.RioNovoSul.out = "AlertaDengueAnalise/report/ES/Municipios/RioNovoSul"
+ES.MN.VilaVelha.out = "AlertaDengueAnalise/report/ES/Municipios/VilaVelha"
 
 #***********************************************************************************************************************************
 # ========================================
