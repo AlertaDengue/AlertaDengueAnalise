@@ -915,7 +915,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$se <- obj$se
     env$ano <- obj$ano
     env$datarel <- obj$datarel
-    
+    dir.estadoRIO = paste(bdir,"AlertaDengueAnalise/report/RJ/figs/")
     # objetos da regional
     load(paste(dir.estado,"/paramsRJ.RData",sep=""),envir = envUF)
     
@@ -928,7 +928,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     
     # Mapa da regional 
     env$mapareg=paste(dir.estado,"/MapaRJ_MetropolitanaI.png",sep='') # mapa
-    env$tabreg=paste(dir.estado,"/tabregionalRJ_MetropolitanaI.tex",sep='') #tabela
+    env$tabreg=paste(dir.estado,"/tabregional_MetropolitanaI.tex",sep='') #tabela
     
     # Objetos da Cidade
     env$nomemapario <- obj$nomemapario

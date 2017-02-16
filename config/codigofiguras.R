@@ -300,7 +300,7 @@ faztabelaresumo <- function(alert,municipios, nmunicipios,tex=F){
   tabelafinal <- tail(tabelaregional[,c("SE","temp_min","tweet","casos","tcasesmed")])
   names(tabelafinal)<-c("SE","temperatura","tweet","casos notif","casos preditos")
   if(tex==TRUE){
-    tabelax <-xtable(tabelafinal,align ="cc|cccc",digits = c(0,1,0,0,0,0),size="\\small")
+    tabelax <-xtable(tabelafinal,align ="cc|cccc",digits = c(0,0,1,0,0,0),size="\\small")
     #digits(tabelax) <- 0
     return(tabelax)
   }else{return(tabelafinal)}
