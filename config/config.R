@@ -43,15 +43,15 @@ RJ.out = "AlertaDengueAnalise/report/RJ"
 # Criterios
 
 RJ.aps <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 18, posseas = 40)
-RJ.aps.shape = "AlertaDengueAnalise/report/RJ/Rio_de_Janeiro/shape/CAPS_SMS.shp"
+RJ.aps.shape = "AlertaDengueAnalise/report/RJ/Municipios/Rio_de_Janeiro/shape/CAPS_SMS.shp"
 RJ.aps.shapeID = "CD_GEOCMU"
 RJ.aps.criteria = criteria
-RJ.RiodeJaneiro.out = "AlertaDengueAnalise/report/RJ/Rio_de_Janeiro"
+RJ.RiodeJaneiro.out = "AlertaDengueAnalise/report/RJ/Municipios/Rio_de_Janeiro"
 
 # ============================
 # Rio de Janeiro - Municipios
 # ============================
-RJ_CamposdosGoytacazes.out = "AlertaDengueAnalise/report/RJ/Campos_dos_Goytacazes"
+RJ_CamposdosGoytacazes.out = "AlertaDengueAnalise/report/RJ/Municipios/Campos_dos_Goytacazes"
 
 #**********************************************************************************************************************************
 # ========================================

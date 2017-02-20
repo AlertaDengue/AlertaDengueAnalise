@@ -128,7 +128,7 @@ As cores indicam niveis de atenção
 
 % Mapa da regional
 \vspace{2cm}
-\captionof{Mapa de Alerta da Regional de Saúde} %{table}[tabregional]
+\captionof{figure}{Mapa de Alerta da Regional de Saúde} %{table}[tabregional]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{\Sexpr{env$mapareg}} 
 \vspace{2cm}

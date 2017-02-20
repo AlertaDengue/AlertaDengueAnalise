@@ -186,7 +186,7 @@ A cidade encontra-se em \textbf{nivel \Sexpr{env$nivelmun}}.
 %-----------------------------------------------------------------------------------
 
 % tabela municipal
-\captionof{table}[tabmun]{Resumo das últimas seis semanas epidemiológicas no município.}
+\captionof{table}[tabmun]{Resumo das últimas dezessseis semanas epidemiológicas no município.}
 \begin{center}
 \input{\Sexpr{env$tabmun}}
 \end{center}
