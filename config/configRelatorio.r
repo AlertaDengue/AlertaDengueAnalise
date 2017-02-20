@@ -2,9 +2,18 @@
 # Configuracao para os boletins do Alerta
 # ========================================================
 
+# If a directory does not exist, create one.
+checkDirectory <- function(directory){
+  calldir <- paste("if [ -d",directory, "]; then echo \"True\"; else mkdir", directory, "; fi")
+  system(calldir)
+}
+
+
+
 configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid, dir, datasource){
   
-  dirfigs = paste(basedir,dir,sep="/") 
+  dirfigs = paste(basedir,dir,"figs/",sep="/")
+  checkDirectory(dirfigs) # if directory does not exist, creates one
   # ------------
   ## Estado, suas regionais e municipios
   # ------------
@@ -216,8 +225,12 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, shape, varid
 # Gera objetos para o Boletim Regional
 # ==============================================
 # data = data final do relatorio, tsdur = tamanho da serie plotada
-configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, data, tsdur=104, alert, pars, shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
+configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, data, tsdur=104, alert, pars, 
+                                    shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
   setwd("~/")
+  
+  dirfigs = paste(dirb, dir,"figs/",sep="/")
+  
   # ------------
   ## Dados da regional
   # ------------
@@ -239,7 +252,7 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, data
   # ----------------
   # Mapa da Regional
   # ----------------
-  dirfigs = paste(basedir,dir,"figs/",sep="/")
+  
   
   nomemapareg=mapa.regional(alerta=alert, regionais=regional, estado = uf, sigla = sigla,
                   data = data, pars=pars, shape=shape, shapeid=varid, dir=dirfigs ,
@@ -360,9 +373,11 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, data
 # Gera objetos para o Boletim Estadual
 # ==============================================
 # data = data final do relatorio, tsdur = tamanho da serie plotada
-configRelatorioEstadual <- function(uf, sigla, data, tsdur=104, alert, pars, shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
+configRelatorioEstadual <- function(uf, sigla, data, tsdur=104, alert, pars, shape, varid, dir, 
+                                    datasource, dirb=basedir,geraPDF=TRUE){
   setwd("~/")
-  dirfigs = paste(basedir,dir,"figs/",sep="/")
+  
+  dirfigs = paste(dirb,dir,"figs/",sep="/")
   
   # ------------
   ## Dados do estado
@@ -510,6 +525,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104, alert, pars, sha
 ## ============================================================
 configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, pars, datasource=con,
                                      dirb=basedir, geraPDF=TRUE){
+  dirfigs = paste(dirb,"/",dir.out,"/figs",sep="")
   
   # Identificacao da cidade
   nomecidade = alert$data$nome[1]
@@ -735,6 +751,10 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
   # -----------------------------------
   dir.rnw = paste(bdir,dir.report,"reportconfig",sep="/")
   setwd(dir.rnw)
+  
+  dirboletim = paste(bdir,dir.boletim,sep="/")
+  
+  checkDirectory(dirboletim) # if directory does not exist, creates one
   
   # tipo = municipal, regional, estadual
   if(tipo == "municipal") {

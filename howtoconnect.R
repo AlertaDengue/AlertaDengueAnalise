@@ -91,13 +91,14 @@ dbListFields(con, c("Dengue_global","regional_saude"))
 tw <- dbReadTable(con, c("Municipio","Tweet"))
 str(tw)
 
+tw <- dbReadTable(con, c("Municipio","Clima_demaden"))
+str(tw)
+
+
       # Exemplo com a tabela alerta_mrj
 tw <- dbReadTable(con, c("Municipio","alerta_mrj"))
 str(tw)
 dim(tw)
-
-# Dados de 2017 de notificacao
-c1 <- "SELECT * from \"Municipio\".\"Notificacao\" WHERE ano_notif = 2017 "
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
 c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 

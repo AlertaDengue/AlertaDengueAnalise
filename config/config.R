@@ -3,6 +3,9 @@
 # ====================================================
 hoje = Sys.Date()
 source("AlertaDengueAnalise/config/config_global.R") # packages e regras gerais do alerta
+source("AlertaDengueAnalise/config/fun_initializeSites.R") # auxiliary functions
+
+
 
 #**********************************************************************************************************************************      
 # ========================================

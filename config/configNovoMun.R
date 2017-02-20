@@ -18,8 +18,8 @@ cid = getCidades(regional = reg, uf = "Minas Gerais", datasource=con)
 cid
 
 ### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
-nomedacidade = "São Gonçalo do Sapucaí"
-geocodigo = 3162005  #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
+nomedacidade = "Pinheiros"
+geocodigo = 320410# 320360  #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
 id = 20# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
 nomereg = "Pouso Alegre" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
 
