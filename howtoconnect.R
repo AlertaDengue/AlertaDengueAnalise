@@ -1,4 +1,4 @@
-library("RPostgreSQL", lib.loc="~/R/x86_64-pc-linux-gnu-library/3.0")
+library("RPostgreSQL")
 
 
 ## Esse arquivo ensina a:
@@ -65,16 +65,9 @@ sqlquery = paste("SELECT  *
 
 sbjr <- dbGetQuery(con, sqlquery)
 
-sqlquery = paste("SELECT  *
-  FROM  \"Municipio\".\"Estacao_wu\" AS e 
-  INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
-  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBAF'")
-
-sbaf <- dbGetQuery(con, sqlquery)
-
-tempwu <- rbind(sbrj,sbgl,sbjr, sbaf)
-save(tempwu, file="tempwu-rio.csv",row.names=F)
-
+# Dados de chikungunia
+sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND cid10_codigo = \'A920\'"
+d <- dbGetQuery(con, sqlquery)
 
 
 # Acessando a tabela "Municipio" dentro do "DengueGlobal" 
@@ -84,7 +77,23 @@ dbListFields(con, c("Dengue_global","regional_saude"))
 # ------------------------------------------------------
 # 2. Criar um objeto data.frame a partir da consulta ao banco de dados
 # ------------------------------------------------------
+cid10="A90"
+sql1 <- paste("'", Sys.Date(), "'", sep = "")
+sql <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE dt_digita <= ",sql1, " AND municipio_geocodigo = ", 3302205, 
+             " AND cid10_codigo = \'", cid10,"\'", sep="")
 
+d <- dbGetQuery(con, sql)
+table(d$ano_notif)
+sum(is.na(d$dt_digita))
+
+sql <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = ", 3302205, 
+             " AND cid10_codigo = \'", cid10,"\'", sep="")
+d <- dbGetQuery(con, sql)
+table(d$ano_notif)
+
+sql <- paste("SELECT ano_notif,COUNT(*) from \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = ", 3302205, 
+             " AND cid10_codigo = \'", cid10,"\' GROUP BY ano_notif", sep="")
+d
 # 2a. Pegando a tabela inteira (não aconselho porque são todos os muncipios)
      # Exemplo com a tabela de tweet
 
@@ -116,8 +125,8 @@ c1 <- paste("SELECT * from \"Dengue_global\".\"Municipio\" WHERE
 d <- dbGetQuery(con,c1)
 
 # municipio
-c1 <- paste("SELECT * from \"Municipio\".\"Tweet\" WHERE 
-               \"Municipio_geocodigo\" = 3304557")
+c1 <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE 
+               \"municipio_geocodigo\" = 4100301")
 
 d <- dbGetQuery(con,c1)
 names(d)
