@@ -1,0 +1,44 @@
+# ============================================
+# Parametros de Configuração do Alerta Dengue - Espírito Santo
+# ============================================
+
+
+default:
+  UF: "ES"
+  estado: "Espírito Santo"
+  out: "report/ES"
+  shape: "report/ES/shape/32MUE250GC_SIRm.shp"  # fonte para o mapa
+  shapeID: "CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
+  criteria: "criteria"
+  pdig1: 1
+  pdig2: 1
+  tcrit: 22
+  inccrit: 100 
+  preseas: 5
+  posseas: 10
+  legpos: "bottomleft" # posiçao da legenda no mapa
+  adjustdelay: FALSE
+ 
+Central:
+  pdig1: 1.857061
+  pdig2: 0.9466695
+
+Metropolitana:
+  pdig1: 2.412546
+  pdig2: 1.053108
+
+Norte: 
+  pdig1: 2.679213
+  pdig2: 1.569757
+
+Sul:
+  pdig1: 2.295608
+  pdig2: 1.167698
+  legpos: "topright"
+
+
+
+
+
+
+
