@@ -20,7 +20,7 @@ bolAlfredoChaves <- configRelatorioMunicipal(alert = aleAlfredoChaves, tipo = "c
                                              data = data_relatorio, pars = pars.ES, 
                                              dir.out = ES.MN.AlfredoChaves.out, geraPDF = TRUE) #
 
-publicarAlerta(ale = aleAlfredoChaves, pdf = bolAlfredoChaves, dir = "Relatorio/ES/Municipios/Alfredo_Chaves")
+publicarAlerta(ale = aleAlfredoChaves, pdf = bolAlfredoChaves, dir = "Relatorio/ES/Municipios/Alfredo_Chaves", writebd = FALSE)
 
 rm(aleAlfredoChaves,bolAlfredoChaves)
 #***************************************************

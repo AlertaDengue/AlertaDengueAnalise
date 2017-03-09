@@ -9,7 +9,7 @@ checkDirectory <- function(directory){
 
 
 ### Funcao para criar a arvore de diretorios
-# USO: setTree.newsite(siglaestado="RS",municipio="PortoAlegre")
+# USO: setTree.newsite(siglaestado="PR",regional="Nova Regional")
 
 setTree.newsite <- function(siglaestado, regional, municipio){
   

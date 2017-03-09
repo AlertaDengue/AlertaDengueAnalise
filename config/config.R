@@ -16,15 +16,15 @@ nomesregs.RJ <- c("Metropolitana I", "Metropolitana II", "Litoral Sul", "Médio 
                "Centro Sul", "Serrana", "Baixada Litorânea", "Norte", "Noroeste")         
 pars.RJ <- NULL
 pars.RJ[nomesregs.RJ] <- list(NULL)
-pars.RJ[["Metropolitana I"]] <- list(pdig = c(2.997765,0.7859499),tcrit=22, inccrit = 100, preseas=8.28374162389761, posseas = 7.67878514885295, legpos="bottomright")
-pars.RJ[["Metropolitana II"]] <- list(pdig = c(2.997765,0.7859499),tcrit = 22, inccrit = 100, preseas=31.2768016548567, posseas=23.820324604354, legpos="bottomright") 
-pars.RJ[["Litoral Sul"]] <- list(pdig = c(2.044211,0.9251224),tcrit = 20, inccrit = 100, preseas=32.731408629799, posseas=33.8713008094722, legpos="bottomright")
-pars.RJ[["Médio Paraíba"]] <- list(pdig = c(2.744345,0.7612805),tcrit = 22, inccrit = 100, preseas=28.2488218636962, posseas=28.2510753568988, legpos="bottomright")
-pars.RJ[["Centro Sul"]] <- list(pdig = c(2.743135,0.8294707),tcrit = 22, inccrit = 100, preseas=15.1656600844788, posseas=18.0563291379993, legpos="bottomright")
-pars.RJ[["Serrana"]] <- list(pdig = c(2.788100,0.7627551),tcrit=22, inccrit=100, preseas=7.14454530796742, posseas=8.66976041810981, legpos="bottomright")
-pars.RJ[["Baixada Litorânea"]] <- list(pdig = c(2.294574,0.8221244),tcrit=22, inccrit=100,preseas=33.0426043568896, posseas = 40.9551438748963, legpos="topleft")
-pars.RJ[["Norte"]] <- list(pdig = c(2.997765,0.7859499),tcrit=22, inccrit=100,preseas=42.2904139814942,posseas=42.9546181775769, legpos="bottomright")
-pars.RJ[["Noroeste"]] <- list(pdig = c(2.791400,0.9913278), tcrit=22, inccrit=129.5,preseas=45.6573892160522, posseas=51.2923379640271, legpos="bottomright")
+pars.RJ[["Metropolitana I"]] <- list(pdig = c(2.997765,0.7859499),tcrit=22, inccrit = 100, preseas=8.2, posseas = 7.6, legpos="bottomright")
+pars.RJ[["Metropolitana II"]] <- list(pdig = c(2.997765,0.7859499),tcrit = 22, inccrit = 100, preseas=31.2, posseas=23.8, legpos="bottomright") 
+pars.RJ[["Litoral Sul"]] <- list(pdig = c(2.044211,0.9251224),tcrit = 20, inccrit = 100, preseas=32.7, posseas=33.8, legpos="bottomright")
+pars.RJ[["Médio Paraíba"]] <- list(pdig = c(2.744345,0.7612805),tcrit = 22, inccrit = 100, preseas=28.2, posseas=28.2, legpos="bottomright")
+pars.RJ[["Centro Sul"]] <- list(pdig = c(2.743135,0.8294707),tcrit = 22, inccrit = 100, preseas=15.1, posseas=18.0, legpos="bottomright")
+pars.RJ[["Serrana"]] <- list(pdig = c(2.788100,0.7627551),tcrit=22, inccrit=100, preseas=7.1, posseas=8.6, legpos="bottomright")
+pars.RJ[["Baixada Litorânea"]] <- list(pdig = c(2.294574,0.8221244),tcrit=22, inccrit=100,preseas=33.0, posseas = 40.9, legpos="topleft")
+pars.RJ[["Norte"]] <- list(pdig = c(2.997765,0.7859499),tcrit=22, inccrit=100,preseas=42.2,posseas=42.9, legpos="bottomright")
+pars.RJ[["Noroeste"]] <- list(pdig = c(2.791400,0.9913278), tcrit=22, inccrit=129.5,preseas=45.6, posseas=51.2, legpos="bottomright")
 
 #pars.Rio <- list(pdig = c(2.5016,1.1013),tcrit = 22, inccrit = 100,
 #                   preseas=18.59, posseas=14.15) # cidade como um todo
@@ -42,7 +42,7 @@ RJ.out = "AlertaDengueAnalise/report/RJ"
 # ===================================================
 # Criterios
 
-RJ.aps <- list(pdig = c(2.5016,1.1013), tcrit=22, inccrit=100, preseas = 18, posseas = 40)
+RJ.aps <- list(pdig = c(2.5016,1.1013), pdigChik = c(1.875754, 1.392577), tcrit=22, inccrit=100, preseas = 18, posseas = 40)
 RJ.aps.shape = "AlertaDengueAnalise/report/RJ/Municipios/Rio_de_Janeiro/shape/CAPS_SMS.shp"
 RJ.aps.shapeID = "CD_GEOCMU"
 RJ.aps.criteria = criteria

@@ -995,9 +995,10 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
 ## ==========================================================
 ## Funcao para publicar o Alerta no site
 ## ==========================================================
-publicarAlerta <- function(ale, pdf, dir, bdir = basedir){
+publicarAlerta <- function(ale, pdf, dir, bdir = basedir, writebd = TRUE){
   
   # ---------------------------------------------------------
+  if(writebd){
   # copia o alerta da tabela de historico do Banco de dados
   message("atualizando a tabela do historico...")
   
@@ -1017,7 +1018,7 @@ publicarAlerta <- function(ale, pdf, dir, bdir = basedir){
           }
         }
     }
-  
+  }
   message("Copia o boletim para a pagina do site...")
   strip <- strsplit(pdf,"/")[[1]]
   nomeb = strip[length(strip)] # nome do boletim

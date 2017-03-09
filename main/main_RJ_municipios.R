@@ -5,19 +5,28 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 data_relatorio = 201709
+=======
 
 #***********************************
 ### Cidade do Rio de Janeiro 
 #***********************************
-
+# Dengue
 alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = data_relatorio, verbose=FALSE)        # calcula o alerta
 
 bolrio <- configRelatorioRio( data=data_relatorio, alert=alerio, shape=RJ.aps.shape,
                                     dirout=RJ.RiodeJaneiro.out, datasource=con, geraPDF=TRUE)
 
+
 publicarAlerta(ale = alerio, pdf = bolrio, dir = "Relatorio/RJ/Municipios/RiodeJaneiro")
 
 rm(alerio,bolrio)
+
+# Chikungunia
+
+alerioC <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, cid10 = "A920", datasource=con, se = data_relatorio, verbose=FALSE)        # calcula o alerta
+bolrio <- configRelatorioRio( data=data_relatorio, alert=alerioC, shape=RJ.aps.shape,
+                              dirout=RJ.RiodeJaneiro.out, datasource=con, geraPDF=TRUE)
+
 #***************************************************
 # Cidade de Campos de Goytacazes
 #***************************************************
