@@ -7,7 +7,7 @@ args = commandArgs(trailingOnly=TRUE)
 # ==============================
 
 if (length(args)!=2){ 
-  stop("Missing arguments: main.R file and/or the epidemiological week.n", call.=FALSE)
+  stop("Missing arguments. Example: infodengue.R main.R 201605", call.=FALSE)
 } else {
   
   # main.R file

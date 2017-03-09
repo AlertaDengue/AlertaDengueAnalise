@@ -1,17 +1,20 @@
 #====================================================
 ## Alertas municipais do Estado do Espírito Santo
 #====================================================
-#setwd("~/")
-#source("config/config_global.R") # packages e regras gerais do alerta
-#source("AlertaDengueAnalise/update-alerta-temp.R")
 source("config/config_global.R") # packages e regras gerais do alerta
-source("config/fun_initializeSites.R") # auxiliary functions
 source("config/config.R") # arquivo de configuracao do alerta (parametros)
 
 con <- DenguedbConnect()
 
 
-#data_relatorio = 201706
+#***************************************************
+# Inicialização dos parametros de configuracao
+#***************************************************
+
+Sys.setenv(R_CONFIG_ACTIVE = "ES-Sul")  # estado-regional
+p <- config::get(file="config/ES.yml")  # estado
+params<- list(pdig = c(p$pdig1,p$pdig2),tcrit=p$tcrit, inccrit = p$inccrit, preseas=p$preseas, 
+              posseas =p$posseas, legpos=p$legpos) # provisorio-para compatibilidade com versao anterior
 
 
 #***************************************************
@@ -23,7 +26,7 @@ con <- DenguedbConnect()
 #                                  datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
 
 
-aleAlfredoChaves <- update.alerta(city = 3200300, pars = pars.ES[["Sul"]], crit = ES.criteria, 
+aleAlfredoChaves <- update.alerta(city = 3200300, pars = params, crit = ES.criteria, 
                            datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
 
 bolAlfredoChaves <- configRelatorioMunicipal(alert = aleAlfredoChaves, tipo = "completo", siglaUF = "ES", 
