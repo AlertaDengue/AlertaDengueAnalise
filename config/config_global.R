@@ -12,8 +12,11 @@ library(AlertTools)
 # explicita o diretorio base
 basedir = system("pwd", intern=TRUE)
 
-source("AlertaDengueAnalise/config/codigofiguras.R")
-source("AlertaDengueAnalise/config/configRelatorio.r")
+source(paste(basedir,"/config/codigofiguras.R", sep=""))
+source(paste(basedir,"/config/configRelatorio.r", sep=""))
+
+#source("config/codigofiguras.R")
+#source("config/configRelatorio.r")
 
 # ====================================================
 ## Parametros globais do alerta

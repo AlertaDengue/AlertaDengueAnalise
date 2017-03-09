@@ -6,7 +6,7 @@
 \documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
 \SweaveOpts{keep.source=TRUE}
 \usepackage[utf8]{inputenc}
-\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+\input{report/reportconfig/structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
 
 % Os objetos R para esse script estao no ambiente env criado pela funcao geraPDF. 
 
@@ -27,7 +27,7 @@ library('xtable')
 %---------------------------------------------------------------------------------
 
 \begin{figure}[H]
-\centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
+\centering\includegraphics[width=1\linewidth]{report/reportconfig/InfoDengue2.png}  
 \end{figure}
 
 \centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line

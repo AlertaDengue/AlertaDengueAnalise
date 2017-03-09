@@ -526,7 +526,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104, alert, pars, sha
 configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, pars, datasource=con,
                                      dirb=basedir, geraPDF=TRUE){
   dirfigs = paste(dirb,"/",dir.out,"/figs",sep="")
-  
+  print(dirfigs)
   # Identificacao da cidade
   nomecidade = alert$data$nome[1]
   geocodigo = alert$data$cidade[1]
@@ -743,18 +743,17 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
 # dir.report = diretorio onde esta a pasta report
 # =================================================================
 
-geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="AlertaDengueAnalise/report",
+geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="report",
                   bdir = basedir){  
   message(tipo)
   # -----------------------------------
   # Identifica o .Rnw a ser executado e onde pdf vai ser salvo
   # -----------------------------------
   dir.rnw = paste(bdir,dir.report,"reportconfig",sep="/")
-  setwd(dir.rnw)
   
-  dirboletim = paste(bdir,dir.boletim,sep="/")
+  #setwd(dir.rnw)
   
-  checkDirectory(dirboletim) # if directory does not exist, creates one
+  #checkDirectory(dirboletim) # if directory does not exist, creates one
   
   # tipo = municipal, regional, estadual
   if(tipo == "municipal") {
@@ -793,7 +792,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
   if(tipo!="municipalsimples"&tipo!="regionalsimples"){
     # PS. Guardar inicialmente esses parametros no ambiente envUF, porque nem todos vao para os municipios
     envUF <- new.env() # ambiente para guardar todos os objetos do estado
-    dir.estado = paste(bdir,"AlertaDengueAnalise/report",obj$sigla,"figs/",sep="/") # diretorio da UF
+    dir.estado = paste(bdir,"report",obj$sigla,"figs/",sep="/") # diretorio da UF
     load(paste(dir.estado,"params",obj$sigla,".RData",sep=""),envir = envUF) # carrega dados da UF
     
     env$figmapaestado = paste(dir.estado,"Mapa_E",obj$sigla,".png", sep="") # mapa estadual
