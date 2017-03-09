@@ -1021,7 +1021,7 @@ publicarAlerta <- function(ale, pdf, dir, bdir = basedir, writebd = TRUE){
   message("Copia o boletim para a pagina do site...")
   strip <- strsplit(pdf,"/")[[1]]
   nomeb = strip[length(strip)] # nome do boletim
-  bolpath <- paste(bdir,dir,nomeb,sep="/") # boletim com path completo
+  bolpath <- paste(dir,nomeb,sep="/") # boletim com path completo
   comando <- paste ("cp", pdf, bolpath) 
   system(comando) 
 }

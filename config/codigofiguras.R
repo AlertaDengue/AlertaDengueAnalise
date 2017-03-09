@@ -125,7 +125,7 @@ figuramunicipio <- function(obj, param, tsdur=104){
   legend(x="topleft",lty=c(2),col=c("black"),
          legend=c("limiar favorável transmissão"),cex=0.85,bty="n")
   axis(2)
-  abline(h=param[[1]]$tcrit, lty=2)
+  abline(h=param$tcrit, lty=2)
   
   # subfigura de baixo: alerta colorido
   par(mai=c(0,0,0,0),mar=c(1,4,0,4))
