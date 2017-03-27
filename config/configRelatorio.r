@@ -612,7 +612,7 @@ nomebol = NULL
 ## Relatorio do Rio de Janeiro
 ## ===================================================
 
-configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=basedir, geraPDF=FALSE){
+configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,  chik= FALSE, bdir=basedir, geraPDF=FALSE){
   
   # ------------------
   # Dados da regional
@@ -626,7 +626,7 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
   dirfigs = paste(bdir,dirout,"figs/",sep="/")
   print(dirfigs)
   # ------------------
-  # Mapa da Cidade
+  # Mapa da Cidade : dengue
   # ------------------
   nomemapario = paste(dirfigs, "mapaRio.png", sep="")
   message("nome do mapa:",nomemapario)
@@ -634,16 +634,53 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
           shapefile = shape)
   
   # ------------------
-  # Dados da Cidade
+  # Mapa da Cidade: chik
+  # ------------------
+  nomemaparioChik = paste(dirfigs, "mapaRioChik.png", sep="")
+  message("nome do mapa:",nomemaparioChik)
+  map.Rio(alertC, data=data, filename="mapaRioChik.png", dir=dirfigs, 
+          shapefile = shape)
+  
+  # ------------------
+  # Dados da Cidade : dengue
   # ------------------
   tres <- write.alertaRio(alert, write="no")
+  tres$ano <- floor(tres$se/100)
+  tres$SE <- tres$se - 100*tres$ano
+  
+  # dados semanais
   totcrude <- aggregate(tres$casos,by=list(tres$se),sum)
   totest<-aggregate(tres$casos_est,by=list(tres$se),sum)
   totmin<-aggregate(tres$casos_est_min,by=list(tres$se),sum)
   totmax<-aggregate(tres$casos_est_max,by=list(tres$se),sum)
   
+  # agregados anuais
+  tot2016 <- sum(tres$casos[tres$ano == 2016]) # total de 2016
+  tot2016se <- sum(tres$casos[(tres$ano == 2016 & tres$SE <=se)] ) # total de 2016 até a semana equivalente do atual
+  tot2017 <- sum(tres$casos[tres$ano == 2017]) # total de 2017 ate agora
+  tot2017ult <- sum(tres$casos[tres$se == data]) # total de 2017 ate agora
+  
+  
+  # ------------------
+  # Dados da Cidade : chik
+  # ------------------
+  tresC <- write.alertaRio(alertC, write="no")[tresC$se>=201601,]
+  tresC$ano <- floor(tresC$se/100)
+  tresC$SE <- tresC$se - 100*tresC$ano
+  
+  # semanais
+  totcrudeC <- aggregate(tresC$casos,by=list(tresC$se),sum) # dados por semana
+  totestC<-aggregate(tresC$casos_est,by=list(tresC$se),sum)
+  totminC<-aggregate(tresC$casos_est_min,by=list(tresC$se),sum)
+  totmaxC<-aggregate(tresC$casos_est_max,by=list(tresC$se),sum)
+  
+  # anuais
+  totChik2016 <- sum(tresC$casos[tresC$ano == 2016]) # total de 2016
+  totChik2016se <- sum(tresC$casos[(tresC$ano == 2016 & tresC$SE <=se)] ) # total de 2016 até a semana equivalente do atual
+  totChik2017 <- sum(tresC$casos[tresC$ano == 2017]) # total de 2017 ate agora
+  totChik2017ult <- sum(tresC$casos[tresC$se == data]) # total de 2017 ate agora
   # -----------------
-  # Grafico da cidade 
+  # Grafico da cidade : dengue
   # -----------------
   figname = paste(dirfigs,"figcidade.png",sep="")
   png(figname, width = 12, height = 16, units = "cm",res=200)
@@ -661,7 +698,25 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
   dev.off()
   
   # -----------------
-  # Grafico das APS 
+  # Grafico da cidade : chik
+  # -----------------
+  fignameChik = paste(dirfigs,"figcidadeChik.png",sep="")
+  png(fignameChik, width = 12, height = 8, units = "cm",res=200)
+  
+  cidadeC<-cbind(totcrudeC,totestC$x,totminC$x,totmaxC$x)
+  names(cidadeC)<-c("se","casos","casos.estimados","ICmin","ICmax")
+  cidadeC$inc <- cidadeC$casos/6.5e6*100000
+  dt<-subset(tresC,aps=="1.0")[,c("se","tweet")]  # tweets
+  dc <- aggregate(tresC[,"tmin"],by=list(se=tresC$se),FUN=mean,na.rm=TRUE) #clima
+  names(dc)[2]<-"tmin"
+  cidadeC<- merge(cidadeC,dt,by="se")
+  cidadeC<- merge(cidadeC,dc,by="se")
+  cidadeC <- subset(cidadeC,se>=201601)
+  figuraRioChik(cidadeC)
+  dev.off()
+  
+  # -----------------
+  # Grafico das APS : dengue
   # -----------------
   
   ### grafico APS 1/2 ------------------
@@ -684,6 +739,29 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
   }
   dev.off()
   
+  # -----------------
+  # Grafico das APS : chik
+  # -----------------
+  inid = 201601
+  ### grafico APS 1/2 ------------------
+  png(paste(dirfigs,"figaps1Chik.png",sep=""),width = 12, height = 16, units = "cm",res=200)
+  
+  par(mfrow=c(5,1),mar=c(5,0,0,5))
+  for (i in 1:5) {
+    plot.alerta(alertC[[i]],var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
+    mtext(names(alertC)[i],line=-1, cex=0.7)
+  }
+  dev.off()
+  
+  ### grafico APS 2/2 ------------------
+  png(paste(dirfigs,"figaps2Chik.png",sep=""),width = 12, height = 16, units = "cm",res=200)
+  par(mfrow=c(5,1),mar=c(5,0,0,5))
+  for (i in 6:10) {
+    plot.alerta(alertC[[i]],var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
+    mtext(names(alertC)[i],line=-1, cex=0.7)
+  }
+  dev.off()
+  
   # --------------------------------
   # Gera e salva tabela da cidade
   # --------------------------------
@@ -694,7 +772,7 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
         include.rownames=FALSE)
   
   # --------------------------------
-  # Gera e salva tabelas das APS
+  # Gera e salva tabelas das APS : dengue
   # --------------------------------
   cores = c("verde","amarelo","laranja","vermelho")
   listaaps <- unique(tres$aps)
@@ -710,10 +788,29 @@ configRelatorioRio<-function(alert, dirout, data, shape, datasource=con,  bdir=b
           include.rownames=FALSE)
   }
   
+  # --------------------------------
+  # Gera e salva tabelas das APS : chik
+  # --------------------------------
+  for(ap in 1:10){
+    tabapnameC = paste(dirfigs,"tabelaC",ap,".tex",sep="")
+    tabC<-tail(tresC[tresC$aps==listaaps[ap],c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
+    names(tabC)[6]<-"pr(inc. subir)"
+    tabC$nivel<-cores[tabC$nivel]
+    
+    tabelaCy <- xtable(tabC,align="cc|ccccccc",digits = c(0,0,0,0,1,1,2,1,0))
+    print(tabelaCy, type="latex", file=tabapnameC, floating=FALSE, latex.environments = NULL,
+          include.rownames=FALSE)
+  }
+  
+  # --------------------------------------
   # objeto que e' retornado pela funcao e lido pelo geraPDF (tambem e salvo como RData)
+  # -------------------------------------
   res = list(nomecidade="Rio de Janeiro", estado="Rio de Janeiro", nomecidadeiconv = "RiodeJaneiro", 
-             regionalmun="Metropolitana I", sigla = "RJ", se=se, ano=ano,alert=alert, nomemapario = nomemapario,
-             nometab = nometab, municip.reg=municip.reg, dirout=dirout, tabaps=tres,datarel=data)
+             regionalmun="Metropolitana I", sigla = "RJ", se=se, ano=ano,alert=alert, alertC = alertC, 
+             nomemapario = nomemapario,nomemaparioChik=nomemaparioChik,totChik2016=totChik2016, totChik2017=totChik2017,
+             totChik2017ult = totChik2017ult,  totChik2016se = totChik2016se,
+             tot2016=tot2016, tot2017=tot2017, tot2017ult = tot2017ult,  tot2016se = tot2016se,
+             nometab = nometab, municip.reg=municip.reg, dirout=dirout, tabaps=tres, tabapsChik = tresC, datarel=data)
   
   message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
   #save(res, file=fname)
@@ -951,13 +1048,27 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$tabreg=paste(dir.estado,"/tabregional_MetropolitanaI.tex",sep='') #tabela
     
     # Objetos da Cidade
-    env$nomemapario <- obj$nomemapario
-    env$tabelaRio <- obj$nometab
+    env$nomemapario <- obj$nomemapario # mapa de dengue
+    env$nomemaparioChik <- obj$nomemaparioChik # mapa de chik
+    env$tabelaRio <- obj$nometab # dengue
+    env$tot2016 <- obj$tot2016 # dengue
+    env$tot2016se <- obj$tot2016se # dengue em 2016, ate a semana epide do relatorio
+    env$tot2017 <- obj$tot2017 # dengue em 2017
+    env$tot2017ult <- obj$tot2017ult # dengue em 2017 na ultima semana
+    env$totChik2016 <- obj$totChik2016  # mesmo para chik
+    env$totChik2016se <- obj$totChik2016se # idem
+    env$totChik2017 <- obj$totChik2017 # idem
+    env$totChik2017ult <- obj$totChik2017ult # idem
     env$tabaps = obj$tabaps 
+    env$tabapsChik = obj$tabapsChik
     dirfigs <- paste(bdir,obj$dirout,"figs",sep="/")
     env$figcidade <- paste(dirfigs,"/figcidade.png",sep="")
+    env$figcidadeChik <- paste(dirfigs,"/figcidadeChik.png",sep="")
     env$figaps1 <- paste(dirfigs,"/figaps1.png",sep="")
     env$figaps2 <- paste(dirfigs,"/figaps2.png",sep="")
+    env$figaps1Chik <- paste(dirfigs,"/figaps1Chik.png",sep="")
+    env$figaps2Chik <- paste(dirfigs,"/figaps2Chik.png",sep="")
+    # tabelas APS dengue
     env$tabela1 <- paste(dirfigs,"/tabela",1,".tex",sep="")
     env$tabela2 <- paste(dirfigs,"/tabela",2,".tex",sep="")
     env$tabela3 <- paste(dirfigs,"/tabela",3,".tex",sep="")
@@ -969,6 +1080,17 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$tabela9 <- paste(dirfigs,"/tabela",9,".tex",sep="")
     env$tabela10<- paste(dirfigs,"/tabela",10,".tex",sep="")
     
+    # tabelas APS chik
+    env$tabelaC1 <- paste(dirfigs,"/tabelaC",1,".tex",sep="")
+    env$tabelaC2 <- paste(dirfigs,"/tabelaC",2,".tex",sep="")
+    env$tabelaC3 <- paste(dirfigs,"/tabelaC",3,".tex",sep="")
+    env$tabelaC4 <- paste(dirfigs,"/tabelaC",4,".tex",sep="")
+    env$tabelaC5 <- paste(dirfigs,"/tabelaC",5,".tex",sep="")
+    env$tabelaC6 <- paste(dirfigs,"/tabelaC",6,".tex",sep="")
+    env$tabelaC7 <- paste(dirfigs,"/tabelaC",7,".tex",sep="")
+    env$tabelaC8 <- paste(dirfigs,"/tabelaC",8,".tex",sep="")
+    env$tabelaC9 <- paste(dirfigs,"/tabelaC",9,".tex",sep="")
+    env$tabelaC10<- paste(dirfigs,"/tabelaC",10,".tex",sep="")
     
   }
   
@@ -996,7 +1118,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
 ## Funcao para publicar o Alerta no site
 ## ==========================================================
 publicarAlerta <- function(ale, pdf, dir, bdir = basedir, writebd = TRUE){
-  
+  # A função write.alerta sabe se e para salvar na tabela de chik ou de dengue
   # ---------------------------------------------------------
   if(writebd){
   # copia o alerta da tabela de historico do Banco de dados
@@ -1004,7 +1126,7 @@ publicarAlerta <- function(ale, pdf, dir, bdir = basedir, writebd = TRUE){
   
   # Se é um municipio isolado
   #---------------------------
-    if("indices" %in% names(ale)) { 
+    if("indices" %in% names(ale)) {
       res <- write.alerta(ale, write = "db") 
     } else {
       # Ou se e'o Rio de Janeiro com suas APS

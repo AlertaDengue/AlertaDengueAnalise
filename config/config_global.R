@@ -38,3 +38,8 @@ criteria = list(
   critr = c("inc > inccrit & casos > 5", 2, 2)
 )
 
+criteriaChik = list(
+  crity = c("temp_min > tcrit & inc > 0", 3, 1),
+  crito = c("p1 > 0.95 & temp_min >= tcrit", 3, 1),
+  critr = c("inc > inccrit & casos > 5", 2, 2)
+)

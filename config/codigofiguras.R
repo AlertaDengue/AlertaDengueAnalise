@@ -159,6 +159,19 @@ figuraRio <- function(cid){
   text(mean(1:dim(cid)[1]),22,"temp crítica",col=2, cex=0.8)
 }
 
+# figuraRioChik
+
+figuraRioChik <- function(cid){
+  par(mfrow=c(1,1),mar=c(4,4,1,1))
+  #ymax <- max(110,max(cid$inc))
+  plot(1:dim(cid)[1],cid$casos, type="l", xlab="",ylab="casos notificados",axes=FALSE,main="Chikungunia")
+  abline(v=201701, lty=3, col="grey")
+  axis(2)
+  le=dim(cid)[1]
+  axis(1,at=rev(seq(le,1,by=-4)),labels=cid$se[rev(seq(le,1,by=-4))],las=2)
+}
+
+
 # -------------------------------
 # fazSomatorio casos nos municipios para calcular totais anuais por municipio, regional
 # -------------------------------
