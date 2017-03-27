@@ -7,7 +7,7 @@ con <- DenguedbConnect()
 
 # ----- data do relatorio:
 
-data_relatorio = 201707
+data_relatorio = 201710
 
 
 # ---- Calcula alerta: 

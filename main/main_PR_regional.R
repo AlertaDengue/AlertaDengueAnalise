@@ -5,7 +5,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201708
+data_relatorio = 201711
 
 
 # ------------------------------- 
@@ -18,6 +18,7 @@ alePR_RS_Cascavel <- update.alerta(region = "Cascavel", pars = pars.PR, crit = P
 bolCascavel=configRelatorioRegional(uf="Paraná", regional="Cascavel", sigla = "PR", data=data_relatorio, tsdur=104,
                 alert=alePR_RS_Cascavel, pars = pars.PR, shape=PR.shape, varid=PR.shapeID,
                 dir=PR.Cascavel.out, datasource=con, geraPDF=TRUE)
+
 
 publicarAlerta(ale = alePR_RS_Cascavel, pdf = bolCascavel, dir = "Relatorio/PR/Regionais/Cascavel")
 
