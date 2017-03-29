@@ -4,7 +4,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201711
+data_relatorio = 201712
 
 #***********************************
 ### Cidade do Rio de Janeiro 
@@ -22,11 +22,9 @@ bolrio <- configRelatorioRio( data=data_relatorio, alert=alerio, alertC= alerioC
                               dirout=RJ.RiodeJaneiro.out, datasource=con, geraPDF=TRUE)
 
 
-
 publicarAlerta(ale = alerio, pdf = bolrio, dir = "Relatorio/RJ/Municipios/RiodeJaneiro")
 res<-write.alertaRio(alerioC, write = "db")
 rm(alerio,alerioC,bolrio)
-
 
 
 #***************************************************
