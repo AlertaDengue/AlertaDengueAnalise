@@ -76,9 +76,9 @@ library('xtable')
   %	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
 %-------------------------------------------------------------------------------
 
-  \hypertarget{estado}{\heading{Situação da Dengue no Estado do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
+  \hypertarget{estado}{\heading{Situação da Dengue e Chikungunia na Cidade do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
 
-Esse é o boletim de situação da Dengue e Chikungunia do Município do Rio de Janeiro. Para contextualização, também é apresentada a situação da dengue no Estado e na Região Metropolitana I. No Estado, desde o início do ano, \Sexpr{env$totanoUF} casos de dengue foram registrados, sendo \Sexpr{env$totultseUF} desses na semana \Sexpr{env$seUF}. O mapa mostra as condições de transmissão da dengue no estado.
+Esse é o boletim de situação da Dengue e Chikungunia do Município do Rio de Janeiro. Para contextualização, também é apresentada a situação da dengue no Estado e na Região Metropolitana I. No Estado, desde o início do ano, \Sexpr{env$totanoUF} casos de dengue foram registrados, sendo \Sexpr{env$totultseUF} desses na última semana. O mapa mostra as condições de transmissão da dengue no estado.
 
 % Mapa estadual
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figmapaestado}}
@@ -244,7 +244,7 @@ A linha tracejada azul indica o limiar pré-epidêmico; a linha tracejada vermel
 %-----------------------------------------------------------------------------------
 
 \begin{minipage}[t]{0.6\linewidth} % Mini page taking up 100% of the actual page
-\hypertarget{mun}{\heading{Situação da Chikungunia na Cidade do Rio de Janeiro}{6pt}} % \hypertarget 
+\hypertarget{munC}{\heading{Situação da Chikungunia na Cidade do Rio de Janeiro}{6pt}} % \hypertarget 
 
 Em 2017, até agora, foram notificados \Sexpr{env$totChik2017} casos de chikungunia na cidade do Rio de Janeiro, sendo \Sexpr{env$totChik2017ult} na última semana. Para comparação, em 2016, no mesmo período, \Sexpr{env$totChik2016se} casos de chikungunia foram notificados na cidade do Rio de Janeiro. No total, em 2016, ocorreram \Sexpr{env$totChik2016} casos. 
 
@@ -317,8 +317,8 @@ Confira a série histórica de alertas para dengue nas APS do Rio de Janeiro.
   % MAIN BODY - SEVENTH and EIGHTTH PAGE - Situação por APS chik - graficos 
 %-----------------------------------------------------------------------------------
   
-  \hypertarget{aps}{\heading{Nas Áreas Programáticas de Saúde: Chikungunia}{6pt}} % \hypertarget 
-Confira a série histórica de alertas para chikungunia nas APS do Rio de Janeiro.
+\hypertarget{aps}{\heading{Nas Áreas Programáticas de Saúde: Chikungunia}{6pt}} % \hypertarget 
+
 \vspace{2cm}
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figaps1Chik}}
 

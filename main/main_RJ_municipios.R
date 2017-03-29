@@ -4,7 +4,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201708
+data_relatorio = 201711
 
 #***********************************
 ### Cidade do Rio de Janeiro 
@@ -17,15 +17,16 @@ alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = da
 
 alerioC <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, cid10 = "A920", datasource=con, se = data_relatorio, verbose=FALSE) 
 
-# Boletim de dengue e chikungunia
+# Boletim de dengue e chik
 bolrio <- configRelatorioRio( data=data_relatorio, alert=alerio, alertC= alerioC, shape=RJ.aps.shape,
                               dirout=RJ.RiodeJaneiro.out, datasource=con, geraPDF=TRUE)
 
 
-publicarAlerta(ale = alerio, pdf = bolrio, dir = "Relatorio/RJ/Municipios/RiodeJaneiro") # grava dengue e gera pdf
-res=write.alertaRio(alerioC, write="db") # grava chik 
 
-rm(alerio,alerioC, bolrio)
+publicarAlerta(ale = alerio, pdf = bolrio, dir = "Relatorio/RJ/Municipios/RiodeJaneiro")
+res<-write.alertaRio(alerioC, write = "db")
+rm(alerio,alerioC,bolrio)
+
 
 
 #***************************************************
