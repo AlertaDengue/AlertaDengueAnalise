@@ -7,7 +7,7 @@ con <- DenguedbConnect()
 
 
 
-data_relatorio = 201711
+data_relatorio = 201712
 
 #***************************************************
 # Cidade de Alfredo Chaves
@@ -62,6 +62,20 @@ bolAnchieta <- configRelatorioMunicipal(alert = aleAnchieta, tipo = "completo", 
 publicarAlerta(ale = aleAnchieta, pdf = bolAnchieta, dir = "Relatorio/ES/Municipios/Anchieta")
 
 rm(aleAnchieta,bolAnchieta)
+
+#***************************************************
+# Cidade de Rio Novo do Sul
+#***************************************************
+
+aleRioNovoSul <- update.alerta(city = 320440, pars = pars.ES[["Sul"]], crit = ES.criteria, 
+                               datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
+
+bolRioNovoSul <- configRelatorioMunicipal(alert = aleRioNovoSul, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
+                                          dir.out = ES.MN.RioNovoSul.out, pars = pars.ES, geraPDF = TRUE)
+
+publicarAlerta(ale = aleRioNovoSul, pdf = bolRioNovoSul, dir = "Relatorio/ES/Municipios/Rio_Novo_do_Sul")
+
+rm(aleRioNovoSul,bolRioNovoSul)
 #***************************************************
 # Cidade de Aracruz
 #***************************************************
@@ -219,19 +233,7 @@ bolPinheiros <- configRelatorioMunicipal(alert = alePinheiros, tipo = "completo"
 publicarAlerta(ale = alePinheiros, pdf = bolPinheiros, dir = "Relatorio/ES/Municipios/Pinheiros")
 
 rm(alePinheiros,bolPinheiros)
-#***************************************************
-# Cidade de Rio Novo do Sul
-#***************************************************
 
-aleRioNovoSul <- update.alerta(city = 320440, pars = pars.ES[["Sul"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-bolRioNovoSul <- configRelatorioMunicipal(alert = aleRioNovoSul, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.RioNovoSul.out, pars = pars.ES, geraPDF = TRUE)
-
-publicarAlerta(ale = aleRioNovoSul, pdf = bolRioNovoSul, dir = "Relatorio/ES/Municipios/Rio_Novo_do_Sul")
-
-rm(aleRioNovoSul,bolRioNovoSul)
 #***************************************************
 # Cidade de Vila Velha
 #***************************************************
