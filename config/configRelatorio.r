@@ -664,7 +664,8 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   # ------------------
   # Dados da Cidade : chik
   # ------------------
-  tresC <- write.alertaRio(alertC, write="no")[tresC$se>=201601,]
+  tresC <- write.alertaRio(alertC, write="no")
+  tresC <- tresC[tresC$se>=201601,]
   tresC$ano <- floor(tresC$se/100)
   tresC$SE <- tresC$se - 100*tresC$ano
   
