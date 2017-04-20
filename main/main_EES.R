@@ -7,7 +7,7 @@ con <- DenguedbConnect()
 
 # ----- data do relatorio:
 
-data_relatorio = 201713
+data_relatorio = 201714
 
 
 # ---- Calcula alerta: 
@@ -25,3 +25,4 @@ rm(aleES,bolES)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
+
