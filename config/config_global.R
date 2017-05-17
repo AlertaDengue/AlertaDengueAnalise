@@ -5,8 +5,10 @@
 #------- Pacotes para carregar 
 
 library(foreign)
+library(forecast)
 library("RPostgreSQL")
 library(xtable)
+library(zoo)
 library(AlertTools)
 
 # explicita o diretorio base

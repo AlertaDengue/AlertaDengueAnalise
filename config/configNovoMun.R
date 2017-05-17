@@ -3,7 +3,7 @@ tab <- read.csv("../tabela-regionaisIBGE.csv")
 
 
 ### 1. Qual é o estado?
-tabuf <- subset(tab, Nome_UF=="Espírito Santo")
+tabuf <- subset(tab, Nome_UF=="Minas Gerais")
 unique(tabuf$Nome_Microrregião)
 unique(tabuf$Nome_Mesorregião)
 
@@ -11,11 +11,11 @@ unique(tabuf$Nome_Mesorregião)
 library("AlertTools")
 con <- DenguedbConnect()
 
-reg=getRegionais(uf = "Espírito Santo")
+reg=getRegionais(uf = "Minas Gerais")
 reg
 
-cid = getCidades(regional = reg, uf = "Minas Gerais", datasource=con)
-cid
+cid = getCidades(regional = "Sete Lagoas", uf = "Minas Gerais", datasource=con)
+dim(cid)
 
 ### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
 nomedacidade = "Pinheiros"
@@ -72,13 +72,13 @@ escrevewu <- function(csvfile){
   newdat
 }
 
-escrevewu("estações-mais-proximas-ES.csv")
+escrevewu("estações-mais-proximas-MG.csv")
 
-getCidades(regional="Metropolitana",uf="Espírito Santo")
+getCidades(regional="Sete Lagoas",uf="Minas Gerais")
 
 ### 5. Uma olhadinha nos casos
 # --------------------------------
-nome = "Linhares"
+nome = "Sete Lagoas"
 geocodigo = tabuf$Código.Município.Completo[tabuf$Nome_Município==nome]
 casos = getCases(city=geocodigo, datasource = con)
 par(mar=c(5,5,2,2))
@@ -96,7 +96,3 @@ list(meanlog=res1$icoef[1], sdlog=exp(res1$icoef[2]))
 
 
 
-3117836:  
-geocode 3122009 not implemented in Infodengue. Use insertCityinAlerta()
-geocode 3152131 not implemented in Infodengue. Use insertCityinAlerta()
-geocode 3162005 

@@ -1,6 +1,5 @@
 library("RPostgreSQL")
 
-
 ## Esse arquivo ensina a:
 
 # 1. Acessar o banco de dados do projeto
@@ -23,7 +22,7 @@ dbListTables(con) # lista de tabelas (elas estao em diferentes schemas)
 
 
 # As tabelas estão dentro de schemas.  Listando as variaveis nas tabelas do schema "Municipio" 
-dbListFields(con, c("Municipio","Notificacao"))
+dbListFields(con, c("Municipio","Notificacao")) # dados de dengue
 dbListFields(con, c("Municipio","Bairro"))
 dbListFields(con, c("Municipio","Historico_alerta"))
 dbListFields(con, c("Municipio","Tweet"))
@@ -31,18 +30,61 @@ dbListFields(con, c("Municipio","alerta_mrj"))
 dbListFields(con, c("Municipio","Localidade")) # APS do Rio de Janeiro
 
 # 
-dbListFields(con, c("Municipio","Estacao_cemaden")) 
-dbListFields(con, c("Municipio","Clima_cemaden")) 
+dbListFields(con, c("Municipio","Estacao_cemaden")) # metadados das estacoes
+dbListFields(con, c("Municipio","Clima_cemaden")) # variaveis meteorologicas
 
-dbListFields(con, c("Municipio","Estacao_wu")) 
-dbListFields(con, c("Municipio","Clima_wu")) 
+# dados do weatherunderground
+dbListFields(con, c("Municipio","Estacao_wu")) # metadados 
+dbListFields(con, c("Municipio","Clima_wu")) # variaveis meteorologicas
 
-sqlquery = paste("SELECT  *
+dbListFields(con, c("Dengue_global","regional_saude")) # variaveis meteorologicas
+dbListFields(con, c("Dengue_global","Municipio")) # variaveis meteorologicas
+# Exemplos de consultas:
+# -----------------------
+
+# baixar a tabela toda
+tw <- dbReadTable(con, c("Municipio","Tweet"))
+str(tw)
+
+# baixar a tabela filtrando para um municipio
+comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 3304557"
+
+tw <- dbGetQuery(con, comando)
+str(tw)
+
+
+# baixar a tabela filtrando para um municipio e apenas registros maiores que 10
+comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 3304557 AND numero > 10"
+tw <- dbGetQuery(con, comando)
+str(tw)
+
+# query linkando informacao de duas tabelas
+
+sqlquery = "SELECT  DISTINCT(sensor)
   FROM  \"Municipio\".\"Estacao_cemaden\" AS e 
   INNER JOIN \"Municipio\".\"Clima_cemaden\" AS c 
-  ON e.codestacao = c.\"Estacao_cemaden_codestacao\" WHERE e.municipio =", "'RIO DE JANEIRO'")
+  ON e.codestacao = c.\"Estacao_cemaden_codestacao\" WHERE e.municipio = 'RIO DE JANEIRO'"
   
 dd <- dbGetQuery(con, sqlquery)
+
+
+sqlquery = "SELECT  *
+FROM  \"Municipio\".\"Estacao_cemaden\" AS e 
+INNER JOIN \"Municipio\".\"Clima_cemaden\" AS c 
+ON e.codestacao = c.\"Estacao_cemaden_codestacao\" WHERE e.municipio = 'RIO DE JANEIRO' 
+AND c.sensor = 'intensidade_precipicacao'"
+
+cemaden.prec <- dbGetQuery(con, sqlquery)
+
+
+
+
+
+
+dd
+### OUTROS COMANDOS
+
+
 
 sqlquery = paste("SELECT  *
   FROM  \"Municipio\".\"Estacao_wu\" AS e 
@@ -66,13 +108,18 @@ sqlquery = paste("SELECT  *
 sbjr <- dbGetQuery(con, sqlquery)
 
 # Dados de chikungunia
-sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND cid10_codigo = \'A920\'"
+sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3167202 AND cid10_codigo = \'A920\'"
 d <- dbGetQuery(con, sqlquery)
 
 
 # Acessando a tabela "Municipio" dentro do "DengueGlobal" 
 dbListFields(con, c("Dengue_global","Municipio"))
 dbListFields(con, c("Dengue_global","regional_saude"))
+
+
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3167202"
+d <- dbGetQuery(con, sqlquery)
+head(d)
 
 # ------------------------------------------------------
 # 2. Criar um objeto data.frame a partir da consulta ao banco de dados
