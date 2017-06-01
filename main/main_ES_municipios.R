@@ -7,7 +7,7 @@ con <- DenguedbConnect()
 
 
 
-data_relatorio = 201720
+data_relatorio = 201721
 
 #***************************************************
 # Cidade de Alfredo Chaves
