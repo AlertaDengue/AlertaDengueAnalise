@@ -4,7 +4,7 @@ setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 con <- DenguedbConnect()
 
-data_relatorio = 201738
+data_relatorio = 201739
 
 #***********************************
 ### Cidade do Rio de Janeiro 
