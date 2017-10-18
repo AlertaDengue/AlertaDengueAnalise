@@ -3,10 +3,12 @@
 # =============================================================================
 setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
+
 con <- DenguedbConnect()
 
+
 # ----- data do relatorio:
-data_relatorio = 201719
+data_relatorio = 201740
 =======
 
 # ---- Calcula alerta: 
