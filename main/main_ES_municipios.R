@@ -7,7 +7,14 @@ con <- DenguedbConnect()
 
 
 
-data_relatorio = 201718
+data_relatorio = 201720
+
+aleLondrina <- update.alerta(city = 4113700, pars = pars.PR[["Londrina"]], crit = PR.criteria, 
+                                  datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
+
+bol <- configRelatorioMunicipal(alert = aleLondrina, tipo = "completo", siglaUF = "ES", 
+                                             data = data_relatorio, pars = pars.ES, 
+                                             dir.out = ES.MN.AlfredoChaves.out, geraPDF = TRUE) #
 
 #***************************************************
 # Cidade de Alfredo Chaves
@@ -253,3 +260,16 @@ rm(aleVilaVelha,bolVilaVelha)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
+
+
+#***************************************************
+# Cidade de Vitoria - NOT RUN
+#***************************************************
+
+aleVit <- update.alerta(city = 3205309, pars = pars.ES[["Central"]], crit = ES.criteria, 
+                              datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
+ES.MN.Vitoria.out = "AlertaDengueAnalise/report/ES/Municipios/Vitoria"
+
+bolVit <- configRelatorioMunicipal(alert = aleVit, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
+                                         dir.out = ES.MN.Vitoria.out, pars = pars.ES, geraPDF = TRUE)
+

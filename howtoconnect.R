@@ -38,7 +38,7 @@ dbListFields(con, c("Municipio","Estacao_wu")) # metadados
 dbListFields(con, c("Municipio","Clima_wu")) # variaveis meteorologicas
 
 dbListFields(con, c("Dengue_global","regional_saude")) # variaveis meteorologicas
-dbListFields(con, c("Dengue_global","Municipio")) # variaveis meteorologicas
+dbListFields(con, c("Dengue_global","Municipio")) # 
 # Exemplos de consultas:
 # -----------------------
 
@@ -51,6 +51,12 @@ comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" 
 
 tw <- dbGetQuery(con, comando)
 str(tw)
+head(tw)
+
+comando <- "SELECT * FROM \"Dengue_global\".\"estado\" LIMIT 2"
+
+d <- dbGetQuery(con, comando)
+str(d)
 
 
 # baixar a tabela filtrando para um municipio e apenas registros maiores que 10
@@ -63,7 +69,7 @@ str(tw)
 sqlquery = "SELECT  DISTINCT(sensor)
   FROM  \"Municipio\".\"Estacao_cemaden\" AS e 
   INNER JOIN \"Municipio\".\"Clima_cemaden\" AS c 
-  ON e.codestacao = c.\"Estacao_cemaden_codestacao\" WHERE e.municipio = 'RIO DE JANEIRO'"
+  ON e.codestacao = c.\"Estacao_cemaden_codestacao\" WHERE e.municipio = 'RIO DE JANEIRO' limit 10"
   
 dd <- dbGetQuery(con, sqlquery)
 
@@ -75,11 +81,6 @@ ON e.codestacao = c.\"Estacao_cemaden_codestacao\" WHERE e.municipio = 'RIO DE J
 AND c.sensor = 'intensidade_precipicacao'"
 
 cemaden.prec <- dbGetQuery(con, sqlquery)
-
-
-
-
-
 
 dd
 ### OUTROS COMANDOS
@@ -103,12 +104,12 @@ sbgl <- dbGetQuery(con, sqlquery)
 sqlquery = paste("SELECT  *
   FROM  \"Municipio\".\"Estacao_wu\" AS e 
   INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
-  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBJR'")
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBJR' limit 10")
 
 sbjr <- dbGetQuery(con, sqlquery)
 
 # Dados de chikungunia
-sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3167202 AND cid10_codigo = \'A920\'"
+sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND cid10_codigo = \'A920\'"
 d <- dbGetQuery(con, sqlquery)
 
 
@@ -117,7 +118,11 @@ dbListFields(con, c("Dengue_global","Municipio"))
 dbListFields(con, c("Dengue_global","regional_saude"))
 
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3167202"
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3205309"
+d <- dbGetQuery(con, sqlquery)
+d
+
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" "
 d <- dbGetQuery(con, sqlquery)
 head(d)
 
@@ -133,7 +138,7 @@ d <- dbGetQuery(con, sql)
 table(d$ano_notif)
 sum(is.na(d$dt_digita))
 
-sql <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = ", 3302205, 
+sql <- paste("SELECT dt_notific,bairro_nome,bairro_bairro_id from \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = ", 3304557, 
              " AND cid10_codigo = \'", cid10,"\'", sep="")
 d <- dbGetQuery(con, sql)
 table(d$ano_notif)
@@ -175,13 +180,20 @@ d <- dbGetQuery(con,c1)
 c1 <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE 
                \"municipio_geocodigo\" = 4100301")
 
+c1 <- paste("SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
+               \"municipio_geocodigo\" = 4113700")
+
 d <- dbGetQuery(con,c1)
-names(d)
+plot(d$data_iniSE, d$casos)
+mu = unique(d$municipio_geocodigo)
+umu = d[d$SE==201736,]
+View(umu[,c(3:6)])
 
 # locs
 poligs <- dbReadTable(con, c("Municipio","Localidade"))
 str(poligs)
 dim(tw)
+
 
 
 # 2b. Selecionando pelo valor de uma das variaveis, é preciso usar SQL

@@ -3,7 +3,7 @@ tab <- read.csv("../tabela-regionaisIBGE.csv")
 
 
 ### 1. Qual é o estado?
-tabuf <- subset(tab, Nome_UF=="Minas Gerais")
+tabuf <- subset(tab, Nome_UF=="Ceará")
 unique(tabuf$Nome_Microrregião)
 unique(tabuf$Nome_Mesorregião)
 
@@ -11,7 +11,7 @@ unique(tabuf$Nome_Mesorregião)
 library("AlertTools")
 con <- DenguedbConnect()
 
-reg=getRegionais(uf = "Minas Gerais")
+reg=getRegionais(uf = "Ceará")
 reg
 
 cid = getCidades(regional = "Sete Lagoas", uf = "Minas Gerais", datasource=con)
@@ -55,6 +55,7 @@ reg
 
 ### Inserção das estacoes meteorologicas na tabela das regionais - requer SENHA
 # ----------------------------------------------------------------
+#https://estacoes.dengue.mat.br/
 escrevewu <- function(csvfile){
   wus <- read.csv(csvfile,header = F)
   wusES <- wus[,c(2,4,6)]

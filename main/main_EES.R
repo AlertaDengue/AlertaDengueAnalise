@@ -7,7 +7,7 @@ con <- DenguedbConnect()
 
 # ----- data do relatorio:
 
-data_relatorio = 201718
+data_relatorio = 201719
 
 
 # ---- Calcula alerta: 
@@ -25,4 +25,7 @@ rm(aleES,bolES)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
+
+ale <- update.alerta(city = 3205309, pars = pars.ES[["Central"]], crit = ES.criteria, 
+                             datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
 
