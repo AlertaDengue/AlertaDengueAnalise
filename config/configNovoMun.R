@@ -14,7 +14,7 @@ con <- DenguedbConnect()
 reg=getRegionais(uf = "Ceará")
 reg
 
-cid = getCidades(regional = "Sete Lagoas", uf = "Minas Gerais", datasource=con)
+cid = getCidades(uf = "Ceará", datasource=con)
 dim(cid)
 
 ### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
@@ -28,9 +28,13 @@ insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha = "
 
 ### 4. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
 ## REQUER SENHA
-tabuf <- read.csv("../Regionais_Saude_ES.csv")
+
+tabuf <- read.csv("../Regionais_Saude_CE.csv") # qdo é custmizada a regional de saude
+names(tabuf)
+tabuf <- tabuf[,c(10,11,9)]
 names(tabuf)[1:3]<-c("nome_municipio","nome_regional","municipio_geocodigo")
 head(tabuf)
+unique(tabuf$nome_regional)
 n = dim(tabuf)[1]
 for (i in 2:n){
   nomedacidade = tabuf$nome_municipio[i]
@@ -38,20 +42,14 @@ for (i in 2:n){
   id = 0 #id=tabuf$id_regional[tabuf$nome_municipio==nomedacidade]
   nomereg = tabuf$nome_regional[tabuf$nome_municipio==nomedacidade]
   insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha="aldengue")
-
+  
 }
 
-#for (i in 11:dim(tabuf)[1]){
-#  nomedacidade = tabuf$Nome_Município[i]
-#  geocodigo = tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
-#  id = tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
-#  nomereg = tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
-#  insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg)
-  
-#}
-
-reg=getRegionais(uf = "Espírito Santo")
+reg=getRegionais(uf = "Ceará")
 reg
+
+
+
 
 ### Inserção das estacoes meteorologicas na tabela das regionais - requer SENHA
 # ----------------------------------------------------------------
@@ -73,18 +71,25 @@ escrevewu <- function(csvfile){
   newdat
 }
 
-escrevewu("estações-mais-proximas-MG.csv")
+escrevewu("../CE-estacoes-mais-proximas.csv")
 
-getCidades(regional="Sete Lagoas",uf="Minas Gerais")
+reg=getRegionais(uf = "Ceará")
+reg
+getCidades(regional="Baturité",uf="Ceará")
 
 ### 5. Uma olhadinha nos casos
 # --------------------------------
-nome = "Sete Lagoas"
-geocodigo = tabuf$Código.Município.Completo[tabuf$Nome_Município==nome]
+nome = "Guaramiranga"
+geocodigo = tabuf$municipio_geocodigo[tabuf$nome_municipio==nome]
 casos = getCases(city=geocodigo, datasource = con)
 par(mar=c(5,5,2,2))
 plot(casos$casos, type="l")
 summary(casos$casos)
+
+
+#### 6. Inserção dos limiares epidemicos na tabela
+datasource = DenguedbConnect()
+thresholds.table <- info.dengue.apply.mem(mun_list=cid$municipio_geocodigo, con=datasource)
 
 
 ### 5. Atraso de notificacao (metodo da Claudia)
@@ -95,5 +100,34 @@ res<-fitDelayModel(cities=geocodigo, period=c("2013-01-01","2016-01-01"), dataso
 #Os parametros a serem anotados no config são:
 list(meanlog=res1$icoef[1], sdlog=exp(res1$icoef[2]))
 
+### Para calcular o atraso por regional (ainda tem que entrar a mao no config)
+
+res.delay <- data.frame(regionais = getRegionais(uf = "Ceará"), casos = 0, param1 = NA, param2 = NA)
+for (i in 1:nrow(res.delay)){
+  geocodigos = tabuf$municipio_geocodigo[tabuf$nome_regional==res.delay$regionais[i]]
+  res<-fitDelayModel(cities=geocodigos, period=c("2013-01-01","2016-01-01"), datasource=con)
+  if (!is.null(res)) res.delay[i,3:4] = list(meanlog=res$icoef[1], sdlog=exp(res$icoef[2]))
+  
+  res.delay$casos[i] <- sum(getCases(city=geocodigos[1], datasource = con)$casos)
+  if (length(geocodigos)>1) for (cid in 2:length(geocodigos)) res.delay$casos[i] <- res.delay$casos[i] +
+    sum(getCases(city=geocodigos[cid], datasource = con)$casos)
+}
+
+res.delay
 
 
+### Para criar estrutura de diretorios (pode ser o estado, a regional ou o municipio)
+source(fun_initializeSites.R)
+# USO: setTree.newsite(siglaestado="CE",regional="Nova Regional")
+setTree.newsite(siglaestado="CE")
+
+
+
+### Para calcular o mem (por enquanto, preparar um dataframe e mandar pro Marcelo)
+# a partir do objeto aleCE gerado pelo main.
+n <- length(aleCE)
+
+ceara <- aleCE[[1]]$data[,c("SE","cidade", "nome" ,"casos")]
+for (i in 2:n) ceara <- rbind(ceara, aleCE[[i]]$data[,c("SE","cidade", "nome" ,"casos")])
+
+save(ceara, file="ceara.RData")

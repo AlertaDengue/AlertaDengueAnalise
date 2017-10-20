@@ -159,3 +159,40 @@ MG.criteria = criteria
 # Dados do diretorio para salvar (com / no final)
 MG.SeteLagoas.out = "AlertaDengueAnalise/report/MG/Regionais/SeteLagoas"
 
+
+# ========================================
+# Parametros do Estado do Ceará 
+# ========================================
+nomesregs.CE = getRegionais("Ceará")# use essa funcao para descobrir as regionais
+
+pars.CE <- NULL
+pars.CE[nomesregs.CE] <- list(NULL)
+pars.CE[["Tauá"]] <- list(pdig = c(1.488395,1.0268605),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright") 
+pars.CE[["Crato"]] <- list(pdig = c(2.134714,0.7901286),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Sobral "]] <- list(pdig = c(2.148597,1.1197786),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Juazeiro do Norte"]] <- list(pdig = c(1.830832,1.1666795),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Tianguá"]] <- list(pdig = c(NA,NA),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Icó"]] <- list(pdig = c(2.614918, 1.0401348),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Caucaia"]] <- list(pdig = c(2.170315, 0.8864213),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Maracanaú"]] <- list(pdig = c(2.303916, 1.1280664),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Canindé"]] <- list(pdig = c(2.156334, 0.8084649),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Iguatu"]] <- list(pdig = c(2.829516, 0.8645565),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Cratéus"]] <- list(pdig = c(1.696401, 1.1192531),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Quixadá"]] <- list(pdig = c(1.754604, 0.9727683),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Itapipoca"]] <- list(pdig = c(1.444086, 0.9250124),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Limoeiro do Norte"]] <- list(pdig = c(1.816298, 1.2204908),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Brejo Santo"]] <- list(pdig = c(2.498629, 1.0448990),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Acaraú"]] <- list(pdig = c(2.257147, 1.1582345),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Baturité"]] <- list(pdig = c(2.046614, 1.2076495),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Fortaleza"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Aracati"]] <- list(pdig = c(2.579873, 1.2285321),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Russas"]] <- list(pdig = c(1.870998, 1.0505445),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Cascavel"]] <- list(pdig = c(2.229735, 0.9273108),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+pars.CE[["Camocim"]] <- list(pdig = c(2.139148, 0.8902779),tcrit=22, inccrit = 100, preseas=5, posseas=5, legpos="bottomright")
+
+# Dados para o mapa
+CE.shape="AlertaDengueAnalise/report/CE/shape/23MUE250GC_SIR.shp"  # fonte para o mapa
+CE.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
+CE.criteria = criteria
+CE.out = "AlertaDengueAnalise/report/CE"
+
