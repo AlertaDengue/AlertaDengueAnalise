@@ -9,7 +9,6 @@ con <- DenguedbConnect()
 
 data_relatorio = 201741
 
-
 # ---- Calcula alerta: 
 
 aleES <- update.alerta(region = names(pars.ES), pars = pars.ES, state = "Espírito Santo", crit = ES.criteria, 
