@@ -8,9 +8,9 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 # ----- data do relatorio:
-data_relatorio = 201741
+data_relatorio = 201743
 
-alePR <- update.alerta(region = names(pars.PR), pars = pars.PR, crit = PR.criteria, 
+alePR <- update.alerta(state = "Paraná",region = names(pars.PR), pars = pars.PR, crit = PR.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE) #, state = "Paraná"
 
 bolPR=configRelatorioEstadual(uf="Paraná", sigla = "PR", data=data_relatorio, tsdur=104,
