@@ -7,8 +7,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 
-
-data_relatorio = 201740
+data_relatorio = 201743
 
 aleLondrina <- update.alerta(city = 4113700, pars = pars.PR[["Londrina"]], crit = PR.criteria, 
                                   datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
@@ -36,14 +35,14 @@ rm(aleAlfredoChaves,bolAlfredoChaves)
 #***************************************************
 
 aleLinhares <- update.alerta(city = 3203205, pars = pars.ES[["Central"]], crit = ES.criteria, 
-                                     datasource = con, sefinal=data_relatorio, writedb = FALSE,adjustdelay = FALSE)
-
-bolLinhares <- configRelatorioMunicipal(alert = aleLinhares, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                        pars = pars.ES, dir.out = ES.MN.Linhares.out, geraPDF = TRUE)
-
-publicarAlerta(ale = aleLinhares, pdf = bolLinhares, dir = "Relatorio/ES/Municipios/Linhares")
-
-rm(aleLinhares,bolLinhares)
+                                       datasource = con, sefinal=data_relatorio, writedb = FALSE,adjustdelay = FALSE)
+  
+  bolLinhares <- configRelatorioMunicipal(alert = aleLinhares, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
+                                          pars = pars.ES, dir.out = ES.MN.Linhares.out, geraPDF = TRUE)
+  
+  publicarAlerta(ale = aleLinhares, pdf = bolLinhares, dir = "Relatorio/ES/Municipios/Linhares")
+  
+  rm(aleLinhares,bolLinhares)
 #***************************************************
 # Cidade de Santa Maria de Jetiba
 #***************************************************
