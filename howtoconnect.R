@@ -47,10 +47,10 @@ tw <- dbReadTable(con, c("Municipio","Tweet"))
 str(tw)
 
 # baixar a tabela filtrando para um municipio
-comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 3304557"
-
-tw <- dbGetQuery(con, comando)
-str(tw)
+comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 2304400"
+comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE \"municipio_geocodigo\" = 2304400"
+d <- dbGetQuery(con, comando)
+str(d)
 head(tw)
 
 comando <- "SELECT * FROM \"Dengue_global\".\"estado\" LIMIT 2"

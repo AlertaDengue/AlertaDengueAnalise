@@ -54,28 +54,44 @@ reg
 ### Inserção das estacoes meteorologicas na tabela das regionais - requer SENHA
 # ----------------------------------------------------------------
 #https://estacoes.dengue.mat.br/
-escrevewu <- function(csvfile){
-  wus <- read.csv(csvfile,header = F)
-  wusES <- wus[,c(2,4,6)]
-  names(wusES) <- c("geocodigo", "estacao", "dist")
-  newdat <- data.frame(municipio_geocodigo=unique(wusES$geocodigo), codigo_estacao_wu=NA,
-                       estacao_wu_sec=NA)
-  for(cid in newdat$municipio_geocodigo) {
-    estacoes <- wusES[wusES$geocodigo==cid,]
-    estacoes <- estacoes[order(estacoes$dist),] # ordm decresc distancia
-    newdat$codigo_estacao_wu[newdat$municipio_geocodigo==cid] <- as.character(estacoes$estacao[1])
-    newdat$estacao_wu_sec[newdat$municipio_geocodigo==cid] <- as.character(estacoes$estacao[2])
+
+# Usar a tabela gerada pelo estacoes.dengue. Se os dados forem ruins, tem a opcao de colocar manualmente:
+
+CE.Reg.estacoes <- list(SBTE=c("Tauá","Crato","Canindé","Cratéus","Quixadá"),
+                 SBFZ=c("Sobral ","Tianguá","Caucaia","Maracanaú","Itapipoca",
+                 "Limoeiro do Norte","Acaraú","Baturité","Fortaleza","Aracati","Russas","Cascavel","Camocim"),
+                 SBPL =c("Juazeiro do Norte","Icó","Iguatu","Brejo Santo"))
+
+escrevewu <- function(csvfile=NULL,lista=NULL, UF){
+  if(!is.null(csvfile)){
+    wus <- read.csv(csvfile,header = F)
+    wusES <- wus[,c(2,4,6)]
+    names(wusES) <- c("geocodigo", "estacao", "dist")  
+    newdat <- data.frame(municipio_geocodigo=unique(wusES$geocodigo), codigo_estacao_wu=NA,
+                         estacao_wu_sec=NA)
+    for(cid in newdat$municipio_geocodigo) {
+      estacoes <- wusES[wusES$geocodigo==cid,]
+      estacoes <- estacoes[order(estacoes$dist),] # ordm decresc distancia
+      newdat$codigo_estacao_wu[newdat$municipio_geocodigo==cid] <- as.character(estacoes$estacao[1])
+      newdat$estacao_wu_sec[newdat$municipio_geocodigo==cid] <- as.character(estacoes$estacao[2])
+    }
   }
+  if(!is.null(lista)){
+    cidades <- getCidades(uf = "Ceará", datasource = con)
+    cidades$estacao <- NULL
+    for (e in 1:length(lista))cidades$estacao[cidades$nome_regional%in%lista[[e]]] <- names(lista)[e]
+    newdat <- data.frame(municipio_geocodigo=cidades$municipio_geocodigo, codigo_estacao_wu=cidades$estacao,
+                         estacao_wu_sec=cidades$estacao)
+  }
+    
   newpars = c("codigo_estacao_wu","estacao_wu_sec")
   res = write.parameters(newpars,newdat,senha="aldengue")
   newdat
 }
 
-escrevewu("../CE-estacoes-mais-proximas.csv")
+#escrevewu(csvfile="../CE-estacoes-mais-proximas.csv")
+escrevewu(lista=CE.Reg.estacoes)
 
-reg=getRegionais(uf = "Ceará")
-reg
-getCidades(regional="Baturité",uf="Ceará")
 
 ### 5. Uma olhadinha nos casos
 # --------------------------------
@@ -88,8 +104,16 @@ summary(casos$casos)
 
 
 #### 6. Inserção dos limiares epidemicos na tabela
-datasource = DenguedbConnect()
-thresholds.table <- info.dengue.apply.mem(mun_list=cid$municipio_geocodigo, con=datasource)
+## ------------------------------------------------------
+#thresholds.table <- info.dengue.apply.mem(mun_list=cid$municipio_geocodigo[1],con = con)
+load("mem-ceara.RData") # rodei direto a funcao do marcelo na pasta mem-marcelo (provisorio)
+newpars = c("limiar_preseason","limiar_posseason","limiar_epidemico")
+res = write.parameters(newpars,thresholds.table,senha="aldengue")
+
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo < 2400000"
+d <- dbGetQuery(con, sqlquery)
+head(d)
+tapply(d$limiar_preseason,d$nome_regional,median) # para atribuir uma media as regionais no par (provisorio)
 
 
 ### 5. Atraso de notificacao (metodo da Claudia)
