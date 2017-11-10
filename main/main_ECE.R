@@ -8,7 +8,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 # ----- data do relatorio:
-data_relatorio = 201740
+data_relatorio = 201739
 
 aleCE <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE) 
@@ -29,7 +29,7 @@ bolFort = configRelatorioMunicipal(alert = aleFort, tipo = "completo", siglaUF =
                                    data = data_relatorio, pars = pars.CE,
                                    dir.out = CE.Fortaleza.out, geraPDF = TRUE)
 
-
+publicarAlerta(ale = aleFort, pdf = bolFort, dir = "Relatorio/CE/Municípios/Fortaleza")
 
 rm(aleCE,bolCE)
 # ----- Fechando o banco de dados
