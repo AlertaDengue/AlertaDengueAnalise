@@ -7,7 +7,7 @@ con <- DenguedbConnect()
 
 # ----- data do relatorio:
 
-data_relatorio = 201745
+data_relatorio = 201746
 
 
 # ---- Calcula alerta: 
@@ -21,7 +21,7 @@ bolES=configRelatorioEstadual(uf="Espírito Santo", sigla = "ES", data=data_rela
 
 publicarAlerta(ale = aleES, pdf = bolES, dir = "Relatorio/ES/Estado")
 
-xbnllewrm(aleES,bolES)
+rm(aleES,bolES)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
