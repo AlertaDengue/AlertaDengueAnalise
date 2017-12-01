@@ -346,17 +346,17 @@ Confira a série histórica de alertas para dengue nas APS do Rio de Janeiro.
   aps <- unique(env$tabaps$aps)
   cat(paste('\\captionof{table}{Dengue na \'APS',aps[1],'\'}\n'))
   cat(paste('\\input{',env$tabela1,'}\n',sep=''))
-  cat(paste('\\captionof{table}{Chikungunya na \'APS',aps[1],'\'}\n'))
+  cat(paste('\\captionof{table}{Chikungunia na \'APS',aps[1],'\'}\n'))
   cat(paste('\\input{',env$tabelaC1,'}\n',sep=''))
   
   cat(paste('\\captionof{table}{Dengue na \'APS',aps[2],'\'}\n'))
   cat(paste('\\input{',env$tabela2,'}\n',sep=''))
-  cat(paste('\\captionof{table}{Chikungunya na \'APS',aps[2],'\'}\n'))
+  cat(paste('\\captionof{table}{Chikungunia na \'APS',aps[2],'\'}\n'))
   cat(paste('\\input{',env$tabelaC2,'}\n',sep=''))
   
   cat(paste('\\captionof{table}{Dengue na \'APS',aps[3],'\'}\n'))
   cat(paste('\\input{',env$tabela3,'}\n',sep=''))
-  cat(paste('\\captionof{table}{Chikungunya na \'APS',aps[3],'\'}\n'))
+  cat(paste('\\captionof{table}{Chikungunia na \'APS',aps[3],'\'}\n'))
   cat(paste('\\input{',env$tabelaC3,'}\n',sep=''))
 @
 \end{center}
@@ -375,17 +375,17 @@ Confira a série histórica de alertas para dengue nas APS do Rio de Janeiro.
   aps <- unique(env$tabaps$aps)
   cat(paste('\\captionof{table}{Dengue na \'APS',aps[4],'\'}\n'))
   cat(paste('\\input{',env$tabela4,'}\n',sep=''))
-  cat(paste('\\captionof{table}{Chikungunya na \'APS',aps[4],'\'}\n'))
+  cat(paste('\\captionof{table}{Chikungunia na \'APS',aps[4],'\'}\n'))
   cat(paste('\\input{',env$tabelaC4,'}\n',sep=''))
   
   cat(paste('\\captionof{table}{Dengue na \'APS',aps[5],'\'}\n'))
   cat(paste('\\input{',env$tabela5,'}',sep=''))
-  cat(paste('\\captionof{table}{Chikungunya na \'APS',aps[5],'\'}\n'))
+  cat(paste('\\captionof{table}{Chikungunia na \'APS',aps[5],'\'}\n'))
   cat(paste('\\input{',env$tabelaC5,'}',sep=''))
   
   cat(paste('\\captionof{table}{Dengue na \'APS',aps[6],'\'}\n'))
   cat(paste('\\input{',env$tabela6,'}\n',sep=''))
-  cat(paste('\\captionof{table}{Chikungunya na \'APS',aps[6],'\'}\n'))
+  cat(paste('\\captionof{table}{Chikungunia na \'APS',aps[6],'\'}\n'))
   cat(paste('\\input{',env$tabelaC6,'}\n',sep=''))
   
 @
