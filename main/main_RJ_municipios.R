@@ -23,6 +23,8 @@ bolrio <- configRelatorioRio( data=data_relatorio, alert=alerio, alertC= alerioC
 
 
 publicarAlerta(ale = alerio, pdf = bolrio, dir = "Relatorio/RJ/Municipios/RiodeJaneiro")
+
+
 res<-write.alertaRio(alerioC, write = "db")
 rm(alerio,alerioC,bolrio)
 
