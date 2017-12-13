@@ -8,7 +8,7 @@ con <- DenguedbConnect()
 
 
 # ----- data do relatorio:
-data_relatorio = 201748
+data_relatorio = 201749
 
 =======
 
