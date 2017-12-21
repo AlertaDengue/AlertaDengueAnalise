@@ -48,7 +48,7 @@ library('xtable')
 \item \hyperlink{estado}{Dengue no Estado} 
 \item \hyperlink{regional}{Dengue na Regional Metropolitana I}
 \item \hyperlink{mun}{Dengue no Município}
-\item \hyperlink{munC}{Chikungunia no Município}
+\item \hyperlink{munC}{Chikungunya no Município}
 \item \hyperlink{aps}{Áreas Programáticas da Saúde}
 \end{itemize}
 \centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
@@ -76,9 +76,9 @@ library('xtable')
   %	TEXTO PRINCIPAL - PRIMEIRA PAGINA - ALERTA A NIVEL DO ESTADO
 %-------------------------------------------------------------------------------
 
-  \hypertarget{estado}{\heading{Situação da Dengue e Chikungunia na Cidade do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
+  \hypertarget{estado}{\heading{Situação da Dengue e Chikungunya na Cidade do Rio de Janeiro}{6pt}} % \hypertarget provides a label to reference using 
 
-Esse é o boletim de situação da Dengue e Chikungunia do Município do Rio de Janeiro. Para contextualização, também é apresentada a situação da dengue no Estado e na Região Metropolitana I. No Estado, desde o início do ano, \Sexpr{env$totanoUF} casos de dengue foram registrados, sendo \Sexpr{env$totultseUF} desses na última semana. O mapa mostra as condições de transmissão da dengue no estado.
+Esse é o boletim de situação da Dengue e Chikungunya do Município do Rio de Janeiro. Para contextualização, também é apresentada a situação da dengue no Estado e na Região Metropolitana I. No Estado, desde o início do ano, \Sexpr{env$totanoUF} casos de dengue foram registrados, sendo \Sexpr{env$totultseUF} desses na última semana. O mapa mostra as condições de transmissão da dengue no estado.
 
 % Mapa estadual
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figmapaestado}}
@@ -240,20 +240,20 @@ A linha tracejada azul indica o limiar pré-epidêmico; a linha tracejada vermel
 
 
 %-----------------------------------------------------------------------------------%	
-  % MAIN BODY - FIFTH PAGE - Situação da chikungunia na cidade: SÉRIE HISTÓRICA e MAPA
+  % MAIN BODY - FIFTH PAGE - Situação da chikungunya na cidade: SÉRIE HISTÓRICA e MAPA
 %-----------------------------------------------------------------------------------
 
 \begin{minipage}[t]{0.6\linewidth} % Mini page taking up 100% of the actual page
-\hypertarget{munC}{\heading{Situação da Chikungunia na Cidade do Rio de Janeiro}{6pt}} % \hypertarget 
+\hypertarget{munC}{\heading{Situação da Chikungunya na Cidade do Rio de Janeiro}{6pt}} % \hypertarget 
 
-Em 2017, até agora, foram notificados \Sexpr{env$totChik2017} casos de chikungunia na cidade do Rio de Janeiro, sendo \Sexpr{env$totChik2017ult} na última semana. Para comparação, em 2016, no mesmo período, \Sexpr{env$totChik2016se} casos de chikungunia foram notificados na cidade do Rio de Janeiro. No total, em 2016, ocorreram \Sexpr{env$totChik2016} casos. 
+Em 2017, até agora, foram notificados \Sexpr{env$totChik2017} casos de chikungunya na cidade do Rio de Janeiro, sendo \Sexpr{env$totChik2017ult} na última semana. Para comparação, em 2016, no mesmo período, \Sexpr{env$totChik2016se} casos de chikungunya foram notificados na cidade do Rio de Janeiro. No total, em 2016, ocorreram \Sexpr{env$totChik2016} casos. 
 
-Veja o mapa da situação atual de transmissão de chikungunia nas APS:
+Veja o mapa da situação atual de transmissão de chikungunya nas APS:
 
 \includegraphics[width=0.95\textwidth]{\Sexpr{env$nomemaparioChik}}
 
 
-Confira a série histórica de chikungunia na cidade do Rio de Janeiro desde janeiro de 2016.
+Confira a série histórica de chikungunya na cidade do Rio de Janeiro desde janeiro de 2016.
 
 \begin{center}
 \includegraphics[width=0.95\textwidth]{\Sexpr{env$figcidadeChik}}
@@ -268,7 +268,7 @@ Confira a série histórica de chikungunia na cidade do Rio de Janeiro desde jan
   %%      TERCEIRA PAGINA: CAIXA LATERAL - INDICE APS
 %%-------------------------------------------------------------------------
   
-  \textbf{Chikungunia nas APS} 
+  \textbf{Chikungunya nas APS} 
 
 \begin{itemize}
 <<bulletsaps,echo=FALSE,results=tex>>=
@@ -317,7 +317,7 @@ Confira a série histórica de alertas para dengue nas APS do Rio de Janeiro.
   % MAIN BODY - SEVENTH and EIGHTTH PAGE - Situação por APS chik - graficos 
 %-----------------------------------------------------------------------------------
   
-\hypertarget{aps}{\heading{Nas Áreas Programáticas de Saúde: Chikungunia}{6pt}} % \hypertarget 
+\hypertarget{aps}{\heading{Nas Áreas Programáticas de Saúde: Chikungunya}{6pt}} % \hypertarget 
 
 \vspace{2cm}
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figaps1Chik}}
@@ -326,7 +326,7 @@ Confira a série histórica de alertas para dengue nas APS do Rio de Janeiro.
 
 \newpage
 
-\heading{Chikungunia (cont.)}{6pt} 
+\heading{Chikungunya (cont.)}{6pt} 
 
 \vspace{2cm}
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figaps2Chik}}
@@ -337,7 +337,7 @@ Confira a série histórica de alertas para dengue nas APS do Rio de Janeiro.
   % MAIN BODY - PAG NOVE E DEZ - Situação de dengue e chik por APS - tabelas
 %-----------------------------------------------------------------------------------
   
-\heading{Tabelas: Resumo das últimas quatro semanas epidemiológicas da dengue e chikungunia nas APS.}{6pt}
+\heading{Tabelas: Resumo das últimas quatro semanas epidemiológicas da dengue e chikungunya nas APS.}{6pt}
 
 \begin{center}
 
