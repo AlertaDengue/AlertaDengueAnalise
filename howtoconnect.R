@@ -39,6 +39,8 @@ dbListFields(con, c("Municipio","Clima_wu")) # variaveis meteorologicas
 
 dbListFields(con, c("Dengue_global","regional_saude")) # variaveis meteorologicas
 dbListFields(con, c("Dengue_global","Municipio")) # 
+
+
 # Exemplos de consultas:
 # -----------------------
 
@@ -46,20 +48,19 @@ dbListFields(con, c("Dengue_global","Municipio")) #
 tw <- dbReadTable(con, c("Municipio","Tweet"))
 str(tw)
 
-# baixar a tabela filtrando para um municipio
+# baixar a tabela de tweet filtrando para um municipio
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 2304400"
-comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE \"municipio_geocodigo\" = 2304400"
 d <- dbGetQuery(con, comando)
 str(d)
-head(tw)
+head(d)
 
+# primeiros 2 registros da tabela dengue global. estado
 comando <- "SELECT * FROM \"Dengue_global\".\"estado\" LIMIT 2"
-
 d <- dbGetQuery(con, comando)
 str(d)
 
 
-# baixar a tabela filtrando para um municipio e apenas registros maiores que 10
+# baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 3304557 AND numero > 10"
 tw <- dbGetQuery(con, comando)
 str(tw)
@@ -81,25 +82,19 @@ ON e.codestacao = c.\"Estacao_cemaden_codestacao\" WHERE e.municipio = 'RIO DE J
 AND c.sensor = 'intensidade_precipicacao'"
 
 cemaden.prec <- dbGetQuery(con, sqlquery)
-
-dd
-### OUTROS COMANDOS
+head(cemaden.prec)
 
 
-
-sqlquery = paste("SELECT  *
-  FROM  \"Municipio\".\"Estacao_wu\" AS e 
-  INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
-  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBRJ'")
-
-sbrj <- dbGetQuery(con, sqlquery)
+# dados da tabela Estacao wu para a estacao SBRJ
 
 sqlquery = paste("SELECT  *
   FROM  \"Municipio\".\"Estacao_wu\" AS e 
   INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
   ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBGL'")
+d <- dbGetQuery(con, sqlquery)
+d[d$data_dia>"2017-10-05",]
 
-sbgl <- dbGetQuery(con, sqlquery)
+# dados da tabela da estacao wu para a estacao SBJR , primeiros 10 registros
 
 sqlquery = paste("SELECT  *
   FROM  \"Municipio\".\"Estacao_wu\" AS e 
@@ -108,12 +103,14 @@ sqlquery = paste("SELECT  *
 
 sbjr <- dbGetQuery(con, sqlquery)
 
-# Dados de chikungunia
+# Dados de chikungunya do municipio 3304557
 sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND cid10_codigo = \'A920\'"
 d <- dbGetQuery(con, sqlquery)
 
 
-# Acessando a tabela "Municipio" dentro do "DengueGlobal" 
+####### Outros comandos
+
+ 
 dbListFields(con, c("Dengue_global","Municipio"))
 dbListFields(con, c("Dengue_global","regional_saude"))
 
