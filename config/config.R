@@ -170,32 +170,40 @@ CE.estacoes <- c(SBTE=c("Tauá","Crato","Canindé","Cratéus","Quixadá"),SBFZ=c
                  SBPL =c("Juazeiro do Norte","Icó","Iguatu","Brejo Santo"))
 pars.CE <- NULL
 pars.CE[nomesregs.CE] <- list(NULL)
-pars.CE[["Tauá"]] <- list(pdig = c(1.488395,1.0268605),tcrit=30, inccrit = 176, preseas=29, posseas=49, legpos="bottomright") 
-pars.CE[["Crato"]] <- list(pdig = c(2.134714,0.7901286),tcrit=30, inccrit = 70, preseas=29, posseas=31, legpos="bottomright")
-pars.CE[["Sobral "]] <- list(pdig = c(2.148597,1.1197786),tcrit=30, inccrit = 89, preseas=34, posseas=33,legpos="bottomright")
-pars.CE[["Juazeiro do Norte"]] <- list(pdig = c(1.830832,1.1666795),tcrit=30, inccrit = 51, preseas=18, posseas=18, legpos="bottomright")
-pars.CE[["Tianguá"]] <- list(pdig = c(NA,NA),tcrit=30, inccrit = 176, preseas=13, posseas=13, legpos="bottomright")
-pars.CE[["Icó"]] <- list(pdig = c(2.614918, 1.0401348),tcrit=30, inccrit = 105, preseas=23, posseas=29, legpos="bottomright")
-pars.CE[["Caucaia"]] <- list(pdig = c(2.170315, 0.8864213),tcrit=30, inccrit = 60, preseas=27, posseas=30, legpos="bottomright")
-pars.CE[["Maracanaú"]] <- list(pdig = c(2.303916, 1.1280664),tcrit=30, inccrit = 54, preseas=21, posseas=21, legpos="bottomright")
-pars.CE[["Canindé"]] <- list(pdig = c(2.156334, 0.8084649),tcrit=30, inccrit = 47, preseas=23, posseas=23, legpos="bottomright")
-pars.CE[["Iguatu"]] <- list(pdig = c(2.829516, 0.8645565),tcrit=30, inccrit = 51, preseas=25, posseas=25, legpos="bottomright")
-pars.CE[["Cratéus"]] <- list(pdig = c(1.696401, 1.1192531),tcrit=30, inccrit = 81, preseas=29, posseas=22, legpos="bottomright")
-pars.CE[["Quixadá"]] <- list(pdig = c(1.754604, 0.9727683),tcrit=30, inccrit = 65, preseas=31, posseas=27, legpos="bottomright")
-pars.CE[["Itapipoca"]] <- list(pdig = c(1.444086, 0.9250124),tcrit=30, inccrit = 51, preseas=23, posseas=23, legpos="bottomright")
-pars.CE[["Limoeiro do Norte"]] <- list(pdig = c(1.816298, 1.2204908),tcrit=30, inccrit = 127, preseas=23, posseas=35,legpos="bottomright")
-pars.CE[["Brejo Santo"]] <- list(pdig = c(2.498629, 1.0448990),tcrit=30, inccrit = 87, preseas=33, posseas=33, legpos="bottomright")
-pars.CE[["Acaraú"]] <- list(pdig = c(2.257147, 1.1582345),tcrit=30, inccrit = 41, preseas=18, posseas=21, legpos="bottomright")
-pars.CE[["Baturité"]] <- list(pdig = c(2.046614, 1.2076495),tcrit=30, inccrit = 81, preseas=33, posseas=34, legpos="bottomright")
-pars.CE[["Fortaleza"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=30, inccrit = 70, preseas=19, posseas=20, legpos="bottomright")
-pars.CE[["Aracati"]] <- list(pdig = c(2.579873, 1.2285321),tcrit=30, inccrit = 56, preseas=28, posseas=28, legpos="bottomright")
-pars.CE[["Russas"]] <- list(pdig = c(1.870998, 1.0505445),tcrit=30, inccrit = 76, preseas=38, posseas=43, legpos="bottomright")
-pars.CE[["Cascavel"]] <- list(pdig = c(2.229735, 0.9273108),tcrit=30, inccrit = 52, preseas=22, posseas=19, legpos="bottomright")
-pars.CE[["Camocim"]] <- list(pdig = c(2.139148, 0.8902779),tcrit=30, inccrit = 77, preseas=33, posseas=33, legpos="bottomright")
+pars.CE[["Tauá"]] <- list(pdig = c(1.488395,1.0268605),tcrit=NA, ucrit = 87, inccrit = 176, preseas=29, posseas=49, legpos="bottomright") 
+pars.CE[["Crato"]] <- list(pdig = c(2.134714,0.7901286),tcrit=NA, ucrit= 87, inccrit = 70, preseas=29, posseas=31, legpos="bottomright")
+pars.CE[["Sobral "]] <- list(pdig = c(2.148597,1.1197786),tcrit=NA, ucrit = 87, inccrit = 89, preseas=34, posseas=33,legpos="bottomright")
+pars.CE[["Juazeiro do Norte"]] <- list(pdig = c(1.830832,1.1666795),tcrit=NA, ucrit = 87, inccrit = 51, preseas=18, posseas=18, legpos="bottomright")
+pars.CE[["Tianguá"]] <- list(pdig = c(1.48,1),tcrit=NA, ucrit = 87, inccrit = 176, preseas=13, posseas=13, legpos="bottomright")
+pars.CE[["Icó"]] <- list(pdig = c(2.614918, 1.0401348),tcrit=NA, ucrit = 87, inccrit = 105, preseas=23, posseas=29, legpos="bottomright")
+pars.CE[["Caucaia"]] <- list(pdig = c(2.170315, 0.8864213),tcrit=NA, ucrit = 87, inccrit = 60, preseas=27, posseas=30, legpos="bottomright")
+pars.CE[["Maracanaú"]] <- list(pdig = c(2.303916, 1.1280664),tcrit=NA, ucrit = 87, inccrit = 54, preseas=21, posseas=21, legpos="bottomright")
+pars.CE[["Canindé"]] <- list(pdig = c(2.156334, 0.8084649),tcrit=NA, ucrit = 87, inccrit = 47, preseas=23, posseas=23, legpos="bottomright")
+pars.CE[["Iguatu"]] <- list(pdig = c(2.829516, 0.8645565),tcrit=NA, ucrit = 87, inccrit = 51, preseas=25, posseas=25, legpos="bottomright")
+pars.CE[["Cratéus"]] <- list(pdig = c(1.696401, 1.1192531),tcrit=NA, ucrit = 87, inccrit = 81, preseas=29, posseas=22, legpos="bottomright")
+pars.CE[["Quixadá"]] <- list(pdig = c(1.754604, 0.9727683),tcrit=NA, ucrit = 87, inccrit = 65, preseas=31, posseas=27, legpos="bottomright")
+pars.CE[["Itapipoca"]] <- list(pdig = c(1.444086, 0.9250124),tcrit=NA, ucrit = 87, inccrit = 51, preseas=23, posseas=23, legpos="bottomright")
+pars.CE[["Limoeiro do Norte"]] <- list(pdig = c(1.816298, 1.2204908),tcrit=NA, ucrit = 87, inccrit = 127, preseas=23, posseas=35,legpos="bottomright")
+pars.CE[["Brejo Santo"]] <- list(pdig = c(2.498629, 1.0448990),tcrit=NA, ucrit = 87, inccrit = 87, preseas=33, posseas=33, legpos="bottomright")
+pars.CE[["Acaraú"]] <- list(pdig = c(2.257147, 1.1582345),tcrit=NA, ucrit = 87, inccrit = 41, preseas=18, posseas=21, legpos="bottomright")
+pars.CE[["Baturité"]] <- list(pdig = c(2.046614, 1.2076495),tcrit=NA, ucrit = 87, inccrit = 81, preseas=33, posseas=34, legpos="bottomright")
+pars.CE[["Fortaleza"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=NA, ucrit=87, inccrit = 70, preseas=19, posseas=20, legpos="bottomright")
+pars.CE[["Aracati"]] <- list(pdig = c(2.579873, 1.2285321),tcrit=NA, ucrit = 87, inccrit = 56, preseas=28, posseas=28, legpos="bottomright")
+pars.CE[["Russas"]] <- list(pdig = c(1.870998, 1.0505445),tcrit=NA, ucrit = 87, inccrit = 76, preseas=38, posseas=43, legpos="bottomright")
+pars.CE[["Cascavel"]] <- list(pdig = c(2.229735, 0.9273108),tcrit=NA, ucrit = 87, inccrit = 52, preseas=22, posseas=19, legpos="bottomright")
+pars.CE[["Camocim"]] <- list(pdig = c(2.139148, 0.8902779),tcrit=NA, ucrit = 87, inccrit = 77, preseas=33, posseas=33, legpos="bottomright")
+
+# Chick
+pars.CE.chik <- NULL
+pars.CE.chik[["Fortaleza"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=NA, ucrit=87, inccrit = 70, preseas=5, posseas=5, legpos="bottomright")
+
+# Chick
+pars.CE.zika <- NULL
+pars.CE.zika[["Fortaleza"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=NA, ucrit=87, inccrit = 70, preseas=5, posseas=5, legpos="bottomright")
 
 # Dados para o mapa
 CE.shape="AlertaDengueAnalise/report/CE/shape/23MUE250GC_SIR.shp"  # fonte para o mapa
 CE.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
-CE.criteria = criteria
+CE.criteria = criteriaCE
 CE.out = "AlertaDengueAnalise/report/CE"
 CE.Fortaleza.out="AlertaDengueAnalise/report/CE/Municipios/Fortaleza"

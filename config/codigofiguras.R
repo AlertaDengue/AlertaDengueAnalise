@@ -2,76 +2,9 @@
 ## Graficos e Mapas para relatorios
 ###############################################
 
-# fig.all <- function(obj){
-#       
-#       ncidades = length(obj)
-#       
-#       for (i in 1:ncidades){
-#             oobj <- obj[[i]]
-#             nome = na.omit(unique(oobj$data$nome))
-#             nick <- gsub(" ", "", nome, fixed = TRUE)
-#             filename = paste("../report",nick,".png",sep="")
-#             
-#             png(filename, width = 16, height = 10.5, units="cm", res=100)
-#             layout(matrix(1:2, nrow = 2, byrow = TRUE), widths = lcm(15), 
-#                    heights = c(lcm(3), lcm(7)))
-#             
-#             # Grafico superior - tweeter
-#              par(mai=c(0,0,0,0),mar=c(0,4,0,3))
-#              plot(oobj$data$casos, type="l", xlab="", ylab="", axes=FALSE)
-#              daxis(1, pos=0, lty=0, lab=FALSE)
-#              axis(2,las=2)
-#              mtext(text="casos de dengue", line=2.5,side=2, cex = 0.7)
-#              maxy <- max(oobj$data$casos, na.rm=TRUE)
-#              legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
-#              par(new=T)
-#              plot(oobj$data$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
-#              lines(oobj$data$tweet, col=3, type="h") #*coefs[2] + coefs[1]
-#              axis(1, pos=0, lty=0, lab=FALSE)
-#              axis(4,las=2)
-#              mtext(text="tweets", line=2.5, side=4, cex = 0.7)
-#             
-#             # Grafico meio
-#             par(mai=c(0,0,0,0),mar=c(0,4,0,3))
-#             plot(oobj$data$temp_min, type="l", xlab="", ylab ="temperatura",axes=FALSE,col="darkgreen")
-#             axis(2, las=2)
-#             clip(1,length(oobj$data$temp_min),oobj$rules$tcrit,100)
-#             lines(oobj$data$temp_min, col='yellow', type='l')
-#             abline(h=obj$rules$tcrit, lty=2)
-#              
-#             
-#             # Grafico baixo
-#             par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-#             plot.alerta(oobj, var="inc",ini=201352,fim=max(oobj$data$SE))
-#             dev.off()
-#             message(paste("Figura salva da cidade", nick))
-#       }
-# }
-
-# -----------------------------------------------
-# fig.cores <- function(obj){
-#       
-#       ncidades = length(obj)
-#       
-#       for (i in 1:ncidades){
-#             oobj <- obj[[i]]
-#             nome = na.omit(unique(oobj$data$nome))
-#             nick <- gsub(" ", "", nome, fixed = TRUE)
-#             filename = paste("report/cores_",nick,".png",sep="")
-#             
-#             png(filename, width = 16, height = 5.5, units="cm", res=100)
-#             layout(matrix(1), widths = lcm(15), 
-#                    heights = c(lcm(5)))
-#             # Grafico baixo
-#             par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-#             plot.alerta(oobj, var="inc",ini=201352,fim=max(oobj$data$SE))
-#             dev.off()
-#             message(paste("Figura salva da cidade", nick))
-#       }
-# }
 
 # --------- Mapa das regionais --------------------------------------
-mapa.regional <- function(alerta, regionais, estado, sigla, pars, shape, 
+mapa.regional <- function(alerta, regionais, estado, varcli = "temp_min", sigla, pars, shape, 
                           shapeid, data, dir="",
                           datasource){
   for (i in regionais) {
@@ -95,7 +28,12 @@ mapa.regional <- function(alerta, regionais, estado, sigla, pars, shape,
 # obj é o alerta do municipio gerado pelo update.alerta
 # USO: figuramunicipio(alePR_RS_Cascavel[["CéuAzul"]])
 
-figuramunicipio <- function(obj, param, tsdur=104){
+figuramunicipio <- function(obj, param, varcli = "temp_min", cid="A90", tsdur=104){
+  
+  if(cid == "A90") titulo = "Casos de Dengue"
+  if(cid == "A92.0") titulo = "Casos de Chikungunya"
+  if(cid == "A92.8") titulo = "Casos de Zika"
+  
   layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
          heights = c(rep(lcm(4),2), lcm(5)))
   
@@ -103,29 +41,45 @@ figuramunicipio <- function(obj, param, tsdur=104){
   objc = obj$data[(n-tsdur):n,]
   
   #objc <- obj$data[obj$data$SE>=201301,] 
-  # Subfigura do topo (serie temporal dengue e tweets)
+  # Subfigura do topo (serie temporal de casos e tweets)
   par(mai=c(0,0,0,0),mar=c(1,4,0,3))
   plot(objc$casos, type="l", xlab="", ylab="", axes=FALSE)
   axis(1, pos=0, lty=0, lab=FALSE)
   axis(2)
-  mtext(text="Casos de Dengue", line=2.5,side=2, cex = 0.7)
+  mtext(text=titulo, line=2.5,side=2, cex = 0.7)
   maxy <- max(objc$casos, na.rm=TRUE)
-  legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
-  par(new=T)
-  if(sum(is.na(objc$tweet))==nrow(objc)) objc$tweet = 0 # 
-  plot(objc$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
-  lines(objc$tweet, col=3, type="h") #*coefs[2] + coefs[1]
-  axis(1, pos=0, lty=0, lab=FALSE)
-  axis(4)
-  mtext(text="Tweets", line=2.5, side=4, cex = 0.7)
-  
-  # subfigura do meio: temperatura
+  if(cid == "A92.0")legend(25, maxy, c("casos de chikungunya"),col=c(1), lty=1, bty="n",cex=0.7)
+  if(cid == "A92.8")legend(25, maxy, c("casos de zika"),col=c(1), lty=1, bty="n",cex=0.7)
+  # colocar tweet, so dengue
+  if(cid == "A90") {
+    legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
+    par(new=T)
+    if(sum(is.na(objc$tweet))==nrow(objc)) objc$tweet = 0 # 
+    plot(objc$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+    lines(objc$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+    axis(1, pos=0, lty=0, lab=FALSE)
+    axis(4)
+    mtext(text="Tweets", line=2.5, side=4, cex = 0.7)
+  }
+  # subfigura do meio: clima
   par(mai=c(0,0,0,0),mar=c(1,4,0,3))
-  plot(objc$temp_min, type="l", xlab="", ylab ="Temperatura",axes=FALSE)
+  if(varcli == "temp_min") {
+    plot(objc$temp_min, type="l", xlab="", ylab ="Temperatura min",axes=FALSE)
+    abline(h=param[[1]]$tcrit, lty=2)
+  }
+  if(varcli == "umid_min") {
+    plot(objc$umid_min, type="l", xlab="", ylab ="Umidade min",axes=FALSE)
+    abline(h=param[[1]]$ucrit, lty=2)
+  }
+  if(varcli == "umid_max") {
+    plot(objc$umid_max, type="l", xlab="", ylab ="Umidade max",axes=FALSE)
+    abline(h=param[[1]]$ucrit, lty=2)
+  }
+  
   legend(x="topleft",lty=c(2),col=c("black"),
          legend=c("limiar favorável transmissão"),cex=0.85,bty="n")
   axis(2)
-  abline(h=param[[1]]$tcrit, lty=2)
+  
   
   # subfigura de baixo: alerta colorido
   par(mai=c(0,0,0,0),mar=c(1,4,0,4))
@@ -139,7 +93,7 @@ figuramunicipio <- function(obj, param, tsdur=104){
 # -----------------------------
 # figuraRio
 
-figuraRio <- function(cid){
+figuraRio <- function(cid, varcli = "temp_min"){
   par(mfrow=c(3,1),mar=c(4,4,1,1))
   ymax <- max(110,max(cid$inc))
   plot(1:dim(cid)[1],cid$tweet,type="h",ylab="",axes=FALSE,xlab="",main="Tweets sobre dengue")
@@ -161,7 +115,7 @@ figuraRio <- function(cid){
 
 # figuraRioChik
 
-figuraRioChik <- function(cid){
+figuraRioChik <- function(cid, varcli = "temp_min"){
   par(mfrow=c(1,1),mar=c(4,4,1,1))
   #ymax <- max(110,max(cid$inc))
   plot(1:dim(cid)[1],cid$casos, type="l", xlab="",ylab="casos notificados",axes=FALSE,main="Chikungunia")
@@ -176,7 +130,7 @@ figuraRioChik <- function(cid){
 # fazSomatorio casos nos municipios para calcular totais anuais por municipio, regional
 # -------------------------------
 
-tabSomatorio <- function(ale,ano,data,agregaregional=FALSE){
+tabSomatorio <- function(ale,ano,data,varcli = "temp_min", agregaregional=FALSE){
 
   tabSoma = data.frame(nome = names(ale), Municipio = NA, Regional = NA, 
                        totano = NA, totultse = NA,
@@ -224,16 +178,27 @@ tabSomatorio <- function(ale,ano,data,agregaregional=FALSE){
 # fazTabelao com dados da ultima semana das Regionais ou do estado
 # -------------------------------
 
-faztabelaoRS <- function(ale,ano,data,tex=F){
+faztabelaoRS <- function(ale,ano,data,varcli = "temp_min", tex=F){
   totano=0; totultse=0
   nverde=0; namarelo=0;nlaranja=0;nvermelho=0
   nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
   
   # ----- começo do tabelao
-  tabelao = data.frame(Municipio = character(),Regional = character(), 
+  if(varcli == "temp_min") tabelao = data.frame(Municipio = character(),Regional = character(), 
                        Temperatura = numeric(), Tweets=numeric(),
                        Casos = integer(), Incidencia=numeric(),Rt=numeric(),
                        Nivel=character(),stringsAsFactors = FALSE)
+  
+  if(varcli == "umid_min") tabelao = data.frame(Municipio = character(),Regional = character(), 
+                       Umidade = numeric(), Tweets=numeric(),
+                       Casos = integer(), Incidencia=numeric(),Rt=numeric(),
+                       Nivel=character(),stringsAsFactors = FALSE)
+  
+  if(varcli == "umid_max") tabelao = data.frame(Municipio = character(),Regional = character(), 
+                       Umidade = numeric(), Tweets=numeric(),
+                       Casos = integer(), Incidencia=numeric(),Rt=numeric(),
+                       Nivel=character(),stringsAsFactors = FALSE)
+  
   N = length(names(ale))
   for (i in 1:N){
     ai <- ale[[i]] 
@@ -256,6 +221,7 @@ faztabelaoRS <- function(ale,ano,data,tex=F){
     nvermelho1 = sum(c(nvermelho1,as.numeric(ai$indices$level[linhase1]==4)),na.rm=TRUE)
     
     cores=c("verde","amarelo","laranja","vermelho")
+    if (varcli == "temp_min")
     paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
                               Regional = as.character(ai$data$nome_regional[1]),
                               Temperatura = ai$data$temp_min[linhase],
@@ -265,6 +231,29 @@ faztabelaoRS <- function(ale,ano,data,tex=F){
                               Rt=ai$data$Rt[linhase],
                               Nivel=as.character(cores[ai$indices$level[linhase]]),
                               stringsAsFactors = FALSE)
+
+    if (varcli == "umid_min")
+      paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
+                                Regional = as.character(ai$data$nome_regional[1]),
+                                Umid.min = ai$data$umid_min[linhase],
+                                Tweets = ai$data$tweet[linhase],
+                                Casos = ai$data$casos[linhase], 
+                                Incidencia=ai$data$inc[linhase],
+                                Rt=ai$data$Rt[linhase],
+                                Nivel=as.character(cores[ai$indices$level[linhase]]),
+                                stringsAsFactors = FALSE)
+
+    if (varcli == "umid_max")
+      paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
+                                Regional = as.character(ai$data$nome_regional[1]),
+                                Umid.max = ai$data$umid_max[linhase],
+                                Tweets = ai$data$tweet[linhase],
+                                Casos = ai$data$casos[linhase], 
+                                Incidencia=ai$data$inc[linhase],
+                                Rt=ai$data$Rt[linhase],
+                                Nivel=as.character(cores[ai$indices$level[linhase]]),
+                                stringsAsFactors = FALSE)
+    
     tabelao[i,] = paratabelao
     
   }
@@ -284,23 +273,41 @@ faztabelaoRS <- function(ale,ano,data,tex=F){
 # faz tabela resumo dos municipios indicados 
 ## --------------------------------
 
-faztabelaresumo <- function(alert,municipios, nmunicipios,tex=F){
+faztabelaresumo <- function(alert,municipios, nmunicipios,varcli = "temp_min",tex=F){
   cidadessemespaco = gsub(" ","",municipios$nome)
   linhascidades <- which(names(alert) %in% cidadessemespaco)
   
+  if (varcli=="temp_min")
   tabela = tail(alert[[linhascidades[1]]]$data[,c("SE","casos","pop","tweet","temp_min",
                                                   "tcasesICmin","tcasesmed","tcasesICmax")])
+  
+  if (varcli=="umid_min")
+    tabela = tail(alert[[linhascidades[1]]]$data[,c("SE","casos","pop","tweet","umid_min",
+                                                    "tcasesICmin","tcasesmed","tcasesICmax")])
+  
+  if (varcli=="umid_max")
+    tabela = tail(alert[[linhascidades[1]]]$data[,c("SE","casos","pop","tweet","umid_max",
+                                                    "tcasesICmin","tcasesmed","tcasesICmax")])
+  
   tabelaregional <- data.frame(SE=tabela$SE)
   
   for (n in 2:nmunicipios){
     
-    newtabela = tail(alert[[linhascidades[n]]]$data[,c("SE","casos","pop","tweet","temp_min",
+    if (varcli=="temp_min")   newtabela = tail(alert[[linhascidades[n]]]$data[,c("SE","casos","pop","tweet","temp_min",
                                                        "tcasesICmin","tcasesmed","tcasesICmax")])
+    if (varcli=="umid_min")   newtabela = tail(alert[[linhascidades[n]]]$data[,c("SE","casos","pop","tweet","umid_min",
+                                                         "tcasesICmin","tcasesmed","tcasesICmax")])
+    if (varcli=="umid_max")  newtabela = tail(alert[[linhascidades[n]]]$data[,c("SE","casos","pop","tweet","umid_max",
+                                                         "tcasesICmin","tcasesmed","tcasesICmax")])
+    
     #tabela[,2:8] <- tabela[,2:8]+newtabela[,2:8]
     tabela = rbind(tabela,newtabela)
     
   }
-  tabelaregional$temp_min <- tapply(tabela$temp_min, tabela$SE, mean, na.rm=TRUE)
+  
+  if (varcli=="temp_min") tabelaregional$tempmin <- tapply(tabela$temp_min, tabela$SE, mean, na.rm=TRUE)
+  if (varcli=="umid_min") tabelaregional$umidmin <- tapply(tabela$umid_min, tabela$SE, mean, na.rm=TRUE)
+  if (varcli=="umid_max") tabelaregional$umidmax <- tapply(tabela$umid_max, tabela$SE, mean, na.rm=TRUE)
   tabelaregional$casos <- tapply(tabela$casos, tabela$SE, sum,na.rm=T)
   tabelaregional$pop <-tapply(tabela$pop, tabela$SE, sum)
   tabelaregional$tweet <-tapply(tabela$tweet, tabela$SE, sum,na.rm=T)
@@ -310,8 +317,19 @@ faztabelaresumo <- function(alert,municipios, nmunicipios,tex=F){
   tabelaregional$inc <- tabelaregional$casos/tabelaregional$pop*100000
   
   #tabelafinal <- tail(tabelaregional[,c("SE","temp_min","tweet","casos","tcasesmed","tcasesICmin","tcasesICmax","inc")])
-  tabelafinal <- tail(tabelaregional[,c("SE","temp_min","tweet","casos","tcasesmed")])
-  names(tabelafinal)<-c("SE","temperatura","tweet","casos notif","casos preditos")
+  if (varcli=="temp_min") {
+        tabelafinal <- tail(tabelaregional[,c("SE","tempmin","tweet","casos","tcasesmed")])
+        names(tabelafinal)<-c("SE","temperatura","tweet","casos notif","casos preditos")
+  }
+  if (varcli=="umid_min"){
+    tabelafinal <- tail(tabelaregional[,c("SE","umidmin","tweet","casos","tcasesmed")])
+    names(tabelafinal)<-c("SE","umid.min","tweet","casos notif","casos preditos")
+  }
+  if (varcli=="umid_max"){
+    tabelafinal <- tail(tabelaregional[,c("SE","umidmax","tweet","casos","tcasesmed")])
+    names(tabelafinal)<-c("SE","umid.max","tweet","casos notif","casos preditos")
+  }
+  
   if(tex==TRUE){
     tabelax <-xtable(tabelafinal,align ="cc|cccc",digits = c(0,0,1,0,0,0),size="\\small")
     #digits(tabelax) <- 0
@@ -324,7 +342,7 @@ faztabelaresumo <- function(alert,municipios, nmunicipios,tex=F){
 ## Figura regional
 ## ---------------------------
 
-fazfiguraregional <- function(ale, municipreg, tsdur){
+fazfiguraregional <- function(ale, municipreg, varcli = "temp_min",tsdur){
   
 nmunreg = length(municipreg)
 res = write.alerta(ale[[municipreg[1]]])

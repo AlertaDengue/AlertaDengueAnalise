@@ -48,6 +48,9 @@ dbListFields(con, c("Dengue_global","Municipio")) #
 tw <- dbReadTable(con, c("Municipio","Tweet"))
 str(tw)
 
+d <- dbReadTable(con, c("Municipio","Historico_alerta_chik"))
+tail(d)
+
 # baixar a tabela de tweet filtrando para um municipio
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 2304400"
 d <- dbGetQuery(con, comando)
@@ -90,9 +93,9 @@ head(cemaden.prec)
 sqlquery = paste("SELECT  *
   FROM  \"Municipio\".\"Estacao_wu\" AS e 
   INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
-  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBGL'")
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBFZ'")
 d <- dbGetQuery(con, sqlquery)
-d[d$data_dia>"2017-10-05",]
+d[d$data_dia>"2017-11-05",]
 
 # dados da tabela da estacao wu para a estacao SBJR , primeiros 10 registros
 
@@ -107,6 +110,15 @@ sbjr <- dbGetQuery(con, sqlquery)
 sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND cid10_codigo = \'A920\'"
 d <- dbGetQuery(con, sqlquery)
 
+# Dados de notificacao do municipio 
+sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 2304400"
+d <- dbGetQuery(con, sqlquery)
+table(d$cid10_codigo)
+
+# Dados de notificacao por doenca  
+sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE cid10_codigo = \'A92.8\'"
+d <- dbGetQuery(con, sqlquery)
+table(d$municipio_geocodigo)
 
 ####### Outros comandos
 
