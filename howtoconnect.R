@@ -93,7 +93,7 @@ head(cemaden.prec)
 sqlquery = paste("SELECT  *
   FROM  \"Municipio\".\"Estacao_wu\" AS e 
   INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
-  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBFZ'")
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBVT'")
 d <- dbGetQuery(con, sqlquery)
 d[d$data_dia>"2017-11-05",]
 
@@ -127,9 +127,9 @@ dbListFields(con, c("Dengue_global","Municipio"))
 dbListFields(con, c("Dengue_global","regional_saude"))
 
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3205309"
-d <- dbGetQuery(con, sqlquery)
-d
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3200136"
+dr <- dbGetQuery(con, sqlquery)
+dr
 
 sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" "
 d <- dbGetQuery(con, sqlquery)

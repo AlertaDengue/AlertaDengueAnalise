@@ -26,6 +26,8 @@ rm(aleES,bolES)
 # ----- Fechando o banco de dados
 dbDisconnect(con)
 
-ale <- update.alerta(city = 3205309, pars = pars.ES[["Central"]], crit = ES.criteria, 
+ale <- update.alerta(city = 3200136, pars = pars.ES[["Central"]], crit = ES.criteria, 
                              datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
 
+ale <- update.alerta(region = "Central", pars = pars.ES[["Central"]], crit = ES.criteria, 
+                     datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
