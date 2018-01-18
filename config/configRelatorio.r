@@ -457,13 +457,15 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
   se = data - ano*100 
   
   # ----------------------------------------------- 
-  # Mapa do estado (funcao basica do alerttools)
+  # Mapa de alerta do estado (funcao basica do alerttools)
   # -----------------------------------------------
   geraMapa(alerta=alert, se=data, shapefile = shape,   
            varid=varid, titulo="", 
            filename=paste("Mapa_E", sigla,".png", sep=""),
            dir=dirfigs, caption=FALSE)
   
+  
+
   # -----------------------------------------------
   # Mapas de todas as Regionais (funcao customizada, no codigoFiguras.R)
   # -----------------------------------------------
@@ -807,10 +809,10 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   totmax<-aggregate(tres$casos_est_max,by=list(tres$se),sum)
   
   # agregados anuais
-  tot2016 <- sum(tres$casos[tres$ano == 2016]) # total de 2016
-  tot2016se <- sum(tres$casos[(tres$ano == 2016 & tres$SE <=se)] ) # total de 2016 até a semana equivalente do atual
-  tot2017 <- sum(tres$casos[tres$ano == 2017]) # total de 2017 ate agora
-  tot2017ult <- sum(tres$casos[tres$se == data]) # total de 2017 ate agora
+  tot2017 <- sum(tres$casos[tres$ano == 2017]) # total de 2017
+  tot2017se <- sum(tres$casos[(tres$ano == 2017 & tres$SE <=se)] ) # total de 2017 até a semana equivalente do atual
+  tot2018 <- sum(tres$casos[tres$ano == 2018]) # total de 2018 ate agora
+  tot2018ult <- sum(tres$casos[tres$se == data]) # total de 2018 ate agora
   
   
   # ------------------
@@ -828,10 +830,10 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   totmaxC<-aggregate(tresC$casos_est_max,by=list(tresC$se),sum)
   
   # anuais
-  totChik2016 <- sum(tresC$casos[tresC$ano == 2016]) # total de 2016
-  totChik2016se <- sum(tresC$casos[(tresC$ano == 2016 & tresC$SE <=se)] ) # total de 2016 até a semana equivalente do atual
-  totChik2017 <- sum(tresC$casos[tresC$ano == 2017]) # total de 2017 ate agora
-  totChik2017ult <- sum(tresC$casos[tresC$se == data]) # total de 2017 ate agora
+  totChik2017 <- sum(tresC$casos[tresC$ano == 2017]) # total de 2017
+  totChik2017se <- sum(tresC$casos[(tresC$ano == 2017 & tresC$SE <=se)]) # total de 2017 ate agora
+  totChik2018 <- sum(tresC$casos[tresC$ano == 2018]) # total de 2017 ate agora
+  totChik2018ult <- sum(tresC$casos[tresC$se == data]) # 
   # -----------------
   # Grafico da cidade : dengue
   # -----------------
@@ -960,9 +962,9 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   # -------------------------------------
   res = list(nomecidade="Rio de Janeiro", estado="Rio de Janeiro", nomecidadeiconv = "RiodeJaneiro", 
              regionalmun="Metropolitana I", sigla = "RJ", se=se, ano=ano,alert=alert, alertC = alertC, 
-             nomemapario = nomemapario,nomemaparioChik=nomemaparioChik,totChik2016=totChik2016, totChik2017=totChik2017,
-             totChik2017ult = totChik2017ult,  totChik2016se = totChik2016se,
-             tot2016=tot2016, tot2017=tot2017, tot2017ult = tot2017ult,  tot2016se = tot2016se,
+             nomemapario = nomemapario,nomemaparioChik=nomemaparioChik,totChik2017=totChik2017, totChik2018=totChik2018,
+             totChik2018ult = totChik2018ult,  totChik2017se = totChik2017se,
+             tot2017=tot2017, tot2018=tot2018, tot2018ult = tot2018ult,  tot2017se = tot2017se,
              nometab = nometab, municip.reg=municip.reg, dirout=dirout, tabaps=tres, tabapsChik = tresC, datarel=data)
   
   message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
@@ -1248,14 +1250,14 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$nomemapario <- obj$nomemapario # mapa de dengue
     env$nomemaparioChik <- obj$nomemaparioChik # mapa de chik
     env$tabelaRio <- obj$nometab # dengue
-    env$tot2016 <- obj$tot2016 # dengue
-    env$tot2016se <- obj$tot2016se # dengue em 2016, ate a semana epide do relatorio
-    env$tot2017 <- obj$tot2017 # dengue em 2017
-    env$tot2017ult <- obj$tot2017ult # dengue em 2017 na ultima semana
-    env$totChik2016 <- obj$totChik2016  # mesmo para chik
-    env$totChik2016se <- obj$totChik2016se # idem
-    env$totChik2017 <- obj$totChik2017 # idem
-    env$totChik2017ult <- obj$totChik2017ult # idem
+    env$tot2017 <- obj$tot2017 # dengue
+    env$tot2017se <- obj$tot2017se # dengue em 2017, ate a semana epide do relatorio
+    env$tot2018 <- obj$tot2018 # dengue em 2018
+    env$tot2018ult <- obj$tot2018ult # dengue em 2018 na ultima semana
+    env$totChik2017 <- obj$totChik2017  # mesmo para chik
+    env$totChik2017se <- obj$totChik2017se # idem
+    env$totChik2018 <- obj$totChik2018 # idem
+    env$totChik2018ult <- obj$totChik2018ult # idem
     env$tabaps = obj$tabaps 
     env$tabapsChik = obj$tabapsChik
     dirfigs <- paste(bdir,obj$dirout,"figs",sep="/")

@@ -23,6 +23,7 @@ bolCE <- configRelatorioEstadual(uf="Ceará", sigla = "CE", data=data_relatorio,
 publicarAlerta(ale = aleCE, pdf = bolCE, dir = "Relatorio/CE/Estado")
 
 
+
 # ----------------- Fortaleza
 
 # Dengue
