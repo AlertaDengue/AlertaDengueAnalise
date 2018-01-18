@@ -1,0 +1,269 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Boletim semanal municipal do InfoDengue Simples (sem a pagina da regional)
+% Adapted by Claudia Codeco (Jun 2016)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
+\SweaveOpts{keep.source=TRUE}
+\usepackage[utf8]{inputenc}
+\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+
+% Os objetos R para esse script estao no ambiente env criado pela funcao geraPDF. 
+
+<<carrega_dados,echo=FALSE,results=hide>>=
+options(useFancyQuotes=FALSE)
+library('xtable')
+@
+
+\fancyfoot[C]{Boletim Municipal - \Sexpr{env$nomecidade}}
+\fancyfoot[R]{SE \Sexpr{env$se} de \Sexpr{env$ano}}
+\fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+%---------------------------------------------------------------------------------
+%	HEADER IMAGE
+%---------------------------------------------------------------------------------
+
+\begin{figure}[H]
+\centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
+\end{figure}
+
+\centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line
+
+
+%---------------------------------------------------------------------------------
+%	CAIXA LATERAL - PRIMEIRA PAGINA
+%--------------------------------------------------------------------------------
+
+\begin{minipage}[t]{.27\linewidth} % Mini page taking up 27% of the actual page
+\begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box
+
+%-----------------------------------------------------------
+
+\hypertarget{contents}{\textbf{{\large Boletim Semanal}}} 
+
+\textbf{Semana \Sexpr{env$se} de \Sexpr{env$ano}} % se, ano, em pp.RData
+
+\centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
+
+%-----------------------------------------------------------
+\hyperlink{ablink}{Tabelas}
+
+\hyperlink{codcor}{Código de Cores}
+
+\hyperlink{vartab}{Variáveis nas Tabelas}
+
+\hyperlink{notas}{Notas} % These link to their appropriate sections in the newsletter
+
+\hyperlink{creditos}{Créditos} % These link to their appropriate sections in the newsletter
+
+\centerline {\rule{.75\linewidth}{.25pt}} % Horizontal line
+
+\textbf{Contato}
+\begin{description}
+\item \href{mailto:alerta\_dengue@fiocruz.br}{alerta\_dengue@fiocruz.br}  
+\end{description}
+
+\end{mdframed}
+\end{minipage}\hfill % End the sidebar mini page 
+\begin{minipage}[t]{.70\linewidth} % Nao pode colocar espaco acima senao ela nao fica lado a lado
+
+
+%\end{minipage} % End the main body - first page mini page
+%\begin{minipage}[t]{.30\linewidth}
+%--------------------------------------------------------------------------
+%      SEGUNDA PAGINA: CAIXA LATERAL - INDICE MUNICIPIOS
+%-------------------------------------------------------------------------
+
+% Mini page taking up 30% of the actual page
+ 
+%\begin{mdframed}[style=sidebar,frametitle={}] % Sidebar box 
+
+%\textbf{\hyperlink{municips}{Municipios}} % titulo
+%\begin{itemize}
+
+<<r,echo=FALSE,results=tex>>=
+#coresbullets = c(verde='\\gsquare',amarelo='\\ysquare',
+#                 laranja='\\osquare',vermelho='\\rsquare')
+
+#for (j in 1:dim(env$municip.reg)[1]) {
+#  nivel = env$tabelao$Nivel[env$tabelao$Municipio==env$municip.reg$nome[j]]
+#  corbullet = '\\wsquare'
+#  if(!is.na(nivel)) corbullet = coresbullets[nivel] 
+#  cat(paste(corbullet,env$municip.reg$nome[j],'\n'))
+#}
+@
+
+%\end{itemize}
+%\BackToContents 
+% fim do box e minipage
+%\end{mdframed}\hfill
+%\end{minipage}%  End of the sidebar mini page
+%\newpage
+
+%-----------------------------------------------------------------------------------
+%	MAIN BODY - FIRST PAGE
+%-----------------------------------------------------------------------------------
+%\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+
+\hypertarget{municipio}{\heading{Situação das Arboviroses em \Sexpr{env$nomecidade} - \Sexpr{env$sigla}}{6pt}} % \hypertarget 
+
+Desde o início do ano, \Sexpr{env$totanomun} casos de dengue, \Sexpr{env$totanomunC} de chikungunya e \Sexpr{env$totanomunZ} de Zika foram registrados na cidade. 
+
+\large{\textbf{Situação da Dengue}}
+\vspace{0.2cm}
+
+A figura abaixo mostra a situação da dengue nos últimos dois anos. (TOPO) em preto, os casos suspeitos de dengue e em verde, a dengue mencionada em rede social; (MEIO) Variável meteorológica utilizada para análise da receptividade da cidade, valores acima do limiar (linha horizontal) indicam condições favoraveis à transmissão. (BAIXO) histórico do alerta de dengue na cidade (ver \hyperlink{codcor}{código de cores}).
+\begin{center}
+\includegraphics[width=1\textwidth]{\Sexpr{env$figmunicipio}}
+\end{center}
+
+  
+\end{minipage}
+
+\newpage
+
+% --------------------------------------------------------------------------------
+% Pagina com figura para chikungunya
+% --------------------------------------------------------------------------------
+\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+\large{\textbf{Situação da Chikungunya}}
+\vspace{0.2cm}
+
+A figura abaixo mostra a situação da chikungunya nos últimos dois anos. (TOPO) em preto, os casos suspeitos relatados (MEIO) Variável meteorológica utilizada para análise da receptividade da cidade, valores acima do limiar (linha horizontal) indicam condições favoraveis à transmissão (mesmo indicador usado na dengue). (BAIXO) histórico do alerta de chikungunya na cidade (ver \hyperlink{codcor}{código de cores}).
+\begin{center}
+\includegraphics[width=0.9\textwidth]{\Sexpr{env$figmunicipioC}}
+\end{center}
+
+\end{minipage}
+
+\newpage
+
+% --------------------------------------------------------------------------------
+% Pagina com figura para zika
+% --------------------------------------------------------------------------------
+\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+\large{\textbf{Situação da Zika}}
+\vspace{0.2cm}
+
+A figura abaixo mostra a situação da zika nos últimos dois anos. (TOPO) em preto, os casos suspeitos relatados (MEIO) Variável meteorológica utilizada para análise da receptividade da cidade, valores acima do limiar (linha horizontal) indicam condições favoraveis à transmissão (mesmo indicador usado na dengue). (BAIXO) histórico do alerta de zika na cidade (ver \hyperlink{codcor}{código de cores}).
+\begin{center}
+\includegraphics[width=0.9\textwidth]{\Sexpr{env$figmunicipioZ}}
+\end{center}
+
+\end{minipage}
+
+\newpage
+
+% --------------------------------------------------------------------------------
+% Pagina com tabela
+% --------------------------------------------------------------------------------
+\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+\hypertarget{tablink}{\heading{Resumo das últimas semanas epidemiológicas}{6pt}} % \hypertarget 
+
+% tabela municipal dengue
+\captionof{table}[tabmun]{Situação da dengue no município.}
+\begin{center}
+\input{\Sexpr{env$tabmun}}
+\end{center}
+\vspace{0.5cm}
+
+
+% tabela municipal chik
+\captionof{table}[tabmun]{Situação da chikungunya no município.}
+\begin{center}
+\input{\Sexpr{env$tabmunC}}
+\end{center}
+\vspace{0.5cm}
+
+\end{minipage}
+
+\newpage
+% --------------------------------------------------------------------------------
+% Pagina com tabela (cont)
+% --------------------------------------------------------------------------------
+\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+
+% tabela municipal zika
+\captionof{table}[tabmun]{Situação da zika no município.}
+\begin{center}
+\input{\Sexpr{env$tabmunZ}}
+\end{center}
+
+
+%--------------------------------------------------------------------------------
+%	 BOX - CODIGO DE CORES
+%--------------------------------------------------------------------------------
+\vspace{1cm}
+\begin{mdframed}[style=intextbox,frametitle={}] % Sidebar box
+
+\hypertarget{codcor}{\heading{O código de Cores}{1pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
+As cores indicam niveis de atenção
+\begin{description}
+\item[Verde:] condições climáticas desfavoráveis, seja por baixa temperatura ou baixa umidade, e baixa incidência de casos.      
+\item[Amarelo:] condições climáticas propícias para aumento da população do vetor e transmissão de arboviroses.
+\item[Laranja:] transmissão aumentada e sustentada da arbovirose. 
+\item[Vermelho:] incidência alta, acima dos 90\% históricos.
+\end{description}
+\end{mdframed}
+
+
+\end{minipage}
+
+\BackToContents % Link back to the contents of the newsletter
+\newpage
+%---------------------------------------------------------------------------------
+%	Variáves nas Tabelas, Créditos e Contato
+%---------------------------------------------------------------------------------
+
+\begin{minipage}[t]{1\linewidth} 
+
+
+
+\hypertarget{vartab}{\heading{Lista das variáveis apresentadas nas tabelas:}{6pt}}
+
+\begin{description}
+\item [SE] semana epidemiológica
+\item [temperatura] média das temperaturas mínimas da semana (em graus centígrados)
+\item [umid.max] média da umidade relativa máxima da semana 
+\item [tweet] número de tweets indicativos de casos de dengue na cidade. Por enquanto só há para dengue.
+\item [casos notif] casos notificados de dengue , zika ou chikungunya
+\item [incidência] casos notificados dividido pela população (por 100.000)
+\item [casos máximos] estimativa do número de casos esperado para a semana, com base no perfil de atraso de notificação do município.
+\item [pr(inc subir)] probabilidade de aumento de incidência. Acima de 90\% é um indicador importante para o alerta laranja.
+\item [nivel] cor do alerta (verde, amarelo, laranja, vermelho)
+\end{description}
+
+\hypertarget{notas}{\heading{Notas}{6pt}}
+
+\begin{itemize}
+\item Os dados do sinan mais recentes ainda não foram totalmente digitados. Estimamos o número esperado de casos notificados considerando o tempo até os casos serem digitados.
+\item Os dados de tweets são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue.
+\item Algumas vezes, os casos da última semana ainda não estao disponíveis, nesse caso, usa-se uma estimação com base na tendência de variação da série.
+\end{itemize}
+
+\hypertarget{creditos}{\heading{Créditos}{6pt}}
+
+Este foi um projeto desenvolvido com apoio da SVS/MS e é operado como parceira entre:
+
+\begin{itemize}
+\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro.
+\item Escola de Matemática Aplicada, Fundação Getúlio Vargas.
+\item Secretaria Estadual de Saúde do \Sexpr{env$sigla}.
+\item Observatório de Dengue da UFMG.
+\end{itemize}
+
+\BackToContents % Link back to the contents of the newsletter
+
+\vspace{1cm}
+
+\hrule
+
+Para mais detalhes sobre o sistema de alerta InfoDengue, consultar: \url{http://info.dengue.mat.br}\\
+
+\textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
+\end{minipage} % fim da pagina de creditos
+
+\end{document} 

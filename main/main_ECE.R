@@ -30,7 +30,7 @@ publicarAlerta(ale = aleCE, pdf = bolCE, dir = "Relatorio/CE/Estado")
 aleFort <- update.alerta(city = 2304400, pars = pars.CE[["Fortaleza"]], cid10="A90",crit = CE.criteria, 
                          datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE)
 
-res = write.alerta(obj = aleFort, write = "db")
+#res = write.alerta(obj = aleFort, write = "db")
 #bolFort <- configRelatorioMunicipal(alert = aleFort, tipo = "simples", varcli = "umid_max", siglaUF = "CE", 
 #                                    data = data_relatorio, pars = pars.CE,
 #                                    dir.out = CE.Fortaleza.out, geraPDF = TRUE)
