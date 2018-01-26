@@ -90,6 +90,8 @@ figuramunicipio <- function(obj, param, varcli = "temp_min", cid="A90", tsdur=10
   
 }
 
+
+
 # -----------------------------
 # figuraRio
 
@@ -376,3 +378,138 @@ axis(4,las=1,pos=103,lwd=0,cex.axis=0.6)
 mtext(text="tweets", line=0.5, side=4, cex = 0.7)
 }
 
+
+# ---------------------------
+## Figura series temporais - arbo
+## ---------------------------
+
+fazfiguraresumo.arbo <- function(serieD, serieC, serieZ, tipo = "estadual", tsdur = 104){
+  # serieD,C,Z sao series temporais geradas contendo "data_iniSE" , "casos", "casos_est",  "casos_est_min" "casos_est_max"
+  # verde", "amarelo", "laranja", "vermelho","ano"    (codigo no ConfigRelatorioEstaudal.Arbo) 
+  
+  
+  # Figura com tres sub-figuras, uma para cada agravo
+  layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
+         heights = c(rep(lcm(4),3)))
+  
+  # --- dengue  ------
+  
+  n = dim(serieD)[1]
+  seriefinalD = serieD[(n-tsdur):n,]
+  require(lubridate)
+  with(seriefinalD, {
+    par(mai=c(0,0,0,0),mar=c(3,0.5,0.5,0.5))
+    plot(casos, type="s", xlab="", ylab="", axes=FALSE,bty="n")
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est[((tsdur + 1) - 6):(tsdur + 1)], lty=1, col=2)
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est_min[((tsdur + 1) - 6):(tsdur + 1)], lty=2, col=2)
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est_max[((tsdur + 1) - 6):(tsdur + 1)], lty=2, col=2)
+    
+    # linhas verticais marcando o inicio de cada ano
+    anos <- unique(ano)
+    for (a in anos) abline(v = which(ano == a)[1], lty=3)
+    axis(1, pos=-2, las=2, at=seq(1,(tsdur+1),by=8),
+       tcl=-0.25,labels=FALSE) #pos=0 ,
+    axis(1, pos=0, las=2, at=seq(1,(tsdur+1),by=8), 
+       labels=data_iniSE[seq(1,length(casos),by=8)],
+       cex.axis=0.6,lwd=0,tcl=-0.25) #pos=0 
+  
+     axis(2,las=1,pos=-0.4,tck=-.05,lab=FALSE)
+     axis(2,las=1,pos=4,lwd=0,cex.axis=0.6)
+     mtext(text="casos de dengue", line=1,side=2, cex = 0.7) # line=3.5 (original)
+     maxy <- max(casos, na.rm=TRUE)
+    legend(25, maxy, c("casos","casos estimados","tweets"),col=c(1,2,3), lty=1, bty="n",cex=0.7)
+    par(new=T)
+    plot(tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+    lines(tweet, col=3, type="h") #*coefs[2] + coefs[1]
+    axis(4,las=1,pos=106,tck=-.05,lab=FALSE)
+    axis(4,las=1,pos=103,lwd=0,cex.axis=0.6)
+    mtext(text="tweets", line=0.5, side=4, cex = 0.7)
+  })
+  
+  # --- chik  ------
+  n = dim(serieC)[1]
+  seriefinalC = serieC[(n-tsdur):n,]
+  
+  with(seriefinalC, {
+    par(mai=c(0,0,0,0),mar=c(3,0.5,0.5,0.5))
+    plot(casos, type="s", xlab="", ylab="", axes=FALSE,bty="n")
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est[((tsdur + 1) - 6):(tsdur + 1)], lty=1, col=2)
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est_min[((tsdur + 1) - 6):(tsdur + 1)], lty=2, col=2)
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est_max[((tsdur + 1) - 6):(tsdur + 1)], lty=2, col=2)
+    
+    axis(1, pos=-2, las=2, at=seq(1,(tsdur+1),by=8),
+         tcl=-0.25,labels=FALSE) #pos=0 , labels=seriefinal$data_iniSE[seq(1,length(seriefinal$casos),by=10)], at=seq(1,length(seriefinal$casos),by=12)
+    axis(1, pos=0, las=2, at=seq(1,(tsdur+1),by=8), 
+         labels=data_iniSE[seq(1,length(casos),by=8)],
+         cex.axis=0.6,lwd=0,tcl=-0.25) #pos=0 
+    # linhas verticais marcando o inicio de cada ano
+    anos <- unique(ano)
+    for (a in anos) abline(v = which(ano == a)[1], lty=3)
+    
+    axis(2,las=1,pos=-0.4,tck=-.05,lab=FALSE)
+    axis(2,las=1,pos=4,lwd=0,cex.axis=0.6)
+    mtext(text="casos de chikungunya", line=1,side=2, cex = 0.7) # line=3.5 (original)
+    maxy <- max(casos, na.rm=TRUE)
+    legend(25, maxy, c("casos","casos estimados"),col=c(1,2,3), lty=1, bty="n",cex=0.7)
+      })
+  
+  
+  # --- zika  ------
+  n = dim(serieZ)[1]
+  seriefinalZ = serieZ[(n-tsdur):n,]
+  
+  with(seriefinalZ, {
+    par(mai=c(0,0,0,0),mar=c(3,0.5,0.5,0.5))
+    plot(casos, type="s", xlab="", ylab="", axes=FALSE,bty="n")
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est[((tsdur + 1) - 6):(tsdur + 1)], lty=1, col=2)
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est_min[((tsdur + 1) - 6):(tsdur + 1)], lty=2, col=2)
+    lines(((tsdur + 1) - 6):(tsdur + 1),casos_est_max[((tsdur + 1) - 6):(tsdur + 1)], lty=2, col=2)
+    
+    axis(1, pos=-2, las=2, at=seq(1,(tsdur+1),by=8),
+         tcl=-0.25,labels=FALSE) #pos=0 , labels=seriefinal$data_iniSE[seq(1,length(seriefinal$casos),by=10)], at=seq(1,length(seriefinal$casos),by=12)
+    axis(1, pos=0, las=2, at=seq(1,(tsdur+1),by=8), 
+         labels=data_iniSE[seq(1,length(casos),by=8)],
+         cex.axis=0.6,lwd=0,tcl=-0.25) #pos=0 
+   
+     # linhas verticais marcando o inicio de cada ano
+    anos <- unique(ano)
+    for (a in anos) abline(v = which(ano == a)[1], lty=3)
+    
+    axis(2,las=1,pos=-0.4,tck=-.05,lab=FALSE)
+    axis(2,las=1,pos=4,lwd=0,cex.axis=0.6)
+    mtext(text="casos de zika", line=1,side=2, cex = 0.7) # line=3.5 (original)
+    maxy <- max(casos, na.rm=TRUE)
+    legend(25, maxy, c("casos","casos estimados"),col=c(1,2,3), lty=1, bty="n",cex=0.7)
+  })
+  
+         
+         }
+
+
+
+
+# subfigura de baixo: alerta colorido
+#p # subfigura do cima
+# Receptividade do clima na região
+#nvarcli <- which(names(resD) == eval(varcli))
+#clima.mean = aggregate(resD[,nvarcli]~data_iniSE,data=resD,FUN=mean,na.rm=TRUE)
+#clima.min = aggregate(resD[,nvarcli]~data_iniSE,data=resD,FUN=min,na.rm=TRUE)
+#clima.max = aggregate(resD[,nvarcli]~data_iniSE,data=resD,FUN=max,na.rm=TRUE)
+
+#par(mai=c(0,0,0,0),mar=c(1,4,0,3))
+#ylims <- (c(0.9*min(clima.min[,2], na.rm=T), min(100,1.1*max(clima.max[,2], na.rm=T))))
+#plot(1:(tsdur + 1),clima.mean[(n-tsdur):n,2], type="l", xlab="", ylab =eval(varcli),axes=FALSE,ylim=ylims)
+#lines(1:(tsdur + 1),clima.min[(n-tsdur):n,2], col="grey")
+#lines(1:(tsdur + 1),clima.max[(n-tsdur):n,2],col="grey")
+#axis(2)
+#if(eval(varcli) %in% c("temp_min", "temp_med", "temp_max")) abline(h=param[[1]]$tcrit, lty=2, col = "darkgreen")
+#if(eval(varcli) %in% c("umid_min", "umid_med", "umid_max")) abline(h=param[[1]]$ucrit, lty=2, col = "darkgreen")
+#legend(x="topleft",lty=c(1,1,2),col=c("black", "grey","darkgreen"),
+#       legend=c("valor médio","valores extremos","limiar favorável transmissão"),cex=0.85,bty="n")
+#par(mai=c(0,0,0,0),mar=c(1,4,0,4))
+#plot.alerta(obj, var="inc",ini=min(objc$SE),fim=max(objc$SE))
+#abline(h=param$posseas*obj$data$pop[1],lty=2)
+#legend(x="topright",lty=c(3,2,2),col=c("red","darkgreen","black"),
+#       legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
+
+#}

@@ -23,6 +23,9 @@ bolCE <- configRelatorioEstadual(uf="Ceará", sigla = "CE", data=data_relatorio,
 publicarAlerta(ale = aleCE, pdf = bolCE, dir = "Relatorio/CE/Estado")
 
 
+# Chik
+aleCE.chik <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.0",
+                       datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE) 
 
 # ----------------- Fortaleza
 

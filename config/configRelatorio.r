@@ -427,7 +427,8 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
 # Gera objetos para o Boletim Estadual
 # ==============================================
 # data = data final do relatorio, tsdur = tamanho da serie plotada
-configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_min", alert, pars, shape, varid, dir, 
+configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_min", alert, 
+                                    pars, shape, varid, dir, 
                                     datasource, dirb=basedir,geraPDF=TRUE){
   setwd("~/")
   
@@ -456,8 +457,10 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
   ano = floor(data/100)
   se = data - ano*100 
   
+  ## Dengue ################
+  relatorio <- "infodengue"  # default, substituido por infoarbo se for pertinente
   # ----------------------------------------------- 
-  # Mapa de alerta do estado (funcao basica do alerttools)
+  # Mapa de alerta de dengue do estado (funcao basica do alerttools)
   # -----------------------------------------------
   geraMapa(alerta=alert, se=data, shapefile = shape,   
            varid=varid, titulo="", 
@@ -467,7 +470,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
   
 
   # -----------------------------------------------
-  # Mapas de todas as Regionais (funcao customizada, no codigoFiguras.R)
+  # Mapas de alerta de degue de todas as Regionais (funcao customizada, no codigoFiguras.R)
   # -----------------------------------------------
   
   nomemapareg = c()
@@ -523,6 +526,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
         include.rownames=FALSE)
   }
   message("tabelas regionais criadas...")
+  
   # --------------------------------
   # Figura-resumo da regional 
   # --------------------------------
@@ -579,7 +583,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
 # alert - objeto gerado pelo update.alerta, siglaUF = "RJ", dir.out = pasta mestre do municipio,
 # data - data do relatorio. Duas opcoes, relatorio completo ou simples
 ## ============================================================
-configRelatorioMunicipal <- function(tipo="completo", alert = alert, siglaUF, dir.out, data, pars, 
+configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, pars, 
                                      alechik, alezika, varcli = "temp_min", datasource=con,
                                      dirb=basedir, tamanhotabela = 16, geraPDF=TRUE){
   dirfigs = paste(dirb,"/",dir.out,"/figs",sep="")
@@ -630,16 +634,16 @@ configRelatorioMunicipal <- function(tipo="completo", alert = alert, siglaUF, di
   # Gera tabela resumo das ultimas semanas
   # ---------------------------------------
   if (!missing(alechik))  tamanhotabela = 8 # fazer tabelas mais curtas no infoarbo
-  if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesICmax","p1")
-  if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesICmax","p1")
-  if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesICmax","p1")
+  if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesmed","p1")
+  if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesmed","p1")
+  if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesmed","p1")
   tab <- tail(alert$data[,varstab], n=tamanhotabela)
   tab$p1 <- tab$p1*100
   cores <- c("verde","amarelo","laranja","vermelho")
   tab <- cbind(tab,cores[tail(alert$indices$level,n=tamanhotabela)])
-  if (varcli== "temp_min") names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
-  if (varcli== "umid_min") names(tab) <- c("SE","umid.min","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
-  if (varcli== "umid_max") names(tab) <- c("SE","umid.max","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
+  if (varcli== "temp_min") names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
+  if (varcli== "umid_min") names(tab) <- c("SE","umid.min","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
+  if (varcli== "umid_max") names(tab) <- c("SE","umid.max","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
   tabname <- paste(dirb,"/",dir.out,"/figs/tabela",nomesemacento,".tex",sep="")
   tabelax <-xtable(tab,align ="cc|ccccccc",digits = 0)
   digits(tabelax) <- 0
@@ -670,15 +674,15 @@ configRelatorioMunicipal <- function(tipo="completo", alert = alert, siglaUF, di
     # Gera tabela resumo das ultimas semanas
     # ---------------------------------------
     tamanhotabela = 16  # n. linhas na tabela
-    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesICmax","p1")
-    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesICmax","p1")
-    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesICmax","p1")
+    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesmed","p1")
     tab <- tail(alechik$data[,varstab], n=tamanhotabela)
     tab$p1 <- tab$p1*100
     tab <- cbind(tab,cores[tail(alechik$indices$level,n=tamanhotabela)])
-    if (varcli== "temp_min") names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
-    if (varcli== "umid_min") names(tab) <- c("SE","umid.min","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
-    if (varcli== "umid_max") names(tab) <- c("SE","umid.max","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
+    if (varcli== "temp_min") names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
+    if (varcli== "umid_min") names(tab) <- c("SE","umid.min","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
+    if (varcli== "umid_max") names(tab) <- c("SE","umid.max","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
     tabnameC <- paste(dirb,"/",dir.out,"/figs/tabela",nomesemacento,"Chik.tex",sep="")
     tabelax <- xtable(tab,align ="cc|ccccccc",digits = 0)
     digits(tabelax) <- 0
@@ -708,15 +712,15 @@ configRelatorioMunicipal <- function(tipo="completo", alert = alert, siglaUF, di
     # Gera tabela resumo das ultimas semanas
     # ---------------------------------------
     tamanhotabela = 16  # n. linhas na tabela
-    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesICmax","p1")
-    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesICmax","p1")
-    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesICmax","p1")
+    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesmed","p1")
     tab <- tail(alezika$data[,varstab], n=tamanhotabela)
     tab$p1 <- tab$p1*100
     tab <- cbind(tab,cores[tail(alezika$indices$level,n=tamanhotabela)])
-    if (varcli== "temp_min") names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
-    if (varcli== "umid_min") names(tab) <- c("SE","umid.min","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
-    if (varcli== "umid_max") names(tab) <- c("SE","umid.max","tweet", "casos notif", "incidência", "casos max","pr(incid. subir)","nivel")
+    if (varcli== "temp_min") names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
+    if (varcli== "umid_min") names(tab) <- c("SE","umid.min","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
+    if (varcli== "umid_max") names(tab) <- c("SE","umid.max","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
     tabnameZ <- paste(dirb,"/",dir.out,"/figs/tabela",nomesemacento,"Zika.tex",sep="")
     tabelax <- xtable(tab,align ="cc|ccccccc",digits = 0)
     digits(tabelax) <- 0

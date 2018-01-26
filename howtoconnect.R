@@ -51,6 +51,10 @@ str(tw)
 d <- dbReadTable(con, c("Municipio","Historico_alerta_chik"))
 tail(d)
 
+d <- dbReadTable(con, c("Municipio","alerta_mrj"))
+write.csv(d[d$se<201740,c("aps","se","data","casos","tmin")], file="dengueRioAPS-201001201740.csv",row.names=FALSE)
+
+
 # baixar a tabela de tweet filtrando para um municipio
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 2304400"
 d <- dbGetQuery(con, comando)
