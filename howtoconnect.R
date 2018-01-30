@@ -131,7 +131,7 @@ dbListFields(con, c("Dengue_global","Municipio"))
 dbListFields(con, c("Dengue_global","regional_saude"))
 
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3200136"
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 2305209"
 dr <- dbGetQuery(con, sqlquery)
 dr
 

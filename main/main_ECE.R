@@ -13,7 +13,7 @@ data_relatorio = 201803
 
 # Dengue
 aleCE <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, 
-                       datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE) 
+                       datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE, delaymethod = "bayesian") 
 
 
 bolCE <- configRelatorioEstadual(uf="Ceará", sigla = "CE", data=data_relatorio, varcli = "umid_max", tsdur=300,
