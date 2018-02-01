@@ -1,10 +1,8 @@
 ## Alertas municipais do Estado do Rio de Janeiro
 #==============================
-setwd("~/")
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-
+setwd("~/"); library("AlertTools")
 con <- DenguedbConnect()
-
+source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
 data_relatorio = 201803
