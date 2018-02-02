@@ -3,7 +3,7 @@ tab <- read.csv("../tabela-regionaisIBGE.csv")
 
 
 ### 1. Qual é o estado?
-tabuf <- subset(tab, Nome_UF=="Ceará")
+tabuf <- subset(tab, Nome_UF=="São Paulo")
 unique(tabuf$Nome_Microrregião)
 unique(tabuf$Nome_Mesorregião)
 
@@ -91,6 +91,7 @@ escrevewu <- function(csvfile=NULL,lista=NULL, UF){
 
 #escrevewu(csvfile="../CE-estacoes-mais-proximas.csv")
 escrevewu(lista=CE.Reg.estacoes)
+
 
 
 ### 5. Uma olhadinha nos casos

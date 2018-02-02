@@ -131,7 +131,7 @@ dbListFields(con, c("Dengue_global","Municipio"))
 dbListFields(con, c("Dengue_global","regional_saude"))
 
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 2305209"
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3200136"
 dr <- dbGetQuery(con, sqlquery)
 dr
 
@@ -418,7 +418,18 @@ character varying(5) DEFAULT NULL"
   
   for (i in 1:dim(newdata)[1]) inserelinha(newdata,i)
   
+  #=====================================================
+  ### 4b. Inserção do codigo das regionais na tabela regional
   
+  # csv com os codigos para inserir 
+  regcod <- read.csv("regionais-ceara.csv",encoding = "latin1", colClasses = c("numeric","numeric","character"))
+  
+  # inserindo 1 a 1
+  #update_sql = paste("UPDATE \"Dengue_global\".regional_saude SET id_regional = 18 WHERE nome_regional = 'Iguatu'")
+  #try(dbGetQuery(con, update_sql))
+  
+  
+  # ========================================================
   ## Query para Suzy, Giovani
   # inner join notificacao com regional
   

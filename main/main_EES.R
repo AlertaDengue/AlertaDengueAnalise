@@ -1,13 +1,13 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Espírito Santo
 # =============================================================================
-setwd("~/")
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
+setwd("~/"); library(AlertTools)
 con <- DenguedbConnect()
+source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
 
-data_relatorio = 201801
+data_relatorio = 201803
 
 
 # ---- Calcula alerta: 
@@ -26,7 +26,7 @@ rm(aleES,bolES)
 # ----- Fechando o banco de dados
 dbDisconnect(con)
 
-#ale <- update.alerta(city = 3200136, pars = pars.ES[["Central"]], crit = ES.criteria, 
+#ale <- update.alerta(city = 3200359, pars = pars.ES[["Central"]], crit = ES.criteria, 
 #                             datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
 
 #ale <- update.alerta(region = "Central", pars = pars.ES[["Central"]], crit = ES.criteria, 

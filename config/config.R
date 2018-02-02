@@ -172,7 +172,7 @@ pars.CE <- NULL
 pars.CE[nomesregs.CE] <- list(NULL)
 pars.CE[["Tauá"]] <- list(pdig = c(1.488395,1.0268605),tcrit=NA, ucrit = 87, inccrit = 176, preseas=29, posseas=49, legpos="bottomright") 
 pars.CE[["Crato"]] <- list(pdig = c(2.134714,0.7901286),tcrit=NA, ucrit= 87, inccrit = 70, preseas=29, posseas=31, legpos="bottomright")
-pars.CE[["Sobral "]] <- list(pdig = c(2.148597,1.1197786),tcrit=NA, ucrit = 87, inccrit = 89, preseas=34, posseas=33,legpos="bottomright")
+pars.CE[["Sobral"]] <- list(pdig = c(2.148597,1.1197786),tcrit=NA, ucrit = 87, inccrit = 89, preseas=34, posseas=33,legpos="bottomright")
 pars.CE[["Juazeiro do Norte"]] <- list(pdig = c(1.830832,1.1666795),tcrit=NA, ucrit = 87, inccrit = 51, preseas=18, posseas=18, legpos="bottomright")
 pars.CE[["Tianguá"]] <- list(pdig = c(1.48,1),tcrit=NA, ucrit = 87, inccrit = 176, preseas=13, posseas=13, legpos="bottomright")
 pars.CE[["Icó"]] <- list(pdig = c(2.614918, 1.0401348),tcrit=NA, ucrit = 87, inccrit = 105, preseas=23, posseas=29, legpos="bottomright")

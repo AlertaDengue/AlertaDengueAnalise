@@ -21,7 +21,7 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, varcli = "te
   sigla = sigla
   municipios = getCidades(uf=estado,datasource=con)
   nmunicipios = dim(municipios)[1]
-  regs = getRegionais(uf = estado) 
+  regs = getRegionais(uf = estado,sortedby = "id") 
   nickregs = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
   nickmun = abbreviate(iconv(municipios$nome, to = "ASCII//TRANSLIT"))
   
@@ -441,7 +441,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
   sigla = sigla
   municipios = getCidades(uf=estado,datasource=con)
   nmunicipios = dim(municipios)[1]
-  regs = getRegionais(uf = estado) 
+  regs = getRegionais(uf = estado, sortedby = 'id') 
   nickregs = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
   nickmun = abbreviate(iconv(municipios$nome, to = "ASCII//TRANSLIT"))
   

@@ -1,19 +1,18 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Ceará
 # =============================================================================
-setwd("~/")
-
+setwd("~/");library("AlertTools")
+con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ---- Calcula alerta: 
-con <- DenguedbConnect()
 
 # ----- data do relatorio:
 data_relatorio = 201804
 
 # Dengue
 aleCE <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, 
-                       datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE, delaymethod = "bayesian") 
+                       datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE) 
 
 
 bolCE <- configRelatorioEstadual(uf="Ceará", sigla = "CE", data=data_relatorio, varcli = "umid_max", tsdur=300,
