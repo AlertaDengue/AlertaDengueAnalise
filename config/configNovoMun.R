@@ -11,17 +11,17 @@ unique(tabuf$Nome_Mesorregião)
 library("AlertTools")
 con <- DenguedbConnect()
 
-reg=getRegionais(uf = "Ceará")
+reg=getRegionais(uf = "São Paulo")
 reg
 
-cid = getCidades(uf = "Ceará", datasource=con)
+cid = getCidades(uf = "São Paulo", datasource=con)
 dim(cid)
 
 ### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
-nomedacidade = "Pinheiros"
-geocodigo = 320410# 320360  #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
-id = 20# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
-nomereg = "Pouso Alegre" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
+nomedacidade = "São José do Rio Preto"
+geocodigo = 3549805 # 320360  #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
+id = 15# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
+nomereg = "São José do Rio Preto" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
 
 insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha = "aldengue")
 
@@ -93,23 +93,36 @@ escrevewu <- function(csvfile=NULL,lista=NULL, UF){
 escrevewu(lista=CE.Reg.estacoes)
 
 
+# Na mão:
+newdat <- data.frame(municipio_geocodigo=3549805, codigo_estacao_wu="SBSR",estacao_wu_sec="SBPW")
+newpars = c("codigo_estacao_wu","estacao_wu_sec")
+res = write.parameters(newpars,newdat,senha="aldengue")
 
 ### 5. Uma olhadinha nos casos
 # --------------------------------
-nome = "Guaramiranga"
-geocodigo = tabuf$municipio_geocodigo[tabuf$nome_municipio==nome]
+nome = "São José do Rio Preto"
+#geocodigo = tabuf$municipio_geocodigo[tabuf$nome_municipio==nome]
+# dengue
 casos = getCases(city=geocodigo, datasource = con)
 par(mar=c(5,5,2,2))
 plot(casos$casos, type="l")
 summary(casos$casos)
 
+# chik
+casosC = getCases(city=geocodigo, cid10 = "A92.0", datasource = con)
+plot(casosC$casos, type="l")
+
+# zika
+casosZ = getCases(city=geocodigo, cid10 = "A92.8", datasource = con)
+plot(casosZ$casos, type="l")
 
 #### 6. Inserção dos limiares epidemicos na tabela
 ## ------------------------------------------------------
 #thresholds.table <- info.dengue.apply.mem(mun_list=cid$municipio_geocodigo[1],con = con)
-load("mem-ceara.RData") # rodei direto a funcao do marcelo na pasta mem-marcelo (provisorio)
+#load("mem-ceara.RData") # rodei direto a funcao do marcelo na pasta mem-marcelo (provisorio, no AlertTools ver uso-do-mem)
 newpars = c("limiar_preseason","limiar_posseason","limiar_epidemico")
-res = write.parameters(newpars,thresholds.table,senha="aldengue")
+valores = data.frame(municipio_geocodigo=3549805, limiar_preseason = 176, limiar_posseason = 165, limiar_epidemico = 967)
+res = write.parameters(newpars,valores,senha="aldengue")
 
 sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo < 2400000"
 d <- dbGetQuery(con, sqlquery)
@@ -120,7 +133,7 @@ tapply(d$limiar_preseason,d$nome_regional,median) # para atribuir uma media as r
 ### 5. Atraso de notificacao (metodo da Claudia)
 library("survival")
 res1<-fitDelayModel(cities=geocodigo, datasource=con)
-res<-fitDelayModel(cities=geocodigo, period=c("2013-01-01","2016-01-01"), datasource=con)
+res<-fitDelayModel(cities=geocodigo, period=c("2013-01-01","2017-06-01"), datasource=con)
 
 #Os parametros a serem anotados no config são:
 list(meanlog=res1$icoef[1], sdlog=exp(res1$icoef[2]))
@@ -142,17 +155,10 @@ res.delay
 
 
 ### Para criar estrutura de diretorios (pode ser o estado, a regional ou o municipio)
-source(fun_initializeSites.R)
+source("config/fun_initializeSites.R")
 # USO: setTree.newsite(siglaestado="CE",regional="Nova Regional")
-setTree.newsite(siglaestado="CE")
+setTree.newsite(siglaestado="SP",regional = "SaoJosedoRioPreto",municipio = "SaoJosedoRioPreto")
+
+# Proximo passo: criar o main
 
 
-
-### Para calcular o mem (por enquanto, preparar um dataframe e mandar pro Marcelo)
-# a partir do objeto aleCE gerado pelo main.
-n <- length(aleCE)
-
-ceara <- aleCE[[1]]$data[,c("SE","cidade", "nome" ,"casos")]
-for (i in 2:n) ceara <- rbind(ceara, aleCE[[i]]$data[,c("SE","cidade", "nome" ,"casos")])
-
-save(ceara, file="ceara.RData")

@@ -22,6 +22,9 @@ bolSeteLagoas=configRelatorioRegional(tipo="simples",uf="Minas Gerais", regional
 
 publicarAlerta(ale = aleMG_RS_SeteLagoas, pdf = bolSeteLagoas, dir = "Relatorio/MG/Regionais/SeteLagoas")
 
+# --------------------------------
+# Municipio de Contagem
+# --------------------------------
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

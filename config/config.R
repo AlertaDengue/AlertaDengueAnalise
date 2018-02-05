@@ -207,3 +207,25 @@ CE.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
 CE.criteria = criteriaCE
 CE.out = "AlertaDengueAnalise/report/CE"
 CE.Fortaleza.out="AlertaDengueAnalise/report/CE/Municipios/Fortaleza"
+
+
+# ========================================
+# Parametros do Estado do São Paulo 
+# ========================================
+# por enquanto, so uma cidade
+nomesregs.SP = getRegionais("São Paulo")# use essa funcao para descobrir as regionais
+pars.SP <- NULL
+pars.SP[nomesregs.CE] <- list(NULL)
+pars.SP[["São José do Rio Preto"]] <- list(pdig = c(2.411618,1.227564),tcrit=20, ucrit = NA, inccrit = 967, preseas=176, posseas=165, legpos="bottomright") 
+
+# Chick
+#pars.SP.chik <- NULL
+#pars.SP[["São José do Rio Preto"]] <- list(pdig = c(2.411618,1.227564),tcrit=22, ucrit = NA, inccrit = 967, preseas=176, posseas=165, legpos="bottomright") 
+
+
+# Dados para o mapa
+SP.shape="AlertaDengueAnalise/report/SP/shape/35MUE250GC_SIR.shp"  # fonte para o mapa
+SP.shapeID="CD_GEOCMU"  # variavel do mapa que corresponde ao geocodigo
+SP.criteria = criteria
+SP.out = "AlertaDengueAnalise/report/SP"
+SP.MN.SJRP.out="AlertaDengueAnalise/report/SP/Municipios/SaoJosedoRioPreto"

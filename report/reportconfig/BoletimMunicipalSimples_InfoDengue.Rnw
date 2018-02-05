@@ -148,7 +148,7 @@ A cidade encontra-se em \textbf{nivel \Sexpr{env$nivelmun}}.
 As cores indicam niveis de atenção
 \begin{description}
 \item[Verde:] temperaturas amenas, baixa incidência de casos.      
-\item[Amarelo:] temperatura propícia para a população do vetor e transmissão da dengue.
+\item[Amarelo:] temperatura propícia para a população do vetor e transmissão da dengue, presença de pelo menos 1 caso.
 \item[Laranja:] transmissão aumentada e sustentada de dengue. 
 \item[Vermelho:] incidência alta de dengue, acima dos 90\% históricos.
 \end{description}
