@@ -65,15 +65,15 @@ figuramunicipio <- function(obj, param, varcli = "temp_min", cid="A90", tsdur=10
   par(mai=c(0,0,0,0),mar=c(1,4,0,3))
   if(varcli == "temp_min") {
     plot(objc$temp_min, type="l", xlab="", ylab ="Temperatura min",axes=FALSE)
-    abline(h=param[[1]]$tcrit, lty=2)
+    abline(h=param$tcrit, lty=2)
   }
   if(varcli == "umid_min") {
     plot(objc$umid_min, type="l", xlab="", ylab ="Umidade min",axes=FALSE)
-    abline(h=param[[1]]$ucrit, lty=2)
+    abline(h=param$ucrit, lty=2)
   }
   if(varcli == "umid_max") {
     plot(objc$umid_max, type="l", xlab="", ylab ="Umidade max",axes=FALSE)
-    abline(h=param[[1]]$ucrit, lty=2)
+    abline(h=param$ucrit, lty=2)
   }
   
   legend(x="topleft",lty=c(2),col=c("black"),

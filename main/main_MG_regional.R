@@ -1,9 +1,9 @@
 # ==================================================================================
 # Arquivo de execução do Alerta Dengue: Regionais de Saude do Estado de Minas Gerais
 # ==================================================================================
-setwd("~/")
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
+setwd("~/"); library("AlertTools")
 con <- DenguedbConnect()
+source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 
 data_relatorio = 201804
@@ -25,6 +25,16 @@ publicarAlerta(ale = aleMG_RS_SeteLagoas, pdf = bolSeteLagoas, dir = "Relatorio/
 # --------------------------------
 # Municipio de Contagem
 # --------------------------------
+
+aleMG_MN_Contagem <- update.alerta(city = 3118601, pars = pars.MG[["Belo Horizonte"]], crit = MG.criteria, 
+                                     datasource = con, sefinal=data_relatorio, writedb = FALSE)
+
+bolContagem=configRelatorioMunicipal(tipo="simples", siglaUF ="MG", data=data_relatorio, 
+                                      alert=aleMG_MN_Contagem, pars = pars.MG[["Belo Horizonte"]], dir.out=MG.MN.Contagem.out, 
+                                      geraPDF=TRUE)
+
+publicarAlerta(ale = aleMG_MN_Contagem, pdf = bolContagem, dir = "Relatorio/MG/Municípios/Contagem")
+
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

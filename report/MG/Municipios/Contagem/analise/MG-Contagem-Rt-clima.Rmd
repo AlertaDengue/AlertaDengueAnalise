@@ -331,4 +331,3 @@ accuracy <- 1-mean(resV$Rt_real != resV$Rt_pred)
 accuracy
 ```
 
-

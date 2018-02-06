@@ -143,11 +143,13 @@ ES.MN.VilaVelha.out = "AlertaDengueAnalise/report/ES/Municipios/VilaVelha"
 # ========================================
 # Parametros do Estado de Minas Gerais 
 # ========================================
-#nomesregs = getRegionais("Espírito Santo")# use essa funcao para descobrir as regionais
-nomesregs.MG <- c("Sete Lagoas")         
+#nomesregs = getRegionais("Minas Gerais")# use essa funcao para descobrir as regionais
+nomesregs.MG <- c("Sete Lagoas","Belo Horizonte")         
 pars.MG <- NULL
 pars.MG[nomesregs.MG] <- list(NULL)
 pars.MG[["Sete Lagoas"]] <- list(pdig = c(2.708049,1.373673),tcrit=20, inccrit = 100, preseas=10, posseas = 10, legpos="bottomright")
+pars.MG[["Belo Horizonte"]] <- list(pdig = c(2.986511,1.067067),tcrit=17, ucrit = NA, inccrit = 131, preseas=11, posseas = 11, legpos="bottomright")
+
 MG.out = "AlertaDengueAnalise/report/MG/figs/"
 
 # Dados para o mapa
@@ -158,6 +160,7 @@ MG.criteria = criteria
 
 # Dados do diretorio para salvar (com / no final)
 MG.SeteLagoas.out = "AlertaDengueAnalise/report/MG/Regionais/SeteLagoas"
+MG.MN.Contagem.out = "AlertaDengueAnalise/report/MG/Municipios/Contagem"
 
 
 # ========================================
@@ -216,7 +219,7 @@ CE.Fortaleza.out="AlertaDengueAnalise/report/CE/Municipios/Fortaleza"
 nomesregs.SP = getRegionais("São Paulo")# use essa funcao para descobrir as regionais
 pars.SP <- NULL
 pars.SP[nomesregs.CE] <- list(NULL)
-pars.SP[["São José do Rio Preto"]] <- list(pdig = c(2.411618,1.227564),tcrit=20, ucrit = NA, inccrit = 967, preseas=176, posseas=165, legpos="bottomright") 
+pars.SP[["São José do Rio Preto"]] <- list(pdig = c(2.411618,1.227564),tcrit=20, ucrit = NA, inccrit = 216, preseas=40, posseas=37, legpos="bottomright") 
 
 # Chick
 #pars.SP.chik <- NULL

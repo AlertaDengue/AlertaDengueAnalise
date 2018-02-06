@@ -26,7 +26,7 @@ library(ROCR)
 ### Definir cidade ou cidades
 
 ```{r}
-geocodigo = 3118601
+geocodigo = 3549805
 ```
 
 
@@ -266,7 +266,7 @@ Usando todas as variaveis numa regressao logistica sem estrutura temporal
 1. Modelo completo (adaptar a cada caso)
 
 ```{r}
-glm1 <- glm(Rt1 ~ temp_min * umid_med + I(temp_max - temp_min) + log(casos+1),family = binomial(link = "logit"),data = fit.df)
+glm1 <- glm(Rt1 ~ temp_min + I(temp_max - temp_min) + umid_min + casos,family = binomial(link = "logit"),data = fit.df)
 summary(glm1)
 anova(glm1)
 ```
@@ -276,7 +276,7 @@ anova(glm1)
 ```{r}
 glm2 <- glm(Rt1 ~ temp_min + I(temp_max - temp_min) + casos,family = binomial(link = "logit"),data = fit.df)
 glm3 <- glm(Rt1 ~ temp_min + I(temp_max - temp_min),family = binomial(link = "logit"),data = fit.df)
-glm4 <- glm(Rt1 ~ temp_min +  umid_med,family = binomial(link = "logit"),data = fit.df)
+glm4 <- glm(Rt1 ~ temp_min * umid_min,family = binomial(link = "logit"),data = fit.df)
 glm5 <- glm(Rt1 ~ temp_min + log(casos+1),family = binomial(link = "logit"),data = fit.df)
 glm6 <- glm(Rt1 ~ temp_min,family = binomial(link = "logit"),data = fit.df)
 AIC(glm1, glm2, glm3, glm4,glm5,glm6)
@@ -330,5 +330,4 @@ table(resV$Rt_real,resV$Rt_pred)
 accuracy <- 1-mean(resV$Rt_real != resV$Rt_pred)
 accuracy
 ```
-
 

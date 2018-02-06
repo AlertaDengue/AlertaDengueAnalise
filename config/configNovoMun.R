@@ -3,7 +3,7 @@ tab <- read.csv("../tabela-regionaisIBGE.csv")
 
 
 ### 1. Qual é o estado?
-tabuf <- subset(tab, Nome_UF=="São Paulo")
+tabuf <- subset(tab, Nome_UF=="Minas Gerais")
 unique(tabuf$Nome_Microrregião)
 unique(tabuf$Nome_Mesorregião)
 
@@ -11,17 +11,17 @@ unique(tabuf$Nome_Mesorregião)
 library("AlertTools")
 con <- DenguedbConnect()
 
-reg=getRegionais(uf = "São Paulo")
+reg=getRegionais(uf = "Minas Gerais")
 reg
 
-cid = getCidades(uf = "São Paulo", datasource=con)
+cid = getCidades(uf = "Minas Gerais", datasource=con)
 dim(cid)
 
 ### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
-nomedacidade = "São José do Rio Preto"
-geocodigo = 3549805 # 320360  #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
+nomedacidade = "Contagem"
+geocodigo = 3118601 # 320360  #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
 id = 15# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
-nomereg = "São José do Rio Preto" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
+nomereg = "Belo Horizonte" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
 
 insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha = "aldengue")
 
@@ -100,7 +100,6 @@ res = write.parameters(newpars,newdat,senha="aldengue")
 
 ### 5. Uma olhadinha nos casos
 # --------------------------------
-nome = "São José do Rio Preto"
 #geocodigo = tabuf$municipio_geocodigo[tabuf$nome_municipio==nome]
 # dengue
 casos = getCases(city=geocodigo, datasource = con)
@@ -121,13 +120,14 @@ plot(casosZ$casos, type="l")
 #thresholds.table <- info.dengue.apply.mem(mun_list=cid$municipio_geocodigo[1],con = con)
 #load("mem-ceara.RData") # rodei direto a funcao do marcelo na pasta mem-marcelo (provisorio, no AlertTools ver uso-do-mem)
 newpars = c("limiar_preseason","limiar_posseason","limiar_epidemico")
-valores = data.frame(municipio_geocodigo=3549805, limiar_preseason = 176, limiar_posseason = 165, limiar_epidemico = 967)
+# o alerta usa incidencia, e nao casos (o mem retorna o limiar em numero de casos)
+valores = data.frame(municipio_geocodigo=geocodigo, limiar_preseason = 11, limiar_posseason = 12, limiar_epidemico = 131)
 res = write.parameters(newpars,valores,senha="aldengue")
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo < 2400000"
-d <- dbGetQuery(con, sqlquery)
-head(d)
-tapply(d$limiar_preseason,d$nome_regional,median) # para atribuir uma media as regionais no par (provisorio)
+#sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo < 2400000"
+#d <- dbGetQuery(con, sqlquery)
+#head(d)
+#tapply(d$limiar_preseason,d$nome_regional,median) # para atribuir uma media as regionais no par (provisorio)
 
 
 ### 5. Atraso de notificacao (metodo da Claudia)
@@ -157,7 +157,7 @@ res.delay
 ### Para criar estrutura de diretorios (pode ser o estado, a regional ou o municipio)
 source("config/fun_initializeSites.R")
 # USO: setTree.newsite(siglaestado="CE",regional="Nova Regional")
-setTree.newsite(siglaestado="SP",regional = "SaoJosedoRioPreto",municipio = "SaoJosedoRioPreto")
+setTree.newsite(siglaestado="MG",regional = "Contagem",municipio = "Contagem")
 
 # Proximo passo: criar o main
 
