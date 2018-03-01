@@ -8,7 +8,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 # ---- Calcula alerta: 
 
 # ----- data do relatorio:
-data_relatorio = 201804
+data_relatorio = 201807
 
 # Dengue
 aleCE <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, 
@@ -23,7 +23,7 @@ publicarAlerta(ale = aleCE, pdf = bolCE, dir = "Relatorio/CE/Estado")
 
 
 # Chik
-aleCE.chik <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.0",
+#aleCE.chik <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.0",
                        datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE) 
 
 # ----------------- Fortaleza
@@ -33,9 +33,9 @@ aleFort <- update.alerta(city = 2304400, pars = pars.CE[["Fortaleza"]], cid10="A
                          datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE)
 
 #res = write.alerta(obj = aleFort, write = "db")
-#bolFort <- configRelatorioMunicipal(alert = aleFort, tipo = "simples", varcli = "umid_max", siglaUF = "CE", 
-#                                    data = data_relatorio, pars = pars.CE,
-#                                    dir.out = CE.Fortaleza.out, geraPDF = TRUE)
+bolFort <- configRelatorioMunicipal(alert = aleFort, tipo = "simples", varcli = "umid_max", siglaUF = "CE", 
+                                    data = data_relatorio, pars = pars.CE,
+                                    dir.out = CE.Fortaleza.out, geraPDF = TRUE)
 
 # Chik 
 aleFortC <- update.alerta(city = 2304400, pars = pars.CE.chik[["Fortaleza"]], cid10="A92.0", crit = CE.criteria, 
