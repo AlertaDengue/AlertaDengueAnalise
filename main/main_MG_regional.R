@@ -27,13 +27,12 @@ publicarAlerta(ale = aleMG_RS_SeteLagoas, pdf = bolSeteLagoas, dir = "Relatorio/
 # --------------------------------
 
 aleMG_MN_Contagem <- update.alerta(city = 3118601, pars = pars.MG[["Belo Horizonte"]], crit = MG.criteria, 
-                                     datasource = con, sefinal=data_relatorio, writedb = FALSE)
+                                     datasource = con, sefinal=data_relatorio, adjustdelay = TRUE, delaymethod = "bayesian",
+                                   writedb = FALSE)
 
 bolContagem=configRelatorioMunicipal(tipo="simples", siglaUF ="MG", data=data_relatorio, 
                                       alert=aleMG_MN_Contagem, pars = pars.MG[["Belo Horizonte"]], dir.out=MG.MN.Contagem.out, 
                                       geraPDF=TRUE)
-
-publicarAlerta(ale = aleMG_MN_Contagem, pdf = bolContagem, dir = "Relatorio/MG/Municípios/Contagem")
 
 
 # ----- Fechando o banco de dados
