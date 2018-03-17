@@ -8,7 +8,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 # ---- Calcula alerta: 
 
 # ----- data do relatorio:
-data_relatorio = 201807
+data_relatorio = 201810
 
 # Dengue
 aleCE <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, 
@@ -39,11 +39,11 @@ bolFort <- configRelatorioMunicipal(alert = aleFort, tipo = "simples", varcli = 
 
 # Chik 
 aleFortC <- update.alerta(city = 2304400, pars = pars.CE.chik[["Fortaleza"]], cid10="A92.0", crit = CE.criteria, 
-                         datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE, delaymethod = "bayesian")
+                         datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
 
 #Zika
 aleFortZ <- update.alerta(city = 2304400, pars = pars.CE.zika[["Fortaleza"]], cid10="A92.8", crit = CE.criteria, 
-                          datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE, delaymethod="bayesian")
+                          datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
 
 # Boletim Arbo
 bolFort <- configRelatorioMunicipal(alert = aleFort, alechik = aleFortC, alezika = aleFortZ, tipo = "simples", varcli = "umid_max", siglaUF = "CE", 
