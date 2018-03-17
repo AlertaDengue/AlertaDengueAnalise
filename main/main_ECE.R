@@ -51,7 +51,7 @@ bolFort <- configRelatorioMunicipal(alert = aleFort, alechik = aleFortC, alezika
                                    dir.out = CE.Fortaleza.out, geraPDF = TRUE)
 
 
-publicarAlerta(ale = aleFort, pdf = bolFort, dir = "Relatorio/CE/Municípios/Fortaleza")
+publicarAlerta(ale = aleFort, pdf = bolFort, dir = "Relatorio/CE/Municipios/Fortaleza")
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

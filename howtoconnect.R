@@ -41,6 +41,7 @@ dbListFields(con, c("Dengue_global","regional_saude")) # variaveis meteorologica
 dbListFields(con, c("Dengue_global","Municipio")) # 
 
 
+
 # Exemplos de consultas:
 # -----------------------
 

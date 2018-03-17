@@ -68,8 +68,8 @@ criteriaChik = list(
 ## Estao inscritos na tabela regional_saude
 ## Refazer anualmente
 
-library("AlertTools")
-cond <- DenguedbConnect()
-cid <- getCidades(uf="Rio de Janeiro",datasource=cond)
-thresholds.table <- info.dengue.apply.mem(con=cond, start_year=0, mun_list = cid$municipio_geocodigo,write = "db", passwd  = "aldengue")
+#library("AlertTools")
+#cond <- DenguedbConnect()
+#cid <- getCidades(uf="Rio de Janeiro",datasource=cond)
+#thresholds.table <- info.dengue.apply.mem(con=cond, start_year=0, mun_list = cid$municipio_geocodigo,write = "db", passwd  = "aldengue")
 
