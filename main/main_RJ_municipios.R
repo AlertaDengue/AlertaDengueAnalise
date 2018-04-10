@@ -5,7 +5,7 @@ con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
-data_relatorio = 201812
+data_relatorio = 201813
 
 #***********************************
 ### Cidade do Rio de Janeiro 
