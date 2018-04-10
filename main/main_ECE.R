@@ -8,7 +8,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 # ---- Calcula alerta: 
 
 # ----- data do relatorio:
-data_relatorio = 201812
+data_relatorio = 201813
 
 # Dengue
 aleCE <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, 
@@ -23,8 +23,8 @@ publicarAlerta(ale = aleCE, pdf = bolCE, dir = "Relatorio/CE/Estado")
 
 
 # Chik
-#aleCE.chik <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.0",
-                       datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE) 
+aleCE.chik <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.0",
+                       datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) 
 
 # ----------------- Fortaleza
 
