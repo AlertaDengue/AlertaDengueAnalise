@@ -26,6 +26,10 @@ publicarAlerta(ale = aleCE, pdf = bolCE, dir = "Relatorio/CE/Estado")
 aleCE.chik <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.0",
                        datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) 
 
+# Zika
+aleCE.zika <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.8",
+                            datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) 
+
 # ----------------- Fortaleza
 
 # Dengue

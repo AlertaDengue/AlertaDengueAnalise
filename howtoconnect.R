@@ -49,7 +49,7 @@ dbListFields(con, c("Dengue_global","Municipio")) #
 tw <- dbReadTable(con, c("Municipio","Tweet"))
 str(tw)
 
-d <- dbReadTable(con, c("Municipio","Historico_alerta_chik"))
+d <- dbReadTable(con, c("Municipio","Historico_alerta_zika"))
 tail(d)
 
 d <- dbReadTable(con, c("Municipio","alerta_mrj"))
