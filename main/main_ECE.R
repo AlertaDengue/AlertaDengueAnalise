@@ -13,7 +13,6 @@ data_relatorio = 201814
 # Dengue
 aleCE <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE) 
-
 # Chik
 aleCE.chik <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.0",
                             datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) 
@@ -23,12 +22,13 @@ aleCE.zika <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars
                             datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) 
 
 
-
 bolCE <- configRelatorioEstadual(uf="Ceará", sigla = "CE", data=data_relatorio, varcli = "umid_max", tsdur=300,
-                                    alert=aleCE, alechik = aleCE.chik, alezika = aleCE.zika, , pars = pars.CE, shape=CE.shape, varid=CE.shapeID,
+                                    alert=aleCE, alechik = aleCE.chik, alezika = aleCE.zika, pars = pars.CE, shape=CE.shape, varid=CE.shapeID,
                                     dir=CE.out, datasource=con, geraPDF=TRUE)
 
 publicarAlerta(ale = aleCE, pdf = bolCE, dir = "Relatorio/CE/Estado")
+
+
 
 # ----------------- Fortaleza
 
