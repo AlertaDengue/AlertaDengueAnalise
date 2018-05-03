@@ -10,7 +10,7 @@ con <- DenguedbConnect()
 # ----- data do relatorio:
 data_relatorio = 201817
 
-# ---- Calcula alerta: 
+# ---- Calcula alerta Dengue: 
 
 aleRJ <- update.alerta(region = names(pars.RJ), state= "Rio de Janeiro", pars = pars.RJ, crit = RJ.criteria, 
                    datasource = con, sefinal=data_relatorio, writedb = FALSE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
@@ -23,6 +23,12 @@ bolRJ=configRelatorioEstadual(uf="Rio de Janeiro", sigla = "RJ", data=data_relat
 publicarAlerta(ale = aleRJ, pdf = bolRJ, dir = "Relatorio/RJ/Estado")
 
 rm(aleRJ,bolRJ)
+
+
+# ---- Calcula alerta Chik:
+aleCRJ <- update.alerta(region = names(pars.RJ), state= "Rio de Janeiro", pars = pars.RJ, crit = RJ.criteria, cid10="A92.0",
+                       datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
+
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

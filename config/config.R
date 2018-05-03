@@ -16,15 +16,15 @@ nomesregs.RJ <- c("Metropolitana I", "Metropolitana II", "Litoral Sul", "Médio 
                "Centro Sul", "Serrana", "Baixada Litorânea", "Norte", "Noroeste")         
 pars.RJ <- NULL
 pars.RJ[nomesregs.RJ] <- list(NULL)
-pars.RJ[["Metropolitana I"]] <- list(pdig = c(2.997765,0.7859499),tcrit=22, inccrit = 100, preseas=8.2, posseas = 7.6, legpos="bottomright")
-pars.RJ[["Metropolitana II"]] <- list(pdig = c(2.997765,0.7859499),tcrit = 22, inccrit = 100, preseas=31.2, posseas=23.8, legpos="bottomright") 
-pars.RJ[["Litoral Sul"]] <- list(pdig = c(2.044211,0.9251224),tcrit = 20, inccrit = 100, preseas=32.7, posseas=33.8, legpos="bottomright")
-pars.RJ[["Médio Paraíba"]] <- list(pdig = c(2.744345,0.7612805),tcrit = 22, inccrit = 100, preseas=28.2, posseas=28.2, legpos="bottomright")
-pars.RJ[["Centro Sul"]] <- list(pdig = c(2.743135,0.8294707),tcrit = 22, inccrit = 100, preseas=15.1, posseas=18.0, legpos="bottomright")
-pars.RJ[["Serrana"]] <- list(pdig = c(2.788100,0.7627551),tcrit=22, inccrit=100, preseas=7.1, posseas=8.6, legpos="bottomright")
-pars.RJ[["Baixada Litorânea"]] <- list(pdig = c(2.294574,0.8221244),tcrit=22, inccrit=100,preseas=33.0, posseas = 40.9, legpos="topleft")
-pars.RJ[["Norte"]] <- list(pdig = c(2.997765,0.7859499),tcrit=22, inccrit=100,preseas=42.2,posseas=42.9, legpos="bottomright")
-pars.RJ[["Noroeste"]] <- list(pdig = c(2.791400,0.9913278), tcrit=22, inccrit=129.5,preseas=45.6, posseas=51.2, legpos="bottomright")
+pars.RJ[["Metropolitana I"]] <- list(pdig = c(2.997765,0.7859499),pdigChik = c(2.997765,0.7859499),tcrit=22, inccrit = 100, preseas=8.2, posseas = 7.6, legpos="bottomright")
+pars.RJ[["Metropolitana II"]] <- list(pdig = c(2.997765,0.7859499),pdigChik = c(2.997765,0.7859499),tcrit = 22, inccrit = 100, preseas=31.2, posseas=23.8, legpos="bottomright") 
+pars.RJ[["Litoral Sul"]] <- list(pdig = c(2.044211,0.9251224),pdigChik = c(2.044211,0.9251224), tcrit = 20, inccrit = 100, preseas=32.7, posseas=33.8, legpos="bottomright")
+pars.RJ[["Médio Paraíba"]] <- list(pdig = c(2.744345,0.7612805),pdigChik = c(2.744345,0.7612805),tcrit = 22, inccrit = 100, preseas=28.2, posseas=28.2, legpos="bottomright")
+pars.RJ[["Centro Sul"]] <- list(pdig = c(2.743135,0.8294707),pdigChik = c(2.743135,0.8294707),tcrit = 22, inccrit = 100, preseas=15.1, posseas=18.0, legpos="bottomright")
+pars.RJ[["Serrana"]] <- list(pdig = c(2.788100,0.7627551),pdigChik = c(2.788100,0.7627551),tcrit=22, inccrit=100, preseas=7.1, posseas=8.6, legpos="bottomright")
+pars.RJ[["Baixada Litorânea"]] <- list(pdig = c(2.294574,0.8221244),pdigChik = c(2.294574,0.8221244),tcrit=22, inccrit=100,preseas=33.0, posseas = 40.9, legpos="topleft")
+pars.RJ[["Norte"]] <- list(pdig = c(2.997765,0.7859499),pdigChik=c(2.997765,0.7859499),tcrit=22, inccrit=100,preseas=42.2,posseas=42.9, legpos="bottomright")
+pars.RJ[["Noroeste"]] <- list(pdig = c(2.791400,0.9913278),pdigChik = c(2.791400,0.9913278), tcrit=22, inccrit=129.5,preseas=45.6, posseas=51.2, legpos="bottomright")
 
 #pars.Rio <- list(pdig = c(2.5016,1.1013),tcrit = 22, inccrit = 100,
 #                   preseas=18.59, posseas=14.15) # cidade como um todo
