@@ -7,7 +7,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 
-data_relatorio = 201816
+data_relatorio = 201817
 
 aleLondrina <- update.alerta(city = 4113700, pars = pars.PR[["Londrina"]], crit = PR.criteria, 
                                   datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
