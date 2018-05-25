@@ -1,6 +1,6 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Paraná
-# =============================================================================
+# 6=============================================================================
 setwd("~/")
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
@@ -8,7 +8,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 # ----- data do relatorio:
-data_relatorio = 201816
+data_relatorio = 201820
 
 alePR <- update.alerta(state = "Paraná",region = names(pars.PR), pars = pars.PR, crit = PR.criteria, 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE) #, state = "Paraná"
