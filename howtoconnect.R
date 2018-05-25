@@ -49,11 +49,11 @@ dbListFields(con, c("Dengue_global","Municipio")) #
 tw <- dbReadTable(con, c("Municipio","Tweet"))
 str(tw)
 
-d <- dbReadTable(con, c("Municipio","Historico_alerta_zika"))
+d <- dbReadTable(con, c("Municipio","Historico_alerta_chik"))
 tail(d)
 
-d <- dbReadTable(con, c("Municipio","alerta_mrj"))
-write.csv(d[d$se<201740,c("aps","se","data","casos","tmin")], file="dengueRioAPS-201001201740.csv",row.names=FALSE)
+d <- dbReadTable(con, c("Municipio","alerta_mrj_chik"))
+#write.csv(d[d$se<201740,c("aps","se","data","casos","tmin")], file="dengueRioAPS-201001201740.csv",row.names=FALSE)
 
 
 # baixar a tabela de tweet filtrando para um municipio

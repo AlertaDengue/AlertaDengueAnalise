@@ -11,15 +11,13 @@ data_relatorio = 201815
 ### Cidade do Rio de Janeiro 
 #***********************************
 
-
-
 # Dengue 
 alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = data_relatorio, verbose=FALSE)        # calcula o alerta
 
 
 # Chikungunya
-
 alerioC <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, cid10 = "A920", datasource=con, se = data_relatorio, verbose=FALSE) 
+write.alertaRio(obj = alerioC, write = "db")
 
 # Boletim de dengue e chik
 bolrio <- configRelatorioRio( data=data_relatorio, alert=alerio, alertC= alerioC, shape=RJ.aps.shape,
