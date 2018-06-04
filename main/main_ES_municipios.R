@@ -7,7 +7,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 con <- DenguedbConnect()
 
 
-data_relatorio = 201818
+data_relatorio = 201820
 
 aleLondrina <- update.alerta(city = 4113700, pars = pars.PR[["Londrina"]], crit = PR.criteria, 
                                   datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
@@ -64,6 +64,8 @@ rm(aleSantaMariaJetiba,bolSantaMariaJetiba)
 
 aleAnchieta <- update.alerta(city = 320040, pars = pars.ES[["Sul"]], crit = ES.criteria, 
                                      datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
+
+
 
 bolAnchieta <- configRelatorioMunicipal(alert = aleAnchieta, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
                                                 dir.out = ES.MN.Anchieta.out, pars = pars.ES, geraPDF = TRUE)
