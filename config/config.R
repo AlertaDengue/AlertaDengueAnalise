@@ -42,7 +42,7 @@ RJ.out = "AlertaDengueAnalise/report/RJ"
 # ===================================================
 # Criterios
 
-RJ.aps <- list(pdig = c(2.5016,1.1013), pdigChik = c(1.875754, 1.392577), tcrit=22, inccrit=100, preseas = 18, posseas = 40)
+RJ.aps <- list(pdig = c(2.600987,1.157937), pdigChik = c(2.687797, 1.362566), tcrit=22, inccrit=100, preseas = 18, posseas = 40)
 RJ.aps.shape = "AlertaDengueAnalise/report/RJ/Municipios/Rio_de_Janeiro/shape/CAPS_SMS.shp"
 RJ.aps.shapeID = "CD_GEOCMU"
 RJ.aps.criteria = criteria

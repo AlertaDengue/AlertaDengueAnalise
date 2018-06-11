@@ -132,8 +132,10 @@ res = write.parameters(newpars,valores,senha="aldengue")
 
 ### 5. Atraso de notificacao (metodo da Claudia)
 library("survival")
-res1<-fitDelayModel(cities=geocodigo, datasource=con)
-res<-fitDelayModel(cities=geocodigo, period=c("2013-01-01","2017-06-01"), datasource=con)
+res1<-fitDelayModel(cities=geocodigo, datasource=con, cid10 = "A90") # dengue
+res1<-fitDelayModel(cities=geocodigo, datasource=con, cid10 = "A920") # chik
+
+res<-fitDelayModel(cities=geocodigo, period=c("2016-01-01","2018-01-01"), datasource=con, cid10 = "A920")
 
 #Os parametros a serem anotados no config são:
 list(meanlog=res1$icoef[1], sdlog=exp(res1$icoef[2]))

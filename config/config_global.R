@@ -23,7 +23,12 @@ source("AlertaDengueAnalise/config/configRelatorio.r")
 
 ## -------- Distribuicao do tempo de geracao da dengue:
 gtdist="normal"; meangt=3; sdgt = 1.2   
-
+GT.Deng = list(gtdist="normal", meangt=3, sdgt = 1.2) 
+## --------- Distri tempode geracao da chikungunya
+#The mean serial interval ranged from 1.5 to 2.7 
+# weeks for CHIKV and from 2.2 to 4.7 weeks for ZIKV according to the change in temperature over the periods
+# Riou et al 2017
+GT.Chik = list(gtdist="normal", meangt=2, sdgt = 1)   
 
 ## --------- Regras de mudança de nivel de alerta
 # (criterio, duracao da condicao para turnon, turnoff)

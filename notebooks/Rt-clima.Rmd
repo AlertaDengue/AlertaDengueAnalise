@@ -26,7 +26,7 @@ library(ROCR)
 ### Definir cidade ou cidades
 
 ```{r}
-geocodigo = 3118601
+geocodigo = 3304557
 ```
 
 
@@ -77,7 +77,7 @@ plot(casZ$data, casZ$casos, type = "h", main="Zika",xlab="",ylab="casos")
 par(mfrow=c(1,3), mar=c(3,3,3,0))
 with(casD,plot(mes, casos , col=1,type='p',xlab="meses",main="Dengue"))
 with(casC,plot(mes, casos , col=1,type='p',xlab="meses",main="Chik"))
-with(casZ,plot(mes, casos , col=1,type='p',xlab="meses",main="Zika"))
+#with(casZ,plot(mes, casos , col=1,type='p',xlab="meses",main="Zika"))
 ```
 
 
@@ -149,6 +149,199 @@ dD <- mergedata(cases = casD, climate = clima.wu.pri)
 dD<-Rt(dD,count = "casos", gtdist = "normal", meangt = 3, sdgt=1)
 dD$Rt1 <- 0
 dD$Rt1[dD$Rt > 1] <- 1
+```
+
+Rt x umidade
+```{r}
+par(mfrow=c(1,3))
+with(dD,{
+boxplot(dD$umid_min~(dD$Rt > 1), notch = T)
+boxplot(dD$umid_med~(dD$Rt > 1), notch = T)
+boxplot(dD$umid_max~(dD$Rt > 1), notch = T)
+})
+```
+
+Rt x temperatura
+```{r}
+par(mfrow=c(1,3))
+with(dD,{
+boxplot(dD$temp_min~(dD$Rt > 1), notch = T)
+boxplot(dD$temp_med~(dD$Rt > 1), notch = T)
+boxplot(dD$temp_max~(dD$Rt > 1), notch = T)
+})
+```
+
+## Modelagem
+
+1. Selecionando as variaveis que interessam
+
+```{r}
+allvars.cli <- c("temp_min", "temp_med", "temp_max", "umid_min", 
+        "umid_med", "umid_max")
+dDa <- dD[,c(allvars.cli, "casos", "Rt", "Rt1","data.x", "pop")]
+sapply(dDa,function(x) sum(is.na(x)))
+```
+
+2. Resolver os missings por na.omit
+
+```{r}
+dDa <- na.omit(dDa)
+```
+
+3. Separando em grupo de treinamento e grupo de teste
+
+```{r}
+require("caTools")
+set.seed(88)
+split <- sample.split(dDa$Rt1,SplitRatio = 0.8)
+fit.df <- subset(dDa,split==TRUE)
+test.df <- subset(dDa,split==FALSE)
+```
+
+### Análise univariada usando gam
+
+A abordagem aqui é encontrar a variavel que melhor discrimina entre semanas com Rt>1 e Rt<1 com um modelo logistico aditivo 
+Usamos regressão logística apenas para escolher a variável que usaremos direto no ROC
+
+1. Ajustar para cada variavel climática
+
+```{r}
+mod1 <- with(fit.df, gam(I(Rt>1)~s(umid_max), family = "binomial"))
+mod2 <- with(fit.df, gam(I(Rt>1)~s(umid_med), family = "binomial"))
+mod3 <- with(fit.df, gam(I(Rt>1)~s(umid_min), family = "binomial"))
+mod4 <- with(fit.df, gam(I(Rt>1)~s(temp_max), family = "binomial"))
+mod5 <- with(fit.df, gam(I(Rt>1)~s(temp_med), family = "binomial"))
+mod6 <- with(fit.df, gam(I(Rt>1)~s(temp_min), family = "binomial"))
+AIC(mod1, mod2, mod3, mod4, mod5, mod6)
+```
+
+2. Selecionar a variavel mais discriminante (menor AIC) 
+
+```{r}
+summary(mod6)
+```
+
+3. Curva ROC para definir ponto de corte da variavel
+
+Acurácia
+```{r}
+library(ROCR)
+
+pred<- prediction(predictions = fit.df$temp_min,
+                  labels = fit.df$Rt1)
+perf<- performance(pred, "acc")
+plot(perf)
+
+# identifiando os valores maximos de acuracia
+maxacc <- max(perf@y.values[[1]]) 
+maxacc
+
+# plotando
+umid.cut = perf@x.values[[1]][which(perf@y.values[[1]]==maxacc)]
+abline(v=umid.cut)
+mtext(side = 3, text = paste("threshold is", umid.cut))
+```
+
+4. Matriz de confusao
+
+```{r}
+
+resF <- data.frame(Date = fit.df$data.x, Rt_real = fit.df$Rt1, Rt_Pred = as.numeric(fit.df$temp_min>umid.cut))
+table(resF$Rt_real,resF$Rt_Pred)
+```
+
+5. Acuracia nos dados de validacao
+
+```{r}
+resV <- data.frame(Date = test.df$data.x, Rt_real = test.df$Rt1,Rt_pred =as.numeric(test.df$temp_min>umid.cut))
+table(resV$Rt_real,resV$Rt_pred)
+accuracy <- 1-mean(resV$Rt_real != resV$Rt_pred)
+accuracy
+```
+
+## Testando modelos lineares multiplos
+
+Usando todas as variaveis numa regressao logistica sem estrutura temporal
+
+1. Modelo completo (adaptar a cada caso)
+
+```{r}
+glm1 <- glm(Rt1 ~ temp_min * umid_med + I(temp_max - temp_min) + log(casos+1),family = binomial(link = "logit"),data = fit.df)
+summary(glm1)
+anova(glm1)
+```
+
+2. Modelos alternativos 
+
+```{r}
+glm2 <- glm(Rt1 ~ temp_min + I(temp_max - temp_min) + casos,family = binomial(link = "logit"),data = fit.df)
+glm3 <- glm(Rt1 ~ temp_min + I(temp_max - temp_min),family = binomial(link = "logit"),data = fit.df)
+glm4 <- glm(Rt1 ~ temp_min +  umid_med,family = binomial(link = "logit"),data = fit.df)
+glm5 <- glm(Rt1 ~ temp_min + log(casos+1),family = binomial(link = "logit"),data = fit.df)
+glm6 <- glm(Rt1 ~ temp_min,family = binomial(link = "logit"),data = fit.df)
+AIC(glm1, glm2, glm3, glm4,glm5,glm6)
+#anova(glm1, glm3, glm2, test = "Chisq")
+```
+
+3. Escolhendo modelo , 
+```{r}
+summary(glm5)
+anova(glm5, test = "Chisq")
+
+```
+
+4. Agora encontrar o ponto de corte do predito do modelo que maximiza a acuracia
+
+```{r}
+fit.df$Rt.pred <- predict(glm6, newdata = fit.df, type="response")
+pred<- prediction(predictions = fit.df$Rt.pred,
+                  labels = fit.df$Rt1)
+perf<- performance(pred, "acc")
+plot(perf)
+
+# identifiando os valores maximos de acuracia
+maxacc <- max(perf@y.values[[1]]) 
+maxacc
+
+# plotando
+umid.cut = perf@x.values[[1]][which(perf@y.values[[1]]==maxacc)]
+abline(v=umid.cut)
+mtext(side = 3, text = paste("threshold is", umid.cut))
+```
+
+5. Matriz de confusao
+```{r}
+resF <- data.frame(Date = fit.df$data.x, Rt_real = fit.df$Rt1, Rt_Pred = as.numeric(fit.df$Rt.pred>umid.cut))
+table(resF$Rt_real,resF$Rt_Pred)
+```
+
+6. Acurácia
+
+```{r}
+accuracy <- 1-mean(resF$Rt_real != resF$Rt_Pred)
+accuracy
+```
+
+7. Aplicando na amostra para validacao 
+
+```{r}
+resV <- data.frame(Date = test.df$data.x, Rt_real = test.df$Rt1,Rt_pred =as.numeric(predict(glm6, newdata = test.df, type="response")>umid.cut))
+table(resV$Rt_real,resV$Rt_pred)
+accuracy <- 1-mean(resV$Rt_real != resV$Rt_pred)
+accuracy
+```
+
+
+### Número reprodutivo da Chikungunya 
+
+
+```{r}
+dD<- mergedata(cases = casC, climate = clima.wu.pri)
+dD<-Rt(dD,count = "casos", gtdist = "normal", meangt = 2, sdgt=1)
+dD$Rt1 <- 0
+dD$Rt1[dD$Rt > 1] <- 1
+plot(dD$casos)
+plot(dD$Rt)
 ```
 
 Rt x umidade
