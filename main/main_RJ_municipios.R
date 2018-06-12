@@ -5,13 +5,13 @@ con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
-data_relatorio = 201820
+data_relatorio = 201821
 #***********************************
 ### Cidade do Rio de Janeiro 
 #***********************************
 
 # Dengue 
-alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con, se = data_relatorio, verbose=FALSE)        # calcula o alerta
+alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con,se = data_relatorio, verbose=FALSE)        # calcula o alerta
 
 
 # Chikungunya

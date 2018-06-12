@@ -770,7 +770,8 @@ nomebol = NULL
 ## Relatorio do Rio de Janeiro
 ## ===================================================
 
-configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,  chik= FALSE, bdir=basedir, geraPDF=FALSE){
+configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,  chik= FALSE, 
+                             bdir=basedir, geraPDF=FALSE){
   
   # ------------------
   # Dados da regional
@@ -802,7 +803,7 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   # ------------------
   # Dados da Cidade : dengue
   # ------------------
-  tres <- write.alertaRio(alert, write="no")
+  tres <- write.alertaRio(alert, cid10=="A90", write="no")
   tres$ano <- floor(tres$se/100)
   tres$SE <- tres$se - 100*tres$ano
   
@@ -822,7 +823,7 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   # ------------------
   # Dados da Cidade : chik
   # ------------------
-  tresC <- write.alertaRio(alertC, write="no")
+  tresC <- write.alertaRio(alertC, cid10=="A92.8", write="no")
   tresC <- tresC[tresC$se>=201601,]
   tresC$ano <- floor(tresC$se/100)
   tresC$SE <- tresC$se - 100*tresC$ano
