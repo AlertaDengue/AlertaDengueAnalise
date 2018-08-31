@@ -21,6 +21,7 @@ bolPR=configRelatorioEstadual(uf="Paraná", sigla = "PR", data=data_relatorio, t
 publicarAlerta(ale = alePR, pdf = bolPR, dir = "Relatorio/PR/Estado")
 
 
+
 rm(alePR,bolPR)
 # ----- Fechando o banco de dados
 dbDisconnect(con)
