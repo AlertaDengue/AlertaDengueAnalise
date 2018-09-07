@@ -7,7 +7,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 
 
 # ----- data do relatorio:
-data_relatorio = 201833
+data_relatorio = 201835
 
 
 # ---- Calcula alerta Dengue: 
@@ -33,7 +33,7 @@ aleCRJ <- update.alerta(region = names(pars.RJ), state= "Rio de Janeiro", pars =
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
-
+8
 
 
 
