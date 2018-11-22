@@ -138,6 +138,16 @@ ES.MN.Muqui.out = "AlertaDengueAnalise/report/ES/Municipios/Muqui"
 ES.MN.Pinheiros.out = "AlertaDengueAnalise/report/ES/Municipios/Pinheiros"
 ES.MN.RioNovoSul.out = "AlertaDengueAnalise/report/ES/Municipios/RioNovoSul"
 ES.MN.VilaVelha.out = "AlertaDengueAnalise/report/ES/Municipios/VilaVelha"
+ES.MN.Vitoria.out = "AlertaDengueAnalise/report/ES/Municipios/Vitoria"
+
+# Chick (sando mesmos limiares da dengue)
+pars.ES.chik <- NULL
+pars.ES.chik[["Metropolitana"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=22, ucrit=NA, inccrit = 70, preseas=5, posseas=5, legpos="bottomright")
+
+# Zika
+pars.ES.zika <- NULL
+pars.ES.zika[["Metropolitana"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=22, ucrit=NA, inccrit = 70, preseas=5, posseas=5, legpos="bottomright")
+
 
 #***********************************************************************************************************************************
 # ========================================
@@ -200,7 +210,7 @@ pars.CE[["Camocim"]] <- list(pdig = c(2.139148, 0.8902779),tcrit=NA, ucrit = 87,
 pars.CE.chik <- NULL
 pars.CE.chik[["Fortaleza"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=NA, ucrit=87, inccrit = 70, preseas=5, posseas=5, legpos="bottomright")
 
-# Chick
+# Zika
 pars.CE.zika <- NULL
 pars.CE.zika[["Fortaleza"]] <- list(pdig = c(3.436139, 1.2744636),tcrit=NA, ucrit=87, inccrit = 70, preseas=5, posseas=5, legpos="bottomright")
 
