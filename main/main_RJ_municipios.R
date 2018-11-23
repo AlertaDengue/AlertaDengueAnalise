@@ -16,7 +16,8 @@ alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con,se = dat
 
 # Chikungunya
 alerioC <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, cid10 = "A920", datasource=con, se = data_relatorio, verbose=FALSE) 
-write.alertaRio(obj = alerioC, write = "db")
+#dd <- write.alertaRio(obj = alerioC, write = "db")
+#write.alertaRio(obj = alerio, write = "db")
 
 # Boletim de dengue e chik
 bolrio <- configRelatorioRio( data=data_relatorio, alert=alerio, alertC= alerioC, shape=RJ.aps.shape,

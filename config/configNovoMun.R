@@ -133,7 +133,8 @@ res = write.parameters(newpars,valores,senha="aldengue")
 ### 5. Atraso de notificacao (metodo da Claudia)
 library("survival")
 res1<-fitDelayModel(cities=geocodigo, datasource=con, cid10 = "A90") # dengue
-res1<-fitDelayModel(cities=geocodigo, datasource=con, cid10 = "A920") # chik
+res1<-fitDelayModel(cities=geocodigo, datasource=con, cid10 = "A92.0") # chik
+res1<-fitDelayModel(cities=geocodigo, datasource=con, cid10 = "A92.8") # zika
 
 res<-fitDelayModel(cities=geocodigo, period=c("2016-01-01","2018-01-01"), datasource=con, cid10 = "A920")
 
@@ -157,9 +158,9 @@ res.delay
 
 
 ### Para criar estrutura de diretorios (pode ser o estado, a regional ou o municipio)
-source("config/fun_initializeSites.R")
+source("AlertaDengueAnalise/config/fun_initializeSites.R")
 # USO: setTree.newsite(siglaestado="CE",regional="Nova Regional")
-setTree.newsite(siglaestado="MG",regional = "Contagem",municipio = "Contagem")
+setTree.newsite(siglaestado="ES", municipio = "Vitoria")
 
 # Proximo passo: criar o main
 
