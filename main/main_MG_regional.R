@@ -6,7 +6,7 @@ con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 
-data_relatorio = 201848
+data_relatorio = 201850
 
 # ------------------------------- 
 # Regional de Saude de Sete Lagoas
@@ -20,6 +20,7 @@ bolSeteLagoas=configRelatorioRegional(tipo="simples",uf="Minas Gerais", regional
                                     dir=MG.SeteLagoas.out, datasource=con, geraPDF=TRUE)
 
 publicarAlerta(ale = aleMG_RS_SeteLagoas, pdf = bolSeteLagoas, dir = "Relatorio/MG/Regionais/SeteLagoas")
+
 
 # --------------------------------
 # Municipio de Contagem
