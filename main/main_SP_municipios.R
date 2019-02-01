@@ -4,7 +4,7 @@
 setwd("~/"); library("AlertTools")
 con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-data_relatorio = 201902
+data_relatorio = 201904
 
 # =====
 # SJRP
