@@ -4,7 +4,7 @@
 setwd("~/"); library("AlertTools")
 con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-data_relatorio = 201916
+data_relatorio = 201924
 
 # =====
 # SJRP
@@ -24,7 +24,7 @@ bolSJRP<- configRelatorioMunicipal(alert = aleSJRP.dengue, tipo = "simples", sig
 publicarAlerta(ale = aleSJRP.dengue, pdf = bolSJRP, dir = "Relatorio/SP/Municipios/SaoJosedoRioPreto")
 
 
-  # ----- Fechando o banco de dados
+# ----- Fechando o banco de dados
 
 
 
