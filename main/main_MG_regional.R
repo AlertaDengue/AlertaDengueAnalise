@@ -6,7 +6,7 @@ con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 
-data_relatorio = 201926
+data_relatorio = 201927
 
 # ------------------------------- 
 # Regional de Saude de Sete Lagoas
