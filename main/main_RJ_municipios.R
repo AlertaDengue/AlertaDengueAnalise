@@ -5,7 +5,7 @@ con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
-data_relatorio = 201928
+data_relatorio = 201932
 #**********************************
 ### Cidade do Rio de Janeiro 
 #***********************************
@@ -46,7 +46,7 @@ publicarAlerta(ale = aleCampos, pdf = bolCampos, dir = "Relatorio/RJ/Municipios/
 rm(aleCampos,bolCampos)
 
 
-q# ----- Fechando o banco de dados
+# ----- Fechando o banco de dados
 dbDisconnect(con)
 
 
