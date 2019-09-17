@@ -7,10 +7,10 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 
 # ----- data do relatorio:
 
-<<<<<<< HEAD
-data_relatorio = 201935
+
+data_relatorio = 201936
 # ---- Calcula alerta:
-=========
+
 
 #Dengue:
 aleES <- update.alerta(region = names(pars.ES), pars = pars.ES, state = "Espírito Santo", crit = ES.criteria, 
