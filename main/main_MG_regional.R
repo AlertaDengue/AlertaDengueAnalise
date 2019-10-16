@@ -6,7 +6,7 @@ con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 
-data_relatorio = 201940
+data_relatorio = 201941
 
 # ------------------------------- 
 # Regional de Saude de Sete Lagoas
@@ -26,13 +26,13 @@ publicarAlerta(ale = aleMG_RS_SeteLagoas, pdf = bolSeteLagoas, dir = "Relatorio/
 # Municipio de Contagem
 # --------------------------------
 
-aleMG_MN_Contagem <- update.alerta(city = 3118601, pars = pars.MG[["Belo Horizonte"]], crit = MG.criteria, 
-                                     datasource = con, sefinal=data_relatorio, adjustdelay = TRUE, delaymethod = "bayesian",
-                                   writedb = FALSE)
+#aleMG_MN_Contagem <- update.alerta(city = 3118601, pars = pars.MG[["Belo Horizonte"]], crit = MG.criteria, 
+#                                     datasource = con, sefinal=data_relatorio, adjustdelay = TRUE, delaymethod = "bayesian",
+#                                   writedb = FALSE)
 
-bolContagem=configRelatorioMunicipal(tipo="simples", siglaUF ="MG", data=data_relatorio, 
-                                      alert=aleMG_MN_Contagem, pars = pars.MG[["Belo Horizonte"]], dir.out=MG.MN.Contagem.out, 
-                                      geraPDF=TRUE)
+#bolContagem=configRelatorioMunicipal(tipo="simples", siglaUF ="MG", data=data_relatorio, 
+#                                      alert=aleMG_MN_Contagem, pars = pars.MG[["Belo Horizonte"]], dir.out=MG.MN.Contagem.out, 
+#                                      geraPDF=TRUE)
 
 
 # ----- Fechando o banco de dados
