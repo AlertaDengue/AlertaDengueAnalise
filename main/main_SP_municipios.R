@@ -5,13 +5,13 @@ setwd("~/"); library("AlertTools")
 con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 data_relatorio = 201852
-
+INLA:::inla.dynload.workaround()
 # =====
 # SJRP
 # =====
 # Dengue
 aleSJRP.dengue <- update.alerta(city = 3549805, pars = pars.SP[["São José do Rio Preto"]], crit = PR.criteria, 
-                                  datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE)
+                                  datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE, delaymethod = "bayesian")
 # Chik tem muito pouco caso 
 aleSJRP.chick <- update.alerta(city = 3549805, pars = pars.SP[["São José do Rio Preto"]], cid10="A92.0", crit = PR.criteria, 
                           datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)

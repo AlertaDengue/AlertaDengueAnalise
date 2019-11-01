@@ -39,6 +39,7 @@ dbListFields(con, c("Municipio","Clima_wu")) # variaveis meteorologicas
 
 dbListFields(con, c("Dengue_global","regional_saude")) # variaveis meteorologicas
 dbListFields(con, c("Dengue_global","Municipio")) # 
+dbListFields(con, c("Dengue_global","parameters")) # 
 
 
 
@@ -46,20 +47,31 @@ dbListFields(con, c("Dengue_global","Municipio")) #
 # -----------------------
 
 # baixar a tabela toda
-tw <- dbReadTable(con, c("Municipio","Tweet"))
-str(tw)
+wu <- dbReadTable(con, c("Municipio","Clima_wu"))
+str(wu)
 
-d <- dbReadTable(con, c("Municipio","Historico_alerta_zika"))
-tail(d[d$municipio_geocodigo==3302502,])
+save(wu, file="wu.RData")
 
-d <- dbReadTable(con, c("Municipio","alerta_mrj_chik"))
-#write.csv(d[d$se<201740,c("aps","se","data","casos","tmin")], file="dengueRioAPS-201001201740.csv",row.names=FALSE)
+d <- dbReadTable(con, c("Municipio","Historico_alerta_chik"))
+range(dd$municipio_geocodigo)
+dd <- d[d$data_iniSE > "2018-08-01",]
+dd <- dd[dd$municipio_geocodigo > 3300000 & dd$municipio_geocodigo < 3400000,]
+write.csv(d,file="historico-alerta-chik.csv",row.names = F)
+
+
+d <- dbReadTable(con, c("Municipio","alerta_mrj"))
+range(d$data)
 
 # baixar a tabela de tweet filtrando para um municipio
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 2304400"
 d <- dbGetQuery(con, comando)
 str(d)
 head(d)
+
+
+comando <- "SELECT geocodigo,nome,populacao,uf FROM \"Dengue_global\".\"Municipio\" "
+pop <- dbGetQuery(con, comando)
+save(pop, file = "pop.RData")
 
 # primeiros 2 registros da tabela dengue global. estado
 comando <- "SELECT * FROM \"Dengue_global\".\"estado\" LIMIT 2"
@@ -71,6 +83,12 @@ str(d)
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 3304557 AND numero > 10"
 tw <- dbGetQuery(con, comando)
 str(tw)
+
+# baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
+comando <- "SELECT nome, geocodigo FROM \"Dengue_global\".\"Municipio\" "
+mun <- dbGetQuery(con, comando)
+
+save(mun, file = "mun.RData")
 
 # query linkando informacao de duas tabelas
 
@@ -131,6 +149,8 @@ table(d$municipio_geocodigo)
 dbListFields(con, c("Dengue_global","Municipio"))
 dbListFields(con, c("Dengue_global","regional_saude"))
 
+d <- dbReadTable(con, c("Dengue_global",""))
+str(d)
 
 sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3200136"
 dr <- dbGetQuery(con, sqlquery)
@@ -177,9 +197,8 @@ dim(tw)
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
 c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
-                \"municipio_geocodigo\" > 3200000 "
+                \"municipio_geocodigo\" = 3300936 "
 d <- dbGetQuery(con,c1)
-dd<-subset(d, uf=="São Paulo")[,c("geocodigo","nome","populacao","uf")]
 
 c1 <- paste("SELECT * from \"Municipio\".\"alerta_mrj\"")
 d <- dbGetQuery(con,c1)
@@ -280,7 +299,9 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
   # criando tabela teste
   # ====================
   
-  dbWriteTable(con, "teste", dC0, overwrite=TRUE, row.names=FALSE)  
+  dados <- dbReadTable(con, c("Municipio","Historico_alerta"))
+  dados <- dados %>% filter(municipio_geocodigo==4113205)
+  dbWriteTable(con, "teste", dados, overwrite=TRUE, row.names=FALSE)  
   dbListTables(con) # lista de tabelas (elas estao em diferentes schemas)
   dbListFields(con, c("teste"))
   newdata = data.frame(SE=201547:201556,casos=rep(99,10),localidade=rep(99,10),cidade=rep(99,10))
@@ -393,7 +414,48 @@ character varying(5) DEFAULT NULL"
   
   dd <- dbGetQuery(con,crianewcol)
   
-  # =======================
+  # =========================
+  # cria nova coluna nas tabelas de historico para inserir tweets
+  dbListFields(con, c("Municipio","Historico_alerta"))
+  #crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN tweet numeric(5) DEFAULT NULL"
+  #tab <- dbGetQuery(con,crianewcol)
+  
+  dbListFields(con, c("Municipio","Historico_alerta_chik"))
+  #crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_chik\" ADD COLUMN tweet numeric(5) DEFAULT NULL"
+  
+  dbListFields(con, c("Municipio","Historico_alerta_zika"))
+  #crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_zika\" ADD COLUMN tweet numeric(5) DEFAULT NULL"
+  
+  # ======================
+  # cria nova coluna na tabela regional saude para inserir cid
+  tabr <- dbReadTable(con, c("Dengue_global","regional_saude"))
+  head(tabr)
+  
+  dbWriteTable(con, c("Dengue_global", "parameters"), value = tabr[,c("municipio_geocodigo","limiar_preseason",
+                                                                      "limiar_posseason","limiar_epidemico",
+                                                                      "varcli")])
+  
+  tab = dbReadTable(con, c("Dengue_global", "parameters"))
+  #crianewcol <- "ALTER TABLE \"Dengue_global\".parameters ADD COLUMN clicrit numeric(5) DEFAULT NULL"
+  #crianewcol <- "ALTER TABLE \"Dengue_global\".parameters ADD COLUMN cid10 character DEFAULT NULL"
+  #crianewcol <- "ALTER TABLE \"Dengue_global\".parameters ADD COLUMN codmodelo VARCHAR DEFAULT NULL"
+  #altercol <- "ALTER TABLE \"Dengue_global\".parameters ALTER COLUMN cid10 TYPE VARCHAR"
+  #tab <- dbGetQuery(con,crianewcol)
+  
+  clit <- tabr$municipio_geocodigo[which(tabr$ucrit==87)]
+  sqlcity = paste("'", clit[1], sep = "")
+  nci = length(clit)
+  for (i in 2:nci) sqlcity = paste(sqlcity, clit[i], sep = "','")
+  sqlcity <- paste(sqlcity, "'", sep = "")
+  
+  #update_sql = paste("UPDATE \"Dengue_global\".parameters SET clicrit = 87 WHERE municipio_geocodigo IN(", sqlcity,")", sep="") 
+  #update_sql = "UPDATE \"Dengue_global\".parameters SET cid10 = \'A90\'"
+  #update_sql = "UPDATE \"Dengue_global\".parameters SET codmodelo = \'Aw\' WHERE varcli= 'umid_max'"
+  
+  #dbGetQuery(con,update_sql)
+  comando <- "SELECT * FROM \"Dengue_global\".parameters WHERE municipio_geocodigo = 2304400"
+  d <- dbGetQuery(con, comando)
+   # =======================
   # inserir nova cidade na tabela localidade
   
   newdata = data.frame(

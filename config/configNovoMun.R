@@ -118,6 +118,7 @@ plot(casosZ$casos, type="l")
 #### 6. Inserção dos limiares epidemicos na tabela
 ## ------------------------------------------------------
 #thresholds.table <- info.dengue.apply.mem(mun_list=cid$municipio_geocodigo[1],con = con)
+info.dengue.apply.mem(mun_list=3301009,con = con)
 #load("mem-ceara.RData") # rodei direto a funcao do marcelo na pasta mem-marcelo (provisorio, no AlertTools ver uso-do-mem)
 newpars = c("limiar_preseason","limiar_posseason","limiar_epidemico")
 # o alerta usa incidencia, e nao casos (o mem retorna o limiar em numero de casos)
