@@ -7,7 +7,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 
 
 # ----- data do relatorio:
-data_relatorio = 201902
+data_relatorio = 201943
 
 
 # ---- Calcula alerta Dengue: 
@@ -28,6 +28,7 @@ rm(aleRJ,bolRJ)
 # ---- Calcula alerta Chik:
 aleCRJ <- update.alerta(region = names(pars.RJ), state= "Rio de Janeiro", pars = pars.RJ, crit = RJ.criteria, cid10="A92.0",
                        datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = TRUE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
+
 
 
 

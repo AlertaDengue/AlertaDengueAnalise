@@ -5,8 +5,8 @@ con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
-data_relatorio = 201918
-#***********************************
+data_relatorio = 201942
+#**********************************
 ### Cidade do Rio de Janeiro 
 #***********************************
 
@@ -38,15 +38,15 @@ rm(alerio,alerioC,bolrio)
 # Cidade de Campos de Goytacazes
 #***************************************************
 
-aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
-                           datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE)
+#aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
+#                           datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE)
 
-bolCampos <- configRelatorioMunicipal(alert = aleCampos, tipo = "completo", siglaUF = "RJ", data = data_relatorio, pars = pars.RJ,
-                                             dir.out = RJ_CamposdosGoytacazes.out, geraPDF = TRUE)
+#bolCampos <- configRelatorioMunicipal(alert = aleCampos, tipo = "completo", siglaUF = "RJ", data = data_relatorio, pars = pars.RJ,
+#                                             dir.out = RJ_CamposdosGoytacazes.out, geraPDF = TRUE)
 
-publicarAlerta(ale = aleCampos, pdf = bolCampos, dir = "Relatorio/RJ/Municipios/CamposdosGoytacazes")
+#publicarAlerta(ale = aleCampos, pdf = bolCampos, dir = "Relatorio/RJ/Municipios/CamposdosGoytacazes")
 
-rm(aleCampos,bolCampos)
+#rm(aleCampos,bolCampos)
 
 
 # ----- Fechando o banco de dados
