@@ -5,7 +5,7 @@ con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
 
 # ----- data do relatorio:
-data_relatorio = 201943
+data_relatorio = 201949
 #**********************************
 ### Cidade do Rio de Janeiro 
 #***********************************
@@ -19,6 +19,7 @@ alerioC <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, cid10 = "A920",
                      datasource=con, se = data_relatorio, verbose=FALSE) 
 
 
+alerioC <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, cid10 = "A920", datasource=con, se = data_relatorio, verbose=FALSE) 
 #dd <- write.alertaRio(obj = alerioC, write = "db")
 #write.alertaRio(obj = alerio, write = "db")
 
@@ -40,6 +41,8 @@ rm(alerio,alerioC,bolrio)
 
 aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
                            datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = TRUE)
+#aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
+#                           datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE)
 
 #bolCampos <- configRelatorioMunicipal(alert = aleCampos, tipo = "completo", siglaUF = "RJ", data = data_relatorio, pars = pars.RJ,
 #                                             dir.out = RJ_CamposdosGoytacazes.out, geraPDF = TRUE)
