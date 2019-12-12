@@ -11,8 +11,8 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 data_relatorio = 201943
 # Dengue
 aleCE <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, 
-                       datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE) 
                        datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE) 
+                       
 # Chik
 aleCE.chik <- update.alerta(region = names(pars.CE), state="Ceará", pars = pars.CE, crit = CE.criteria, cid10="A92.0",
                             datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) 

@@ -14,7 +14,7 @@ data_relatorio = 201943
 
 #Dengue:
 aleES <- update.alerta(region = names(pars.ES), pars = pars.ES, state = "Espírito Santo", crit = ES.criteria, 
-                       datasource = con, sefinal=data_relatorio, writedb = FALSE) 
+                       datasource = con, sefinal=data_relatorio, writedb = TRUE) 
 
 
 # Chik
