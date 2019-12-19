@@ -8,7 +8,7 @@ source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alert
 # ----- data do relatorio:
 
 
-data_relatorio = 201949
+data_relatorio = 201950
 # ---- Calcula alerta:
 
 
