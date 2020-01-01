@@ -2,9 +2,10 @@
 ## Alertas municipais do Estado de São Paulo
 #====================================================
 setwd("~/"); library("AlertTools")
+library("RPostgreSQL")
 con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-data_relatorio = 201947
+#data_relatorio = 201947
 INLA:::inla.dynload.workaround()
 # =====
 # SJRP
@@ -17,12 +18,15 @@ aleSJRP.chick <- update.alerta(city = 3549805, pars = pars.SP[["São José do Ri
                           datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
 
 
-bolSJRP<- configRelatorioMunicipal(alert = aleSJRP.dengue, tipo = "simples", siglaUF = "SP", 
+if(write_report) {
+  bolSJRP<- configRelatorioMunicipal(alert = aleSJRP.dengue, tipo = "simples", siglaUF = "SP", 
                                              data = data_relatorio, pars = pars.SP[["São José do Rio Preto"]], 
                                              dir.out = SP.MN.SJRP.out, geraPDF = TRUE) 
 
-publicarAlerta(ale = aleSJRP.dengue, pdf = bolSJRP, dir = "Relatorio/SP/Municipios/SaoJosedoRioPreto")
+  publicarAlerta(ale = aleSJRP.dengue, pdf = bolSJRP, dir = "Relatorio/SP/Municipios/SaoJosedoRioPreto")
+}
 
+save(aleSJRP.dengue,aleSJRP.chick, file = paste0("alertasRData/aleSP-mn",data_relatorio,".RData"))
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

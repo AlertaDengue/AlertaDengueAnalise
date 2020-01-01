@@ -1,14 +1,18 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Espírito Santo
 # =============================================================================
-setwd("~/"); library(AlertTools)
+# Cabeçalho igual para todos ------------------------------
+setwd("~/"); library("AlertTools", quietly = TRUE)
+library("RPostgreSQL", quietly = TRUE)
 con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
+INLA:::inla.dynload.workaround()
 
+aalog <- paste0("AlertaDengueAnalise/",alog)
+print(aalog)
+# ---------------------------------------------------------
 # ----- data do relatorio:
-
-
-data_relatorio = 201950
+#data_relatorio = 201950
 # ---- Calcula alerta:
 
 
@@ -27,14 +31,14 @@ aleES.zika <- update.alerta(region = names(pars.ES), state="Espírito Santo", pa
 
 # O Boletim estadual ainda é só de dengue:
 
-bolES=configRelatorioEstadual(uf="Espírito Santo", sigla = "ES", data=data_relatorio, tsdur=104,
+if(write_report) {
+  bolES=configRelatorioEstadual(uf="Espírito Santo", sigla = "ES", data=data_relatorio, tsdur=104,
                               alert=aleES, pars = pars.ES, shape=ES.shape, varid=ES.shapeID,
                               dir=ES.out, datasource=con, geraPDF=TRUE)
 
 
-publicarAlerta(ale = aleES, pdf = bolES, dir = "Relatorio/ES/Estado")
-
-rm(aleES,bolES)
+  publicarAlerta(ale = aleES, pdf = bolES, dir = "Relatorio/ES/Estado")
+}
 
 
 # ----- Calcula alerta arbo para Vitoria
@@ -60,15 +64,18 @@ aleVitZ <- update.alerta(city = 3205309, pars = pars.ES.zika[["Metropolitana"]],
                           datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE)
 
 # Boletim Arbo
-bolVit <- configRelatorioMunicipal(alert = aleVit, alechik = aleVitC, alezika = aleVitZ, tipo = "simples", 
+if(write_report) {
+  bolVit <- configRelatorioMunicipal(alert = aleVit, alechik = aleVitC, alezika = aleVitZ, tipo = "simples", 
                                     varcli = "temp_min", siglaUF = "ES", 
                                     data = data_relatorio, pars = pars.ES,
                                     dir.out = ES.MN.Vitoria.out, geraPDF = TRUE)
 
 
-publicarAlerta(ale = aleVit, pdf = bolVit, dir = "Relatorio/ES/Municipios/Vitoria")
+  publicarAlerta(ale = aleVit, pdf = bolVit, dir = "Relatorio/ES/Municipios/Vitoria")
+}
 
-
+save(aleES, aleES.chik, aleES.zika, aleVit, aleVitC, aleVitZ, 
+     file = paste0("alertasRData/aleES",data_relatorio,".RData"))
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

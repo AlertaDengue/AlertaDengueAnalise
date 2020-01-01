@@ -41,6 +41,8 @@ dbListFields(con, c("Dengue_global","regional_saude")) # variaveis meteorologica
 dbListFields(con, c("Dengue_global","Municipio")) # 
 dbListFields(con, c("Dengue_global","parameters")) # 
 
+tt <- dbReadTable(con, c("Municipio","Localidade"))
+summary(tt)
 
 
 # Exemplos de consultas:
@@ -50,7 +52,8 @@ dbListFields(con, c("Dengue_global","parameters")) #
 wu <- dbReadTable(con, c("Municipio","Clima_wu"))
 str(wu)
 
-save(wu, file="wu.RData")
+est <- dbReadTable(con, c("Municipio","Estacao_wu"))
+str(est)
 
 d <- dbReadTable(con, c("Municipio","Historico_alerta"))
 range(dd$municipio_geocodigo)
@@ -134,10 +137,10 @@ sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodig
 d <- dbGetQuery(con, sqlquery)
 
 # Dados de notificacao do municipio 
-sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND ano_notif = 2018
+sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND ano_notif = 2019
 AND cid10_codigo = \'A90\' AND se_notif > 34"
 d <- dbGetQuery(con, sqlquery)
-table(d$cid10_codigo)
+summary(d)
 
 # Dados de notificacao por doenca  
 sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE cid10_codigo = \'A92.8\'"
@@ -326,14 +329,14 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
   dbListFields(con, c("Dengue_global","regional_saude"))
   tabr <- dbReadTable(con, c("Dengue_global","regional_saude"))
   
-  sql <- "SELECT * from \"Dengue_global\".regional_saude WHERE  municipio_geocodigo >= 4100000"
+  sql <- "SELECT * from \"Dengue_global\".regional_saude WHERE  municipio_geocodigo >= 3500000 AND municipio_geocodigo < 3600000"
   dd <- dbGetQuery(con, sql)
   
   #sql <- "DELETE from \"Dengue_global\".regional_saude WHERE  municipio_geocodigo = 3117836"
   #dbGetQuery(con, sql)
   
   
-  newdata <- read.csv("../../EPR_municipios_regional_saude1.csv")
+  newdata <- read.csv("regionaisSP.csv")
   tail(newdata)
   
   inserelinha <- function(newd,li){

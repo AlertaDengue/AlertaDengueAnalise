@@ -1,27 +1,32 @@
 # ==================================================================================
 # Arquivo de execução do Alerta Dengue: Regionais de Saude do Estado de Minas Gerais
 # ==================================================================================
-setwd("~/"); library("AlertTools")
+# Cabeçalho igual para todos ------------------------------
+setwd("~/"); library("AlertTools", quietly = TRUE)
+library("RPostgreSQL", quietly = TRUE)
 con <- DenguedbConnect()
 source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
+INLA:::inla.dynload.workaround()
 
-
-data_relatorio = 201948
+aalog <- paste0("AlertaDengueAnalise/",alog)
+print(aalog)
+# ---------------------------------------------------------
+#data_relatorio = 201948
 
 # ------------------------------- 
 # Regional de Saude de Sete Lagoas
 # -------------------------------
 aleMG_RS_SeteLagoas <- update.alerta(region = "Sete Lagoas", pars = pars.MG, crit = MG.criteria, 
-                                   datasource = con, sefinal=data_relatorio, writedb = FALSE)
+                                   datasource = con, sefinal=data_relatorio, writedb = writedb)
 
-
-bolSeteLagoas=configRelatorioRegional(tipo="simples",uf="Minas Gerais", regional="Sete Lagoas", sigla = "MG", data=data_relatorio, 
+if(write_report) {
+  bolSeteLagoas=configRelatorioRegional(tipo="simples",uf="Minas Gerais", regional="Sete Lagoas", sigla = "MG", data=data_relatorio, 
                                     alert=aleMG_RS_SeteLagoas, pars = pars.MG, shape=MG.shape, varid=MG.shapeID,
                                     dir=MG.SeteLagoas.out, datasource=con, geraPDF=TRUE)
+  publicarAlerta(ale = aleMG_RS_SeteLagoas, pdf = bolSeteLagoas, dir = "Relatorio/MG/Regionais/SeteLagoas")
+}
 
-publicarAlerta(ale = aleMG_RS_SeteLagoas, pdf = bolSeteLagoas, dir = "Relatorio/MG/Regionais/SeteLagoas")
-
-
+save(aleMG_RS_SeteLagoas, file = paste0("alertasRData/aleMG-rg",data_relatorio,".RData"))
 # --------------------------------
 # Municipio de Contagem
 # --------------------------------

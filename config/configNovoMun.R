@@ -3,7 +3,7 @@ tab <- read.csv("../tabela-regionaisIBGE.csv")
 
 
 ### 1. Qual é o estado?
-tabuf <- subset(tab, Nome_UF=="Minas Gerais")
+tabuf <- subset(tab, Nome_UF=="São Paulo")
 unique(tabuf$Nome_Microrregião)
 unique(tabuf$Nome_Mesorregião)
 
@@ -11,20 +11,19 @@ unique(tabuf$Nome_Mesorregião)
 library("AlertTools")
 con <- DenguedbConnect()
 
-reg=getRegionais(uf = "Minas Gerais")
+reg=getRegionais(uf = "São Paulo")
 reg
 
 cid = getCidades(uf = "Minas Gerais", datasource=con)
 dim(cid)
 
 ### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
-nomedacidade = "Contagem"
-geocodigo = 3118601 # 320360  #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
-id = 15# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
-nomereg = "Belo Horizonte" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
+nomedacidade = "Bauru"
+geocodigo = tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
+id = tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
+nomereg = tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
 
 insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha = "aldengue")
-
 
 ### 4. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
 ## REQUER SENHA
@@ -161,7 +160,7 @@ res.delay
 ### Para criar estrutura de diretorios (pode ser o estado, a regional ou o municipio)
 source("AlertaDengueAnalise/config/fun_initializeSites.R")
 # USO: setTree.newsite(siglaestado="CE",regional="Nova Regional")
-setTree.newsite(siglaestado="ES", municipio = "Vitoria")
+setTree.newsite(siglaestado="SP", municipio = "Bauru")
 
 # Proximo passo: criar o main
 
