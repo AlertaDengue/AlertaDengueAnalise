@@ -1,20 +1,20 @@
-###############################################
-## Graficos e Mapas para relatorios
-###############################################
+
+## Graficos e Mapas para relatorios ########
 
 
-# --------- Mapa das regionais --------------------------------------
-mapa.regional <- function(alerta, regionais, estado, varcli = "temp_min", sigla, pars, shape, 
+
+# --------- mapa.regional --------------------------------------
+mapa.regional <- function(alerta, regionais, estado, varcli = "temp_min", sigla, shape, 
                           shapeid, data, dir="",
                           datasource){
   for (i in regionais) {
-    cidades = getCidades(regional = i, uf = estado,datasource = datasource)["nome"]
+    cidades = getCidades(regional = i, uf = estado,datasource = datasource)["municipio_geocodigo"]
     titu = paste(sigla,":",i,"\n")
     nomesemespaco = gsub(" ","",i)
     nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
     fname = paste(dir,"Mapa",sigla,"_",nomesemacento,".png",sep="")
     
-    geraMapa(alerta=alerta, subset=cidades, se=data, legpos = pars[[i]]$legpos,  
+    geraMapa(alerta=alerta, subset=cidades$municipio_geocodigo, se=data, legpos = "bottomright",#pars[[i]]$legpos,  
              shapefile=shape, varid=shapeid, 
              titulo=titu ,filename=fname, dir="")
   }
@@ -23,16 +23,20 @@ mapa.regional <- function(alerta, regionais, estado, varcli = "temp_min", sigla,
 }
 
 
-# ------------ Figuras municipios ------------------------------------
+# ------------ figuramunicipio ------------------------------------
 ## figuramunicipio: codigo da figura com 3 subfiguras que e usada para os municipios
 # obj é o alerta do municipio gerado pelo update.alerta
 # USO: figuramunicipio(alePR_RS_Cascavel[["CéuAzul"]])
 
-figuramunicipio <- function(obj, param, varcli = "temp_min", cid="A90", tsdur=104){
+figuramunicipio <- function(obj, varcli = "temp_min", cid="A90", tsdur=104){
   
   if(cid == "A90") titulo = "Casos de Dengue"
   if(cid == "A92.0") titulo = "Casos de Chikungunya"
   if(cid == "A92.8") titulo = "Casos de Zika"
+  
+  geoc <- obj$data$cidade[1]
+  print(geoc)
+  param <- read.parameters(geoc, cid10 = cid)
   
   layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
          heights = c(rep(lcm(4),2), lcm(5)))
@@ -83,7 +87,7 @@ figuramunicipio <- function(obj, param, varcli = "temp_min", cid="A90", tsdur=10
   
   # subfigura de baixo: alerta colorido
   par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-  plot.alerta(obj, var="inc",ini=min(objc$SE),fim=max(objc$SE))
+  plot_alerta(obj, geocodigo = geoc, var="casos") #"inc",ini=min(objc$SE),fim=max(objc$SE))
   abline(h=param$posseas*obj$data$pop[1],lty=2)
   legend(x="topright",lty=c(3,2,2),col=c("red","darkgreen","black"),
   legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
@@ -92,8 +96,7 @@ figuramunicipio <- function(obj, param, varcli = "temp_min", cid="A90", tsdur=10
 
 
 
-# -----------------------------
-# figuraRio
+# figuraRio -----------------------
 
 figuraRio <- function(cid, varcli = "temp_min"){
   par(mfrow=c(3,1),mar=c(4,4,1,1))
@@ -128,25 +131,31 @@ figuraRioChik <- function(cid, varcli = "temp_min"){
 }
 
 
-# -------------------------------
+
 # fazSomatorio casos nos municipios para calcular totais anuais por municipio, regional
-# -------------------------------
+# fazSomatorio -----------------------
 
-tabSomatorio <- function(ale,ano,data,varcli = "temp_min", agregaregional=FALSE){
-
+tabSomatorio <- function(ale, ano, data, varcli = "temp_min", uf = uf, 
+                         agregaregional=FALSE){
+  # check data
+  dataale <- max(ale[[1]]$data$SE)
+  if(dataale < data) print("faztabelaoRS: ultima SE de ale é anterior à data do relatorio")
+  data <- dataale
+  
   tabSoma = data.frame(nome = names(ale), Municipio = NA, Regional = NA, 
                        totano = NA, totultse = NA,
                        nivel=NA,nivel1 = NA, stringsAsFactors = FALSE)
   N = length(names(ale))
   for (i in 1:N){
     ai <- ale[[i]] 
+    reg <- getRegionais(cities = ai$data$cidade[1], uf = uf)
     
     linhasdoano = which(floor(ai$data$SE/100)==ano)
     linhase = which(ai$data$SE==data)
     linhase1 = which(ai$data$SE==data)-1
     
     tabSoma$Municipio[i]=unique(ai$data$nome)
-    tabSoma$Regional[i]=unique(ai$data$nome_regional)
+    tabSoma$Regional[i]=reg
     tabSoma$totano[i] = sum(ai$data$casos[linhasdoano],na.rm=TRUE)
     tabSoma$totultse[i] = ai$data$casos[linhase]
     tabSoma$nivel[i] = ai$indices$level[linhase]
@@ -176,11 +185,17 @@ tabSomatorio <- function(ale,ano,data,varcli = "temp_min", agregaregional=FALSE)
 }
 
 
-# -------------------------------
+# faztabelaoRS-------------------------------
 # fazTabelao com dados da ultima semana das Regionais ou do estado
-# -------------------------------
 
-faztabelaoRS <- function(ale,ano,data,varcli = "temp_min", tex=F){
+
+faztabelaoRS <- function(ale,ano,data,uf, varcli = "temp_min", tex=F){
+  
+  # check data
+  dataale <- max(ale[[1]]$data$SE)
+  if(dataale < data) print("faztabelaoRS: ultima SE de ale é anterior à data do relatorio")
+  data <- dataale
+  
   totano=0; totultse=0
   nverde=0; namarelo=0;nlaranja=0;nvermelho=0
   nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
@@ -204,7 +219,7 @@ faztabelaoRS <- function(ale,ano,data,varcli = "temp_min", tex=F){
   N = length(names(ale))
   for (i in 1:N){
     ai <- ale[[i]] 
-    
+    reg <- getRegionais(cities = ai$data$cidade[1], uf = uf)
     linhasdoano = which(floor(ai$data$SE/100)==ano)
     linhase = which(ai$data$SE==data)
     linhase1 = which(ai$data$SE==data)-1
@@ -225,7 +240,7 @@ faztabelaoRS <- function(ale,ano,data,varcli = "temp_min", tex=F){
     cores=c("verde","amarelo","laranja","vermelho")
     if (varcli == "temp_min")
     paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
-                              Regional = as.character(ai$data$nome_regional[1]),
+                              Regional = reg,
                               Temperatura = ai$data$temp_min[linhase],
                               Tweets = ai$data$tweet[linhase],
                               Casos = ai$data$casos[linhase], 
@@ -236,7 +251,7 @@ faztabelaoRS <- function(ale,ano,data,varcli = "temp_min", tex=F){
 
     if (varcli == "umid_min")
       paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
-                                Regional = as.character(ai$data$nome_regional[1]),
+                                Regional = reg,
                                 Umid.min = ai$data$umid_min[linhase],
                                 Tweets = ai$data$tweet[linhase],
                                 Casos = ai$data$casos[linhase], 
@@ -247,7 +262,7 @@ faztabelaoRS <- function(ale,ano,data,varcli = "temp_min", tex=F){
 
     if (varcli == "umid_max")
       paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
-                                Regional = as.character(ai$data$nome_regional[1]),
+                                Regional = reg,
                                 Umid.max = ai$data$umid_max[linhase],
                                 Tweets = ai$data$tweet[linhase],
                                 Casos = ai$data$casos[linhase], 
@@ -271,13 +286,13 @@ faztabelaoRS <- function(ale,ano,data,varcli = "temp_min", tex=F){
     }
 }
 
-##---------------------------------
+##faztabelaresumo------------------------
 # faz tabela resumo dos municipios indicados 
-## --------------------------------
+
 
 faztabelaresumo <- function(alert,municipios, nmunicipios,varcli = "temp_min",tex=F){
   cidadessemespaco = gsub(" ","",municipios$nome)
-  linhascidades <- which(names(alert) %in% cidadessemespaco)
+  linhascidades <- which(as.numeric(names(alert)) %in% municipios$municipio_geocodigo)
   
   if (varcli=="temp_min")
   tabela = tail(alert[[linhascidades[1]]]$data[,c("SE","casos","pop","tweet","temp_min",
@@ -340,15 +355,15 @@ faztabelaresumo <- function(alert,municipios, nmunicipios,varcli = "temp_min",te
   
 }
 
-## ---------------------------
+## fazfiguraregional ----------------------
 ## Figura regional
-## ---------------------------
+
 
 fazfiguraregional <- function(ale, municipreg, varcli = "temp_min",tsdur){
   
 nmunreg = length(municipreg)
-res = write.alerta(ale[[municipreg[1]]])
-for (n in 2:nmunreg) res = rbind(res, write.alerta(ale[[municipreg[n]]]))
+res = tabela_historico(ale[[municipreg[1]]])
+for (n in 2:nmunreg) res = rbind(res, tabela_historico(ale[[municipreg[n]]]))
 
 res$tweet[is.na(res$tweet)] <- 0 # colocando 0 onde não há tweets, so para o grafico
 serie = aggregate(cbind(tweet,casos)~data_iniSE,data=res,FUN=sum,na.rm=TRUE)
@@ -379,9 +394,9 @@ mtext(text="tweets", line=0.5, side=4, cex = 0.7)
 }
 
 
-# ---------------------------
+# fazfiguraresumo.arbo
 ## Figura series temporais - arbo
-## ---------------------------
+
 
 fazfiguraresumo.arbo <- function(serieD, serieC, serieZ, tipo = "estadual", tsdur = 104){
   # serieD,C,Z sao series temporais geradas contendo "data_iniSE" , "casos", "casos_est",  "casos_est_min" "casos_est_max"
@@ -392,7 +407,7 @@ fazfiguraresumo.arbo <- function(serieD, serieC, serieZ, tipo = "estadual", tsdu
   layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
          heights = c(rep(lcm(4),3)))
   
-  # --- dengue  ------
+  #  dengue  
   
   n = dim(serieD)[1]
   seriefinalD = serieD[(n-tsdur):n,]
@@ -426,7 +441,7 @@ fazfiguraresumo.arbo <- function(serieD, serieC, serieZ, tipo = "estadual", tsdu
     mtext(text="tweets", line=0.5, side=4, cex = 0.7)
   })
   
-  # --- chik  ------
+  #  chik 
   n = dim(serieC)[1]
   seriefinalC = serieC[(n-tsdur):n,]
   
@@ -454,7 +469,7 @@ fazfiguraresumo.arbo <- function(serieD, serieC, serieZ, tipo = "estadual", tsdu
       })
   
   
-  # --- zika  ------
+  #  zika  
   n = dim(serieZ)[1]
   seriefinalZ = serieZ[(n-tsdur):n,]
   
@@ -507,9 +522,12 @@ fazfiguraresumo.arbo <- function(serieD, serieC, serieZ, tipo = "estadual", tsdu
 #legend(x="topleft",lty=c(1,1,2),col=c("black", "grey","darkgreen"),
 #       legend=c("valor médio","valores extremos","limiar favorável transmissão"),cex=0.85,bty="n")
 #par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-#plot.alerta(obj, var="inc",ini=min(objc$SE),fim=max(objc$SE))
+#plot_alerta(obj, var="inc",ini=min(objc$SE),fim=max(objc$SE))
 #abline(h=param$posseas*obj$data$pop[1],lty=2)
 #legend(x="topright",lty=c(3,2,2),col=c("red","darkgreen","black"),
 #       legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
 
 #}
+
+
+

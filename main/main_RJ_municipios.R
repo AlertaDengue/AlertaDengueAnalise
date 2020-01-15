@@ -1,21 +1,43 @@
 ## Alertas municipais do Estado do Rio de Janeiro
 #==============================
-# Cabeçalho igual para todos ------------------------------
-setwd("~/"); library("AlertTools", quietly = TRUE)
-library("RPostgreSQL", quietly = TRUE)
-con <- DenguedbConnect()
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-INLA:::inla.dynload.workaround()
+# Cabeçalho ------------------------------
+setwd("~/")
+source("AlertaDengueAnalise/config/config_global.R") #configuracao 
+con <- DenguedbConnect(pass = pw)  
 
-aalog <- paste0("AlertaDengueAnalise/",alog)
-print(aalog)
-# ---------------------------------------------------------
+# parametros especificos -----------------
+estado = "Rio de Janeiro"
+sig = "RJ"
+shape="AlertaDengueAnalise/report/RJ/shape/33MUE250GC_SIR.shp"
+shapeID="CD_GEOCMU" 
+# onde salvar boletim
+out = "AlertaDengueAnalise/report/RJ/Municipios"
+dir_rel = "Relatorio/RJ/Municipios"
 
-# ----- data do relatorio:
-#data_relatorio = 201949
-#**********************************
-### Cidade do Rio de Janeiro 
-#***********************************
+
+# logging -------------------------------- 
+#habilitar se quiser
+# alog = paste0("ale_",Sys.Date(),".log")
+if (logging == TRUE){
+  aalog <- paste0("AlertaDengueAnalise/",alog)
+  print(aalog)
+}
+
+# data do relatorio:---------------------
+#data_relatorio = 201851
+dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
+
+# cidade -------------------------------
+#geo <- 3304557
+
+#
+### Cidade do Rio de Janeiro ------------
+if(geo == 3304557){
+  params <- read.parameters(geo, cid10 = "A90")
+  criter <- setCriteria(rule="Af", values = )
+  ale.den <- alertaRio()
+}
+
 
 # Dengue 
 alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con,se = data_relatorio, verbose=FALSE)        # calcula o alerta

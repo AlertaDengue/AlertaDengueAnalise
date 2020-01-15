@@ -14,8 +14,13 @@
 ##    -sb: supress boletim creation
 ##    -te: testing the code (not implemented yet)
 
+## pass
+library(getPass)
+pw <- getPass()
+
 ## Logging parameters
 library(futile.logger, quietly = TRUE)
+logging = TRUE
 log_level = futile.logger::TRACE
 alog = paste0("ale_",Sys.Date(),".log")
 flog.appender(appender.tee(alog))
@@ -28,15 +33,18 @@ myargv <- myarg[seq(2, length(myarg), by=2)]
 names(myargv) <- gsub("-", "", myarg[seq(1, length(myarg), by=2)])
 
 ## handling input errors
-if(!any(names(myargv) %in% c("uf","mn","rg","se","wr","sb","te"))) stop("One or more unknown arguments.")
-if(any(names(myargv) %in% "uf") & any(names(myargv) %in% "mn")) stop("Arguments -uf and -mn cannot be used together.")
-if(any(names(myargv) %in% "uf") & any(names(myargv) %in% "rg")) stop("Arguments -uf and -rg cannot be used together.")
-if(!any(names(myargv) %in% c("uf","mn","rg"))) stop("Either argument -uf or -mn or -rg must be specified. Ex: -uf RJ -mn 3304557")
-if(!any(names(myargv) %in% "se")) stop("Argument -se must be specified. Ex: 202016")
+if(!any(names(myargv) %in% c("uf","mn","rg","se","wr","sb","te","pw"))) stop("One or more unknown arguments.")
+if(any(names(myargv) %in% "mn") & !any(names(myargv) %in% "uf")) stop("Please specify -uf and -mn to run the municipal pipeline.")
+if(any(names(myargv) %in% "rg") & !any(names(myargv) %in% "uf")) stop("Please specify -uf and -rg to run the regional pipeline.")
+if(!any(names(myargv) %in% c("uf","mn","rg"))) stop("Run script like this: \n\t Rscript infodengue.R -uf RJ -mn 3304557 -se 201951")
+if(!any(names(myargv) %in% "se")) stop("Run script like this: \n\t Rscript infodengue.R -uf RJ -mn 3304557 -se 201951")
 
 # Check date
 data_relatorio = as.numeric(unlist(myargv[["se"]]))	
 stopifnot(data_relatorio > 201000) 
+
+# cidade
+geo <- as.numeric(myargv[["mn"]])
 
 # Default writing argument is FALSE
 if(!any(names(myargv) %in% "wr")) myargv <- c(myargv, wr="no") # Sets write default to no. Saving RData only.  
@@ -51,26 +59,25 @@ write_report = ifelse(myargv[["bol"]]=="yes", TRUE, FALSE)
 # Location of Scripts
 mains = dir("./main/")
 
-## If '-uf' is provided: 
-if(any(names(myargv) %in% "uf")) {
+## If '-uf' only is provided, run state: 
+if(any(names(myargv) %in% "uf" & !any(names(myargv) %in% c("mn", "rg")))) {
   arq = paste0("main_E",myargv[["uf"]],".R")
   if(!(arq %in% mains))stop("script not found. Check if arguments are correct.")
 } 
 
 ## If '-mn' is provided: 
 if(any(names(myargv) %in% "mn")) {
-  arq = paste0("main_", myargv[["mn"]] ,"_municipios.R")
+  arq <- paste0("main_", myargv[["uf"]] ,"_municipios.R")
   if(!(arq %in% mains))stop("script not found. Check if arguments are correct.")
 }
 
 ## If '-rg' is provided: 
 if(any(names(myargv) %in% "rg")) {
-  arq = paste0("main_", myargv[["rg"]] ,"_regional.R")
+  arq = paste0("main_", myargv[["uf"]] ,"_regional.R")
   if(!(arq %in% mains))stop("script not found. Check if arguments are correct.")
 }
 
 ## Starting the pipeline
-
 flog.info("executing %s", arq, name = alog)
 flog.info("Argumentos",myargv, capture=TRUE, name = alog)
 
@@ -80,6 +87,8 @@ source(paste0("./main/", arq))
 
 flog.info(paste(arq, "done"), name = alog)
 
+
+#print(paste("Ultimos registros de dengue:",lastDBdate("sinan", city=330455,datasource=datasource)))
 ## Import paths and names of fastq samples
 #  fastqDF <- read.delim(myargv[["i"]])
 #  fastq <- as.character(fastqDF$Files); names(fastq) <- fastqDF$Samples

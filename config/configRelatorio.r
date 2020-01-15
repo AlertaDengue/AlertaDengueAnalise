@@ -1,22 +1,22 @@
-# ========================================================
 # Configuracao para os boletins do Alerta
-# ========================================================
+
 
 # If a directory does not exist, create one.
+#checkDirectory ------------------------------------
 checkDirectory <- function(directory){
   calldir <- paste("if [ -d",directory, "]; then echo \"True\"; else mkdir", directory, "; fi")
   system(calldir)
 }
 
 
-
+# configRelatorio ------------------------------------
 configRelatorio <- function(uf, regional, sigla, data, alert, pars, varcli = "temp_min", shape, varid, dir, datasource){
   
   dirfigs = paste(basedir,dir,"figs/",sep="/")
   checkDirectory(dirfigs) # if directory does not exist, creates one
-  # ------------
+
   ## Estado, suas regionais e municipios
-  # ------------
+
   estado = uf
   sigla = sigla
   municipios = getCidades(uf=estado,datasource=con)
@@ -25,23 +25,23 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, varcli = "te
   nickregs = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
   nickmun = abbreviate(iconv(municipios$nome, to = "ASCII//TRANSLIT"))
   
-  # -----------
+
   ## As datas
-  # -----------
+
   ano = floor(data/100)
   se = data - ano*100 
   
-  # ----------------------------------------------- 
+
   # Mapa do estado (funcao basica do alerttools)
-  # -----------------------------------------------
+
   geraMapa(alerta=alert, se=data, shapefile = shape,   
              varid=varid, titulo="", 
              filename=paste("Mapa_E", sigla,".png", sep=""),
              dir=dirfigs, caption=FALSE)
   
-  # -----------------------------------------------
+
   # Mapas de todas as Regionais (funcao customizada, no codigoFiguras.R)
-  # -----------------------------------------------
+
   if(missing(regional)){ # se for estadual, faz para todas as RS
   mapa.regional(alerta=alert, regionais=regs, estado = uf, sigla = sigla,
                 data = data, pars=pars, shape=shape, shapeid=varid, dir=dirfigs ,
@@ -52,9 +52,9 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, varcli = "te
                     datasource=datasource)
     }
   
-  # ------------------------    
+
   # Tabelao com resultado do alerta por municipio e totais 
-  # ------------------------
+
   totano=0; totultse=0
   nverde=0; namarelo=0;nlaranja=0;nvermelho=0
   nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
@@ -138,9 +138,9 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, varcli = "te
             add.to.row=add.to.row)
   # -------- fim do tabelao
       
-  # --------------------------------
+  
   # Gera e salva tabelas regionais (xtable)
-  # --------------------------------
+  
       
   for (k in regs) {
     cidades = getCidades(regional = k, uf = estado, datasource = datasource)
@@ -203,9 +203,9 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, varcli = "te
     
     # --- fim das tabelas regionais
     
-    # --------------------------------
+
     # Figuras-resumo das regionais 
-    # --------------------------------
+
             
     res = write.alerta(alert[[1]])
     for (n in 2:N) res = rbind(res, write.alerta(alert[[n]]))
@@ -271,19 +271,19 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, varcli = "te
 }
 
 
-# ==============================================
-# Gera objetos para o Boletim Regional
-# ==============================================
-# data = data final do relatorio, tsdur = tamanho da serie plotada
+# 
+# Gera objetos para o Boletim Regional 
+# 
+# configRelatorioRegional -----------------
 configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varcli = "temp_min", data, tsdur=104, alert, pars, 
                                     shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
   setwd("~/")
   
   dirfigs = paste(dirb, dir,"figs/",sep="/")
   
-  # ------------
+ 
   ## Dados da regional
-  # ------------
+ 
   estado = uf
   sigla = sigla
   municipios = getCidades(uf=estado, regional = regional, datasource=datasource)
@@ -293,29 +293,27 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
   nickreg = abbreviate(iconv(regional, to = "ASCII//TRANSLIT"))
   municipios$nickmun = abbreviate(iconv(municipios$nome, to = "ASCII//TRANSLIT"))
   
-  # -----------
+ 
   ## As datas
-  # -----------
+ 
   ano = floor(data/100)
   se = data - ano*100 
   
-  # ----------------
+ 
   # Mapa da Regional
-  # ----------------
-  
-  
-  nomemapareg=mapa.regional(alerta=alert, regionais=regional, estado = uf, sigla = sigla,
+ 
+   nomemapareg=mapa.regional(alerta=alert, regionais=regional, estado = uf, sigla = sigla,
                   data = data, pars=pars, shape=shape, shapeid=varid, dir=dirfigs ,
                   datasource=datasource)
   
-  # -------------------------
+ 
   # Descritores gerais (nverde, namarelo, totultse, etc) 
-  # -------------------------
+ 
   descrgerais <- faztabelaoRS(ale = alert,ano = ano,varcli = varcli,data = data,tex=FALSE)
   
-  # ------------------------    
+ 
   # Tabelao com resultado do alerta por municipio da Regional e totais (funcao no configfiguras)
-  # ------------------------
+ 
   
   nometabelao = paste(dirfigs,"/","tabelaoMun_",nomeregfiguras,".tex",sep="")
   
@@ -334,21 +332,19 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
         add.to.row=add.to.row)
   
   
-  # --------------------------------
+
   # tabela resumo
-  # --------------------------------
-  
-    
+
   nometabreg = paste(dirfigs,"/","tabregional_",nomeregfiguras,".tex",sep="")
     
   tabelax <- faztabelaresumo(alert = alert,municipios = municipios, varcli = varcli, nmunicipios = nmunicipios,tex=TRUE)
   print(tabelax, type="latex", file=nometabreg, floating=FALSE, latex.environments = NULL,
           include.rownames=FALSE)
     
-    # --------------------------------
+
     # Figura-resumo da regional 
-    # --------------------------------
-    
+
+  
   munreg = which(municipios$nome_regional == regional)
   figregname = paste(dirfigs,"figuraRS_",nomeregfiguras,".png",sep="")
   png(figregname, width = 12, height = 5.5, units="cm", res=200)
@@ -357,24 +353,24 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
         
   filename = paste(dirfigs,"paramsRS_",nomeregfiguras,".RData",sep="")
   
-  # --------------------------------
+
   # Figuras dos municipios da Regional (3 subfiguras)
-  # --------------------------------
+
   
   municipios$figname <- "NA"
   for(cid in 1:nmunicipios){ 
     cidadessemespaco = gsub(" ","",municipios$nome[cid])
     figname = paste(dirfigs,"figMun_",nomemunfiguras[cid],".png",sep="")
   
-    png(figname, width = 14, height = 16, units="cm", res=300)  # inicio da figura -----
-    figuramunicipio(alert[[cidadessemespaco]],param=pars, varcli=varcli)
+    png(figname, width = 14, height = 16, units="cm", res=300)  # inicio da figura 
+    figuramunicipio(alert[[cidadessemespaco]], varcli=varcli)
     municipios$figname[cid] <- figname
     dev.off()  
   }
   
-  # --------------------------------
+  
   # Tabelas dos municipios da Regional 
-  # --------------------------------
+  
   municipios$tabname <- "NA"
   if (varcli == "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesICmax","p1")
   if (varcli == "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesICmax","p1")
@@ -405,9 +401,9 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
              nomemapareg = nomemapareg, nometabreg = nometabreg, nometabelao = nometabelao,
              tabelao = descrgerais$tabelao, figreg = figregname)
   
-  # -----------------------------
+ 
   # salvando o boletim
-  # ----------------------------
+ 
   nomebol = NULL
   if (geraPDF==TRUE){
     message("gerando PDF...")
@@ -423,20 +419,21 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
 }
 
 
-# ==============================================
-# Gera objetos para o Boletim Estadual
-# ==============================================
+
+# configRelatorioEstadual -----------------
+
 # data = data final do relatorio, tsdur = tamanho da serie plotada
-configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_min", alert, 
+configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , 
+                                    varcli = "temp_min", alert, 
                                     pars, shape, varid, dir, 
                                     datasource, dirb=basedir,geraPDF=TRUE){
   setwd("~/")
   
   dirfigs = paste(dirb,dir,"figs/",sep="/")
   
-  # ------------
+ 
   ## Dados do estado
-  # ------------
+ 
   estado = uf
   sigla = sigla
   municipios = getCidades(uf=estado,datasource=con)
@@ -451,52 +448,53 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
   nickreg = abbreviate(iconv(regs, to = "ASCII//TRANSLIT"))
   municipios$nickmun = abbreviate(iconv(municipios$nome, to = "ASCII//TRANSLIT"))
   
-  # -----------
+ 
   ## As datas
-  # -----------
+ 
   ano = floor(data/100)
   se = data - ano*100 
   
-  ## Dengue ################
+ 
   relatorio <- "infodengue"  # default, substituido por infoarbo se for pertinente
-  # ----------------------------------------------- 
+ 
   # Mapa de alerta de dengue do estado (funcao basica do alerttools)
-  # -----------------------------------------------
+ 
   geraMapa(alerta=alert, se=data, shapefile = shape,   
            varid=varid, titulo="", 
            filename=paste("Mapa_E", sigla,".png", sep=""),
            dir=dirfigs, caption=FALSE)
   
   
-
-  # -----------------------------------------------
   # Mapas de alerta de degue de todas as Regionais (funcao customizada, no codigoFiguras.R)
-  # -----------------------------------------------
+ 
   
   nomemapareg = c()
   
-  for (regional in regs) nomemapareg = c(nomemapareg, mapa.regional(alerta=alert, regionais=regional, estado = uf, sigla = sigla,
-                  data = data, pars=pars, shape=shape, shapeid=varid, dir=dirfigs ,
-                  datasource=datasource))
+  for (regional in regs) nomemapareg = c(nomemapareg, 
+                  mapa.regional(alerta=alert, regionais=regional, estado = uf, 
+                                sigla = sigla,data = data, shape=shape, 
+                                shapeid=varid, dir=dirfigs,datasource=datasource))
   
               
-  # -------------------------
+ 
   # Descritores gerais (nverde, namarelo, totultse, etc) 
-  # -------------------------
-  descrgerais <- faztabelaoRS(ale = alert,ano = ano,varcli = varcli, data = data,tex=FALSE)
+ 
+  descrgerais <- faztabelaoRS(ale = alert,ano = ano,varcli = varcli, 
+                              uf = uf, data = data,tex=FALSE)
   
-  # -------------------------
+ 
   # Descritores gerais regionais (nverde, namarelo, totultse, etc) 
-  # -------------------------
-  tabelasomatorios <- tabSomatorio(ale = alert,ano = ano,data = data,varcli = varcli,agregaregional = TRUE)
+ 
+  tabelasomatorios <- tabSomatorio(ale = alert,ano = ano,data = data, uf=uf,
+                                   varcli = varcli,agregaregional = TRUE)
   
-  # ------------------------    
+ 
   # Tabelao com resultado do alerta por municipio e totais (funcao no configfiguras)
-  # ------------------------
+ 
   
   nometabelao = paste(dirfigs,"tabelaoMun_",sigla,".tex",sep="")
   
-  tabelaox <- faztabelaoRS(ale = alert,ano = ano,data = data,varcli = varcli,tex=TRUE)
+  tabelaox <- faztabelaoRS(ale = alert,ano = ano,data = data, uf = uf, varcli = varcli,tex=TRUE)
   
   add.to.row <- list(pos = list(0), command = NULL)
   command <- paste0("\\hline\n\\endhead\n",
@@ -511,9 +509,9 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
         add.to.row=add.to.row)
   message(paste("tabelao criado:",nometabelao))
   
-  # --------------------------------
+ 
   # tabela resumo das regionais
-  # --------------------------------
+ 
   
   nomestabreg = c()
   for (i in 1:length(regs)){
@@ -521,15 +519,16 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
     nomestabreg <- c(nomestabreg, nometabreg)
     munreg = which(municipios$nome_regional == regs[i])
     nmunreg = length(munreg)
-    tabelax <- faztabelaresumo(alert = alert,municipios = municipios[munreg,], nmunicipios = nmunreg,varcli = varcli, tex=TRUE)
+    tabelax <- faztabelaresumo(alert = alert,municipios = municipios[munreg,], 
+                               nmunicipios = nmunreg,varcli = varcli, tex=TRUE)
   print(tabelax, type="latex", file=nometabreg, floating=FALSE, latex.environments = NULL,
         include.rownames=FALSE)
   }
   message("tabelas regionais criadas...")
   
-  # --------------------------------
+ 
   # Figura-resumo da regional 
-  # --------------------------------
+ 
   
   nomesfigreg = c()
   for (i in 1:length(regs)){
@@ -543,8 +542,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
   }
   message("figuras regionais criadas")
   
-  # ----
-  # objeto com variaveis do estado para serem usadas pelos municipios e regionais
+   # objeto com variaveis do estado para serem usadas pelos municipios e regionais
   filename = paste(dirfigs,"params",sigla,".RData",sep="")
   
   message(paste("salvando RData em",filename))
@@ -564,9 +562,9 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
   
   save(res, file=filename)
   
-  # -----------------------------
+
   # salvando o boletim
-  # ----------------------------
+
   nomebol = NULL
   if (geraPDF==TRUE){
     message("gerando PDF...")
@@ -576,24 +574,21 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , varcli = "temp_
   
 }
 
-## ===========================================================
-## FUN configRelatorioMunicipal
+
+## configRelatorioMunicipal -------
 
 # gera objetos necessarios para o boletim Municipal
 # alert - objeto gerado pelo update.alerta, siglaUF = "RJ", dir.out = pasta mestre do municipio,
 # data - data do relatorio. Duas opcoes, relatorio completo ou simples
-## ============================================================
-configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, data, pars, 
+configRelatorioMunicipal <- function(tipo="completo", alert, estado, siglaUF, dir.out, data,  
                                      alechik, alezika, varcli = "temp_min", datasource=con,
                                      dirb=basedir, tamanhotabela = 16, geraPDF=TRUE){
   dirfigs = paste(dirb,"/",dir.out,"/figs",sep="")
   
   # Identificacao da cidade
-  nomecidade = alert$data$nome[1]
-  geocodigo = alert$data$cidade[1]
-  estado = as.character(dbGetQuery(datasource, paste("SELECT uf 
-                                             FROM \"Dengue_global\".\"Municipio\" 
-                                             where geocodigo = ", geocodigo, sep="")))
+  ale <- alert[[1]]
+  nomecidade = ale$data$nome[1]
+  geocodigo = ale$data$cidade[1]
   
   # Identificacao da regional a qual ela pertence
   regionalmun = as.character(dbGetQuery(datasource, paste("SELECT nome_regional 
@@ -605,19 +600,19 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
   # Data do relatorio
   ano = floor(data/100)
   se = data - ano*100 
-  linhasdoano = which(floor(alert$data$SE/100)==ano) # posicao do dataframe para essa data
-  linhase = which(alert$data$SE==data)
-  linhase1 = which(alert$data$SE==data)-1 # posicao referente a semana anterior
+  linhasdoano = which(floor(ale$data$SE/100)==ano) # posicao do dataframe para essa data
+  linhase = which(ale$data$SE==data)
+  linhase1 = which(ale$data$SE==data)-1 # posicao referente a semana anterior
   
-  ## Dengue ################
+ 
   relatorio <- "infodengue"  # default, substituido por infoarbo se for pertinente
   # Total de casos no municipio nas ultimas 2 semanas (dengue)
-  totanomun = sum(alert$data$casos[linhasdoano],na.rm=TRUE)
-  totultsemun = alert$data$casos[linhase]
+  totanomun = sum(ale$data$casos[linhasdoano],na.rm=TRUE)
+  totultsemun = ale$data$casos[linhase]
   
   # Cor do alerta na ultima semana
   cores = c("verde","amarelo","laranja","vermelho")
-  nivelmun = cores[alert$indices$level[linhase] ]  
+  nivelmun = cores[ale$indices$level[linhase] ]  
   
   # Gera nome do arquivo de saida paramsNomedaCidade.RData
   nomesemespaco = gsub(" ","",nomecidade)
@@ -627,20 +622,21 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
   # Gera figura chamada figuraNomedaCidade.png com 3 subfiguras
   figname = paste(dirb,"/",dir.out,"/figs/figura",nomesemacento,".png",sep="")
   
-  png(figname, width = 14, height = 16, units="cm", res=300)  # inicio da figura -----
-  figuramunicipio(alert,varcli = varcli, param=pars)
-  dev.off()  # fim da figura ----------
+  png(figname, width = 14, height = 16, units="cm", res=300)  # inicio da figura 
+  figuramunicipio(ale,varcli = varcli)
+  dev.off()  # fim da figura 
   message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
   # Gera tabela resumo das ultimas semanas
-  # ---------------------------------------
+
   if (!missing(alechik))  tamanhotabela = 8 # fazer tabelas mais curtas no infoarbo
+  
   if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesmed","p1")
   if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesmed","p1")
   if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesmed","p1")
-  tab <- tail(alert$data[,varstab], n=tamanhotabela)
+  tab <- tail(ale$data[,varstab], n=tamanhotabela)
   tab$p1 <- tab$p1*100
   cores <- c("verde","amarelo","laranja","vermelho")
-  tab <- cbind(tab,cores[tail(alert$indices$level,n=tamanhotabela)])
+  tab <- cbind(tab,cores[tail(ale$indices$level,n=tamanhotabela)])
   if (varcli== "temp_min") names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
   if (varcli== "umid_min") names(tab) <- c("SE","umid.min","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
   if (varcli== "umid_max") names(tab) <- c("SE","umid.max","tweet", "casos notif", "incidência", "casos estimados","pr(incid. subir)","nivel")
@@ -650,10 +646,12 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
   print(tabelax, type="latex", file=tabname, floating=FALSE, latex.environments = NULL,
         include.rownames=FALSE)
   
-  ###
+  
   ### Chik
   if (!missing(alechik)){
     relatorio <- "infoarbo"
+    alechik <- alechik[[1]]
+    
     # Total de casos no municipio nas ultimas 2 semanas (dengue)
     totanomunC = sum(alechik$data$casos[linhasdoano],na.rm=TRUE)
     totultsemunC = alechik$data$casos[linhase]
@@ -667,16 +665,17 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
     # Gera figura chamada figuraNomedaCidade_chik.png com 3 subfiguras
     fignameC = paste(dirb,"/",dir.out,"/figs/figura",nomesemacento,"Chik.png",sep="")
     
-    png(fignameC, width = 14, height = 16, units="cm", res=300)  # inicio da figura -----
-    figuramunicipio(alechik,varcli = varcli, cid = "A92.0", param=pars)
-    dev.off()  # fim da figura ----------
+    png(fignameC, width = 14, height = 16, units="cm", res=300)  # inicio da figura 
+    figuramunicipio(alechik,varcli = varcli, cid = "A92.0")
+    dev.off()  # fim da figura
     message(paste("figura",fignameC,"salva. Objetos criados para o relatorio."))
     # Gera tabela resumo das ultimas semanas
-    # ---------------------------------------
+
     tamanhotabela = 16  # n. linhas na tabela
-    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesmed","p1")
-    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesmed","p1")
-    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesmed","p1")
+
+    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweets", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweets", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweets", "casos", "inc", "tcasesmed","p1")
     tab <- tail(alechik$data[,varstab], n=tamanhotabela)
     tab$p1 <- tab$p1*100
     tab <- cbind(tab,cores[tail(alechik$indices$level,n=tamanhotabela)])
@@ -692,6 +691,7 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
   
   ### Zika
   if (!missing(alezika)){
+    alezika <- alezika[[1]]
     # Total de casos no municipio nas ultimas 2 semanas (dengue)
     totanomunZ = sum(alezika$data$casos[linhasdoano],na.rm=TRUE)
     totultsemunZ = alezika$data$casos[linhase]
@@ -705,16 +705,16 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
     # Gera figura chamada figuraNomedaCidade_zika.png com 3 subfiguras
     fignameZ = paste(dirb,"/",dir.out,"/figs/figura",nomesemacento,"Zika.png",sep="")
     
-    png(fignameZ, width = 14, height = 16, units="cm", res=300)  # inicio da figura -----
-    figuramunicipio(alezika,varcli = varcli, cid = "A92.8", param=pars)
-    dev.off()  # fim da figura ----------
+    png(fignameZ, width = 14, height = 16, units="cm", res=300)  # inicio da figura 
+    figuramunicipio(alezika,varcli = varcli, cid = "A92.8")
+    dev.off()  # fim da figura
     message(paste("figura",fignameZ,"salva. Objetos criados para o relatorio."))
     # Gera tabela resumo das ultimas semanas
-    # ---------------------------------------
+    
     tamanhotabela = 16  # n. linhas na tabela
-    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesmed","p1")
-    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesmed","p1")
-    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweets", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweets", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweets", "casos", "inc", "tcasesmed","p1")
     tab <- tail(alezika$data[,varstab], n=tamanhotabela)
     tab$p1 <- tab$p1*100
     tab <- cbind(tab,cores[tail(alezika$indices$level,n=tamanhotabela)])
@@ -729,9 +729,9 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
   }
   
   
-  # -----------------------------
+ 
   # Salvando objeto para o PDF
-  # -----------------------------
+ 
   # objeto que e' retornado pela funcao e lido pelo geraPDF (tambem e salvo como RData)
   if(relatorio == "infodengue") res = list(nomecidade=nomecidade, estado=estado, nomecidadeiconv = nomesemacento, regionalmun=regionalmun, sigla = siglaUF, alert=alert, totanomun=totanomun,
              totultsemun=totultsemun, nivelmun=nivelmun, se=se, ano=ano, data=data, figname=figname, dir.out = dir.out,
@@ -749,9 +749,9 @@ configRelatorioMunicipal <- function(tipo="completo", alert, siglaUF, dir.out, d
   save(res, file=fname)
   
   
-  # -----------------------------
+ 
   # salvando o boletim
-  # ----------------------------
+ 
 nomebol = NULL  
   if (geraPDF==TRUE){
     message("gerando PDF...")
@@ -766,43 +766,43 @@ nomebol = NULL
   
 }
 
-## ===================================================
-## Relatorio do Rio de Janeiro
-## ===================================================
+
+## Relatorio do Rio de Janeiro ---------------------
+
 
 configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,  chik= FALSE, 
                              bdir=basedir, geraPDF=FALSE){
   
-  # ------------------
+ 
   # Dados da regional
-  # ------------------
+ 
   municip.reg <- getCidades(regional = "Metropolitana I",uf="Rio de Janeiro",datasource=con)$nome
   ano = floor(data/100)
   se = data - ano*100
-  # ------------------
+ 
   # Diretorio para salvar figs e tabs
-  # ------------------
+ 
   dirfigs = paste(bdir,dirout,"figs/",sep="/")
   print(dirfigs)
-  # ------------------
+ 
   # Mapa da Cidade : dengue
-  # ------------------
+ 
   nomemapario = paste(dirfigs, "mapaRio.png", sep="")
   message("nome do mapa:",nomemapario)
   map.Rio(alert, data=data, filename="mapaRio.png", dir=dirfigs, 
           shapefile = shape)
   
-  # ------------------
+ 
   # Mapa da Cidade: chik
-  # ------------------
+ 
   nomemaparioChik = paste(dirfigs, "mapaRioChik.png", sep="")
   message("nome do mapa:",nomemaparioChik)
   map.Rio(alertC, data=data, filename="mapaRioChik.png", dir=dirfigs, 
           shapefile = shape)
   
-  # ------------------
+ 
   # Dados da Cidade : dengue
-  # ------------------
+ 
   tres <- write.alertaRio(alert, cid10=="A90", write="no")
   tres$ano <- floor(tres$se/100)
   tres$SE <- tres$se - 100*tres$ano
@@ -820,9 +820,9 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   tot2018ult <- sum(tres$casos[tres$se == data]) # total de 2018 ate agora
   
   
-  # ------------------
+ 
   # Dados da Cidade : chik
-  # ------------------
+ 
   tresC <- write.alertaRio(alertC, cid10=="A92.8", write="no")
   tresC <- tresC[tresC$se>=201601,]
   tresC$ano <- floor(tresC$se/100)
@@ -839,9 +839,9 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   totChik2017se <- sum(tresC$casos[(tresC$ano == 2017 & tresC$SE <=se)]) # total de 2017 ate agora
   totChik2018 <- sum(tresC$casos[tresC$ano == 2018]) # total de 2017 ate agora
   totChik2018ult <- sum(tresC$casos[tresC$se == data]) # 
-  # -----------------
+ 
   # Grafico da cidade : dengue
-  # -----------------
+ 
   figname = paste(dirfigs,"figcidade.png",sep="")
   png(figname, width = 12, height = 16, units = "cm",res=200)
   
@@ -857,9 +857,9 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   figuraRio(cidade)
   dev.off()
   
-  # -----------------
+ 
   # Grafico da cidade : chik
-  # -----------------
+ 
   fignameChik = paste(dirfigs,"figcidadeChik.png",sep="")
   png(fignameChik, width = 12, height = 8, units = "cm",res=200)
   
@@ -875,65 +875,65 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   figuraRioChik(cidadeC)
   dev.off()
   
-  # -----------------
+
   # Grafico das APS : dengue
-  # -----------------
+
   
-  ### grafico APS 1/2 ------------------
+  ### grafico APS 1/2 
   png(paste(dirfigs,"figaps1.png",sep=""),width = 12, height = 16, units = "cm",res=200)
   inid = 201224
   par(mfrow=c(5,1),mar=c(5,0,0,5))
   for (i in 1:5) {
-    plot.alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
+    plot_alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
     mtext(names(alert)[i],line=-1, cex=0.7)
   }
   dev.off()
   
-  ### grafico APS 2/2 ------------------
+  ### grafico APS 2/2 
   png(paste(dirfigs,"figaps2.png",sep=""),width = 12, height = 16, units = "cm",res=200)
   inid = 201224
   par(mfrow=c(5,1),mar=c(5,0,0,5))
   for (i in 6:10) {
-    plot.alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
+    plot_alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
     mtext(names(alert)[i],line=-1, cex=0.7)
   }
   dev.off()
   
-  # -----------------
+
   # Grafico das APS : chik
-  # -----------------
+
   inid = 201601
-  ### grafico APS 1/2 ------------------
+  ### grafico APS 1/2 
   png(paste(dirfigs,"figaps1Chik.png",sep=""),width = 12, height = 16, units = "cm",res=200)
   
   par(mfrow=c(5,1),mar=c(5,0,0,5))
   for (i in 1:5) {
-    plot.alerta(alertC[[i]],var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
+    plot_alerta(alertC[[i]],var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
     mtext(names(alertC)[i],line=-1, cex=0.7)
   }
   dev.off()
   
-  ### grafico APS 2/2 ------------------
+  ### grafico APS 2/2 
   png(paste(dirfigs,"figaps2Chik.png",sep=""),width = 12, height = 16, units = "cm",res=200)
   par(mfrow=c(5,1),mar=c(5,0,0,5))
   for (i in 6:10) {
-    plot.alerta(alertC[[i]],var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
+    plot_alerta(alertC[[i]],var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
     mtext(names(alertC)[i],line=-1, cex=0.7)
   }
   dev.off()
   
-  # --------------------------------
+  
   # Gera e salva tabela da cidade
-  # --------------------------------
+  
   nometab = paste(dirfigs,"tabelaRio.tex",sep="") 
   message("tabela", nometab, "salva")
   tabelax <-xtable(tail(cidade),align ="cc|ccccccc",digits = c(0,0,0,0,0,0,1,0,1))
   print(tabelax, type="latex", file=nometab, floating=FALSE, latex.environments = NULL,
         include.rownames=FALSE)
   
-  # --------------------------------
+  
   # Gera e salva tabelas das APS : dengue
-  # --------------------------------
+  
   cores = c("verde","amarelo","laranja","vermelho")
   listaaps <- unique(tres$aps)
   
@@ -948,9 +948,9 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
           include.rownames=FALSE)
   }
   
-  # --------------------------------
+ 
   # Gera e salva tabelas das APS : chik
-  # --------------------------------
+ 
   for(ap in 1:10){
     tabapnameC = paste(dirfigs,"tabelaC",ap,".tex",sep="")
     tabC<-tail(tresC[tresC$aps==listaaps[ap],c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
@@ -962,9 +962,9 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
           include.rownames=FALSE)
   }
   
-  # --------------------------------------
+ 
   # objeto que e' retornado pela funcao e lido pelo geraPDF (tambem e salvo como RData)
-  # -------------------------------------
+ 
   res = list(nomecidade="Rio de Janeiro", estado="Rio de Janeiro", nomecidadeiconv = "RiodeJaneiro", 
              regionalmun="Metropolitana I", sigla = "RJ", se=se, ano=ano,alert=alert, alertC = alertC, 
              nomemapario = nomemapario,nomemaparioChik=nomemaparioChik,totChik2017=totChik2017, totChik2018=totChik2018,
@@ -975,9 +975,9 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
   #save(res, file=fname)
   
-  # -----------------------------
+  
   # salvando o boletim
-  # ----------------------------
+  
   nomebol = NULL  
   if (geraPDF==TRUE){
     message("gerando PDF...")
@@ -990,22 +990,22 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
 }
 
 
-## ===============================================================
-## FUN geraPDF
+
+## FUN geraPDF -------------------
 
 # executa o Sweave com o Rnw selecionado (municipal, regional, estadual) alimentado com os objetos gerados
 # pelo alerta encapsulados em obj 
 # obj - lista gerada pelo configRelatorioMunicipal (por enquanto)
 # tipo = um de "municipal", "regional", "estadual"
 # dir.report = diretorio onde esta a pasta report
-# =================================================================
+
 
 geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="AlertaDengueAnalise/report", relatorio = "infodengue",
                   bdir = basedir){  
   message(paste("Criando PDF", relatorio))
-  # -----------------------------------
+
   # Identifica o .Rnw a ser executado e onde pdf vai ser salvo
-  # -----------------------------------
+
   dir.rnw = paste(bdir,dir.report,"reportconfig",sep="/")
   setwd(dir.rnw)
   
@@ -1040,14 +1040,14 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     nomeboletim = paste(bdir,"/",dir.boletim, "/",obj$sigla,"-mn-",obj$nomecidadeiconv,"-",Sys.Date(),".pdf",sep="")
   }
   print(paste("usando template", rnwfile))
-    # -------------------------------------------
+ 
   # Cria Ambiente com objetos para o relatorio
-  # -------------------------------------------
+ 
   env <<- new.env() # ambiente que vai ser usado no relatorio, imprescindivel para o sweave funcionar
   
-  #-------------------------
+ 
   # Carrega parametros estaduais que todos os relatorios usam, exceto os simples
-  # -------------------------
+ 
   if(tipo!="municipalsimples"&tipo!="regionalsimples"){
     # PS. Guardar inicialmente esses parametros no ambiente envUF, porque nem todos vao para os municipios
     envUF <- new.env() # ambiente para guardar todos os objetos do estado
@@ -1058,11 +1058,11 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     
   
     # Alimenta env com parametros estaduais que serao (eventualmente) usados
-    # ------------------------------------------------------
+ 
     env$estado <- envUF$res$estado  # nome do estado
     env$regionaisUF <- envUF$res$regs # lista de regionais
   
-    # ----- dengue ------
+ # dengue
     env$totanoUF <- envUF$res$totano  # total de casos no ano
     env$totultseUF <- envUF$res$totultse  # total de casos na ultima semana
     #env$figmapaestado <- envUF$res$figmapaestado
@@ -1093,7 +1093,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     }
     
     # alimenta env com os parametros da Regional de Saude (if regional) 
-    # ---------------------------------------------------------
+ 
     
     if(tipo == "regional"){
       env$regional <- obj$regional  
@@ -1120,13 +1120,13 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     }
     
     # alimenta env com os parametros municipais (if municipal completo) 
-    # ---------------------------------------------------------
+ 
     print(obj$tabnameC)
     if(tipo == "municipal"){
       env$se <- obj$se
       env$ano <- obj$ano
       env$nomecidade <- obj$nomecidade
-      # --- dengue ----
+      # --- dengue 
       env$totanomun <- obj$totanomun   # total de casos no ano no municipio
       env$totultsemun <-obj$totultsemun # casos na ultima semana
       env$nivelmun <- obj$nivelmun # nivel atual
@@ -1135,7 +1135,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
       print("dengue")
       print(obj$tabname)
       print(env$tabmun)
-      # ---- chik ------
+      # ---- chik 
       if (relatorio == "infoarbo"){
         # chik
         env$totanomunC <- obj$totanomunC   # total de casos no ano no municipio
@@ -1168,22 +1168,22 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     }
   }
   
-  # ---------------------------------------------
+ 
   # Caso especifico do municipal simples, que nao tem dados de estadual ou regional
-  # ---------------------------------------------
+ 
   if(tipo == "municipalsimples"){
     env$ano <- obj$ano
     env$se <- obj$se
     env$estado <- obj$estado
     env$sigla <- obj$sigla
     env$nomecidade <- obj$nomecidade
-    # --- dengue ---
+    # --- dengue 
     env$totanomun <- obj$totanomun   # total de casos no ano no municipio
     env$totultsemun <-obj$totultsemun # casos na ultima semana
     env$nivelmun <- obj$nivelmun # nivel atual
     env$figmunicipio <- obj$figname  # Figura do alerta municipal
     env$tabmun <- obj$nometabmun
-    # ---- chik ------
+    # ---- chik 
     if (relatorio == "infoarbo"){
       env$totanomunC <- obj$totanomunC   # total de casos no ano no municipio
       env$totultsemunC <-obj$totultsemunC # casos na ultima semana
@@ -1202,9 +1202,9 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     
   }
   
-  # -------------------------------------------------------
+ 
   # caso especifico em que a regional esta sozinha
-  # --------------------------------------------------
+ 
   
   if(tipo == "regionalsimples"){
     env$regional <- obj$regional  
@@ -1229,9 +1229,8 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$nvermelho1RS <- obj$nvermelho1
   }
     
-  # --------------------------------------------------
-  # Rio de Janeiro
-  # --------------------------------------------------
+   # Rio de Janeiro
+ 
   if(tipo == "Rio"){
     env$se <- obj$se
     env$ano <- obj$ano
@@ -1318,23 +1317,23 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
 
 
 
-## ==========================================================
-## Funcao para publicar o Alerta no site
-## ==========================================================
+
+## Funcao para publicar o Alerta no site ------------------
+
 publicarAlerta <- function(ale, pdf, dir, bdir = basedir, writebd = TRUE){
   # A função write.alerta sabe se e para salvar na tabela de chik ou de dengue
-  # ---------------------------------------------------------
+
   if(writebd){
   # copia o alerta da tabela de historico do Banco de dados
   message("atualizando a tabela do historico...")
   
   # Se é um municipio isolado
-  #---------------------------
+
     if("indices" %in% names(ale)) {
-      res <- write.alerta(ale, write = "db") 
+      res <- write_alerta(ale) 
     } else {
       # Ou se e'o Rio de Janeiro com suas APS
-      # --------------------------------------
+ 
       if("APS 1" %in% names(ale)) {res=write.alertaRio(ale, write="db") 
         }else{
           # todos os outros - regionais e estados 

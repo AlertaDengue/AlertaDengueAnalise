@@ -1,93 +1,97 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Espírito Santo
 # =============================================================================
-# Cabeçalho igual para todos ------------------------------
-setwd("~/"); library("AlertTools", quietly = TRUE)
-library("RPostgreSQL", quietly = TRUE)
-con <- DenguedbConnect()
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-INLA:::inla.dynload.workaround()
 
-aalog <- paste0("AlertaDengueAnalise/",alog)
-print(aalog)
-# ---------------------------------------------------------
-# ----- data do relatorio:
-#data_relatorio = 201950
-# ---- Calcula alerta:
+# Cabeçalho ------------------------------
+setwd("~/")
+source("AlertaDengueAnalise/config/config_global.R") #configuracao 
+con <- DenguedbConnect(pass = pw)  
 
+# parametros especificos -----------------
+estado = "Espírito Santo"
+sig = "ES"
+shape="AlertaDengueAnalise/report/ES/shape/32MUE250GC_SIRm.shp"
+shapeID="CD_GEOCMU" 
+# onde salvar boletim
+out = "AlertaDengueAnalise/report/ES"
+dir_rel = "Relatorio/ES/Estado"
 
-#Dengue:
-aleES <- update.alerta(region = names(pars.ES), pars = pars.ES, state = "Espírito Santo", crit = ES.criteria, 
-                       datasource = con, sefinal=data_relatorio, writedb = TRUE) 
-
-
-# Chik
-aleES.chik <- update.alerta(region = names(pars.ES), state="Espírito Santo", pars = pars.ES, crit = ES.criteria,
-                            cid10="A92.0", datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) 
-
-# Zika
-aleES.zika <- update.alerta(region = names(pars.ES), state="Espírito Santo", pars = pars.ES, crit = ES.criteria, 
-                            cid10="A92.8", datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE) 
-
-# O Boletim estadual ainda é só de dengue:
-
-if(write_report) {
-  bolES=configRelatorioEstadual(uf="Espírito Santo", sigla = "ES", data=data_relatorio, tsdur=104,
-                              alert=aleES, pars = pars.ES, shape=ES.shape, varid=ES.shapeID,
-                              dir=ES.out, datasource=con, geraPDF=TRUE)
-
-
-  publicarAlerta(ale = aleES, pdf = bolES, dir = "Relatorio/ES/Estado")
+# logging -------------------------------- 
+#habilitar se quiser
+if (logging == TRUE){
+  aalog <- paste0("AlertaDengueAnalise/",alog)
+  print(aalog)
 }
+
+
+# data do relatorio:---------------------
+#data_relatorio = 201851
+dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
+
+# cidades --------------------------------
+cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
+
+
+# Calcula alerta estadual ------------------ 
+ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "fixedprob", 
+                           finalday = dia_relatorio)
+
+ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob", 
+                            finalday = dia_relatorio)
+
+ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "fixedprob", 
+                            finalday = dia_relatorio)
+
+
+## boletim dengue estadual
+if(write_report) {
+  flog.info("writing boletim estadual...", name = aalog)
+  dirbol = paste0("Relatorio/",sigla,"/Estado")
+  bol <- configRelatorioEstadual(uf=estado, sigla = sig, data=data_relatorio, tsdur=300,
+                                 alert=ale.den, shape=shape, varid=shapeID,
+                                 dir=out, datasource=con, geraPDF=TRUE)
+  
+  publicarAlerta(ale = ale.den, pdf = bol, dir = dirbol)
+  
+  if (!bol %in% ls(dirbol)) futile.logger::flog.error("pdf boletin not saved")
+  
+} else {flog.warn("boletim estatual skipped by user", name = alog)}
+
 
 
 # ----- Calcula alerta arbo para Vitoria
+geo = 3205309
+
+ES.V.out = "AlertaDengueAnalise/report/CE/Municipios/Vitoria" 
+flog.info("alerta dengue Vitoria executing...", name = aalog)
+
+ale.V.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
+ale.V.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio)
+ale.V.zika <- pipe_infodengue(geo, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio)
 
 
-# Dengue
-aleVit <- update.alerta(city = 3205309, pars = pars.ES[["Metropolitana"]], cid10="A90",crit = ES.criteria, 
-                         datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE,
-                        delaymethod = "bayesian")
-
-#res = write.alerta(obj = aleFort, write = "db")
-#bolVit <- configRelatorioMunicipal(alert = aleFort, tipo = "simples", varcli = "umid_max", siglaUF = "CE", 
-#                                    data = data_relatorio, pars = pars.CE,
-#                                    dir.out = CE.Fortaleza.out, geraPDF = TRUE)
-
-# Chik 
-aleVitC <- update.alerta(city = 3205309, pars = pars.ES.chik[["Metropolitana"]], cid10="A92.0", 
-                         crit = criteriaChik, datasource = con, sefinal=data_relatorio, writedb = FALSE, 
-                         adjustdelay = FALSE)
-
-#Zika
-aleVitZ <- update.alerta(city = 3205309, pars = pars.ES.zika[["Metropolitana"]], cid10="A92.8", crit = ES.criteria, 
-                          datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = FALSE)
-
-# Boletim Arbo
+# Boletim Arbo ----------------------------------
 if(write_report) {
-  bolVit <- configRelatorioMunicipal(alert = aleVit, alechik = aleVitC, alezika = aleVitZ, tipo = "simples", 
-                                    varcli = "temp_min", siglaUF = "ES", 
-                                    data = data_relatorio, pars = pars.ES,
-                                    dir.out = ES.MN.Vitoria.out, geraPDF = TRUE)
-
-
-  publicarAlerta(ale = aleVit, pdf = bolVit, dir = "Relatorio/ES/Municipios/Vitoria")
+  flog.info("writing boletim Arbo Vitoria", name = aalog)
+  bolV <- configRelatorioMunicipal(alert = ale.V.den, alechik = ale.V.chik, alezika = ale.V.zika, tipo = "simples", 
+                                      varcli = "temp_min", estado = estado, siglaUF = sig, data = data_relatorio, 
+                                      dir.out = ES.V.out, geraPDF = TRUE)
+  
+  #publicarAlerta(ale = aleFort, pdf = bolFort, dir = "Relatorio/CE/Municipios/Fortaleza")
 }
 
-save(aleES, aleES.chik, aleES.zika, aleVit, aleVitC, aleVitZ, 
+# salvando objetos -------------------------
+Rfile = paste0("alertasRData/aleES",data_relatorio,".RData")
+
+flog.info("saving ...", Rfile, capture = TRUE, name = aalog)
+save(ale.den, ale.chik, ale.zika, ale.V.den, ale.V.chik, ale.V.zika, file = Rfile)
+
+
+save(aleES, aleES.chik, aleES.zika, ale.V.den, ale.V.chik, ale.V.zika, 
      file = paste0("alertasRData/aleES",data_relatorio,".RData"))
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
 
 
-
-
-
-
-#ale <- update.alerta(city = 3200359, pars = pars.ES[["Central"]], crit = ES.criteria, 
-#                             datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-#ale <- update.alerta(region = "Central", pars = pars.ES[["Central"]], crit = ES.criteria, 
-#                     datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
 

@@ -1,264 +1,70 @@
 #====================================================
 ## Alertas municipais do Estado do Espírito Santo
 #====================================================
-# Cabeçalho igual para todos ------------------------------
-setwd("~/"); library("AlertTools", quietly = TRUE)
-library("RPostgreSQL", quietly = TRUE)
-con <- DenguedbConnect()
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-INLA:::inla.dynload.workaround()
+# cidades participantes (rever): Alfredo Chaves (3200300); 
+# Linhares (3203205); Sta Maria Jetiba (3204559); Anchieta (320040);
+# Rio Novo do Sul (320440);  Aracruz (320060); Atilio Vivaqua (320070);
+# Conceição do Castelo (320170); Domingo Martins (320190); Itaguaçu (320270);
+# Jerônimo Monteiro (320310); Laranja da Terra (320316);
+# Marechal Floriano (320334); Mimoso do Sul (320340); Mucurici (320360);
+# Muqui (320380); Pinheiros (320410); Vila Velha (320520)
 
-aalog <- paste0("AlertaDengueAnalise/",alog)
-print(aalog)
-# ---------------------------------------------------------
+# Cabeçalho ------------------------------
+setwd("~/")
+source("AlertaDengueAnalise/config/config_global.R") #configuracao 
+con <- DenguedbConnect(pass = pw)  
 
-#data_relatorio = 201903
-aleLondrina <- update.alerta(city = 4113700, pars = pars.PR[["Londrina"]], crit = PR.criteria, 
-                                  datasource = con, sefinal=data_relatorio, writedb = writedb, adjustdelay = FALSE)
+# parametros especificos -----------------
+estado = "Espírito Santo"
+sig = "ES"
+shape="AlertaDengueAnalise/report/ES/shape/32MUE250GC_SIRm.shp"
+shapeID="CD_GEOCMU" 
+# onde salvar boletim
+out = "AlertaDengueAnalise/report/ES/Municipios"
+dir_rel = "Relatorio/ES/Municipios"
 
-if(write_report) {
-  bol <- configRelatorioMunicipal(alert = aleLondrina, tipo = "completo", siglaUF = "ES", 
-                                             data = data_relatorio, pars = pars.ES, 
-                                             dir.out = ES.MN.Londrina.out, geraPDF = TRUE) 
+# logging -------------------------------- 
+#habilitar se quiser
+# alog = paste0("ale_",Sys.Date(),".log")
+if (logging == TRUE){
+  aalog <- paste0("AlertaDengueAnalise/",alog)
+  print(aalog)
 }
 
-#***************************************************
-# Cidade de Alfredo Chaves
-#***************************************************
+# data do relatorio:---------------------
+#data_relatorio = 201851
+dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
-aleAlfredoChaves <- update.alerta(city = 3200300, pars = pars.ES[["Sul"]], crit = ES.criteria, 
-                           datasource = con, sefinal=data_relatorio, writedb = writedb, adjustdelay = FALSE)
+# cidade -------------------------------
+#geo <- 3200300
+
+# pipeline -------------------------------
+flog.info(paste("alerta dengue", geo ,"executing..."), name = aalog)
+
+ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
+ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio)
+ale.zika <- pipe_infodengue(geo, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio)
+
+
+# Boletim ----------------------------------
 if(write_report) {
-  bolAlfredoChaves <- configRelatorioMunicipal(alert = aleAlfredoChaves, tipo = "completo", siglaUF = "ES", 
-                                             data = data_relatorio, pars = pars.ES, 
-                                             dir.out = ES.MN.AlfredoChaves.out, geraPDF = TRUE) #
-publicarAlerta(ale = aleAlfredoChaves, pdf = bolAlfredoChaves, dir = "Relatorio/ES/Municipios/Alfredo_Chaves", writebd = FALSE)
-}
-
-#***************************************************
-# Cidade de Linhares
-#***************************************************
-
-aleLinhares <- update.alerta(city = 3203205, pars = pars.ES[["Central"]], crit = ES.criteria, 
-                                       datasource = con, sefinal=data_relatorio, writedb = FALSE,adjustdelay = FALSE)
+  # dir exists?
+  nome <- ale.den[[1]]$data$nome[1]
+  nomesemespaco = gsub(" ","",nome)
+  nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+  out = paste0("AlertaDengueAnalise/report/ES/Municipios/",nomesemacento) 
+  dir.create(file.path(out), showWarnings = FALSE) # check if directory exists
+  dir.create(file.path(paste0(out, "/figs/")), showWarnings = FALSE) # check if directory exists
   
-if(write_report) {
-  bolLinhares <- configRelatorioMunicipal(alert = aleLinhares, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                          pars = pars.ES, dir.out = ES.MN.Linhares.out, geraPDF = TRUE)
   
-  publicarAlerta(ale = aleLinhares, pdf = bolLinhares, dir = "Relatorio/ES/Municipios/Linhares")
-}  
+  flog.info(paste("writing boletim de ", nome), name = aalog)
+  bol <- configRelatorioMunicipal(alert = ale.den, alechik = ale.chik, alezika = ale.zika, tipo = "simples", 
+                                   varcli = "temp_min", estado = estado, siglaUF = sig, data = data_relatorio, 
+                                   dir.out = out, geraPDF = TRUE)
   
-#***************************************************
-# Cidade de Santa Maria de Jetiba
-#***************************************************
-
-aleSantaMariaJetiba <- update.alerta(city = 3204559, pars = pars.ES[["Metropolitana"]], crit = ES.criteria, 
-                                  datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-if(write_report) {
-  bolSantaMariaJetiba <- configRelatorioMunicipal(alert = aleSantaMariaJetiba, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                             dir.out = ES.MN.SantaMariaJetiba.out, pars = pars.ES, geraPDF = TRUE)
-
-  publicarAlerta(ale = aleSantaMariaJetiba, pdf = bolSantaMariaJetiba, dir = "Relatorio/ES/Municipios/Santa_Maria_de_Jetiba")
+  #publicarAlerta(ale = aleFort, pdf = bol, dir = "Relatorio/CE/Municipios/Fortaleza")
 }
-
-#***************************************************
-# Cidade de Anchieta
-#***************************************************
-
-aleAnchieta <- update.alerta(city = 320040, pars = pars.ES[["Sul"]], crit = ES.criteria, 
-                                     datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-if(write_report) {
-  bolAnchieta <- configRelatorioMunicipal(alert = aleAnchieta, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                                dir.out = ES.MN.Anchieta.out, pars = pars.ES, geraPDF = TRUE)
-
-publicarAlerta(ale = aleAnchieta, pdf = bolAnchieta, dir = "Relatorio/ES/Municipios/Anchieta")
-}
-
-#***************************************************
-# Cidade de Rio Novo do Sul
-#***************************************************
-
-aleRioNovoSul <- update.alerta(city = 320440, pars = pars.ES[["Sul"]], crit = ES.criteria, 
-                               datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-if(write_report) {
-  bolRioNovoSul <- configRelatorioMunicipal(alert = aleRioNovoSul, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                          dir.out = ES.MN.RioNovoSul.out, pars = pars.ES, geraPDF = TRUE)
-
-  publicarAlerta(ale = aleRioNovoSul, pdf = bolRioNovoSul, dir = "Relatorio/ES/Municipios/Rio_Novo_do_Sul")
-}
-
-#***************************************************
-# Cidade de Aracruz
-#***************************************************
-
-aleAracruz <- update.alerta(city = 320060, pars = pars.ES[["Central"]], crit = ES.criteria, 
-                                     datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-if(write_report) {
-  bolAracruz <- configRelatorioMunicipal(alert = aleAracruz, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                                dir.out = ES.MN.Aracruz.out, pars = pars.ES, geraPDF = TRUE)
-
-  publicarAlerta(ale = aleAracruz, pdf = bolAracruz, dir = "Relatorio/ES/Municipios/Aracruz")
-}
-
-#***************************************************
-# Cidade de Atílio Vivacqua
-#***************************************************
-
-aleAtilioVivacqua <- update.alerta(city = 320070, pars = pars.ES[["Sul"]], crit = ES.criteria, 
-                                     datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-if(write_report) {
-  bolAtilioVivacqua <- configRelatorioMunicipal(alert = aleAtilioVivacqua, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                                dir.out = ES.MN.AtilioVivacqua.out, pars = pars.ES, geraPDF = TRUE)
-  publicarAlerta(ale = aleAtilioVivacqua, pdf = bolAtilioVivacqua, dir = "Relatorio/ES/Municipios/Atilio_Vivacqua")
-}
-
-#***************************************************
-# Cidade de Conceição do Castelo
-#***************************************************
-
-aleConceicaoCastelo <- update.alerta(city = 320170, pars = pars.ES[["Metropolitana"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-if(write_report) {
-  bolConceicaoCastelo <- configRelatorioMunicipal(alert = aleConceicaoCastelo, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.ConceicaoCastelo.out, pars = pars.ES, geraPDF = TRUE)
-
-  publicarAlerta(ale = aleConceicaoCastelo, pdf = bolConceicaoCastelo, dir = "Relatorio/ES/Municipios/Conceicao_do_Castelo")
-}
-
-#***************************************************
-# Cidade de Domingos Martins
-#***************************************************
-
-aleDomingosMartins <- update.alerta(city = 320190, pars = pars.ES[["Metropolitana"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-if(write_report) {
-  bolDomingosMartins <- configRelatorioMunicipal(alert = aleDomingosMartins, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.DomingosMartins.out, pars = pars.ES, geraPDF = TRUE)
- publicarAlerta(ale = aleDomingosMartins, pdf = bolDomingosMartins, dir = "Relatorio/ES/Municipios/Domingos_Martins")
-}
-
-#***************************************************
-# Cidade de Itaguaçu
-#***************************************************
-
-aleItaguacu <- update.alerta(city = 320270, pars = pars.ES[["Metropolitana"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-if(write_report) {
-  bolItaguacu <- configRelatorioMunicipal(alert = aleItaguacu, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.Itaguacu.out, pars = pars.ES, geraPDF = TRUE)
-  publicarAlerta(ale = aleItaguacu, pdf = bolItaguacu, dir = "Relatorio/ES/Municipios/Itaguacu")
-}
-
-#***************************************************
-# Cidade de Jerônimo Monteiro
-#***************************************************
-
-aleJeronimoMonteiro <- update.alerta(city = 320310, pars = pars.ES[["Sul"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-if(write_report) {
-  bolJeronimoMonteiro <- configRelatorioMunicipal(alert = aleJeronimoMonteiro, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.JeronimoMonteiro.out, pars = pars.ES, geraPDF = TRUE)
- publicarAlerta(ale = aleJeronimoMonteiro, pdf = bolJeronimoMonteiro, dir = "Relatorio/ES/Municipios/Jeronimo_Monteiro")
-}
-
-#***************************************************
-# Cidade de Laranja da Terra
-#***************************************************
-
-aleLaranjaTerra <- update.alerta(city = 320316, pars = pars.ES[["Metropolitana"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-if(write_report) {
-  bolLaranjaTerra <- configRelatorioMunicipal(alert = aleLaranjaTerra, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.LaranjaTerra.out, pars = pars.ES, geraPDF = TRUE)
-  publicarAlerta(ale = aleLaranjaTerra, pdf = bolLaranjaTerra, dir = "Relatorio/ES/Municipios/Laranja_da_Terra")
-}
-
-#***************************************************
-# Cidade de Marechal Floriano
-#***************************************************
-
-aleMarechalFloriano <- update.alerta(city = 320334, pars = pars.ES[["Metropolitana"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-bolMarechalFloriano <- configRelatorioMunicipal(alert = aleMarechalFloriano, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.MarechalFloriano.out, pars = pars.ES, geraPDF = TRUE)
-
-publicarAlerta(ale = aleMarechalFloriano, pdf = bolMarechalFloriano, dir = "Relatorio/ES/Municipios/Marechal_Floriano")
-
-rm(aleMarechalFloriano,bolMarechalFloriano)
-#***************************************************
-# Cidade de Mimoso do Sul
-#***************************************************
-
-aleMimosoSul <- update.alerta(city = 320340, pars = pars.ES[["Sul"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-bolMimosoSul <- configRelatorioMunicipal(alert = aleMimosoSul, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.MimosoSul.out, pars = pars.ES, geraPDF = TRUE)
-
-publicarAlerta(ale = aleMimosoSul, pdf = bolMimosoSul, dir = "Relatorio/ES/Municipios/Mimoso_do_Sul")
-
-rm(aleMimosoSul,bolMimosoSul)
-#***************************************************
-# Cidade de Mucurici
-#***************************************************
-
-aleMucurici <- update.alerta(city = 320360, pars = pars.ES[["Norte"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-bolMucurici <- configRelatorioMunicipal(alert = aleMucurici, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.Mucurici.out, pars = pars.ES, geraPDF = TRUE)
-
-publicarAlerta(ale = aleMucurici, pdf = bolMucurici, dir = "Relatorio/ES/Municipios/Mucurici")
-
-rm(aleMucurici,bolMucurici)
-#***************************************************
-# Cidade de Muqui
-#***************************************************
-
-aleMuqui <- update.alerta(city = 320380, pars = pars.ES[["Sul"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-bolMuqui <- configRelatorioMunicipal(alert = aleMuqui, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.Muqui.out, pars = pars.ES, geraPDF = TRUE)
-
-publicarAlerta(ale = aleMuqui, pdf = bolMuqui, dir = "Relatorio/ES/Municipios/Muqui")
-
-rm(aleMuqui,bolMuqui)
-#***************************************************
-# Cidade de Pinheiros
-#***************************************************
-
-alePinheiros <- update.alerta(city = 320410, pars = pars.ES[["Norte"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-bolPinheiros <- configRelatorioMunicipal(alert = alePinheiros, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.Pinheiros.out, pars = pars.ES, geraPDF = TRUE)
-
-publicarAlerta(ale = alePinheiros, pdf = bolPinheiros, dir = "Relatorio/ES/Municipios/Pinheiros")
-
-rm(alePinheiros,bolPinheiros)
-
-#***************************************************
-# Cidade de Vila Velha
-#***************************************************
-
-aleVilaVelha <- update.alerta(city = 320520, pars = pars.ES[["Metropolitana"]], crit = ES.criteria, 
-                                   datasource = con, sefinal=data_relatorio,writedb = FALSE, adjustdelay = FALSE)
-
-bolVilaVelha <- configRelatorioMunicipal(alert = aleVilaVelha, tipo = "completo", siglaUF = "ES", data = data_relatorio, 
-                                              dir.out = ES.MN.VilaVelha.out, pars = pars.ES, geraPDF = TRUE)
-
-publicarAlerta(ale = aleVilaVelha, pdf = bolVilaVelha, dir = "Relatorio/ES/Municipios/Vila_Velha")
-
-rm(aleVilaVelha,bolVilaVelha)
-
-
+ 
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

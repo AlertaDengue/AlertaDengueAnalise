@@ -1,38 +1,53 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Rio de Janeiro
 # =============================================================================
-# Cabeçalho igual para todos ------------------------------
-setwd("~/"); library("AlertTools", quietly = TRUE)
-library("RPostgreSQL", quietly = TRUE)
-con <- DenguedbConnect()
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-INLA:::inla.dynload.workaround()
 
-aalog <- paste0("AlertaDengueAnalise/",alog)
-print(aalog)
-# ---------------------------------------------------------
-# ----- data do relatorio:
-#data_relatorio = 201951
+# Cabeçalho ------------------------------
+setwd("~/")
+source("AlertaDengueAnalise/config/config_global.R") #configuracao 
+con <- DenguedbConnect(pass = pw)  
+
+# parametros especificos -----------------
+estado = "Rio de Janeiro"
+sig = "RJ"
+shape="AlertaDengueAnalise/report/RJ/shape/33MUE250GC_SIR.shp"
+shapeID="CD_GEOCMU" 
+# onde salvar boletim
+out = "AlertaDengueAnalise/report/RJ"
+dir_rel = "Relatorio/RJ/Estado"
 
 
-# ---- Calcula alerta Dengue: 
-aleRJ <- update.alerta(region = names(pars.RJ), state= "Rio de Janeiro", pars = pars.RJ, crit = RJ.criteria, 
-                   datasource = con, sefinal=data_relatorio, writedb = writedb,adjustdelay = TRUE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
-
-# ---- Calcula alerta Chik:
-aleRJ.chik <- update.alerta(region = names(pars.RJ), state= "Rio de Janeiro", pars = pars.RJ, crit = RJ.criteria, cid10="A92.0",
-                            datasource = con, sefinal=data_relatorio, writedb = writedb, adjustdelay = TRUE) #region = names(pars.RJ)[1] escolho a regiao que desejo analisar
-
-if(write_report) { # so dengue
-  bolRJ=configRelatorioEstadual(uf="Rio de Janeiro", sigla = "RJ", data=data_relatorio, tsdur=104,
-                             alert=aleRJ, pars = pars.RJ, shape=RJ.shape, varid=RJ.shapeID,
-                              dir=RJ.out, datasource=con, geraPDF=TRUE)
-
-  publicarAlerta(ale = aleRJ, pdf = bolRJ, dir = "Relatorio/RJ/Estado")
+# logging -------------------------------- 
+#habilitar se quiser
+if (logging == TRUE){
+  aalog <- paste0("AlertaDengueAnalise/",alog)
+  print(aalog)
 }
 
+# data do relatorio:
+#data_relatorio = 201851
+dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
-save(aleRJ,aleRJ.chik, file = paste0("alertasRData/aleRJ",data_relatorio,".RData"))
+# cidades 
+cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
+
+# Calcula alerta ---------------------------- 
+ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "fixedprob", 
+                                     finalday = dia_relatorio)
+
+ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob", 
+                            finalday = dia_relatorio)
+
+# Boletim: 
+if(write_report) { # so dengue
+  bol=configRelatorioEstadual(uf=estado, sigla=sig, data=data_relatorio, 
+                                tsdur=104,alert=ale.den, shape=shape, varid=shapeID,
+                              dir=out, datasource=con, geraPDF=TRUE)
+
+  publicarAlerta(ale, pdf = bol, dir = "dir_rel",writedb = FALSE)
+}
+
+save(ale.den,ale.chik, file = paste0("/AlertaDengueAnalise/alertasRData/aleRJ",data_relatorio,".RData"))
 
 
 # ----- Fechando o banco de dados
