@@ -4,7 +4,7 @@
 ## Author: Claudia Codeco
 ## Last update: 2020
 ## Usage:
-## Rscript infodengue.R -uf RJ -mn RJ -rg MG -se 201951 -wr true -sb false -te
+## Rscript infodengue.R -uf RJ -mn 3304557 -rg MG -se 201951 -wr true -sb false -te
 
 ##    -uf: to run statewise alert. E.g.: RJ, PR 
 ##    -mn: to run the alert at municipality level. E.g.: RJ
@@ -22,7 +22,8 @@ pw <- getPass()
 library(futile.logger, quietly = TRUE)
 logging = TRUE
 log_level = futile.logger::TRACE
-alog = paste0("ale_",Sys.Date(),".log")
+alog = paste0("log/ale_",Sys.Date(),".log")
+print(alog)
 flog.appender(appender.tee(alog))
 
 ## Process arguments
@@ -43,8 +44,6 @@ if(!any(names(myargv) %in% "se")) stop("Run script like this: \n\t Rscript infod
 data_relatorio = as.numeric(unlist(myargv[["se"]]))	
 stopifnot(data_relatorio > 201000) 
 
-# cidade
-geo <- as.numeric(myargv[["mn"]])
 
 # Default writing argument is FALSE
 if(!any(names(myargv) %in% "wr")) myargv <- c(myargv, wr="no") # Sets write default to no. Saving RData only.  
@@ -67,6 +66,7 @@ if(any(names(myargv) %in% "uf" & !any(names(myargv) %in% c("mn", "rg")))) {
 
 ## If '-mn' is provided: 
 if(any(names(myargv) %in% "mn")) {
+  mn <- myargv[["mn"]]
   arq <- paste0("main_", myargv[["uf"]] ,"_municipios.R")
   if(!(arq %in% mains))stop("script not found. Check if arguments are correct.")
 }

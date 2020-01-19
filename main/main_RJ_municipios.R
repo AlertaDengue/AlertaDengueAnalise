@@ -27,64 +27,65 @@ if (logging == TRUE){
 #data_relatorio = 201851
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
-# cidade -------------------------------
+# qual municipio? -------------------------------
 #geo <- 3304557
 
-#
-### Cidade do Rio de Janeiro ------------
+
+### Se Boletim da cidade do Rio de Janeiro por APS ------------------------
 if(geo == 3304557){
-  params <- read.parameters(geo, cid10 = "A90")
-  criter <- setCriteria(rule="Af", values = )
-  ale.den <- alertaRio()
+  
+  RJ.aps.shape = "AlertaDengueAnalise/report/RJ/Municipios/Rio_de_Janeiro/shape/CAPS_SMS.shp"
+  RJ.aps.shapeID = "CD_GEOCMU"
+  RJ.RiodeJaneiro.out = "AlertaDengueAnalise/report/RJ/Municipios/Rio_de_Janeiro"
+  
+  
+  ale.den <- alertaRio(se = data_relatorio, cid10 = "A90", delaymethod = "fixedprob")
+  ale.chik <- alertaRio(se = data_relatorio, cid10 = "A920", delaymethod = "fixedprob")
+  #ale.zika <- alertaRio(se = data_relatorio, cid10 = "A92.8", delaymethod = "fixedprob")
+  
+  bol <- configRelatorioRio(data=data_relatorio, alert=ale.den, alertC= ale.chik, shape=RJ.aps.shape,
+                                dirout=RJ.RiodeJaneiro.out, datasource=con, geraPDF=TRUE, inid = 201801)
+  
+  #publicarAlerta(ale = aleFort, pdf = bol, dir = "Relatorio/CE/Municipios/Fortaleza")
+  save(ale.den,ale.chik, file = paste0("alertasRData/aleRJ-mn",data_relatorio,".RData"))
+  #res<-write.alertaRio(alerioC, write = "db")
+}else {
+  
+  
+  
+  #Se Boletim de municipios do RJ, exceto capital  ------------------------
+  
+  flog.info(paste("alerta dengue", geo ,"executing..."), name = aalog)
+  
+  ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
+  ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio)
+  ale.zika <- pipe_infodengue(geo, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio)
+  
+  
+  # escreve?
+  if(write_report) {
+    # dir exists?
+    nome <- ale.den[[1]]$data$nome[1]
+    nomesemespaco = gsub(" ","",nome)
+    nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+    out = paste0("AlertaDengueAnalise/report/RJ/Municipios/",nomesemacento) 
+    dir.create(file.path(out), showWarnings = FALSE) # check if directory exists
+    dir.create(file.path(paste0(out, "/figs/")), showWarnings = FALSE) # check if directory exists
+    
+    
+    flog.info(paste("writing boletim de ", nome), name = aalog)
+    bol <- configRelatorioMunicipal(alert = ale.den, alechik = ale.chik, alezika = ale.zika, tipo = "simples", 
+                                    varcli = "temp_min", estado = estado, siglaUF = sig, data = data_relatorio, 
+                                    dir.out = out, geraPDF = TRUE)
+    
+    #publicarAlerta(ale = aleFort, pdf = bol, dir = "Relatorio/RJ/Municipios/Fortaleza")
+  }
+  
 }
 
 
-# Dengue 
-alerio <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, datasource=con,se = data_relatorio, verbose=FALSE)        # calcula o alerta
 
-
-# Chikungunya
-alerioC <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, cid10 = "A920", 
-                     datasource=con, se = data_relatorio, verbose=FALSE) 
-
-
-alerioC <- alertaRio(pars=RJ.aps, crit = RJ.aps.criteria, cid10 = "A920", datasource=con, se = data_relatorio, verbose=FALSE) 
-#dd <- write.alertaRio(obj = alerioC, write = "db")
-#write.alertaRio(obj = alerio, write = "db")
-
-# Boletim de dengue e chik
-if(write_report) {
-  bolrio <- configRelatorioRio( data=data_relatorio, alert=alerio, alertC= alerioC, shape=RJ.aps.shape,
-                              dirout=RJ.RiodeJaneiro.out, datasource=con, geraPDF=TRUE)
-
-
-  publicarAlerta(ale = alerio, pdf = bolrio, dir = "Relatorio/RJ/Municipios/RiodeJaneiro")
-}
-
-save(alerio,alerioC, file = paste0("alertasRData/aleRJ-mn",data_relatorio,".RData"))
-
-res<-write.alertaRio(alerioC, write = "db")
-rm(alerio,alerioC,bolrio)
-
-
-#***************************************************
-# Cidade de Campos de Goytacazes
-#***************************************************
-
-#aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
-#                           datasource = con, sefinal=data_relatorio, writedb = TRUE, adjustdelay = TRUE)
-#aleCampos <- update.alerta(city = 3301009, pars = pars.RJ[["Norte"]], crit = RJ.criteria, 
-#                           datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE)
-
-#bolCampos <- configRelatorioMunicipal(alert = aleCampos, tipo = "completo", siglaUF = "RJ", data = data_relatorio, pars = pars.RJ,
-#                                             dir.out = RJ_CamposdosGoytacazes.out, geraPDF = TRUE)
-
-#publicarAlerta(ale = aleCampos, pdf = bolCampos, dir = "Relatorio/RJ/Municipios/CamposdosGoytacazes")
-
-#rm(aleCampos,bolCampos)
-
-
-# ----- Fechando o banco de dados
+# Fechando o banco de dados ------------------------------
 dbDisconnect(con)
 
 

@@ -275,7 +275,7 @@ configRelatorio <- function(uf, regional, sigla, data, alert, pars, varcli = "te
 # Gera objetos para o Boletim Regional 
 # 
 # configRelatorioRegional -----------------
-configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varcli = "temp_min", data, tsdur=104, alert, pars, 
+configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varcli = "temp_min", data, tsdur=104, alert,  
                                     shape, varid, dir, datasource, dirb=basedir,geraPDF=TRUE){
   setwd("~/")
   
@@ -284,9 +284,8 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
  
   ## Dados da regional
  
-  estado = uf
   sigla = sigla
-  municipios = getCidades(uf=estado, regional = regional, datasource=datasource)
+  municipios = getCidades(uf=uf, regional = regional)
   nmunicipios = dim(municipios)[1]
   nomeregfiguras = iconv(gsub(" ","",regional),to = "ASCII//TRANSLIT")
   nomemunfiguras = iconv(gsub(" ","",municipios$nome),to = "ASCII//TRANSLIT")
@@ -303,22 +302,22 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
   # Mapa da Regional
  
    nomemapareg=mapa.regional(alerta=alert, regionais=regional, estado = uf, sigla = sigla,
-                  data = data, pars=pars, shape=shape, shapeid=varid, dir=dirfigs ,
+                  data = data, shape=shape, shapeid=varid, dir=dirfigs ,
                   datasource=datasource)
   
  
   # Descritores gerais (nverde, namarelo, totultse, etc) 
  
-  descrgerais <- faztabelaoRS(ale = alert,ano = ano,varcli = varcli,data = data,tex=FALSE)
-  
+  descrgerais <- faztabelaoRS(ale = alert,ano = ano, uf = uf, varcli = varcli,data = data,tex=FALSE)
+  print("descrgerais")
  
   # Tabelao com resultado do alerta por municipio da Regional e totais (funcao no configfiguras)
  
   
   nometabelao = paste(dirfigs,"/","tabelaoMun_",nomeregfiguras,".tex",sep="")
   
-  tabelaox <- faztabelaoRS(ale = alert,ano = ano,varcli = varcli, data = data,tex=TRUE)
-  
+  tabelaox <- faztabelaoRS(ale = alert,ano = ano,varcli = varcli, uf = uf, data = data,tex=TRUE)
+  print("tabelao")
   add.to.row <- list(pos = list(0), command = NULL)
   command <- paste0("\\hline\n\\endhead\n",
                     "\\hline\n",
@@ -340,7 +339,7 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
   tabelax <- faztabelaresumo(alert = alert,municipios = municipios, varcli = varcli, nmunicipios = nmunicipios,tex=TRUE)
   print(tabelax, type="latex", file=nometabreg, floating=FALSE, latex.environments = NULL,
           include.rownames=FALSE)
-    
+  print("faztabelaresumo")  
 
     # Figura-resumo da regional 
 
@@ -352,7 +351,7 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
   dev.off()  
         
   filename = paste(dirfigs,"paramsRS_",nomeregfiguras,".RData",sep="")
-  
+  print("fazfiguraregional") 
 
   # Figuras dos municipios da Regional (3 subfiguras)
 
@@ -361,14 +360,14 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
   for(cid in 1:nmunicipios){ 
     cidadessemespaco = gsub(" ","",municipios$nome[cid])
     figname = paste(dirfigs,"figMun_",nomemunfiguras[cid],".png",sep="")
-  
+    gg <- as.character(municipios$municipio_geocodigo[cid]) 
     png(figname, width = 14, height = 16, units="cm", res=300)  # inicio da figura 
-    figuramunicipio(alert[[cidadessemespaco]], varcli=varcli)
+    figuramunicipio(alert[[gg]], varcli=varcli)
     municipios$figname[cid] <- figname
     dev.off()  
   }
   
-  
+  print("figs mun")
   # Tabelas dos municipios da Regional 
   
   municipios$tabname <- "NA"
@@ -377,6 +376,7 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
   if (varcli == "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesICmax","p1")
   
   for(cid in 1:nmunicipios){ 
+    gg <- municipios$municipio_geocodigo[cid] 
     tab <- tail(alert[[cid]]$data[,varstab])
     tab$p1 <- tab$p1*100
     if (varcli == "temp_min")    names(tab) <- c("SE","temperatura","tweet", "casos notif", "incidência", "incidência max","pr(aumento)")
@@ -390,7 +390,7 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
   }
   
   
-  res = list(estado=estado, sigla=sigla, se=se, ano=ano, municipios=municipios,
+  res = list(estado=uf, sigla=sigla, se=se, ano=ano, municipios=municipios,
              nmunicipios=nmunicipios, regional=regional,nomeregiconv=nomeregfiguras, 
              nomemuniconv=nomemunfiguras, totano=descrgerais$totano, nickreg=nickreg,
              totultse=descrgerais$totultse, nverde=descrgerais$nverde, 
@@ -771,15 +771,17 @@ nomebol = NULL
 
 
 configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,  chik= FALSE, 
-                             bdir=basedir, geraPDF=FALSE){
+                             bdir=basedir, geraPDF=FALSE, inid = 201801){
   
- 
   # Dados da regional
  
   municip.reg <- getCidades(regional = "Metropolitana I",uf="Rio de Janeiro",datasource=con)$nome
   ano = floor(data/100)
   se = data - ano*100
  
+  # data inicio dos graficos:  Atualizar quando
+  if(missing(inid)) inid <- 201201 
+  
   # Diretorio para salvar figs e tabs
  
   dirfigs = paste(bdir,dirout,"figs/",sep="/")
@@ -789,7 +791,7 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
  
   nomemapario = paste(dirfigs, "mapaRio.png", sep="")
   message("nome do mapa:",nomemapario)
-  map.Rio(alert, data=data, filename="mapaRio.png", dir=dirfigs, 
+  map_Rio(alert, data=data, filename="mapaRio.png", dir=dirfigs, 
           shapefile = shape)
   
  
@@ -797,48 +799,51 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
  
   nomemaparioChik = paste(dirfigs, "mapaRioChik.png", sep="")
   message("nome do mapa:",nomemaparioChik)
-  map.Rio(alertC, data=data, filename="mapaRioChik.png", dir=dirfigs, 
+  map_Rio(alertC, data=data, filename="mapaRioChik.png", dir=dirfigs, 
           shapefile = shape)
   
  
   # Dados da Cidade : dengue
  
-  tres <- write.alertaRio(alert, cid10=="A90", write="no")
-  tres$ano <- floor(tres$se/100)
-  tres$SE <- tres$se - 100*tres$ano
+  tres <- write_alertaRio(alert, write = "no") %>%
+    filter(se > data) %>%   # esse filtro parece funcionar ao contrario , verificar 
+    mutate(ano = floor(se/100),
+           SE = se - 100*ano)
   
   # dados semanais
   totcrude <- aggregate(tres$casos,by=list(tres$se),sum)
   totest<-aggregate(tres$casos_est,by=list(tres$se),sum)
-  totmin<-aggregate(tres$casos_est_min,by=list(tres$se),sum)
-  totmax<-aggregate(tres$casos_est_max,by=list(tres$se),sum)
+  totmin<-aggregate(tres$casos_estmin,by=list(tres$se),sum)
+  totmax<-aggregate(tres$casos_estmax,by=list(tres$se),sum)
   
   # agregados anuais
-  tot2017 <- sum(tres$casos[tres$ano == 2017]) # total de 2017
-  tot2017se <- sum(tres$casos[(tres$ano == 2017 & tres$SE <=se)] ) # total de 2017 até a semana equivalente do atual
-  tot2018 <- sum(tres$casos[tres$ano == 2018]) # total de 2018 ate agora
-  tot2018ult <- sum(tres$casos[tres$se == data]) # total de 2018 ate agora
+  ano <- max(ano)
+  anoprev <- ano - 1
+  totanoprev <- sum(tres$casos[tres$ano == anoprev]) # total do ano anterior
+  totanoprevse <- sum(tres$casos[(tres$ano == anoprev & tres$SE <=se)] ) # total do ano anterior até a semana equivalente do atual
+  totano <- sum(tres$casos[tres$ano == ano]) # total do ano atual ate agora
+  totanoult <- sum(tres$casos[tres$se == data]) # total de ano ate agora
   
   
- 
   # Dados da Cidade : chik
  
-  tresC <- write.alertaRio(alertC, cid10=="A92.8", write="no")
-  tresC <- tresC[tresC$se>=201601,]
-  tresC$ano <- floor(tresC$se/100)
-  tresC$SE <- tresC$se - 100*tresC$ano
+  tresC <- write_alertaRio(alertC, write = "no") %>%
+    filter(se > data) %>%
+    mutate(ano = floor(se/100),
+           SE = se - 100*ano)
+  
   
   # semanais
   totcrudeC <- aggregate(tresC$casos,by=list(tresC$se),sum) # dados por semana
   totestC<-aggregate(tresC$casos_est,by=list(tresC$se),sum)
-  totminC<-aggregate(tresC$casos_est_min,by=list(tresC$se),sum)
-  totmaxC<-aggregate(tresC$casos_est_max,by=list(tresC$se),sum)
+  totminC<-aggregate(tresC$casos_estmin,by=list(tresC$se),sum)
+  totmaxC<-aggregate(tresC$casos_estmax,by=list(tresC$se),sum)
   
   # anuais
-  totChik2017 <- sum(tresC$casos[tresC$ano == 2017]) # total de 2017
-  totChik2017se <- sum(tresC$casos[(tresC$ano == 2017 & tresC$SE <=se)]) # total de 2017 ate agora
-  totChik2018 <- sum(tresC$casos[tresC$ano == 2018]) # total de 2017 ate agora
-  totChik2018ult <- sum(tresC$casos[tresC$se == data]) # 
+  totChikanoprev <- sum(tresC$casos[tresC$ano == anoprev]) # total de anoprev
+  totChikanoprevse <- sum(tresC$casos[(tresC$ano == anoprev & tresC$SE <=se)]) # total de anoprev ate agora
+  totChikano <- sum(tresC$casos[tresC$ano == ano]) # total de anoprev ate agora
+  totChikanoult <- sum(tresC$casos[tresC$se == data]) # 
  
   # Grafico da cidade : dengue
  
@@ -848,12 +853,12 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   cidade<-cbind(totcrude,totest$x,totmin$x,totmax$x)
   names(cidade)<-c("se","casos","casos.estimados","ICmin","ICmax")
   cidade$inc <- cidade$casos/6.5e6*100000
-  dt<-subset(tres,aps=="1.0")[,c("se","tweet")]  # tweets
+  dt<-subset(tres,aps=="1.0")[,c("se","tweets")]  # tweets
   dc <- aggregate(tres[,"tmin"],by=list(se=tres$se),FUN=mean,na.rm=TRUE) #clima
   names(dc)[2]<-"tmin"
   cidade<- merge(cidade,dt,by="se")
   cidade<- merge(cidade,dc,by="se")
-  cidade <- subset(cidade,se>=201101)
+  cidade <- subset(cidade,se>=inid)
   figuraRio(cidade)
   dev.off()
   
@@ -866,12 +871,12 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   cidadeC<-cbind(totcrudeC,totestC$x,totminC$x,totmaxC$x)
   names(cidadeC)<-c("se","casos","casos.estimados","ICmin","ICmax")
   cidadeC$inc <- cidadeC$casos/6.5e6*100000
-  dt<-subset(tresC,aps=="1.0")[,c("se","tweet")]  # tweets
+  dt<-subset(tresC,aps=="1.0")[,c("se","tweets")]  # tweets
   dc <- aggregate(tresC[,"tmin"],by=list(se=tresC$se),FUN=mean,na.rm=TRUE) #clima
   names(dc)[2]<-"tmin"
   cidadeC<- merge(cidadeC,dt,by="se")
   cidadeC<- merge(cidadeC,dc,by="se")
-  cidadeC <- subset(cidadeC,se>=201601)
+  cidadeC <- subset(cidadeC,se>=inid)
   figuraRioChik(cidadeC)
   dev.off()
   
@@ -881,20 +886,20 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   
   ### grafico APS 1/2 
   png(paste(dirfigs,"figaps1.png",sep=""),width = 12, height = 16, units = "cm",res=200)
-  inid = 201224
+  
+  
   par(mfrow=c(5,1),mar=c(5,0,0,5))
   for (i in 1:5) {
-    plot_alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
+    plot_alertaRio(alert,var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
     mtext(names(alert)[i],line=-1, cex=0.7)
   }
   dev.off()
   
   ### grafico APS 2/2 
   png(paste(dirfigs,"figaps2.png",sep=""),width = 12, height = 16, units = "cm",res=200)
-  inid = 201224
   par(mfrow=c(5,1),mar=c(5,0,0,5))
   for (i in 6:10) {
-    plot_alerta(alert[[i]],var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
+    plot_alertaRio(alert,var="inc",ini=inid,fim=max(alert[[i]]$data$SE))
     mtext(names(alert)[i],line=-1, cex=0.7)
   }
   dev.off()
@@ -902,13 +907,12 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
 
   # Grafico das APS : chik
 
-  inid = 201601
   ### grafico APS 1/2 
   png(paste(dirfigs,"figaps1Chik.png",sep=""),width = 12, height = 16, units = "cm",res=200)
   
   par(mfrow=c(5,1),mar=c(5,0,0,5))
   for (i in 1:5) {
-    plot_alerta(alertC[[i]],var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
+    plot_alertaRio(alertC,var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
     mtext(names(alertC)[i],line=-1, cex=0.7)
   }
   dev.off()
@@ -917,7 +921,7 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   png(paste(dirfigs,"figaps2Chik.png",sep=""),width = 12, height = 16, units = "cm",res=200)
   par(mfrow=c(5,1),mar=c(5,0,0,5))
   for (i in 6:10) {
-    plot_alerta(alertC[[i]],var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
+    plot_alertaRio(alertC,var="inc",ini=inid,fim=max(alertC[[i]]$data$SE))
     mtext(names(alertC)[i],line=-1, cex=0.7)
   }
   dev.off()
@@ -939,7 +943,7 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   
   for(ap in 1:10){
     tabapname = paste(dirfigs,"tabela",ap,".tex",sep="")
-    tab<-tail(tres[tres$aps==listaaps[ap],c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
+    tab<-tail(tres[tres$aps==listaaps[ap],c("se","casos","casos_est","tmin","rt","prt1","inc","nivel")],n=4)
     names(tab)[6]<-"pr(inc. subir)"
     tab$nivel<-cores[tab$nivel]
     
@@ -953,7 +957,7 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
  
   for(ap in 1:10){
     tabapnameC = paste(dirfigs,"tabelaC",ap,".tex",sep="")
-    tabC<-tail(tresC[tresC$aps==listaaps[ap],c("se","casos","casos_est","tmin","rt","p_rt1","inc","nivel")],n=4)
+    tabC<-tail(tresC[tresC$aps==listaaps[ap],c("se","casos","casos_est","tmin","rt","prt1","inc","nivel")],n=4)
     names(tabC)[6]<-"pr(inc. subir)"
     tabC$nivel<-cores[tabC$nivel]
     
@@ -966,10 +970,10 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   # objeto que e' retornado pela funcao e lido pelo geraPDF (tambem e salvo como RData)
  
   res = list(nomecidade="Rio de Janeiro", estado="Rio de Janeiro", nomecidadeiconv = "RiodeJaneiro", 
-             regionalmun="Metropolitana I", sigla = "RJ", se=se, ano=ano,alert=alert, alertC = alertC, 
-             nomemapario = nomemapario,nomemaparioChik=nomemaparioChik,totChik2017=totChik2017, totChik2018=totChik2018,
-             totChik2018ult = totChik2018ult,  totChik2017se = totChik2017se,
-             tot2017=tot2017, tot2018=tot2018, tot2018ult = tot2018ult,  tot2017se = tot2017se,
+             regionalmun="Metropolitana I", sigla = "RJ", se=se, ano=ano, anoprev = anoprev, alert=alert, alertC = alertC, 
+             nomemapario = nomemapario,nomemaparioChik=nomemaparioChik,totChikanoprev=totChikanoprev, totChikano=totChikano,
+             totChikanoult = totChikanoult,  totChikanoprevse = totChikanoprevse,
+             totanoprev=totanoprev, totano=totano, totanoult = totanoult,  totanoprevse = totanoprevse,
              nometab = nometab, municip.reg=municip.reg, dirout=dirout, tabaps=tres, tabapsChik = tresC, datarel=data)
   
   message(paste("figura",figname,"salva. Objetos criados para o relatorio."))
@@ -1234,6 +1238,7 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
   if(tipo == "Rio"){
     env$se <- obj$se
     env$ano <- obj$ano
+    env$anoprev <- obj$anoprev
     env$datarel <- obj$datarel
     dir.estadoRIO = paste(bdir,"AlertaDengueAnalise/report/RJ/figs/")
     # objetos da regional
@@ -1254,14 +1259,14 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
     env$nomemapario <- obj$nomemapario # mapa de dengue
     env$nomemaparioChik <- obj$nomemaparioChik # mapa de chik
     env$tabelaRio <- obj$nometab # dengue
-    env$tot2017 <- obj$tot2017 # dengue
-    env$tot2017se <- obj$tot2017se # dengue em 2017, ate a semana epide do relatorio
-    env$tot2018 <- obj$tot2018 # dengue em 2018
-    env$tot2018ult <- obj$tot2018ult # dengue em 2018 na ultima semana
-    env$totChik2017 <- obj$totChik2017  # mesmo para chik
-    env$totChik2017se <- obj$totChik2017se # idem
-    env$totChik2018 <- obj$totChik2018 # idem
-    env$totChik2018ult <- obj$totChik2018ult # idem
+    env$totanoprev <- obj$totanoprev # dengue
+    env$totanoprevse <- obj$totanoprevse # dengue em anoprev, ate a semana epide do relatorio
+    env$totano <- obj$totano # dengue em ano
+    env$totanoult <- obj$totanoult # dengue em ano na ultima semana
+    env$totChikanoprev <- obj$totChikanoprev  # mesmo para chik
+    env$totChikanoprevse <- obj$totChikanoprevse # idem
+    env$totChikano <- obj$totChikano # idem
+    env$totChikanoult <- obj$totChikanoult # idem
     env$tabaps = obj$tabaps 
     env$tabapsChik = obj$tabapsChik
     dirfigs <- paste(bdir,obj$dirout,"figs",sep="/")

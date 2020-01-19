@@ -1,32 +1,65 @@
 #====================================================
 ## Alertas municipais do Estado de São Paulo
 #====================================================
-setwd("~/"); library("AlertTools")
-library("RPostgreSQL")
-con <- DenguedbConnect()
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-#data_relatorio = 201947
-INLA:::inla.dynload.workaround()
-# =====
-# SJRP
-# =====
-# Dengue
-aleSJRP.dengue <- update.alerta(city = 3549805, pars = pars.SP[["São José do Rio Preto"]], crit = PR.criteria, 
-                                  datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = TRUE, delaymethod = "bayesian")
-# Chik tem muito pouco caso 
-aleSJRP.chick <- update.alerta(city = 3549805, pars = pars.SP[["São José do Rio Preto"]], cid10="A92.0", crit = PR.criteria, 
-                          datasource = con, sefinal=data_relatorio, writedb = FALSE, adjustdelay = FALSE)
+# cidades: SJ Rio Preto (3549805), Bauru ()
 
+# Cabeçalho ------------------------------
+setwd("~/")
+source("AlertaDengueAnalise/config/config_global.R") #configuracao 
+con <- DenguedbConnect(pass = pw)  
 
-if(write_report) {
-  bolSJRP<- configRelatorioMunicipal(alert = aleSJRP.dengue, tipo = "simples", siglaUF = "SP", 
-                                             data = data_relatorio, pars = pars.SP[["São José do Rio Preto"]], 
-                                             dir.out = SP.MN.SJRP.out, geraPDF = TRUE) 
+# parametros especificos -----------------
+estado = "São Paulo"
+sig = "SP"
+shape="AlertaDengueAnalise/report/SP/shape/35MUE250GC_SIR.shp"
+shapeID="CD_GEOCMU" 
+# onde salvar boletim
+out = "AlertaDengueAnalise/report/SP/Municipios"
+dir_rel = "Relatorio/SP/Municipios"
 
-  publicarAlerta(ale = aleSJRP.dengue, pdf = bolSJRP, dir = "Relatorio/SP/Municipios/SaoJosedoRioPreto")
+# logging -------------------------------- 
+#habilitar se quiser
+# alog = paste0("ale_",Sys.Date(),".log")
+if (logging == TRUE){
+  aalog <- paste0("AlertaDengueAnalise/",alog)
+  print(aalog)
 }
 
-save(aleSJRP.dengue,aleSJRP.chick, file = paste0("alertasRData/aleSP-mn",data_relatorio,".RData"))
+# data do relatorio:---------------------
+#data_relatorio = 201851
+dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
+
+# cidade -------------------------------
+#geo <- 3549805
+geo <- as.numeric(mn)  # from infodengue.R
+
+# pipeline -------------------------------
+flog.info(paste("alerta dengue", geo ,"executing..."), name = aalog)
+
+ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
+#ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", finalday = dia_relatorio)
+#ale.zika <- pipe_infodengue(geo, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio)
+
+# Boletim ----------------------------------
+if(write_report) {
+  # dir exists?
+  nome <- ale.den[[1]]$data$nome[1]
+  nomesemespaco = gsub(" ","",nome)
+  nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
+  out = paste0("AlertaDengueAnalise/report/SP/Municipios/",nomesemacento) 
+  dir.create(file.path(out), showWarnings = FALSE) # check if directory exists
+  dir.create(file.path(paste0(out, "/figs/")), showWarnings = FALSE) # check if directory exists
+  
+  
+  flog.info(paste("writing boletim de ", nome), name = aalog)
+  bol <- configRelatorioMunicipal(alert = ale.den, tipo = "simples", 
+                                  varcli = "temp_min", estado = estado, siglaUF = sig, data = data_relatorio, 
+                                  dir.out = out, geraPDF = TRUE)
+  
+  #publicarAlerta(ale = aleFort, pdf = bol, dir = "Relatorio/CE/Municipios/Fortaleza")
+}
+
+save(ale.den, file = paste0("alertasRData/aleSP-mn",data_relatorio,".RData"))
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

@@ -173,7 +173,7 @@ for (j in 1:env$nmunicipiosRS) {
 \begin{minipage}[t]{0.6\linewidth} % Mini page taking up 100% of the actual page
 \hypertarget{mun}{\heading{Situação atual da Dengue na Cidade do Rio de Janeiro}{6pt}} % \hypertarget 
 
-Em 2018, até agora, foram notificados \Sexpr{env$tot2018} casos de dengue na cidade do Rio de Janeiro. Para comparação, em 2017, no mesmo período, \Sexpr{env$tot2017se} casos de dengue foram notificados. No total, em 2017, ocorreram \Sexpr{env$tot2017} casos. 
+Em \Sexpr{env$ano}, até agora, foram notificados \Sexpr{env$totano} casos de dengue na cidade do Rio de Janeiro. Para comparação, em \Sexpr{env$anoprev}, no mesmo período, \Sexpr{env$totanoprevse} casos de dengue foram notificados. No total, em \Sexpr{env$anoprev}, ocorreram \Sexpr{env$totanoprev} casos. 
 
 O Município do Rio de Janeiro é dividido em 10 áreas programáticas da saúde (APS). O mapa mostra a situação atual de transmissão da dengue em cada APS. 
 
@@ -246,14 +246,14 @@ A linha tracejada azul indica o limiar pré-epidêmico; a linha tracejada vermel
 \begin{minipage}[t]{0.6\linewidth} % Mini page taking up 100% of the actual page
 \hypertarget{munC}{\heading{Situação da Chikungunya na Cidade do Rio de Janeiro}{6pt}} % \hypertarget 
 
-Em 2018, até agora, foram notificados \Sexpr{env$totChik2018} casos de chikungunya na cidade do Rio de Janeiro, sendo \Sexpr{env$totChik2018ult} na última semana. Para comparação, em 2017, no mesmo período, \Sexpr{env$totChik2017se} casos de chikungunya foram notificados na cidade do Rio de Janeiro. No total, em 2017, ocorreram \Sexpr{env$totChik2017} casos. 
+Em \Sexpr{env$ano}, até agora, foram notificados \Sexpr{env$totChikano} casos de chikungunya na cidade do Rio de Janeiro, sendo \Sexpr{env$totChikanoult} na última semana. Para comparação, em \Sexpr{env$anoprev}, no mesmo período, \Sexpr{env$totChikanoprevse} casos de chikungunya foram notificados na cidade do Rio de Janeiro. No total, em \Sexpr{env$anoprev}, ocorreram \Sexpr{env$totChikanoprev} casos. 
 
 Veja o mapa da situação atual de transmissão de chikungunya nas APS:
 
 \includegraphics[width=0.95\textwidth]{\Sexpr{env$nomemaparioChik}}
 
 
-Confira a série histórica de chikungunya na cidade do Rio de Janeiro desde janeiro de 2017.
+Confira a série histórica de chikungunya na cidade do Rio de Janeiro.
 
 \begin{center}
 \includegraphics[width=0.95\textwidth]{\Sexpr{env$figcidadeChik}}
