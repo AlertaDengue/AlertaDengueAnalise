@@ -34,7 +34,7 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 geo <- as.numeric(mn)  # from infodengue.R
 
 # pipeline -------------------------------
-flog.info(paste("alerta dengue", geo ,"executing..."), name = aalog)
+#flog.info(paste("alerta dengue", geo ,"executing..."), name = aalog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
 #ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", finalday = dia_relatorio)
@@ -51,7 +51,7 @@ if(write_report) {
   dir.create(file.path(paste0(out, "/figs/")), showWarnings = FALSE) # check if directory exists
   
   
-  flog.info(paste("writing boletim de ", nome), name = aalog)
+#  flog.info(paste("writing boletim de ", nome), name = aalog)
   bol <- configRelatorioMunicipal(alert = ale.den, tipo = "simples", 
                                   varcli = "temp_min", estado = estado, siglaUF = sig, data = data_relatorio, 
                                   dir.out = out, geraPDF = TRUE)
