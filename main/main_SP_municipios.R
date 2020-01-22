@@ -17,13 +17,6 @@ shapeID="CD_GEOCMU"
 out = "AlertaDengueAnalise/report/SP/Municipios"
 dir_rel = "Relatorio/SP/Municipios"
 
-# logging -------------------------------- 
-#habilitar se quiser
-# alog = paste0("ale_",Sys.Date(),".log")
-if (logging == TRUE){
-  aalog <- paste0("AlertaDengueAnalise/",alog)
-  print(aalog)
-}
 
 # data do relatorio:---------------------
 #data_relatorio = 201851
@@ -34,7 +27,7 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 geo <- as.numeric(mn)  # from infodengue.R
 
 # pipeline -------------------------------
-#flog.info(paste("alerta dengue", geo ,"executing..."), name = aalog)
+flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
 #ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", finalday = dia_relatorio)
@@ -51,12 +44,14 @@ if(write_report) {
   dir.create(file.path(paste0(out, "/figs/")), showWarnings = FALSE) # check if directory exists
   
   
-#  flog.info(paste("writing boletim de ", nome), name = aalog)
+#  flog.info(paste("writing boletim de ", nome))
   bol <- configRelatorioMunicipal(alert = ale.den, tipo = "simples", 
                                   varcli = "temp_min", estado = estado, siglaUF = sig, data = data_relatorio, 
                                   dir.out = out, geraPDF = TRUE)
   
-  #publicarAlerta(ale = aleFort, pdf = bol, dir = "Relatorio/CE/Municipios/Fortaleza")
+  dir_rel <- paste0("Relatorio/SP/Municipios/",nomesemacento) 
+  dir.create(file.path(dir_rel), showWarnings = FALSE) # check if directory exists
+  publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
 }
 
 save(ale.den, file = paste0("alertasRData/aleSP-mn",data_relatorio,".RData"))

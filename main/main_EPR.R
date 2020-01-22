@@ -1,34 +1,49 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue: Estado do Paraná
-# 6=============================================================================
-# Cabeçalho igual para todos ------------------------------
-setwd("~/"); library("AlertTools", quietly = TRUE)
-library("RPostgreSQL", quietly = TRUE)
-con <- DenguedbConnect()
-source("AlertaDengueAnalise/config/config.R") # arquivo de configuracao do alerta (parametros)
-INLA:::inla.dynload.workaround()
+# =============================================================================
+# Cabeçalho ------------------------------
+setwd("~/")
+source("AlertaDengueAnalise/config/config_global.R") #configuracao 
+con <- DenguedbConnect(pass = pw)  
 
-aalog <- paste0("AlertaDengueAnalise/",alog)
-print(aalog)
-# ---------------------------------------------------------
+# parametros especificos -----------------
+estado = "Paraná"
+sig = "PR"
+shape="AlertaDengueAnalise/report/PR/shape/41MUE250GC_SIR.shp"
+shapeID="CD_GEOCMU" 
+# onde salvar boletim
+out = "AlertaDengueAnalise/report/PR"
+dir_rel = "Relatorio/PR/Estado"
 
-# ----- data do relatorio:
+
+# data do relatorio -----------------
 #data_relatorio = 201949
+dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
-alePR <- update.alerta(state = "Paraná",region = names(pars.PR), pars = pars.PR, crit = PR.criteria, 
-                       datasource = con, sefinal=data_relatorio, writedb = writedb) #, state = "Paraná"
+# cidades --------------------------
+cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 
+# Calcula alerta estadual ------------------ 
+ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
+                           finalday = dia_relatorio)
+
+
+## boletim dengue estadual
 if(write_report) {
-  bolPR=configRelatorioEstadual(uf="Paraná", sigla = "PR", data=data_relatorio, tsdur=104,
-                                    alert=alePR, pars = pars.PR, shape=PR.shape, varid=PR.shapeID,
-                                    dir=PR.out, datasource=con, geraPDF=TRUE)
-
-
-
-  publicarAlerta(ale = alePR, pdf = bolPR, dir = "Relatorio/PR/Estado")
+  flog.info("writing boletim estadual...", name = alog)
+  bol <- configRelatorioEstadual(uf=estado, sigla = sig, data=data_relatorio, tsdur=300,
+                                 alert=ale.den, shape=shape, varid=shapeID,
+                                 dir=out, datasource=con, geraPDF=TRUE)
+  
+  publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
+  write_alerta(tabela_historico(ale.chik))
+  write_alerta(tabela_historico(ale.zika))
 }
 
-save(alePR,file = paste0("alertasRData/alePR",data_relatorio,".RData"))
+# salvando objetos -------------------------
+Rfile = paste0("alertasRData/alePR",data_relatorio,".RData")
+flog.info("saving ...", Rfile, capture = TRUE, name = alog)
+save(ale.den, ale.chik, ale.zika, ale.F.den, ale.F.chik, ale.F.zika, file = Rfile)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

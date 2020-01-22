@@ -12,6 +12,7 @@ lapply(pkgs, library, character.only = TRUE ,quietly = T)
 
 # explicita o diretorio base
 basedir = system("pwd", intern=TRUE)
+print(basedir)
 
 # codigos das figuras dos boletins
 source("AlertaDengueAnalise/config/codigofiguras.R")

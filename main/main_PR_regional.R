@@ -15,14 +15,6 @@ shapeID="CD_GEOCMU"
 #out = "AlertaDengueAnalise/report/MG/Regionais/"
 dir_rel = "Relatorio/PR/Regionais"
 
-# logging -------------------------------- 
-#habilitar se quiser
-# alog = paste0("ale_",Sys.Date(),".log")
-if (logging == TRUE){
-  aalog <- paste0("AlertaDengueAnalise/log/",alog)
-  print(aalog)
-}
-
 # data do relatorio:---------------------
 #data_relatorio = 201851
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
@@ -32,9 +24,10 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 reg <- "Cascavel"
 geo <- getCidades(regional = reg, uf = "Paraná")$municipio_geocodigo
 
-flog.info(paste("alerta dengue", reg ,"executing..."), name = aalog)
+flog.info(paste("alerta dengue", reg ,"executing..."), name = alog)
 
-ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
+ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob",
+                           finalday = dia_relatorio)
 
 # Boletim ----------------------------------
 if(write_report) {
@@ -43,14 +36,14 @@ if(write_report) {
   nomesemespaco = gsub(" ","",nome)
   nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
   out = paste0("AlertaDengueAnalise/report/PR/Regionais/",nomesemacento) 
-  flog.info(paste("writing boletim de ", nome), name = aalog)
+  flog.info(paste("writing boletim de ", nome), name = alog)
   
-  bol <- configRelatorioRegional(tipo="simples",uf=estado, regional=reg, sigla = sig, data=data_relatorio, 
+  bol <- configRelatorioRegional(tipo="simples",uf=estado, regional=reg,
+                                 sigla = sig, data=data_relatorio, 
                                  alert=ale.den, shape=shape, varid=shapeID,
                                  dir=out, datasource=con, geraPDF=TRUE)
   
-  
-  #publicarAlerta(ale = alePR_RS_Cascavel, pdf = bolCascavel, dir = "Relatorio/PR/Regionais/Cascavel")
+  publicarAlerta(ale = ale.den, pdf = bol, dir = out)
   save(ale.den, file = paste0("alertasRData/alePR-rg",data_relatorio,".RData"))
 }
 

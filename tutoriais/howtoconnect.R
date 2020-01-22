@@ -11,7 +11,7 @@ library("RPostgreSQL")
 
 dbname <- "dengue"
 user <- "dengueadmin"
-password <- "aldengue"
+password <- ""
 host <- "localhost"
 
 con <- dbConnect(dbDriver("PostgreSQL"), user=user,
@@ -55,11 +55,8 @@ str(wu)
 est <- dbReadTable(con, c("Municipio","Estacao_wu"))
 str(est)
 
-d <- dbReadTable(con, c("Municipio","Historico_alerta"))
-range(dd$municipio_geocodigo)
-dd <- d[d$data_iniSE > "2018-08-01",]
-dd <- dd[dd$municipio_geocodigo > 3300000 & dd$municipio_geocodigo < 3400000,]
-write.csv(d,file="historico-alerta-chik.csv",row.names = F)
+d <- dbReadTable(con, c("Municipio","alerta_mrj"))
+d[d$se == 201945, ]
 
 
 d <- dbReadTable(con, c("Municipio","alerta_mrj"))

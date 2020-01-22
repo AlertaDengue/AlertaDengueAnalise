@@ -425,12 +425,12 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
 # data = data final do relatorio, tsdur = tamanho da serie plotada
 configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 , 
                                     varcli = "temp_min", alert, 
-                                    pars, shape, varid, dir, 
+                                    pars, shape, varid, dir, dini=201401,
                                     datasource, dirb=basedir,geraPDF=TRUE){
   setwd("~/")
   
   dirfigs = paste(dirb,dir,"figs/",sep="/")
-  
+  print(paste("dirfigs:", dirfigs))
  
   ## Dados do estado
  
@@ -458,8 +458,9 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 ,
   relatorio <- "infodengue"  # default, substituido por infoarbo se for pertinente
  
   # Mapa de alerta de dengue do estado (funcao basica do alerttools)
- 
-  geraMapa(alerta=alert, se=data, shapefile = shape,   
+  shap <- paste(dirb,shape,sep="/")
+  print(paste("shape:",shap))
+  geraMapa(alerta=alert, se=data, shapefile = shap,   
            varid=varid, titulo="", 
            filename=paste("Mapa_E", sigla,".png", sep=""),
            dir=dirfigs, caption=FALSE)
@@ -480,7 +481,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 ,
   # Descritores gerais (nverde, namarelo, totultse, etc) 
  
   descrgerais <- faztabelaoRS(ale = alert,ano = ano,varcli = varcli, 
-                              uf = uf, data = data,tex=FALSE)
+                              uf = estado, data = data,tex=FALSE)
   
  
   # Descritores gerais regionais (nverde, namarelo, totultse, etc) 
@@ -771,17 +772,17 @@ nomebol = NULL
 
 
 configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,  chik= FALSE, 
-                             bdir=basedir, geraPDF=FALSE, inid = 201801){
+                             bdir=basedir, geraPDF=FALSE, inid = 201201){
+  
+  assert_that(inid < data, msg = "configRelatorioRio: check argument inid, it should be less
+              than data_relatorio")
   
   # Dados da regional
  
   municip.reg <- getCidades(regional = "Metropolitana I",uf="Rio de Janeiro",datasource=con)$nome
   ano = floor(data/100)
   se = data - ano*100
- 
-  # data inicio dos graficos:  Atualizar quando
-  if(missing(inid)) inid <- 201201 
-  
+  print(data)
   # Diretorio para salvar figs e tabs
  
   dirfigs = paste(bdir,dirout,"figs/",sep="/")
@@ -822,7 +823,7 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   totanoprev <- sum(tres$casos[tres$ano == anoprev]) # total do ano anterior
   totanoprevse <- sum(tres$casos[(tres$ano == anoprev & tres$SE <=se)] ) # total do ano anterior até a semana equivalente do atual
   totano <- sum(tres$casos[tres$ano == ano]) # total do ano atual ate agora
-  totanoult <- sum(tres$casos[tres$se == data]) # total de ano ate agora
+  totanoult <- sum(tres$casos[tres$se == data]) # total da semana
   
   
   # Dados da Cidade : chik
@@ -858,7 +859,7 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   names(dc)[2]<-"tmin"
   cidade<- merge(cidade,dt,by="se")
   cidade<- merge(cidade,dc,by="se")
-  cidade <- subset(cidade,se>=inid)
+  
   figuraRio(cidade)
   dev.off()
   
@@ -876,7 +877,6 @@ configRelatorioRio<-function(alert, alertC, dirout, data, shape, datasource=con,
   names(dc)[2]<-"tmin"
   cidadeC<- merge(cidadeC,dt,by="se")
   cidadeC<- merge(cidadeC,dc,by="se")
-  cidadeC <- subset(cidadeC,se>=inid)
   figuraRioChik(cidadeC)
   dev.off()
   
@@ -1323,36 +1323,28 @@ geraPDF<-function(tipo, obj, dir.boletim, data = data_relatorio, dir.report="Ale
 
 
 
-## Funcao para publicar o Alerta no site ------------------
+## publicarAlerta ------------------
 
 publicarAlerta <- function(ale, pdf, dir, bdir = basedir, writebd = TRUE){
-  # A função write.alerta sabe se e para salvar na tabela de chik ou de dengue
+  # A função write_alerta sabe se e para salvar na tabela de chik ou de dengue
 
-  if(writebd){
-  # copia o alerta da tabela de historico do Banco de dados
-  message("atualizando a tabela do historico...")
+  if(writebd)  message("atualizando a tabela do historico...")
   
-  # Se é um municipio isolado
-
-    if("indices" %in% names(ale)) {
-      res <- write_alerta(ale) 
-    } else {
-      # Ou se e'o Rio de Janeiro com suas APS
- 
-      if("APS 1" %in% names(ale)) {res=write.alertaRio(ale, write="db") 
+  # Se é cidade do Rio ou outros 
+    if("APS 1" %in% names(ale)) {
+      restab  <- ifelse(writebd, write_alertaRio(ale, write = "db"),
+                        write_alertaRio(ale, write = "no"))
         }else{
-          # todos os outros - regionais e estados 
-          for (i in 1:length(ale)) {
-            print(names(ale)[i])
-            res=write.alerta(ale[[i]], write="db") 
+          restab <- tabela_historico(ale)
+          if(writebd) restab <- write_alerta(restab) 
           }
-        }
-    }
-  }
+        
+
   message("Copia o boletim para a pagina do site...")
   strip <- strsplit(pdf,"/")[[1]]
   nomeb = strip[length(strip)] # nome do boletim
   bolpath <- paste(bdir,dir,nomeb,sep="/") # boletim com path completo
   comando <- paste ("cp", pdf, bolpath) 
+  print(comando)
   system(comando) 
 }

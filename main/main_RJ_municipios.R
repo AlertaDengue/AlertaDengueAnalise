@@ -15,21 +15,13 @@ out = "AlertaDengueAnalise/report/RJ/Municipios"
 dir_rel = "Relatorio/RJ/Municipios"
 
 
-# logging -------------------------------- 
-#habilitar se quiser
-# alog = paste0("ale_",Sys.Date(),".log")
-if (logging == TRUE){
-  aalog <- paste0("AlertaDengueAnalise/",alog)
-  print(aalog)
-}
-
 # data do relatorio:---------------------
-#data_relatorio = 201851
+data_relatorio = 201952
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # qual municipio? -------------------------------
 #geo <- 3304557
-
+geo <- as.numeric(mn)
 
 ### Se Boletim da cidade do Rio de Janeiro por APS ------------------------
 if(geo == 3304557){
@@ -41,21 +33,28 @@ if(geo == 3304557){
   
   ale.den <- alertaRio(se = data_relatorio, cid10 = "A90", delaymethod = "fixedprob")
   ale.chik <- alertaRio(se = data_relatorio, cid10 = "A920", delaymethod = "fixedprob")
+  
   #ale.zika <- alertaRio(se = data_relatorio, cid10 = "A92.8", delaymethod = "fixedprob")
   
-  bol <- configRelatorioRio(data=data_relatorio, alert=ale.den, alertC= ale.chik, shape=RJ.aps.shape,
-                                dirout=RJ.RiodeJaneiro.out, datasource=con, geraPDF=TRUE, inid = 201801)
+  bol <- configRelatorioRio(data=data_relatorio, alert=ale.den, alertC= ale.chik, 
+                            shape=RJ.aps.shape,dirout=RJ.RiodeJaneiro.out, datasource=con, 
+                            geraPDF=TRUE, inid = 201401)
   
-  #publicarAlerta(ale = aleFort, pdf = bol, dir = "Relatorio/CE/Municipios/Fortaleza")
+  publicarAlerta(ale = ale.den, pdf = bol, dir = "Relatorio/RJ/Municipios/RiodeJaneiro", 
+                 writebd = FALSE)
+  res.chik <- write_alertaRio(ale.chik, write = "db")
+  res.den <- write_alertaRio(ale.den, write = "db")
+  
+  
   save(ale.den,ale.chik, file = paste0("alertasRData/aleRJ-mn",data_relatorio,".RData"))
-  #res<-write.alertaRio(alerioC, write = "db")
+  
 }else {
   
   
   
   #Se Boletim de municipios do RJ, exceto capital  ------------------------
   
-  flog.info(paste("alerta dengue", geo ,"executing..."), name = aalog)
+  flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
   
   ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
   ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio)
@@ -73,12 +72,16 @@ if(geo == 3304557){
     dir.create(file.path(paste0(out, "/figs/")), showWarnings = FALSE) # check if directory exists
     
     
-    flog.info(paste("writing boletim de ", nome), name = aalog)
+    flog.info(paste("writing boletim de ", nome), name = alog)
     bol <- configRelatorioMunicipal(alert = ale.den, alechik = ale.chik, alezika = ale.zika, tipo = "simples", 
                                     varcli = "temp_min", estado = estado, siglaUF = sig, data = data_relatorio, 
                                     dir.out = out, geraPDF = TRUE)
     
-    #publicarAlerta(ale = aleFort, pdf = bol, dir = "Relatorio/RJ/Municipios/Fortaleza")
+    dir_rel <- paste0("Relatorio/RJ/Municipios/",nomesemacento) 
+    dir.create(file.path(dir_rel), showWarnings = FALSE) # check if directory exists
+    publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
+    write_alerta(tabela_historico(ale.chik))
+    write_alerta(tabela_historico(ale.zika))
   }
   
 }

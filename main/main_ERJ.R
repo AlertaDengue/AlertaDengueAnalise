@@ -17,18 +17,11 @@ out = "AlertaDengueAnalise/report/RJ"
 dir_rel = "Relatorio/RJ/Estado"
 
 
-# logging -------------------------------- 
-#habilitar se quiser
-if (logging == TRUE){
-  aalog <- paste0("AlertaDengueAnalise/",alog)
-  print(aalog)
-}
-
-# data do relatorio:
+# data do relatorio --------------------------
 #data_relatorio = 201851
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
-# cidades 
+# cidades -------------------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 
 # Calcula alerta ---------------------------- 
@@ -44,7 +37,10 @@ if(write_report) { # so dengue
                                 tsdur=104,alert=ale.den, shape=shape, varid=shapeID,
                               dir=out, datasource=con, geraPDF=TRUE)
 
-  publicarAlerta(ale, pdf = bol, dir = "dir_rel",writedb = FALSE)
+  publicarAlerta(ale.den, pdf = bol, dir = dir_rel)
+  write_alerta(tabela_historico(ale.chik))
+
+  
 }
 
 save(ale.den,ale.chik, file = paste0("/AlertaDengueAnalise/alertasRData/aleRJ",data_relatorio,".RData"))

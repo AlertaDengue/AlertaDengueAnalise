@@ -100,7 +100,7 @@ figuramunicipio <- function(obj, varcli = "temp_min", cid="A90", tsdur=104){
 
 figuraRio <- function(cid, varcli = "temp_min"){
   par(mfrow=c(3,1),mar=c(4,4,1,1))
-  ymax <- max(110,max(cid$inc))
+  ymax <- max(110,max(cid$inc, na.rm = TRUE))
   plot(1:dim(cid)[1],cid$tweet,type="h",ylab="",axes=FALSE,xlab="",main="Tweets sobre dengue")
   axis(2)
   plot(1:dim(cid)[1],cid$inc, type="l", xlab="",ylab="incidência (por 100.000)",axes=FALSE,main="Dengue",ylim=c(0,ymax))
@@ -123,7 +123,8 @@ figuraRio <- function(cid, varcli = "temp_min"){
 figuraRioChik <- function(cid, varcli = "temp_min"){
   par(mfrow=c(1,1),mar=c(4,4,1,1))
   #ymax <- max(110,max(cid$inc))
-  plot(1:dim(cid)[1],cid$casos, type="l", xlab="",ylab="casos notificados",axes=FALSE,main="Chikungunia")
+  plot(1:dim(cid)[1],cid$casos, type="l", xlab="",ylab="casos notificados",
+       axes=FALSE,main="Chikungunia")
   abline(v=201701, lty=3, col="grey")
   axis(2)
   le=dim(cid)[1]
