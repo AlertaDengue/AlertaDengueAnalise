@@ -18,7 +18,7 @@ dir_rel = "Relatorio/RJ/Estado"
 
 
 # data do relatorio --------------------------
-#data_relatorio = 201851
+#data_relatorio = 202002
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # cidades -------------------------------------
@@ -28,9 +28,9 @@ cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "fixedprob", 
                                      finalday = dia_relatorio)
 
-ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob", 
-                            finalday = dia_relatorio)
-
+#ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob", 
+#                            finalday = dia_relatorio)
+save(ale.den, ale.chik, file="ale.RData")
 # Boletim: 
 if(write_report) { # so dengue
   bol=configRelatorioEstadual(uf=estado, sigla=sig, data=data_relatorio, 
@@ -39,12 +39,9 @@ if(write_report) { # so dengue
 
   publicarAlerta(ale.den, pdf = bol, dir = dir_rel)
   write_alerta(tabela_historico(ale.chik))
-
+  #write_alerta(tabela_historico(ale.den))
   
 }
-
-save(ale.den,ale.chik, file = paste0("/AlertaDengueAnalise/alertasRData/aleRJ",data_relatorio,".RData"))
-
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

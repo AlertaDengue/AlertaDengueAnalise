@@ -198,8 +198,17 @@ dim(tw)
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
 c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
-                \"municipio_geocodigo\" = 3300936 "
+                \"municipio_geocodigo\" = 3304507 "
 d <- dbGetQuery(con,c1)
+
+
+c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
+                \"SE\" is NULL"
+d <- dbGetQuery(con,c1)
+
+c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\""
+d <- dbGetQuery(con,c1)
+
 
 c1 <- paste("SELECT * from \"Municipio\".\"alerta_mrj\"")
 d <- dbGetQuery(con,c1)
@@ -236,7 +245,8 @@ c1 <- paste("SELECT * from \"Municipio\".\"Tweet\" WHERE
 d <- dbGetQuery(con,c1)
 head(d)
 plot(d$numero)
-#sql <- "DELETE from \"Municipio\".\"Historico_alerta\" where casos_est=0"
+
+sql <- "SELECT * from \"Municipio\".\"Historico_alerta\" where \"data_iniSE\" < '2009-12-31'"
 dbGetQuery(con, sql)
 
 #getTweet <- function(city, lastday = Sys.Date(), datasource = "data/tw.rda") {
