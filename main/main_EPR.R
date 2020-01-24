@@ -17,17 +17,20 @@ dir_rel = "Relatorio/PR/Estado"
 
 
 # data do relatorio -----------------
-#data_relatorio = 201949
+#data_relatorio = 202002
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
-
+ 
 # cidades --------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 
+# checking the last date
+AlertTools::lastDBdate("sinan", city = 4108304, datasource = con) # Foz
+print(Sys.time())
 # Calcula alerta estadual ------------------ 
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
-                           finalday = dia_relatorio)
+                           finalday = dia_relatorio); save(ale.den, file="aleden.RData")
 
-
+print(Sys.time())
 ## boletim dengue estadual
 if(write_report) {
   flog.info("writing boletim estadual...", name = alog)

@@ -19,12 +19,15 @@ dir_rel = "Relatorio/SP/Municipios"
 
 
 # data do relatorio:---------------------
-#data_relatorio = 201851
+#data_relatorio = 201952
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
+
 
 # cidade -------------------------------
 #geo <- 3549805
 geo <- as.numeric(mn)  # from infodengue.R
+# checking the last date
+AlertTools::lastDBdate("sinan", city = geo, datasource = con)
 
 # pipeline -------------------------------
 flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
