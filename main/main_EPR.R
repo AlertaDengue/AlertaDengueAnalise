@@ -25,12 +25,12 @@ cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 
 # checking the last date
 AlertTools::lastDBdate("sinan", city = 4108304, datasource = con) # Foz
-Sys.time()
+print(Sys.time())
 # Calcula alerta estadual ------------------ 
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
                            finalday = dia_relatorio); save(ale.den, file="aleden.RData")
 
-Sys.time()
+print(Sys.time())
 ## boletim dengue estadual
 if(write_report) {
   flog.info("writing boletim estadual...", name = alog)

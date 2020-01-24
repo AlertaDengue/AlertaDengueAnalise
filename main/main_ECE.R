@@ -25,7 +25,7 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 # checking the last date
 AlertTools::lastDBdate("sinan", city = 2304400, datasource = con)
-
+print(Sys.time())
 # Calcula alerta estadual ------------------ 
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
                            finalday = dia_relatorio); save(ale.den, file="aleden.RData")
@@ -35,7 +35,7 @@ ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob",
 
 ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "fixedprob", 
                             finalday = dia_relatorio); save(ale.zika, file="alezika.RData")
-
+print(Sys.time())
 ## boletim dengue estadual
 if(write_report) {
   flog.info("writing boletim estadual...", name = alog)
@@ -67,7 +67,7 @@ if(write_report) {
 publicarAlerta(ale = ale.F.den, pdf = bolFort, dir = "Relatorio/CE/Municipios/Fortaleza")
 write_alerta(tabela_historico(ale.F.chik))
 write_alerta(tabela_historico(ale.F.zika))
-
+print(Sys.time())
 #if (!bolFort %in% ls(dirbol)) futile.logger::flog.error("pdf boletin not saved")
 }
 

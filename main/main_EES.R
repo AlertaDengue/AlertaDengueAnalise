@@ -21,7 +21,7 @@ dir_rel = "Relatorio/ES/Estado"
 #data_relatorio = 201951
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 AlertTools::lastDBdate("sinan", city = 3205309, datasource = con)
-
+print(Sys.time())
 # cidades --------------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 
@@ -35,7 +35,7 @@ ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob",
 ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "fixedprob", 
                             finalday = dia_relatorio)
 
-
+print(Sys.time())
 ## boletim dengue estadual
 if(write_report) {
   flog.info("writing boletim estadual...", name = alog)
