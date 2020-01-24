@@ -56,7 +56,7 @@ est <- dbReadTable(con, c("Municipio","Estacao_wu"))
 str(est)
 
 d <- dbReadTable(con, c("Municipio","alerta_mrj"))
-d[d$se == 201945, ]
+range(d$data)
 
 
 d <- dbReadTable(con, c("Municipio","alerta_mrj"))
