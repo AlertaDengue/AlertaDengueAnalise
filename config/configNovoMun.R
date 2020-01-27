@@ -8,25 +8,25 @@ unique(tabuf$Nome_Microrregião)
 unique(tabuf$Nome_Mesorregião)
 
 ### 2. O que temos desse estado no banco de dados?
-library("AlertTools")
-con <- DenguedbConnect()
+library("AlertTools"); library(assertthat) ; library(tidyverse)
+con <- DenguedbConnect(pass = pw)
 
 reg=getRegionais(uf = "São Paulo")
 reg
 
-cid = getCidades(uf = "Minas Gerais", datasource=con)
-dim(cid)
+cid = getCidades(uf = "São Paulo", datasource=con)
+cid
 
 ### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
 nomedacidade = "Bauru"
-geocodigo = tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
-id = tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
-nomereg = tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
+geocodigo =  3506003 #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
+id =  6# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
+nomereg = "Bauru" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
 
-insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha = "aldengue")
+insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha = pw)
 
 ### 4. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
-## REQUER SENHA
+## 
 
 tabuf <- read.csv("../Regionais_Saude_CE.csv") # qdo é custmizada a regional de saude
 names(tabuf)
@@ -40,7 +40,7 @@ for (i in 2:n){
   geocodigo = tabuf$municipio_geocodigo[tabuf$nome_municipio==nomedacidade]
   id = 0 #id=tabuf$id_regional[tabuf$nome_municipio==nomedacidade]
   nomereg = tabuf$nome_regional[tabuf$nome_municipio==nomedacidade]
-  insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha="aldengue")
+  insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha=pw)
   
 }
 
@@ -54,7 +54,8 @@ reg
 # ----------------------------------------------------------------
 #https://estacoes.dengue.mat.br/
 
-# Usar a tabela gerada pelo estacoes.dengue. Se os dados forem ruins, tem a opcao de colocar manualmente:
+# Usar a tabela gerada pelo estacoes.dengue. Se os dados forem ruins, 
+#tem a opcao de colocar manualmente:
 
 CE.Reg.estacoes <- list(SBTE=c("Tauá","Crato","Canindé","Cratéus","Quixadá"),
                  SBFZ=c("Sobral ","Tianguá","Caucaia","Maracanaú","Itapipoca",
@@ -66,7 +67,8 @@ escrevewu <- function(csvfile=NULL,lista=NULL, UF){
     wus <- read.csv(csvfile,header = F)
     wusES <- wus[,c(2,4,6)]
     names(wusES) <- c("geocodigo", "estacao", "dist")  
-    newdat <- data.frame(municipio_geocodigo=unique(wusES$geocodigo), codigo_estacao_wu=NA,
+    newdat <- data.frame(municipio_geocodigo=unique(wusES$geocodigo), 
+                         codigo_estacao_wu=NA,
                          estacao_wu_sec=NA)
     for(cid in newdat$municipio_geocodigo) {
       estacoes <- wusES[wusES$geocodigo==cid,]
@@ -76,7 +78,7 @@ escrevewu <- function(csvfile=NULL,lista=NULL, UF){
     }
   }
   if(!is.null(lista)){
-    cidades <- getCidades(uf = "Ceará", datasource = con)
+    cidades <- getCidades(uf = UF, datasource = con)
     cidades$estacao <- NULL
     for (e in 1:length(lista))cidades$estacao[cidades$nome_regional%in%lista[[e]]] <- names(lista)[e]
     newdat <- data.frame(municipio_geocodigo=cidades$municipio_geocodigo, codigo_estacao_wu=cidades$estacao,
@@ -84,18 +86,22 @@ escrevewu <- function(csvfile=NULL,lista=NULL, UF){
   }
     
   newpars = c("codigo_estacao_wu","estacao_wu_sec")
-  res = write.parameters(newpars,newdat,senha="aldengue")
+  res = write.parameters(newpars,newdat,senha=pw)
   newdat
 }
 
-#escrevewu(csvfile="../CE-estacoes-mais-proximas.csv")
+escrevewu(csvfile="estações-mais-proximas-SP.csv")
 escrevewu(lista=CE.Reg.estacoes)
 
-
 # Na mão:
-newdat <- data.frame(municipio_geocodigo=3549805, codigo_estacao_wu="SBSR",estacao_wu_sec="SBPW")
+newdat <- data.frame(municipio_geocodigo=3506003, codigo_estacao_wu="SBBT",
+                     estacao_wu_sec="SBML")
 newpars = c("codigo_estacao_wu","estacao_wu_sec")
-res = write.parameters(newpars,newdat,senha="aldengue")
+res = write.parameters(newpars,newdat,senha=pw)
+
+read.parameters(cities = geocodigo, cid10 = "A90", datasource = con)
+
+read.parameters
 
 ### 5. Uma olhadinha nos casos
 # --------------------------------
