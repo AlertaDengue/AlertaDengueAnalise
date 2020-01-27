@@ -26,13 +26,13 @@ print(Sys.time())
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 
 # Calcula alerta estadual ------------------ 
-ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "no", 
+ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "fixedprob", 
                            finalday = dia_relatorio)
 
-ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob", 
+ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "no", 
                             finalday = dia_relatorio)
 
-ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "fixedprob", 
+ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "no", 
                             finalday = dia_relatorio)
 
 print(Sys.time())
@@ -79,7 +79,7 @@ if(write_report) {
 Rfile = paste0("alertasRData/aleES",data_relatorio,".RData")
 
 flog.info("saving ...", Rfile, capture = TRUE, name = alog)
-save(ale.den, ale.V.den, file = Rfile)
+save(ale.den, ale.chik, ale.zika, ale.V.den, file = Rfile)
 
 
 # ----- Fechando o banco de dados

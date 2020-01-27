@@ -26,6 +26,7 @@ cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 # checking the last date
 AlertTools::lastDBdate("sinan", city = 4108304, datasource = con) # Foz
 print(Sys.time())
+
 # Calcula alerta estadual ------------------ 
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
                            finalday = dia_relatorio); save(ale.den, file="aleden.RData")
@@ -39,14 +40,13 @@ if(write_report) {
                                  dir=out, datasource=con, geraPDF=TRUE)
   
   publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
-  write_alerta(tabela_historico(ale.chik))
-  write_alerta(tabela_historico(ale.zika))
+  
 }
 
 # salvando objetos -------------------------
 Rfile = paste0("alertasRData/alePR",data_relatorio,".RData")
 flog.info("saving ...", Rfile, capture = TRUE, name = alog)
-save(ale.den, ale.chik, ale.zika, ale.F.den, ale.F.chik, ale.F.zika, file = Rfile)
+save(ale.den, file = Rfile)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)
