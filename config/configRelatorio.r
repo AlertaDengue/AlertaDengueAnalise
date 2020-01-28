@@ -284,7 +284,6 @@ configRelatorioRegional <- function(tipo = "completo", uf, regional, sigla, varc
  
   ## Dados da regional
  
-  sigla = sigla
   municipios = getCidades(uf=uf, regional = regional)
   nmunicipios = dim(municipios)[1]
   nomeregfiguras = iconv(gsub(" ","",regional),to = "ASCII//TRANSLIT")

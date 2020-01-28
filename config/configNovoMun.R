@@ -86,7 +86,7 @@ escrevewu <- function(csvfile=NULL,lista=NULL, UF){
   }
     
   newpars = c("codigo_estacao_wu","estacao_wu_sec")
-  res = write.parameters(newpars,newdat,senha=pw)
+  res = write.parameters(newpars,newdat,senha = pw)
   newdat
 }
 

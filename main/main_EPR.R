@@ -23,8 +23,6 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 # cidades --------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 
-# checking the last date
-AlertTools::lastDBdate("sinan", city = 4108304, datasource = con) # Foz
 print(Sys.time())
 
 # Calcula alerta estadual ------------------ 
@@ -35,7 +33,8 @@ print(Sys.time())
 ## boletim dengue estadual
 if(write_report) {
   flog.info("writing boletim estadual...", name = alog)
-  bol <- configRelatorioEstadual(uf=estado, sigla = sig, data=data_relatorio, tsdur=300,
+  new_data_relatorio <- max(ale.den[[1]]$data$SE)
+  bol <- configRelatorioEstadual(uf=estado, sigla = sig, data=new_data_relatorio, tsdur=300,
                                  alert=ale.den, shape=shape, varid=shapeID,
                                  dir=out, datasource=con, geraPDF=TRUE)
   
@@ -44,7 +43,7 @@ if(write_report) {
 }
 
 # salvando objetos -------------------------
-Rfile = paste0("alertasRData/alePR",data_relatorio,".RData")
+Rfile = paste0("alertasRData/alePR",new_data_relatorio,".RData")
 flog.info("saving ...", Rfile, capture = TRUE, name = alog)
 save(ale.den, file = Rfile)
 

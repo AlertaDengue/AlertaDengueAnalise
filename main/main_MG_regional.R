@@ -17,9 +17,8 @@ dir_rel = "Relatorio/MG/Regionais"
 
 
 # data do relatorio:---------------------
-#data_relatorio = 201851
+#data_relatorio = 201951
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
-
 
 # Boletim da Regional de Saude de Sete Lagoas ----------------
 reg <- "Sete Lagoas"
@@ -29,6 +28,7 @@ flog.info(paste("alerta dengue", reg ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
 
+
 # Boletim ----------------------------------
 if(write_report) {
   # dir 
@@ -37,13 +37,14 @@ if(write_report) {
   nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
   out = paste0("AlertaDengueAnalise/report/MG/Regionais/",nomesemacento) 
   flog.info(paste("writing boletim de ", nome), name = alog)
-
-  bol <- configRelatorioRegional(tipo="simples",uf="Minas Gerais", regional="Sete Lagoas", sigla = "MG", data=data_relatorio, 
-                                   alert=ale.den, shape=shape, varid=shapeID,
+  
+  new_data_relatorio <- max(ale.den[[1]]$data$SE) # data real do relatorio, limitada 
+  bol <- configRelatorioRegional(tipo="simples",uf=estado, regional="Sete Lagoas", sigla = sig, 
+                                 data=new_data_relatorio, alert=ale.den, shape=shape, varid=shapeID,
                                    dir=out, datasource=con, geraPDF=TRUE)
   
   publicarAlerta(ale = ale.den, pdf = bol, dir = out)
-  save(ale.den, file = paste0("alertasRData/aleMG-rg",data_relatorio,".RData"))
+  save(ale.den, file = paste0("alertasRData/aleMG-rg",new_data_relatorio,".RData"))
 }
 
 

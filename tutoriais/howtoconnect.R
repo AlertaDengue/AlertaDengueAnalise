@@ -79,6 +79,9 @@ comando <- "SELECT * FROM \"Dengue_global\".\"estado\" LIMIT 2"
 d <- dbGetQuery(con, comando)
 str(d)
 
+# tabela de parametros
+comando <- "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo = 3506003" 
+dbGetQuery(con, comando)
 
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 3304557 AND numero > 10"

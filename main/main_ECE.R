@@ -23,9 +23,8 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # cidades --------------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
-# checking the last date
-AlertTools::lastDBdate("sinan", city = 2304400, datasource = con)
 print(Sys.time())
+
 # Calcula alerta estadual ------------------ 
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
                            finalday = dia_relatorio); save(ale.den, file="aleden.RData")
@@ -36,6 +35,10 @@ ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob",
 ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "fixedprob", 
                             finalday = dia_relatorio); save(ale.zika, file="alezika.RData")
 print(Sys.time())
+
+data_relatorio <- max(ale.den[[1]]$data$SE, ale.chik[[1]]$data$SE, ale.zika[[1]]$data$SE)
+
+
 ## boletim dengue estadual
 if(write_report) {
   flog.info("writing boletim estadual...", name = alog)

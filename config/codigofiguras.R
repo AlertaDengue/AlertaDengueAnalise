@@ -14,7 +14,7 @@ mapa.regional <- function(alerta, regionais, estado, varcli = "temp_min", sigla,
     nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
     fname = paste(dir,"Mapa",sigla,"_",nomesemacento,".png",sep="")
     
-    geraMapa(alerta=alerta, subset=cidades$municipio_geocodigo, se=data, legpos = "bottomright",#pars[[i]]$legpos,  
+    geraMapa(alerta=alerta, subset=as.numeric(names(alerta)), se=data, legpos = "bottomright",#pars[[i]]$legpos,  
              shapefile=shape, varid=shapeid, 
              titulo=titu ,filename=fname, dir="")
   }
