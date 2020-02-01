@@ -1,5 +1,6 @@
 ## Alertas municipais do Estado do Rio de Janeiro
 #==============================
+# Campos:  
 # Cabeçalho ------------------------------
 setwd("~/")
 source("AlertaDengueAnalise/config/config_global.R") #configuracao 
@@ -16,7 +17,7 @@ dir_rel = "Relatorio/RJ/Municipios"
 
 
 # data do relatorio:---------------------
-data_relatorio = 201952
+#data_relatorio = 201952
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # qual municipio? -------------------------------
@@ -35,8 +36,10 @@ if(geo == 3304557){
   ale.chik <- alertaRio(se = data_relatorio, cid10 = "A920", delaymethod = "fixedprob")
   
   #ale.zika <- alertaRio(se = data_relatorio, cid10 = "A92.8", delaymethod = "fixedprob")
-  
-  bol <- configRelatorioRio(data=data_relatorio, alert=ale.den, alertC= ale.chik, 
+  flog.info("writing boletim do municipio do Rio de Janeiro...", name = alog)
+  new_data_relatorio <- max(ale.den[[1]]$data$SE)
+  print(paste("Data real do relatorio:", new_data_relatorio))
+  bol <- configRelatorioRio(data=new_data_relatorio, alert=ale.den, alertC= ale.chik, 
                             shape=RJ.aps.shape,dirout=RJ.RiodeJaneiro.out, datasource=con, 
                             geraPDF=TRUE, inid = 201401)
   
@@ -58,7 +61,7 @@ if(geo == 3304557){
   
   ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio)
   ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio)
-  ale.zika <- pipe_infodengue(geo, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio)
+#  ale.zika <- pipe_infodengue(geo, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio)
   
   
   # escreve?
@@ -73,15 +76,19 @@ if(geo == 3304557){
     
     
     flog.info(paste("writing boletim de ", nome), name = alog)
-    bol <- configRelatorioMunicipal(alert = ale.den, alechik = ale.chik, alezika = ale.zika, tipo = "simples", 
-                                    varcli = "temp_min", estado = estado, siglaUF = sig, data = data_relatorio, 
+    new_data_relatorio <- max(ale.den[[1]]$data$SE)
+    print(paste("Data real do relatorio:", new_data_relatorio))
+    
+    bol <- configRelatorioMunicipal(alert = ale.den,  
+                                     tipo = "simples", 
+                                    varcli = "temp_min", estado = estado, siglaUF = sig, data = new_data_relatorio, 
                                     dir.out = out, geraPDF = TRUE)
     
     dir_rel <- paste0("Relatorio/RJ/Municipios/",nomesemacento) 
     dir.create(file.path(dir_rel), showWarnings = FALSE) # check if directory exists
     publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
     write_alerta(tabela_historico(ale.chik))
-    write_alerta(tabela_historico(ale.zika))
+    #write_alerta(tabela_historico(ale.zika))
   }
   
 }

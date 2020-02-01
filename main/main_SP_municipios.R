@@ -27,7 +27,7 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 #geo <- 3549805
 geo <- as.numeric(mn)  # from infodengue.R
 # checking the last date
-AlertTools::lastDBdate("sinan", city = geo, datasource = con)
+#AlertTools::lastDBdate("sinan", city = geo, datasource = con)
 
 # pipeline -------------------------------
 flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)

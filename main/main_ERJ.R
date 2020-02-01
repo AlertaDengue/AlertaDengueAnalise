@@ -20,7 +20,7 @@ dir_rel = "Relatorio/RJ/Estado"
 # data do relatorio --------------------------
 #data_relatorio = 202002
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
-AlertTools::lastDBdate("sinan", city = 3304557, datasource = con)
+#AlertTools::lastDBdate("sinan", city = 3304557, datasource = con)
 
 
 # cidades -------------------------------------
@@ -29,15 +29,19 @@ print(Sys.time())
 
 # Calcula alerta ---------------------------- 
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "fixedprob", 
-                                     finalday = dia_relatorio)
+                                     finalday = dia_relatorio); save(ale.den, file="aleden.RData")
 
 ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob", 
-                            finalday = dia_relatorio)
-save(ale.den, ale.chik, file="ale.RData")
+                            finalday = dia_relatorio); save(ale.chik, file="alechik.RData")
+
 print(Sys.time())
 # Boletim: 
 if(write_report) { # so dengue
-  bol=configRelatorioEstadual(uf=estado, sigla=sig, data=data_relatorio, 
+  flog.info("writing boletim estadual...", name = alog)
+  new_data_relatorio <- max(ale.den[[1]]$data$SE)
+  print(paste("Data real do relatorio:", new_data_relatorio))
+  
+  bol=configRelatorioEstadual(uf=estado, sigla=sig, data=new_data_relatorio, 
                                 tsdur=104,alert=ale.den, shape=shape, varid=shapeID,
                               dir=out, datasource=con, geraPDF=TRUE)
 
