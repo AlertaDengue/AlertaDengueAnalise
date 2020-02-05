@@ -673,9 +673,9 @@ configRelatorioMunicipal <- function(tipo="completo", alert, estado, siglaUF, di
 
     tamanhotabela = 16  # n. linhas na tabela
 
-    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweets", "casos", "inc", "tcasesmed","p1")
-    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweets", "casos", "inc", "tcasesmed","p1")
-    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweets", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesmed","p1")
     tab <- tail(alechik$data[,varstab], n=tamanhotabela)
     tab$p1 <- tab$p1*100
     tab <- cbind(tab,cores[tail(alechik$indices$level,n=tamanhotabela)])
@@ -712,9 +712,9 @@ configRelatorioMunicipal <- function(tipo="completo", alert, estado, siglaUF, di
     # Gera tabela resumo das ultimas semanas
     
     tamanhotabela = 16  # n. linhas na tabela
-    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweets", "casos", "inc", "tcasesmed","p1")
-    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweets", "casos", "inc", "tcasesmed","p1")
-    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweets", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "temp_min") varstab <- c("SE","temp_min","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_min") varstab <- c("SE","umid_min","tweet", "casos", "inc", "tcasesmed","p1")
+    if (varcli== "umid_max") varstab <- c("SE","umid_max","tweet", "casos", "inc", "tcasesmed","p1")
     tab <- tail(alezika$data[,varstab], n=tamanhotabela)
     tab$p1 <- tab$p1*100
     tab <- cbind(tab,cores[tail(alezika$indices$level,n=tamanhotabela)])

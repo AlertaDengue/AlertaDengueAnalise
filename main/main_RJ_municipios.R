@@ -1,6 +1,6 @@
 ## Alertas municipais do Estado do Rio de Janeiro
 #==============================
-# Campos:  
+# Campos:  3301009
 # Cabeçalho ------------------------------
 setwd("~/")
 source("AlertaDengueAnalise/config/config_global.R") #configuracao 
@@ -80,7 +80,7 @@ if(geo == 3304557){
     print(paste("Data real do relatorio:", new_data_relatorio))
     
     bol <- configRelatorioMunicipal(alert = ale.den,  
-                                     tipo = "simples", 
+                                     tipo = "completo", 
                                     varcli = "temp_min", estado = estado, siglaUF = sig, data = new_data_relatorio, 
                                     dir.out = out, geraPDF = TRUE)
     

@@ -29,10 +29,10 @@ print(Sys.time())
 
 # Calcula alerta ---------------------------- 
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "fixedprob", 
-                                     finalday = dia_relatorio); save(ale.den, file="aleden.RData")
+                                     finalday = dia_relatorio); save(ale.den, file="aleden.RData",userinput = T)
 
 ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "fixedprob", 
-                            finalday = dia_relatorio); save(ale.chik, file="alechik.RData")
+                            finalday = dia_relatorio); save(ale.chik, file="alechik.RData",userinput = T)
 
 print(Sys.time())
 # Boletim: 
