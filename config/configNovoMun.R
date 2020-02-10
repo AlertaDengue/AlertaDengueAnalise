@@ -11,11 +11,10 @@ unique(tabuf$Nome_Mesorregião)
 library("AlertTools"); library(assertthat) ; library(tidyverse)
 con <- DenguedbConnect(pass = pw)
 
-reg=getRegionais(uf = "São Paulo")
-reg
+(getRegionais(uf = "São Paulo"))
 
-cid = getCidades(uf = "São Paulo", datasource=con)
-cid
+(cid = getCidades(uf = "São Paulo", datasource=con))
+
 
 ### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
 nomedacidade = "Bauru"
@@ -101,13 +100,13 @@ res = write.parameters(newpars,newdat,senha=pw)
 
 read.parameters(cities = geocodigo, cid10 = "A90", datasource = con)
 
-read.parameters
+
 
 ### 5. Uma olhadinha nos casos
 # --------------------------------
 #geocodigo = tabuf$municipio_geocodigo[tabuf$nome_municipio==nome]
 # dengue
-casos = getCases(city=geocodigo, datasource = con)
+casos = getCases(cities=geocodigo, datasource = con)
 par(mar=c(5,5,2,2))
 plot(casos$casos, type="l")
 summary(casos$casos)
@@ -123,11 +122,12 @@ plot(casosZ$casos, type="l")
 #### 6. Inserção dos limiares epidemicos na tabela
 ## ------------------------------------------------------
 #thresholds.table <- info.dengue.apply.mem(mun_list=cid$municipio_geocodigo[1],con = con)
-info.dengue.apply.mem(mun_list=3301009,con = con)
+AlertTools::infodengue_apply_mem(mun_list=3506003,con = con)
 #load("mem-ceara.RData") # rodei direto a funcao do marcelo na pasta mem-marcelo (provisorio, no AlertTools ver uso-do-mem)
 newpars = c("limiar_preseason","limiar_posseason","limiar_epidemico")
-# o alerta usa incidencia, e nao casos (o mem retorna o limiar em numero de casos)
-valores = data.frame(municipio_geocodigo=geocodigo, limiar_preseason = 11, limiar_posseason = 12, limiar_epidemico = 131)
+
+# o alerta usa incidencia, e nao casos 
+valores = data.frame(municipio_geocodigo=3301009, limiar_preseason = 12.8, limiar_posseason = 10, limiar_epidemico = 68)
 res = write.parameters(newpars,valores,senha="aldengue")
 
 #sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo < 2400000"

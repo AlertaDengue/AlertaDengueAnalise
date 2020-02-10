@@ -69,15 +69,15 @@ figuramunicipio <- function(obj, varcli = "temp_min", cid="A90", tsdur=104){
   par(mai=c(0,0,0,0),mar=c(1,4,0,3))
   if(varcli == "temp_min") {
     plot(objc$temp_min, type="l", xlab="", ylab ="Temperatura min",axes=FALSE)
-    abline(h=param$tcrit, lty=2)
+    abline(h=param$clicrit, lty=2)
   }
   if(varcli == "umid_min") {
     plot(objc$umid_min, type="l", xlab="", ylab ="Umidade min",axes=FALSE)
-    abline(h=param$ucrit, lty=2)
+    abline(h=param$clicrit, lty=2)
   }
   if(varcli == "umid_max") {
     plot(objc$umid_max, type="l", xlab="", ylab ="Umidade max",axes=FALSE)
-    abline(h=param$ucrit, lty=2)
+    abline(h=param$clicrit, lty=2)
   }
   
   legend(x="topleft",lty=c(2),col=c("black"),
@@ -88,7 +88,9 @@ figuramunicipio <- function(obj, varcli = "temp_min", cid="A90", tsdur=104){
   # subfigura de baixo: alerta colorido
   par(mai=c(0,0,0,0),mar=c(1,4,0,4))
   plot_alerta(obj, geocodigo = geoc, var="casos") #"inc",ini=min(objc$SE),fim=max(objc$SE))
-  abline(h=param$posseas*obj$data$pop[1],lty=2)
+  abline(h=param$limiar_epidemico*obj$data$pop[1]/1e5,lty=2, col ="red")
+  abline(h=param$limiar_preseason*obj$data$pop[1]/1e5,lty=2, col ="darkgreen")
+  abline(h=param$limiar_posseason*obj$data$pop[1]/1e5,lty=2, col ="black")
   legend(x="topright",lty=c(3,2,2),col=c("red","darkgreen","black"),
   legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
   
