@@ -102,7 +102,7 @@ cat("\\end{itemize}")
 %-------------------------------------------------------------------------------
   \hypertarget{estado}{\heading{Situação da Dengue no Estado do \Sexpr{env$estado}}{6pt}} % \hypertarget provides a label to reference using 
 
-Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, sendo \Sexpr{env$totultseUF} na última semana. A figura abaixo mostra as condições de transmissão em cada município na semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}.
+De acordo com os dados disponíveis até o momento, \Sexpr{env$totanoUF} casos foram registrados no estado, sendo \Sexpr{env$totultseUF} na última semana. A figura abaixo mostra as condições de transmissão em cada município na semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}.
 
 % Mapa estadual
 \includegraphics[width=0.8\textwidth]{\Sexpr{env$figmapaestado}}
@@ -110,7 +110,7 @@ Desde o início do ano, \Sexpr{env$totanoUF} casos foram registrados no estado, 
 
 Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em nivel verde, \Sexpr{env$namareloUF} em nivel amarelo, \Sexpr{env$nlaranjaUF} em nivel laranja e \Sexpr{env$nvermelhoUF} em nivel vermelho referentes a semana epidemiológica \Sexpr{env$seUF}-\Sexpr{env$anoUF}. Para informações mais atualizadas e ter acesso ao mapa interativo do estado e de outras localidades, consultar em \href{http://info.dengue.mat.br}{\textit{Info Dengue}}.
 
-\textbf{Na semana passada:} \Sexpr{env$namarelo1UF} municípios em nivel amarelo, \Sexpr{env$nlaranja1UF} em laranja e \Sexpr{env$nvermelho1UF} em vermelho. % frase estava abaixo do box
+\textbf{Na semana passada:} Com os dados atualizados, foram recalculados os niveis anteriores:  \Sexpr{env$namarelo1UF} municípios em nivel amarelo, \Sexpr{env$nlaranja1UF} em laranja e \Sexpr{env$nvermelho1UF} em vermelho. % frase estava abaixo do box
 
 
 %--------------------------------------------------------------------------------
@@ -122,7 +122,8 @@ Dos \Sexpr{env$nmunicipios} municipios, \Sexpr{env$nverdeUF} encontram-se em niv
 \hypertarget{descriptivebox}{\heading{O código de Cores}{1pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
 As cores indicam os seguintes níveis de atenção:
 \begin{description}
-\item[Verde:] condições climáticas desfavoráveis, seja por baixa temperatura ou baixa umidade, e baixa incidência de casos. \item[Amarelo:] condições climáticas propícias para aumento da população do vetor e transmissão de arboviroses.
+\item[Verde:] condições climáticas desfavoráveis, seja por baixa temperatura ou baixa umidade, e baixa incidência de casos. 
+\item[Amarelo:] condições climáticas propícias para aumento da população do vetor e transmissão de arboviroses.
 \item[Laranja:] transmissão aumentada e sustentada da dengue 
 \item[Vermelho:] incidência alta, acima dos 90\% históricos.\end{description}
 \end{mdframed}

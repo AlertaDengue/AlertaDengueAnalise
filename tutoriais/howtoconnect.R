@@ -162,7 +162,7 @@ dbListFields(con, c("Dengue_global","regional_saude"))
 d <- dbReadTable(con, c("Dengue_global",""))
 str(d)
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3200136"
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3304557"
 dr <- dbGetQuery(con, sqlquery)
 dr
 
@@ -207,9 +207,9 @@ dim(tw)
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
 c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
-                \"municipio_geocodigo\" = 3304507 "
+                \"municipio_geocodigo\" = 3506003 "
 d <- dbGetQuery(con,c1)
-
+tail(d[order(d$SE),], n= 20)
 
 c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
                 \"SE\" is NULL"
@@ -363,13 +363,19 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
         linha = paste(el1,el2,el3,el4,sep=",")
         sql = paste("insert into \"Dengue_global\".\"regional_saude\" (municipio_geocodigo, id_regional, 
                      codigo_estacao_wu, nome_regional) values(", linha ,")")
-        dbGetQuery(con, sql)    
+            
   }
-  
   inserelinha(newdata,1)
   
   for (i in 1:dim(newdata)[1]) inserelinha(newdata,i)
-
+  
+  
+  # inserindo um valor 
+  update_sql = "UPDATE \"Dengue_global\".regional_saude SET tcrit = 22
+   WHERE municipio_geocodigo = 3506003"
+  dbGetQuery(con, update_sql)
+  
+  
     
   tabr <- dbReadTable(con, c("Dengue_global","regional_saude"))
   
