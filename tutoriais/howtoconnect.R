@@ -89,11 +89,11 @@ tw <- dbGetQuery(con, comando)
 str(tw)
 
 # baixar 
-comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 4000000
-AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
+comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 2300000
+AND municipio_geocodigo < 2400000 AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
 tw <- dbGetQuery(con, comando)
 nrow(tw)
-
+table(tw$)
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
 comando <- "SELECT nome, geocodigo FROM \"Dengue_global\".\"Municipio\" "
 mun <- dbGetQuery(con, comando)
