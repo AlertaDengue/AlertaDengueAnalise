@@ -18,7 +18,7 @@ dir_rel = "Relatorio/ES/Estado"
 
 
 # data do relatorio:---------------------
-#data_relatorio = 202002
+#data_relatorio = 202006
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 print(Sys.time())
@@ -29,8 +29,8 @@ cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "fixedprob", 
                            finalday = dia_relatorio); save(ale.den, file="aleden.RData")
 
-ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "no", 
-                            finalday = dia_relatorio); save(ale.chik, file="alechik.RData")
+#ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "no", 
+#                            finalday = dia_relatorio); save(ale.chik, file="alechik.RData")
 
 #ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "no", 
 #                            finalday = dia_relatorio); save(ale.zika, file="alezika.RData")
@@ -48,7 +48,7 @@ if(write_report) {
                                  dir=out, datasource=con, geraPDF=TRUE)
   
   publicarAlerta(ale = ale.den, pdf = bol, dir = dirbol)
-  write_alerta(tabela_historico(ale.chik))
+  #write_alerta(tabela_historico(ale.chik))
  
   
   if (!bol %in% ls(dirbol)) futile.logger::flog.error("pdf boletin not saved")

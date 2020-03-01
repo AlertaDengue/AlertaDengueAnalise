@@ -80,7 +80,7 @@ d <- dbGetQuery(con, comando)
 str(d)
 
 # tabela de parametros
-comando <- "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo = 3506003" 
+comando <- "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo = 2308302" 
 dbGetQuery(con, comando)
 
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
@@ -88,11 +88,23 @@ comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" 
 tw <- dbGetQuery(con, comando)
 str(tw)
 
-# baixar 
-comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 4000000
-AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
+# baixar dados notificacao 
+comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 2000000 AND 
+municipio_geocodigo <  3000000 AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
 tw <- dbGetQuery(con, comando)
 nrow(tw)
+
+comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 2000000 AND 
+municipio_geocodigo <  3000000 AND se= '2020-01-01' AND cid10_codigo = \'A90\'"
+tw1 <- dbGetQuery(con, comando)
+nrow(tw1)
+
+
+# baixar dados historico 
+comando <- "SELECT * FROM \"Municipio\".\"Historico_alerta\" WHERE municipio_geocodigo = 2308302"
+hh <- dbGetQuery(con, comando)
+hhh <- hh[order(hh$SE),]
+tail(hhh, n= 15)
 
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
 comando <- "SELECT nome, geocodigo FROM \"Dengue_global\".\"Municipio\" "
