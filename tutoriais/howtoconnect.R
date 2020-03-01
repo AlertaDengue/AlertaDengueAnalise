@@ -80,7 +80,7 @@ d <- dbGetQuery(con, comando)
 str(d)
 
 # tabela de parametros
-comando <- "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo = 2308302" 
+comando <- "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo = 2308302::" 
 dbGetQuery(con, comando)
 
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
@@ -88,6 +88,7 @@ comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" 
 tw <- dbGetQuery(con, comando)
 str(tw)
 
+<<<<<<< HEAD
 # baixar dados notificacao 
 comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 2000000 AND 
 municipio_geocodigo <  3000000 AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
@@ -106,6 +107,14 @@ hh <- dbGetQuery(con, comando)
 hhh <- hh[order(hh$SE),]
 tail(hhh, n= 15)
 
+=======
+# baixar 
+comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 2300000
+AND municipio_geocodigo < 2400000 AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
+tw <- dbGetQuery(con, comando)
+nrow(tw)
+table(tw$)
+>>>>>>> a0d6d6b9e32845110963a69afbc614bf1e661730
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
 comando <- "SELECT nome, geocodigo FROM \"Dengue_global\".\"Municipio\" "
 mun <- dbGetQuery(con, comando)
@@ -174,7 +183,7 @@ dbListFields(con, c("Dengue_global","regional_saude"))
 d <- dbReadTable(con, c("Dengue_global",""))
 str(d)
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3200136"
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3304557"
 dr <- dbGetQuery(con, sqlquery)
 dr
 
@@ -219,9 +228,9 @@ dim(tw)
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
 c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
-                \"municipio_geocodigo\" = 3304507 "
+                \"municipio_geocodigo\" = 3506003 "
 d <- dbGetQuery(con,c1)
-
+tail(d[order(d$SE),], n= 20)
 
 c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
                 \"SE\" is NULL"
@@ -375,13 +384,19 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
         linha = paste(el1,el2,el3,el4,sep=",")
         sql = paste("insert into \"Dengue_global\".\"regional_saude\" (municipio_geocodigo, id_regional, 
                      codigo_estacao_wu, nome_regional) values(", linha ,")")
-        dbGetQuery(con, sql)    
+            
   }
-  
   inserelinha(newdata,1)
   
   for (i in 1:dim(newdata)[1]) inserelinha(newdata,i)
-
+  
+  
+  # inserindo um valor 
+  update_sql = "UPDATE \"Dengue_global\".regional_saude SET tcrit = 22
+   WHERE municipio_geocodigo = 3506003"
+  dbGetQuery(con, update_sql)
+  
+  
     
   tabr <- dbReadTable(con, c("Dengue_global","regional_saude"))
   

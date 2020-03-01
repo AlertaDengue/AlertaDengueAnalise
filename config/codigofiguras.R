@@ -8,13 +8,13 @@ mapa.regional <- function(alerta, regionais, estado, varcli = "temp_min", sigla,
                           shapeid, data, dir="",
                           datasource){
   for (i in regionais) {
-    cidades = getCidades(regional = i, uf = estado,datasource = datasource)["municipio_geocodigo"]
+    cidades = getCidades(regional = i, uf = estado)
     titu = paste(sigla,":",i,"\n")
     nomesemespaco = gsub(" ","",i)
     nomesemacento = iconv(nomesemespaco, to = "ASCII//TRANSLIT")
     fname = paste(dir,"Mapa",sigla,"_",nomesemacento,".png",sep="")
     
-    geraMapa(alerta=alerta, subset=as.numeric(names(alerta)), se=data, legpos = "bottomright",#pars[[i]]$legpos,  
+    geraMapa(alerta=alerta, subset=cidades$municipio_geocodigo, se=data, legpos = "bottomright",#pars[[i]]$legpos,  
              shapefile=shape, varid=shapeid, 
              titulo=titu ,filename=fname, dir="")
   }
