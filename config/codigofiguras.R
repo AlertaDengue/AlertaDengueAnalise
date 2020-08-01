@@ -23,80 +23,6 @@ mapa.regional <- function(alerta, regionais, estado, varcli = "temp_min", sigla,
 }
 
 
-# ------------ figuramunicipio ------------------------------------
-## figuramunicipio: codigo da figura com 3 subfiguras que e usada para os municipios
-# obj é o alerta do municipio gerado pelo update.alerta
-# USO: figuramunicipio(alePR_RS_Cascavel[["CéuAzul"]])
-
-figuramunicipio <- function(obj, varcli = "temp_min", cid="A90", tsdur=104){
-  
-  if(cid == "A90") titulo = "Casos de Dengue"
-  if(cid == "A92.0") titulo = "Casos de Chikungunya"
-  if(cid == "A92.8") titulo = "Casos de Zika"
-  
-  geoc <- obj$data$cidade[1]
-  print(geoc)
-  param <- read.parameters(geoc, cid10 = cid)
-  
-  layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
-         heights = c(rep(lcm(4),2), lcm(5)))
-  
-  n = dim(obj$data)[1]
-  objc = obj$data[(n-tsdur):n,]
-  
-  #objc <- obj$data[obj$data$SE>=201301,] 
-  # Subfigura do topo (serie temporal de casos e tweets)
-  par(mai=c(0,0,0,0),mar=c(1,4,0,3))
-  plot(objc$casos, type="l", xlab="", ylab="", axes=FALSE)
-  axis(1, pos=0, lty=0, lab=FALSE)
-  axis(2)
-  mtext(text=titulo, line=2.5,side=2, cex = 0.7)
-  maxy <- max(objc$casos, na.rm=TRUE)
-  if(cid == "A92.0")legend(25, maxy, c("casos de chikungunya"),col=c(1), lty=1, bty="n",cex=0.7)
-  if(cid == "A92.8")legend(25, maxy, c("casos de zika"),col=c(1), lty=1, bty="n",cex=0.7)
-  # colocar tweet, so dengue
-  if(cid == "A90") {
-    legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
-    par(new=T)
-    if(sum(is.na(objc$tweet))==nrow(objc)) objc$tweet = 0 # 
-    plot(objc$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
-    lines(objc$tweet, col=3, type="h") #*coefs[2] + coefs[1]
-    axis(1, pos=0, lty=0, lab=FALSE)
-    axis(4)
-    mtext(text="Tweets", line=2.5, side=4, cex = 0.7)
-  }
-  # subfigura do meio: clima
-  par(mai=c(0,0,0,0),mar=c(1,4,0,3))
-  if(varcli == "temp_min") {
-    plot(objc$temp_min, type="l", xlab="", ylab ="Temperatura min",axes=FALSE)
-    abline(h=param$clicrit, lty=2)
-  }
-  if(varcli == "umid_min") {
-    plot(objc$umid_min, type="l", xlab="", ylab ="Umidade min",axes=FALSE)
-    abline(h=param$clicrit, lty=2)
-  }
-  if(varcli == "umid_max") {
-    plot(objc$umid_max, type="l", xlab="", ylab ="Umidade max",axes=FALSE)
-    abline(h=param$clicrit, lty=2)
-  }
-  
-  legend(x="topleft",lty=c(2),col=c("black"),
-         legend=c("limiar favorável transmissão"),cex=0.85,bty="n")
-  axis(2)
-  
-  
-  # subfigura de baixo: alerta colorido
-  par(mai=c(0,0,0,0),mar=c(1,4,0,4))
-  plot_alerta(obj, geocodigo = geoc, var="casos") #"inc",ini=min(objc$SE),fim=max(objc$SE))
-  abline(h=param$limiar_epidemico*obj$data$pop[1]/1e5,lty=2, col ="red")
-  abline(h=param$limiar_preseason*obj$data$pop[1]/1e5,lty=2, col ="darkgreen")
-  abline(h=param$limiar_posseason*obj$data$pop[1]/1e5,lty=2, col ="black")
-  legend(x="topright",lty=c(3,2,2),col=c("red","darkgreen","black"),
-  legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
-  
-}
-
-
 
 # figuraRio -----------------------
 
@@ -187,10 +113,118 @@ tabSomatorio <- function(ale, ano, data, varcli = "temp_min", uf = uf,
   return(tabSoma)
 }
 
+# faztabelaoRS2-------------------------------
+# fazTabelao com dados da ultima semana das Regionais ou do estado
+
+faztabelaoRS2 <- function(tab, data,uf, varcli = "temp_min", tex=F){
+  
+  reg <- data.frame(reg = getRegionais(cities = unique(restab$municipio_geocodigo), uf = uf),
+                    municipio_geocodigo = unique(restab$municipio_geocodigo))
+  
+  # filtrar para o periodo de interesse
+  ano <- floor(data/100)
+  ano_pre <- ano - 1
+  
+  restab <- tab %>%
+    filter((SE <= data) & (SE > ano_pre*100)) %>%
+    left_join(reg)
+  
+  rm(reg)  
+  
+  res <- restab %>% 
+    group_by(municipio_geocodigo) %>%
+    summarize(
+      totano = sum(casos[SE >ano*100]),
+      n = length(casos),
+      totultse = casos[(n-1)]
+    )
+  
+  
+  totano=0; totultse=0
+  nverde=0; namarelo=0;nlaranja=0;nvermelho=0
+  nverde1=0; namarelo1=0;nlaranja1=0;nvermelho1=0
+  
+  
+  tabelao = data.frame(Municipio = character(),Regional = character(), 
+                       Clima = numeric(), Tweets=numeric(),
+                       Casos = integer(), Incidencia=numeric(),Rt=numeric(),
+                       Nivel=character(),stringsAsFactors = FALSE)
+  
+  
+  
+  for (i in 1:N){
+    
+    reg <- getRegionais(cities = ai$data$cidade[1], uf = uf)
+    linhasdoano = which(floor(ai$data$SE/100)==ano)
+    linhase = which(ai$data$SE==data)
+    linhase1 = which(ai$data$SE==data)-1
+    
+    totano = sum(c(totano, ai$data$casos[linhasdoano]),na.rm=TRUE)
+    totultse = sum(c(totultse, ai$data$casos[linhase]),na.rm=TRUE)
+    
+    nverde = sum(c(nverde,as.numeric(ai$indices$level[linhase]==1)),na.rm=TRUE)
+    namarelo = sum(c(namarelo,as.numeric(ai$indices$level[linhase]==2)),na.rm=TRUE)
+    nlaranja = sum(c(nlaranja,as.numeric(ai$indices$level[linhase]==3)),na.rm=TRUE)
+    nvermelho = sum(c(nvermelho,as.numeric(ai$indices$level[linhase]==4)),na.rm=TRUE)
+    
+    nverde1 = sum(c(nverde1,as.numeric(ai$indices$level[linhase1]==1)),na.rm=TRUE)
+    namarelo1 = sum(c(namarelo1,as.numeric(ai$indices$level[linhase1]==2)),na.rm=TRUE)
+    nlaranja1 = sum(c(nlaranja1,as.numeric(ai$indices$level[linhase1]==3)),na.rm=TRUE)
+    nvermelho1 = sum(c(nvermelho1,as.numeric(ai$indices$level[linhase1]==4)),na.rm=TRUE)
+    
+    cores=c("verde","amarelo","laranja","vermelho")
+    if (varcli == "temp_min")
+      paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
+                                Regional = reg,
+                                Temperatura = ai$data$temp_min[linhase],
+                                Tweets = ai$data$tweet[linhase],
+                                Casos = ai$data$casos[linhase], 
+                                Incidencia=ai$data$inc[linhase],
+                                Rt=ai$data$Rt[linhase],
+                                Nivel=as.character(cores[ai$indices$level[linhase]]),
+                                stringsAsFactors = FALSE)
+    
+    if (varcli == "umid_min")
+      paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
+                                Regional = reg,
+                                Umid.min = ai$data$umid_min[linhase],
+                                Tweets = ai$data$tweet[linhase],
+                                Casos = ai$data$casos[linhase], 
+                                Incidencia=ai$data$inc[linhase],
+                                Rt=ai$data$Rt[linhase],
+                                Nivel=as.character(cores[ai$indices$level[linhase]]),
+                                stringsAsFactors = FALSE)
+    
+    if (varcli == "umid_max")
+      paratabelao <- data.frame(Municipio = as.character(ai$data$nome[1]), 
+                                Regional = reg,
+                                Umid.max = ai$data$umid_max[linhase],
+                                Tweets = ai$data$tweet[linhase],
+                                Casos = ai$data$casos[linhase], 
+                                Incidencia=ai$data$inc[linhase],
+                                Rt=ai$data$Rt[linhase],
+                                Nivel=as.character(cores[ai$indices$level[linhase]]),
+                                stringsAsFactors = FALSE)
+    
+    tabelao[i,] = paratabelao
+    
+  }
+  if(tex==T){
+    tabelaox <-xtable(tabelao, align ="ll|lllllll")
+    digits(tabelaox) <- c(0,0,0,1,0,0,1,1,0)
+    return(tabelaox)
+  }else{
+    return(list(tabelao=tabelao,totano=totano,totultse=totultse,nverde=nverde,
+                namarelo=namarelo,nlaranja=nlaranja,nvermelho=nvermelho,
+                nverde1=nverde1,namarelo1=namarelo1,nlaranja1=nlaranja1
+                ,nvermelho1=nvermelho1))
+  }
+}
+
+
 
 # faztabelaoRS-------------------------------
 # fazTabelao com dados da ultima semana das Regionais ou do estado
-
 
 faztabelaoRS <- function(ale,ano,data,uf, varcli = "temp_min", tex=F){
   
@@ -221,7 +255,7 @@ faztabelaoRS <- function(ale,ano,data,uf, varcli = "temp_min", tex=F){
   
   N = length(names(ale))
   for (i in 1:N){
-    ai <- ale[[i]] 
+    ai <- ale[[i]]
     reg <- getRegionais(cities = ai$data$cidade[1], uf = uf)
     linhasdoano = which(floor(ai$data$SE/100)==ano)
     linhase = which(ai$data$SE==data)

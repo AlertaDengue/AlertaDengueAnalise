@@ -1,36 +1,32 @@
-# tabela com dados de todo o brasil do IBGE
-tab <- read.csv("../tabela-regionaisIBGE.csv")
-
-
-### 1. Qual é o estado?
-tabuf <- subset(tab, Nome_UF=="São Paulo")
-unique(tabuf$Nome_Microrregião)
-unique(tabuf$Nome_Mesorregião)
-
-### 2. O que temos desse estado no banco de dados?
 library("AlertTools"); library(assertthat) ; library(tidyverse)
+
+### 1. O que temos desse estado no banco de dados?
+UF = "Rio Grande do Sul"
 con <- DenguedbConnect(pass = pw)
+(getRegionais(uf = UF))
+(getRegionais(uf = UF, macroreg = TRUE))
+cid = getCidades(uf = UF, datasource=con)
+nrow(cid)
+head(cid)
 
-(getRegionais(uf = "São Paulo"))
+save(cid, file = "cid.RData")
+# Se todas as cidades estao presentes, siga para (3)
 
-(cid = getCidades(uf = "São Paulo", datasource=con))
+### 2. Seu municipio(s) não está? Coloque-o, usando informacao do IBGE (se adequado)
+nomedacidade = "Porto Alegre"
+geocodigo =  4314902 #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
+id =  1# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
+nomereg = "Porto Alegre" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
+# nao sei se funciona
+insert_city_infodengue(geocodigo=geocodigo, regional = "Porto Alegre", id_regional=id)
 
-
-### 3. Seu municipio não está? Coloque-o, usando informacao do IBGE (se adequado)
-nomedacidade = "Bauru"
-geocodigo =  3506003 #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
-id =  6# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
-nomereg = "Bauru" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
-
-insertCityinAlerta(city=geocodigo, id_regional=id, regional = nomereg, senha = pw)
-
-### 4. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
-## 
+### 2a. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
+## (adaptar para incluir macroregiao)
 
 tabuf <- read.csv("../Regionais_Saude_CE.csv") # qdo é custmizada a regional de saude
 names(tabuf)
 tabuf <- tabuf[,c(10,11,9)]
-names(tabuf)[1:3]<-c("nome_municipio","nome_regional","municipio_geocodigo")
+names(tabuf)[1:3]<-c("nome_municipio","nome_regional","municipio_geocodigo")  # incluir nome_macroreg se tiver
 head(tabuf)
 unique(tabuf$nome_regional)
 n = dim(tabuf)[1]
@@ -43,98 +39,172 @@ for (i in 2:n){
   
 }
 
-reg=getRegionais(uf = "Ceará")
-reg
+macroreg=getRegionais(uf = "Minas Gerais", macroreg = TRUE)
+reg=getRegionais(uf = "Minas Gerais")
 
 
-
-
-### Inserção das estacoes meteorologicas na tabela das regionais - requer SENHA
+### 3. Inserção das estacoes meteorologicas na tabela das regionais - requer SENHA
 # ----------------------------------------------------------------
 #https://estacoes.dengue.mat.br/
 
-# Usar a tabela gerada pelo estacoes.dengue. Se os dados forem ruins, 
-#tem a opcao de colocar manualmente:
+# Usar a tabela gerada pelo estacoes.dengue. Se os dados forem ruins, a opcao é selecionar
+# as estacoes na mao. Script:# Vamos agora verificar a qualidade das estacoes usando script 
+#tutoriais/relatorio-qualidade-dados
 
-CE.Reg.estacoes <- list(SBTE=c("Tauá","Crato","Canindé","Cratéus","Quixadá"),
-                 SBFZ=c("Sobral ","Tianguá","Caucaia","Maracanaú","Itapipoca",
-                 "Limoeiro do Norte","Acaraú","Baturité","Fortaleza","Aracati","Russas","Cascavel","Camocim"),
-                 SBPL =c("Juazeiro do Norte","Icó","Iguatu","Brejo Santo"))
 
-escrevewu <- function(csvfile=NULL,lista=NULL, UF){
-  if(!is.null(csvfile)){
+# funcao para escrever a partir do csv
+escrevewu <- function(csvfile=NULL, UF, senha){
+  if(!is.null(csvfile)){  # csvfile vem do estacoes-mais-proximas
     wus <- read.csv(csvfile,header = F)
     wusES <- wus[,c(2,4,6)]
     names(wusES) <- c("geocodigo", "estacao", "dist")  
     newdat <- data.frame(municipio_geocodigo=unique(wusES$geocodigo), 
-                         codigo_estacao_wu=NA,
-                         estacao_wu_sec=NA)
+                         primary_station=NA,
+                         secondary_station=NA)
     for(cid in newdat$municipio_geocodigo) {
       estacoes <- wusES[wusES$geocodigo==cid,]
-      estacoes <- estacoes[order(estacoes$dist),] # ordm decresc distancia
-      newdat$codigo_estacao_wu[newdat$municipio_geocodigo==cid] <- as.character(estacoes$estacao[1])
-      newdat$estacao_wu_sec[newdat$municipio_geocodigo==cid] <- as.character(estacoes$estacao[2])
+      estacoes <- estacoes[order(estacoes$dist, decreasing = FALSE),] # ordm cresc distancia
+      newdat$primary_station[newdat$municipio_geocodigo==cid] <- as.character(estacoes$estacao[1])
+      newdat$secondary_station[newdat$municipio_geocodigo==cid] <- as.character(estacoes$estacao[2])
     }
   }
-  if(!is.null(lista)){
-    cidades <- getCidades(uf = UF, datasource = con)
-    cidades$estacao <- NULL
-    for (e in 1:length(lista))cidades$estacao[cidades$nome_regional%in%lista[[e]]] <- names(lista)[e]
-    newdat <- data.frame(municipio_geocodigo=cidades$municipio_geocodigo, codigo_estacao_wu=cidades$estacao,
-                         estacao_wu_sec=cidades$estacao)
-  }
-    
-  newpars = c("codigo_estacao_wu","estacao_wu_sec")
-  res = write.parameters(newpars,newdat,senha = pw)
+  
+  setWUstation(st = newdat, UF = UF, senha = senha)
   newdat
 }
 
-escrevewu(csvfile="estações-mais-proximas-SP.csv")
-escrevewu(lista=CE.Reg.estacoes)
+escrevewu(csvfile="estacoes/estações-mais-proximasRS.csv", UF = "Rio Grande do Sul")
+#escrevewu(lista=CE.Reg.estacoes)
 
-# Na mão:
-newdat <- data.frame(municipio_geocodigo=3506003, codigo_estacao_wu="SBBT",
-                     estacao_wu_sec="SBML")
-newpars = c("codigo_estacao_wu","estacao_wu_sec")
-res = write.parameters(newpars,newdat,senha=pw)
+# PS. Na mão: usar setWUstation()
+# uma:
+dados <- data.frame(municipio_geocodigo = geocodigo, 
+                    primary_station = "SBPA", secondary_station = "SBNM")
+setWUstation(dados, senha ="",UF = "Rio Grande do Sul")
 
-read.parameters(cities = geocodigo, cid10 = "A90", datasource = con)
+# varias:
+# essa tabela foi criada a mão (verificar se os nomes estao iguais ao da getRegionais)
+ests <- data.frame(nome = c("NORTE", "NORDESTE", "NOROESTE","JEQUITINHONHA",
+                            "LESTE","CENTRO","OESTE","TRIÂNGULO DO NORTE",
+                            "TRIÂNGULO DO SUL", "LESTE DO SUL","CENTRO SUL","SUL","SUDESTE"),
+                   est1 = c("SBMK","SBMK","SBMK","SBMK","SBLS","SBLS","SBLS",
+                            "SBUL","SBUR","SBBQ","SBBQ","SBKP","SBBQ"),
+                   est2 = c("SBLP","SBBR","SBBR","SBLS","SBCF","SBPR","SBCF",
+                            "SBUR","SBUL","SBCF","SBCF","SBTA","SBCF"))
+cide <- cid %>% 
+  left_join(ests, by = c("nome_macroreg" = "nome")) %>%
+  select(municipio_geocodigo, primary_station = est1, secondary_station = est2)
+setWUstation(cide, UF = "Minas Gerais",senha = "")
+
+
+# Verificando (so funciona para uma cidade por vez)
+getWUstation(cities = geocodigo)
 
 
 
-### 5. Uma olhadinha nos casos
-# --------------------------------
-#geocodigo = tabuf$municipio_geocodigo[tabuf$nome_municipio==nome]
-# dengue
-casos = getCases(cities=geocodigo, datasource = con)
-par(mar=c(5,5,2,2))
-plot(casos$casos, type="l")
-summary(casos$casos)
-
-# chik
-casosC = getCases(city=geocodigo, cid10 = "A92.0", datasource = con)
-plot(casosC$casos, type="l")
-
-# zika
-casosZ = getCases(city=geocodigo, cid10 = "A92.8", datasource = con)
-plot(casosZ$casos, type="l")
-
-#### 6. Inserção dos limiares epidemicos na tabela
+#### 4. Inserção dos parametros na tabela parameters 
 ## ------------------------------------------------------
-#thresholds.table <- info.dengue.apply.mem(mun_list=cid$municipio_geocodigo[1],con = con)
-AlertTools::infodengue_apply_mem(mun_list=3506003,con = con)
-#load("mem-ceara.RData") # rodei direto a funcao do marcelo na pasta mem-marcelo (provisorio, no AlertTools ver uso-do-mem)
-newpars = c("limiar_preseason","limiar_posseason","limiar_epidemico")
+#Os limiares epidemicos (MEM) são obtidos no script config/calc-mem.R no terminal em bash pois pode demorar
+load("AlertaDengueAnalise/config/thresMG.RData") 
+d <- thresMG; rm(thresMG)
+names(d)
+# tem tres tipos:
+  # percentile simples
+  # minimo fixo
+  # threshold mem
+# IMPORTANTE!!!! o alerta usa incidencia, e nao casos 
+cid10 <- "A90"
+N <- length(d$thresholds$municipio_geocodigo)
+which(d$thresholds$municipio_geocodigo==3112208)
+for (i in 1:N){
+  params = data.frame(municipio_geocodigo = d$thresholds$municipio_geocodigo[i], cid10 = cid10,
+                      limiar_preseason = d$thresholds$limiar_preseason[i], 
+                      limiar_posseason = d$thresholds$limiar_posseason[i], 
+                      limiar_epidemico =d$thresholds$limiar_epidemico[i])
+  res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params = params, 
+                          overwrite = TRUE, senha)
+}
+                    
+# para um local so
 
-# o alerta usa incidencia, e nao casos 
-valores = data.frame(municipio_geocodigo=3301009, limiar_preseason = 12.8, limiar_posseason = 10, limiar_epidemico = 68)
-res = write.parameters(newpars,valores,senha="aldengue")
+params = data.frame(municipio_geocodigo = 4314902, cid10 = cid10,
+                    limiar_preseason = 0.369, 
+                    limiar_posseason = 0.338, 
+                    limiar_epidemico =1.87)
+res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params = params, 
+                        overwrite = TRUE, senha)
 
-#sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo < 2400000"
-#d <- dbGetQuery(con, sqlquery)
-#head(d)
-#tapply(d$limiar_preseason,d$nome_regional,median) # para atribuir uma media as regionais no par (provisorio)
 
+# para verificar
+sqlquery = "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo 
+> 3100000 AND municipio_geocodigo < 3200000"
+dr <- dbGetQuery(con, sqlquery)
+summary(dr)
+
+# apareceram duas cidades inexistentes no banco de dados, 3117835 e 3152139. foram removidas usando sql
+#dr %>%
+#  filter(is.na(limiar_preseason))
+
+sqlquery = "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo 
+= 4314902"
+dr <- dbGetQuery(con, sqlquery)
+dr
+
+### 5. Inserção dos limiares de temperatura e umidade
+
+# para isso, fazer a analise usando o script ModelagemCasosClima.Rmd
+# para varios (MG)
+pars1 <- data.frame(nome = c("NORTE", "NORDESTE", "NOROESTE","JEQUITINHONHA","OESTE","TRIÂNGULO DO NORTE",
+                            "TRIÂNGULO DO SUL"),
+                            varcli = rep("temp_min", 7),
+                            varcli2 = rep("umid_max", 7),
+                            clicrit = c(18, 18, 18, 18, 18, 18, 18),
+                            clicrit2 = c(72, 72, 72, 72, 75, 75, 75),
+                    codmodelo = rep("AsAw",7))
+
+cidee <- cid %>%
+  filter(nome_macroreg %in% pars1$nome) %>%
+  left_join(pars1, by = c("nome_macroreg" = "nome"))
+
+  
+for (i in 1:nrow(cidee)){
+  params = data.frame(municipio_geocodigo = cidee$municipio_geocodigo[i], cid10 = cid10,
+                      varcli = cidee$varcli[i],
+                      varcli2 = cidee$varcli2[i],
+                      clicrit = cidee$clicrit[i],
+                      clicrit2 = cidee$clicrit2[i],
+                      codmodelo = cidee$codmodelo[i])
+  
+  res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params, 
+                          overwrite = TRUE, senha)
+}
+
+pars2 <- data.frame(nome = c("LESTE","CENTRO","LESTE DO SUL","CENTRO SUL","SUL","SUDESTE"),
+                   varcli = rep("temp_min", 6),
+                   clicrit = rep(15.5, 6),
+                   codmodelo = c(rep("Af",6)))
+
+cidee <- cid %>%
+  filter(nome_macroreg %in% pars2$nome) %>%
+  left_join(pars2, by = c("nome_macroreg" = "nome"))
+
+for (i in 1:nrow(cidee)){
+  params = data.frame(municipio_geocodigo = cidee$municipio_geocodigo[i], cid10 = cid10,
+                      varcli = as.character(cidee$varcli[i]),
+                      clicrit = cidee$clicrit[i],
+                      codmodelo = cidee$codmodelo[i])
+  
+  res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params, 
+                          overwrite = TRUE, senha)
+}
+
+
+# para um municipio só, a mao (POA)
+params$varcli = "temp_min"
+params$clicrit = 17
+params$codmodelo = "Af"
+res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params, 
+                        overwrite = TRUE, senha)
 
 ### 5. Atraso de notificacao (metodo da Claudia)
 library("survival")
@@ -171,3 +241,19 @@ setTree.newsite(siglaestado="SP", municipio = "Bauru")
 # Proximo passo: criar o main
 
 
+###  Uma olhadinha nos casos
+# --------------------------------
+geocodigo = cid$municipio_geocodigo[cid$nome=="Belo Horizonte"]
+# dengue
+casos = getCases(cities=geocodigo, datasource = con)
+par(mar=c(5,5,2,2))
+plot(casos$casos, type="l")
+summary(casos$casos)
+
+# chik
+casosC = getCases(cities=geocodigo, cid10 = "A92.0", datasource = con)
+plot(casosC$casos, type="l")
+
+# zika
+casosZ = getCases(cities=geocodigo, cid10 = "A92.8", datasource = con)
+plot(casosZ$casos, type="l")

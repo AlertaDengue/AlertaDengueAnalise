@@ -10,8 +10,7 @@
 
 remove.packages("AlertTools") # remover versao antiga
 library("devtools")
-install_github("claudia-codeco/AlertTools", ref = "alertTidy", dependencies = TRUE)
-
+install_github("claudia-codeco/AlertTools", dependencies = TRUE)
 
 
 

@@ -18,7 +18,7 @@ dir_rel = "Relatorio/CE/Estado"
 
 
 # data do relatorio:---------------------
-#data_relatorio = 202005
+#data_relatorio = 202014
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # cidades --------------------------------
@@ -26,7 +26,7 @@ cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 print(Sys.time())
 
 # Calcula alerta estadual ------------------ 
- ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
+ ale.den <- pipe_infodengue(cidades[1:2], cid10 = "A90", nowcasting = "none", 
                             finalday = dia_relatorio); save(ale.den, file="aleden.RData")
  
  ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "none", 

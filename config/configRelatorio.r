@@ -453,7 +453,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 ,
   ano = floor(data/100)
   se = data - ano*100 
   
- 
+   
   relatorio <- "infodengue"  # default, substituido por infoarbo se for pertinente
  
   # Mapa de alerta de dengue do estado (funcao basica do alerttools)
@@ -475,11 +475,12 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 ,
                                 sigla = sigla,data = data, shape=shape, 
                                 shapeid=varid, dir=dirfigs,datasource=datasource))
   
-              
+  # Faz tabela historico
+  restab <- tabela_historico(alert)
  
   # Descritores gerais (nverde, namarelo, totultse, etc) 
  
-  descrgerais <- faztabelaoRS(ale = alert,ano = ano,varcli = varcli, 
+  descrgerais <- faztabelaoRS(tab = restab,ano = ano,varcli = varcli, 
                               uf = estado, data = data,tex=FALSE)
   
  

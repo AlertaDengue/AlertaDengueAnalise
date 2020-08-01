@@ -1,5 +1,5 @@
 # ====================================================
-# Arquivo de configuracao global do Alerta Dengue
+# Arquivo de configuracao global do Alerta Dengue 2020
 # ====================================================
 
 #------- Pacotes para carregar 
@@ -16,8 +16,6 @@ basedir = system("pwd", intern=TRUE)
 print(basedir)
 
 # codigos das figuras dos boletins
-source("AlertaDengueAnalise/config/codigofiguras.R")
-source("AlertaDengueAnalise/config/configRelatorio.r")
 source("AlertaDengueAnalise/config/publicar_alerta.R")
 
 # INLA
