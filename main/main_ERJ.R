@@ -18,10 +18,10 @@ dir_rel = "Relatorio/RJ/Estado"
 
 
 # data do relatorio --------------------------
-#data_relatorio = 202002
+#data_relatorio = 202024
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
-#AlertTools::lastDBdate("sinan", city = 3304557, datasource = con)
-
+AlertTools::lastDBdate("sinan", cities = 3304557, datasource = con)
+AlertTools::lastDBdate("clima_wu", cities = 3304557, datasource = con)
 
 # cidades -------------------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]

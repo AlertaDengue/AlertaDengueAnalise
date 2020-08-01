@@ -70,8 +70,9 @@ str(d)
 head(d)
 
 
-comando <- "SELECT geocodigo,nome,populacao,uf FROM \"Dengue_global\".\"Municipio\" "
+comando <- "SELECT nome, uf FROM \"Dengue_global\".\"Municipio\" where geocodigo = 3152139 "
 pop <- dbGetQuery(con, comando)
+
 save(pop, file = "pop.RData")
 
 # primeiros 2 registros da tabela dengue global. estado
@@ -88,10 +89,6 @@ comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" 
 tw <- dbGetQuery(con, comando)
 str(tw)
 
-<<<<<<< HEAD
-# baixar dados notificacao 
-comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 2000000 AND 
-municipio_geocodigo <  3000000 AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
 tw <- dbGetQuery(con, comando)
 nrow(tw)
 
@@ -113,7 +110,7 @@ comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodig
 AND municipio_geocodigo < 2400000 AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
 tw <- dbGetQuery(con, comando)
 nrow(tw)
-table(tw$)
+
 >>>>>>> a0d6d6b9e32845110963a69afbc614bf1e661730
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
 comando <- "SELECT nome, geocodigo FROM \"Dengue_global\".\"Municipio\" "
@@ -160,15 +157,17 @@ sqlquery = paste("SELECT  *
 sbjr <- dbGetQuery(con, sqlquery)
 
 # Dados de chikungunya do municipio 3304557
-sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND cid10_codigo = \'A920\'"
+sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 
+AND cid10_codigo = \'A920\'"
 d <- dbGetQuery(con, sqlquery)
 
 # Dados de notificacao do municipio 
-sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo = 3304557 AND ano_notif = 2019
-AND cid10_codigo = \'A90\' AND se_notif > 34"
+sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 3100000 
+AND municipio_geocodigo < 3200000 AND ano_notif >=2019 AND cid10_codigo = \'A90\'"
 d <- dbGetQuery(con, sqlquery)
-summary(d)
+d <- d[d$dt_notific > as.Date("2019-07-01"), c("municipio_geocodigo","dt_notific","dt_sin_pri","dt_digita")]
 
+save(d, cid, file = "dados-MG.RData")
 # Dados de notificacao por doenca  
 sqlquery = "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE cid10_codigo = \'A92.8\'"
 d <- dbGetQuery(con, sqlquery)
@@ -183,13 +182,16 @@ dbListFields(con, c("Dengue_global","regional_saude"))
 d <- dbReadTable(con, c("Dengue_global",""))
 str(d)
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo = 3304557"
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo 
+ = 3117835"
 dr <- dbGetQuery(con, sqlquery)
 dr
+summary(dr)
 
-sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" "
+sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE nome_regional = \'Crato\'"
 d <- dbGetQuery(con, sqlquery)
 head(d)
+
 
 # ------------------------------------------------------
 # 2. Criar um objeto data.frame a partir da consulta ao banco de dados
@@ -228,7 +230,7 @@ dim(tw)
 
 #Selecionando pelo valor de uma das variaveis, é preciso usar SQL
 c1 <- "SELECT * from \"Municipio\".\"Historico_alerta\" WHERE 
-                \"municipio_geocodigo\" = 3506003 "
+                \"municipio_geocodigo\" = 4314902 "
 d <- dbGetQuery(con,c1)
 tail(d[order(d$SE),], n= 20)
 
@@ -248,6 +250,12 @@ d <- dbGetQuery(con,c1)
 c1 <- paste("SELECT * from \"Dengue_global\".\"Municipio\" WHERE 
                 geocodigo > 3000000")
 d <- dbGetQuery(con,c1)
+
+# verificando se a cidade esta no banco
+c1 <- paste("SELECT * from \"Dengue_global\".\"Municipio\" WHERE 
+                geocodigo= 3152139")
+d <- dbGetQuery(con,c1)
+
 
 # municipio
 c1 <- paste("SELECT * from \"Municipio\".\"Notificacao\" WHERE 
@@ -292,7 +300,7 @@ dbListFields(con, c("Municipio","Notificacao"))
 sql <- "SELECT * from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000 AND ano_notif=2106"
 dd <- dbGetQuery(con, sql)
 
-#sql <- "DELETE from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 4100000 AND ano_notif=2016"
+#sql <- "DELETE from \"Dengue_global\".\"parameters\" WHERE  municipio_geocodigo = 3112208"
 #dbGetQuery(con, sql)
 
 
@@ -388,19 +396,27 @@ IN  (", sql1, ") AND data_dia <= ",sql2)
   }
   inserelinha(newdata,1)
   
+  
+  #sql = paste("insert into \"Dengue_global\".\"parameters\" (municipio_geocodigo) values (3112208)")
+  #dbGetQuery(con, sql)
+  sql = paste("select * from \"Dengue_global\".\"parameters\" where municipio_geocodigo=3112208")
+  dbGetQuery(con, sql)
+  update_sql = "UPDATE \"Dengue_global\".parameters SET cid10 = \'A90\' WHERE municipio_geocodigo = 3112208"
+  
+  
   for (i in 1:dim(newdata)[1]) inserelinha(newdata,i)
   
   
   # inserindo um valor 
-  update_sql = "UPDATE \"Dengue_global\".regional_saude SET tcrit = 22
-   WHERE municipio_geocodigo = 3506003"
+  update_sql = "UPDATE \"Dengue_global\".regional_saude SET nome_regional = \'Crato\', id_regional = 20 WHERE municipio_geocodigo = 2314003"
+  
   dbGetQuery(con, update_sql)
   
   
     
   tabr <- dbReadTable(con, c("Dengue_global","regional_saude"))
   
-  #sql <- "DELETE from \"Dengue_global\".\"regional_saude\" where municipio_geocodigo > 4100000"
+  #sql <- "DELETE from \"Dengue_global\".\"regional_saude\" where municipio_geocodigo = 3100500 AND codmodelo "
   #dbGetQuery(con, sql)
   
   # =======================
@@ -461,7 +477,7 @@ character varying(5) DEFAULT NULL"
   
   dd <- dbGetQuery(con,crianewcol)
   
-  # =========================
+    # =========================
   # cria nova coluna nas tabelas de historico para inserir tweets
   dbListFields(con, c("Municipio","Historico_alerta"))
   #crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN tweet numeric(5) DEFAULT NULL"
@@ -535,8 +551,15 @@ character varying(5) DEFAULT NULL"
   #update_sql = "UPDATE \"Dengue_global\".parameters SET codmodelo = \'Aw\' WHERE varcli= 'umid_max'"
   
   #dbGetQuery(con,update_sql)
-  comando <- "SELECT * FROM \"Dengue_global\".parameters WHERE municipio_geocodigo = 2304400"
+  comando <- "SELECT * FROM \"Dengue_global\".parameters WHERE municipio_geocodigo = 3141801"
   d <- dbGetQuery(con, comando)
+  
+  # change the type of the columns
+  sql_query <- "ALTER TABLE \"Dengue_global\".parameters ALTER COLUMN varcli2 TYPE varchar(16)"
+  d <- dbGetQuery(con, sql_query)
+  
+  
+  
    # =======================
   # inserir nova cidade na tabela localidade
   
@@ -593,5 +616,28 @@ character varying(5) DEFAULT NULL"
   tw <- dbGetQuery(con,c1)
   names(tw)<-c("data","tweet")
   tw <- subset(tw, as.Date(data, format = "%Y-%m-%d") <= lastday)
+  
+  ###  find duplicates
+  sql_dupli <- "SELECT municipio_geocodigo, COUNT(municipio_geocodigo) FROM \"Dengue_global\".parameters 
+WHERE cid10 = \'A90\' GROUP BY municipio_geocodigo HAVING COUNT( municipio_geocodigo )> 1  ORDER BY municipio_geocodigo"
+  
+  dup <- dbGetQuery(con,sql_dupli)
+  head(dup)
+  
+  ## remove duplicates (GOOD CODE! use it!)
+  sql_rem_dupli <- "DELETE FROM \"Dengue_global\".parameters a USING \"Dengue_global\".parameters b
+  WHERE a.municipio_geocodigo = b.municipio_geocodigo
+  AND a.cid10 = b.cid10
+  AND a.codmodelo IS NULL"
+  #dbGetQuery(con,sql_rem_dupli)
+  
+  
+  sql_null <- "SELECT * FROM \"Dengue_global\".parameters WHERE codmodelo IS NULL"
+  isnull <- dbGetQuery(con,sql_null)
+  
+  ## remove lines
+  sql_del <- "DELETE from \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo=3141801 "
+  #dbGetQuery(con, sql_del)
+  
   
   

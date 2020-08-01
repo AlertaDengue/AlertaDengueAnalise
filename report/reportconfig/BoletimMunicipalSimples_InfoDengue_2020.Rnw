@@ -1,0 +1,203 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Boletim semanal municipal do InfoDengue Simples (sem a pagina da regional)
+% Adapted by Claudia Codeco (Jun 2020)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[10pt]{article} % The default font size is 10pt; 11pt and 12pt are alternatives
+\SweaveOpts{keep.source=TRUE}
+\usepackage[utf8]{inputenc}
+%\SweaveOpts{concordance=TRUE}
+\input{structure_infodengue.tex} % Include the document which specifies all packages and structural customizations for this template
+
+% Os objetos R para esse script estao no ambiente env criado pela funcao geraPDF. 
+
+<<carrega_dados,echo=FALSE,results=hide>>=
+options(useFancyQuotes=FALSE)
+library('xtable')
+@
+
+\fancyfoot[C]{Boletim Municipal - \Sexpr{env$nomecidade}}
+\fancyfoot[R]{SE \Sexpr{env$se} de \Sexpr{env$ano}}
+\fancyfoot[L]{\href{http://info.dengue.mat.br}{InfoDengue}}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+%---------------------------------------------------------------------------------
+%	HEADER IMAGE
+%---------------------------------------------------------------------------------
+
+\begin{figure}[H]
+\centering\includegraphics[width=1\linewidth]{InfoDengue2.png}  
+\end{figure}
+
+\centerline {\color{altncolor}\rule{1\linewidth}{2.75pt}} % Horizontal line
+
+
+\begin{minipage}[t]{1\linewidth} % Nao pode colocar espaco acima senao ela nao fica lado a lado
+
+%-----------------------------------------------------------------------------------
+%	MAIN BODY - FIRST PAGE
+%-----------------------------------------------------------------------------------
+%\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+
+\textbf{\large Boletim Semanal - semana \Sexpr{env$se} de \Sexpr{env$ano}}
+
+\hypertarget{municipio}{\heading{Situação da Dengue em \Sexpr{env$nomecidade} - \Sexpr{env$sigla}}{6pt}} % \hypertarget 
+
+Esse boletim analisa as condições de transmissão da dengue em \Sexpr{env$nomecidade} utilizando dados de clima, redes sociais e notificação de casos fornecido pela Secretaria de Saúde. A partir desses dados, são analisadas as condições de receptividade ambiental, transmissão e incidência (ver \hyperlink{descricao}{definição}). O objetivo é contribuir para a tomada de decisão na sala de situação. 
+
+Esse ano, foram notificados até o momento, \Sexpr{env$totanomun} casos de dengue, o que corresponde a uma incidência acumulada de \Sexpr{env$incano} casos por 100.000 habitantes. Esse valor corresponde a \Sexpr{env$variacao} \% do registrado no ano passado, no mesmo período. 
+
+A figura 1 mostra o perfil de casos na cidade. As cores indicam os níveis de atenção, conforme descrito no quadro. Confira a relação entre os níveis de atenção e os níveis de contingência no anexo.
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{\Sexpr{env$figmunicipio3}}
+\captionof{figure}{Série temporal de casos suspeitos de dengue em \Sexpr{env$nomecidade}. Cores indicam níveis de alerta que combinam informações de receptividade, transmissão e incidência.}
+\end{center}
+
+%--------------------------------------------------------------------------------
+%	 BOX - CODIGO DE CORES
+%--------------------------------------------------------------------------------
+\vspace{1cm}
+\begin{mdframed}[style=intextbox,frametitle={}, backgroundcolor=black!10] % Sidebar box
+
+\hypertarget{codcor}{\heading{O código de Cores}{1pt}} % \hypertarget provides a label to reference using \hyperlink{label}{link text}
+\begin{description}
+\item[Verde:] Receptividade ambiental baixa para transmissão de arboviroses.       
+\item[Amarelo:] Há condições ambientais receptivas para transmissão de arboviroses, além de indicação de presença do vírus.
+\item[Laranja:] Detectou-se transmissão sustentada da dengue recentemente ou atualmente. 
+\item[Vermelho:] Detectou-se incidência acima dos 90\% históricos por pelo menos duas semanas, recentemente ou atualmente.
+\end{description}
+\end{mdframed}
+
+\end{minipage}
+
+\newpage
+
+% --------------------------------------------------------------------------------
+% Pagina com receptividade
+% --------------------------------------------------------------------------------
+\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+\hypertarget{tablink}{\heading{Perfil sazonal da transmissão da dengue}{6pt}} % \hypertarget 
+
+A figura 2 mostra o perfil sazonal da dengue em \Sexpr{env$nomecidade}. A semana atual está indicada pela seta azul. A figura 2A indica o perfil sazonal da receptividade ambiental, numa escala que varia de 0 (período pouco receptivo) a 100 (período muito receptivo). Períodos muito receptivos indicam a sazonalidade da doença. A figura 2B mostra o número reprodutivo médio dos últimos 10 anos ao longo do ano. Valores maiores que 1 indicam histórico de risco, especialmente se ocorrerem em sequência. A figura 2C mostra o perfil sazonal das séries temporais de incidência de dengue nos últimos 10 anos para comparar com a incidência desse ano (marcada em vermelho). 
+
+\begin{center}
+\includegraphics[width=0.70\textwidth]{\Sexpr{env$figmunicipio1}}
+\captionof{figure}{(A) Faixa amarela indica o período com maior histórico de condições climáticas favoráveis para transmissão da dengue em \Sexpr{env$nomecidade}; (B) Média histórica do número reprodutivo na semana. Ocorrências isoladas de $R > 1$ não refletem transmissão sustentada; (C) Padrão sazonal da otificação de dengue nos últimos 10 anos. Em vermelho, a série de \Sexpr{env$ano}. }
+\end{center}
+
+\end{minipage}
+
+% --------------------------------------------------------------------------------
+% Pagina com incidencia
+% --------------------------------------------------------------------------------
+\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+\hypertarget{tablink}{\heading{Situação recente da Dengue}{6pt}} % \hypertarget 
+
+Essa seção foca no período recente de transmissão de dengue em \Sexpr{env$nomecidade}. A figura 3A mostra o padrão de variação da curva epidêmica. Saltos positivos seguidos (setas vermelhas) indicam períodos de transmissão. Esse ano, houve um \Sexpr{env$variacaopos} no número de casos notificados em relação ao ano passado, considerando até a mesma semana epidemiológica. De \Sexpr{env$se} semanas, \Sexpr{env$weekReceptEsseAno} apresentaram condições favoráveis para transmissão, enquanto que no ano passado, foram \Sexpr{env$weekReceptAnoPass}. Transmissão efetiva foi detectada em \Sexpr{env$weekTransmEsseAno} semanas, enquanto no ano passado, foram \Sexpr{env$weekTransmAnoPass} semanas.  
+
+A figura 3B mostra a curva de casos de dengue e as faixas de atenção. A faixa verde indica incidência abaixo do limiar pré-epidêmico da região. A faixa vermelha indica incidência acima do limiar epidêmico estabelecido para a cidade utilizando dados históricos.  Em algumas cidades, também é apresentado, como uma linha verde, o número de casos preditos com base no ajuste de modelo estatístico a dados de redes sociais (ver Nota).
+
+\end{minipage}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.80\textwidth]{\Sexpr{env$figmunicipio2}}
+\end{center}
+\caption{(A) Curva de casos de dengue em \Sexpr{env$nomecidade} indicando variação semanal; (B) Níveis de incidência pré-epidêmico (verde) e epidêmico (vermelho) .}
+\end{figure}
+
+\newpage
+% --------------------------------------------------------------------------------
+% Pagina com tabela
+% --------------------------------------------------------------------------------
+\begin{minipage}[t]{1\linewidth} % Mini page taking up 100% of the actual page
+\hypertarget{tablink}{\heading{Resumo das últimas semanas epidemiológicas}{6pt}} % \hypertarget 
+
+A Tabela 1 sumariza a situação de transmissão e atividade da dengue nas últimas semanas. 
+
+% tabela municipal
+\captionof{table}[tabmun]{Situação recente da dengue no município.}
+\begin{center}
+\input{\Sexpr{env$tabmun}}
+\end{center}
+\vspace{2cm}
+
+
+\hypertarget{descricao}{\heading{Descrição dos indicadores}{6pt}} 
+
+Esses são os descritores utilizados no Infodengue. Mais detalhes em: \url{http://info.dengue.mat.br}.
+
+\begin{tabular}{| l | p{12cm} |}
+\hline
+indicadores & descrição \\  
+\hline
+ casos & casos registrados com datas dos primeiros sintomas. Esse dado está sujeito a atualização\\ \hline
+ casos esperados & estimação do número de casos atuais após correção estatística do atraso de notificação\\ \hline
+ receptividade & indica a presença de condições ambientais favoráveis para reprodução e competência do mosquito para transmissão de dengue baseado no clima e na presença de vírus\\
+ transmissão & indicação de transmissão sustentada de dengue, isso é, sequência de semanas com $Rt > 1$ atualmente ou recentemente\\  \hline
+incidência & indica o quão alta é a incidência semanal atual em comparação com os valores históricos\\  \hline
+nível & nível de atenção para a situação da dengue calculado pelo Infodengue. Veja o Quadro de comparação do nível do Infodengue com os níveis do Plano de Contingência da Dengue do Ministério da Saúde\\ 
+\hline
+\end{tabular}
+
+\end{minipage}
+
+\newpage
+%---------------------------------------------------------------------------------
+%	Variáves nas Tabelas, Créditos e Contato
+%---------------------------------------------------------------------------------
+
+\begin{minipage}[t]{1\linewidth} 
+
+\hypertarget{notas}{\heading{Notas}{6pt}}
+
+\begin{itemize}
+\item Os dados de notificação são fornecidos pela Secretaria de Saúde. Esses são dados ainda sujeitos a revisão. 
+\item Em algumas cidades, é aplicado um modelo de nowcasting (correção da incidência atual em função do tempo até a notificação). Esse modelo só é ajustado em cidades com volume de casos suficiente. Quando não há ajuste, a coluna de casos estimados mostra os mesmos valores da coluna de casos.  
+\item A análise de receptividade é feita com base em dados de temperatura e umidade do ar coletadas de aeroportos próximos do município. Em alguns municípios, essa informação pode não ser de boa qualidade. 
+\item Os indicadores de redes sociais (tweets) são gerados pelo Observatório de Dengue (UFMG). Os tweets são processados para exclusão de informes e outros temas relacionados a dengue. Incluímos essa informação em relatórios do Infodengue apenas quando análises prévias indicam que há associação estatística entre o indicador e a incidência de dengue. 
+\item Os perfis sazonais de receptividade ambiental e de transmissão são calculados com base na série histórica desde 2010. Foi ajustado um modelo de decisão para identificar as condições climáticas associadas com número reprodutivo maior que 1 na cidade.  
+\item As análises aqui apresentadas são baseadas nos dados disponíveis até a data do relatório. Atualizações dessas informações podem alterar os níveis atribuídos a cada semana. Em cada novo relatório, toda a série histórica é recalculada, por isso, pode haver divergência entre boletins. Nesse caso, considere sempre a última versão.
+\end{itemize}
+
+\hypertarget{creditos}{\heading{Créditos}{6pt}}
+
+Este é um projeto desenvolvido com apoio da SVS/MS e Fiocruz em resulta da parceria de:
+
+\begin{itemize}
+\item Programa de Computação Científica, Fundação Oswaldo Cruz, Rio de Janeiro.
+\item Escola de Matemática Aplicada, Fundação Getúlio Vargas.
+\item Secretarias Municipais e Estaduais de Saúde participantes do InfoDengue.
+\item Observatório de Dengue da UFMG
+\end{itemize}
+
+\BackToContents % Link back to the contents of the newsletter
+
+\vspace{1cm}
+
+\hrule
+
+Para mais detalhes sobre o sistema de alerta InfoDengue e os modelos implementados, consultar: \url{http://info.dengue.mat.br}\\
+
+\textbf{Contato}: \href{alerta\_dengue@fiocruz.br}{\nolinkurl{alerta\_dengue@fiocruz.br} }
+\end{minipage} % fim da pagina de creditos
+
+\newpage
+
+
+\hypertarget{pncd}{\heading{Anexo}{6pt}}
+
+Para facilitar a tomada de decisão, o quadro mostra a relação entre os níveis de atenção do Infodengue e os níveis do \href{http://www.saude.gov.br/images/pdf/2015/janeiro/20/plano-contingencia-dengue-19jan15-web.pdf}{Plano de Contingência Nacional para Controle da Dengue}. 
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=1\textwidth]{PNCDinfodengue.png}
+\end{center}
+\end{figure}
+
+
+
+\end{document} 
