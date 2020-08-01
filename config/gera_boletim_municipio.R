@@ -108,12 +108,12 @@ gera_boletim_municipio <- function(ale, uf, dir.out = out, dirb = basedir, publi
   cores <- c("verde","amarelo","laranja","vermelho")
   dtail <- cbind(dtail, nivel = cores[tail(d$level,n=6)])
   
-  tabname <- paste("tabela",nomesemacento,".tex",sep="")
+  tabname <- paste(dirfigs,"/tabela",nomesemacento,".tex",sep="")
   tabelax <-xtable(dtail,align ="cc|cccccc",digits = 0)
   digits(tabelax) <- 0
   print(tabelax, type="latex", file=tabname, floating=FALSE, latex.environments = NULL,
         include.rownames=FALSE)
-  
+  print(paste("tabela",tabname,"criada"))
   # ------------------------ 
   # CRIA AMBIENTE")
   # ------------------------
@@ -170,7 +170,7 @@ gera_boletim_municipio <- function(ale, uf, dir.out = out, dirb = basedir, publi
   nomeboletim = paste(dir.boletim, "/",uf,"-mn-",nomesemacento,"-",Sys.Date(),".pdf",sep="")
   
   if(!dir.exists(dir.boletim)) {
-    message(paste("boletim foi criado na pasta reportconfig mas nao foi movido para a pasta dos boletins pq a mesma não foi encontrada"))
+    message(paste("boletim foi criado na pasta reportconfig mas nao foi movido para a pasta",dir.boletim ,"pq a não foi encontrada"))
     return(pdffile)
   }
   

@@ -51,7 +51,7 @@ out = paste0("AlertaDengueAnalise/report/RS/Municipios/",nome)
 bol <- gera_boletim_municipio(ale.den, uf = uf, dir.out = out)  
 
 if(write_report){
-  dir_rel <- paste0("Relatorio/RS/Municipios/",nomesemacento) 
+  dir_rel <- paste0("Relatorio/RS/Municipios/",nome) 
   dir.create(file.path(dir_rel), showWarnings = FALSE) # check if directory exists
   publicar_alerta(ale = ale.den, pdf = bol, dir = dir_rel)
   
