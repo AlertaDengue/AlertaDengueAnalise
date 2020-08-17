@@ -480,7 +480,7 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 ,
  
   # Descritores gerais (nverde, namarelo, totultse, etc) 
  
-  descrgerais <- faztabelaoRS(tab = restab,ano = ano,varcli = varcli, 
+  descrgerais <- faztabelaoRS(ale = alert, ano = ano ,varcli = varcli, 
                               uf = estado, data = data,tex=FALSE)
   
  
