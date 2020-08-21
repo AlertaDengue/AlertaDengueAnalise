@@ -18,7 +18,7 @@ dir_rel = "Relatorio/CE/Estado"
 
 
 # data do relatorio:---------------------
-#data_relatorio = 202005
+#data_relatorio = 202034
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # cidades --------------------------------
@@ -32,8 +32,8 @@ ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none",
 ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "none", 
                             finalday = dia_relatorio); save(ale.chik, file="alechik.RData")
 
-#ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none",
-#                            finalday = dia_relatorio); save(ale.zika, file="alezika.RData")
+ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none",
+                            finalday = dia_relatorio); save(ale.zika, file="alezika.RData")
 print(Sys.time())
 
 #new_data_relatorio <- max(ale.den[[1]]$data$SE, ale.chik[[1]]$data$SE, ale.zika[[1]]$data$SE)
@@ -50,7 +50,7 @@ if(write_report) {
 
   publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
   write_alerta(tabela_historico(ale.chik))
-  # write_alerta(tabela_historico(ale.zika))
+  write_alerta(tabela_historico(ale.zika))
   
 }
   
@@ -58,9 +58,9 @@ if(write_report) {
 CE.F.out = "AlertaDengueAnalise/report/CE/Municipios/Fortaleza" 
 flog.info("alerta dengue Fortaleza executing...", name = alog)
 
-ale.F.den <- pipe_infodengue(2304400, cid10 = "A90", nowcasting = "fixedprob", finalday = data_relatorio, iniSE = 201001)
-ale.F.chik <- pipe_infodengue(2304400, cid10 = "A92.0", nowcasting = "fixedprob", finalday = data_relatorio)
-#ale.F.zika <- pipe_infodengue(2304400, cid10 = "A92.8", nowcasting = "fixedprob", finalday = new_data_relatorio)
+ale.F.den <- pipe_infodengue(2304400, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
+ale.F.chik <- pipe_infodengue(2304400, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
+ale.F.zika <- pipe_infodengue(2304400, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
 
 # Boletim Arbo ----------------------------------
 if(write_report) {
