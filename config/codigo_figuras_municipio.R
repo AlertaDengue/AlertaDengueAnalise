@@ -18,7 +18,7 @@ figuras_municipio <- function(obj, param, nome, tsdur=104){
   print("Figuras: # fitting tweet lm (so plota se for significativa a associacao)")
   sig.tw <- FALSE
   if(sum(obj$tweet, na.rm = TRUE) != 0){
-    mod <- lm(casos ~ tweet, data = obj$data)
+    mod <- lm(casos ~ tweet, data = obj)
     sig.tw <- ifelse(confint(mod)[2,1] > 0, TRUE, FALSE) # true se  tweet tem relacao com casos 
   } 
   

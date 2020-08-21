@@ -146,6 +146,15 @@ sqlquery = paste("SELECT  *
   ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id =", "'SBRJ'")
 dSBRJ <- dbGetQuery(con, sqlquery)
 
+sqlquery = paste("SELECT  *
+  FROM  \"Municipio\".\"Estacao_wu\" AS e 
+  INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id IN ", "('SBMA','SBFO','SBTU','SBTE','SBSL','SBPJ','SBPN','SBIZ','SBBE','SBCJ','SBPB','SBCI','SBAA','SNCW','SBPL')")
+d <- dbGetQuery(con, sqlquery)
+
+names(d)
+dd <- d[,c(1:3,5, 9,6,12)]
+write.csv(dd, file = "ICAO_MA.csv")
 
 # dados da tabela da estacao wu para a estacao SBJR , primeiros 10 registros
 

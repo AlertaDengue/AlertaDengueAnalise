@@ -1,7 +1,7 @@
 library("AlertTools"); library(assertthat) ; library(tidyverse)
 
 ### 1. O que temos desse estado no banco de dados?
-UF = "Rio Grande do Sul"
+UF = "Minas Gerais"
 con <- DenguedbConnect(pass = pw)
 (getRegionais(uf = UF))
 (getRegionais(uf = UF, macroreg = TRUE))
