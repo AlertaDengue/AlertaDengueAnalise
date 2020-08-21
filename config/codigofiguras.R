@@ -1,6 +1,79 @@
 
 ## Graficos e Mapas para relatorios ########
 
+# ------------ figuramunicipio ------------------------------------
+## figuramunicipio: codigo da figura com 3 subfiguras que e usada para os municipios
+# obj é o alerta do municipio gerado pelo update.alerta
+# USO: figuramunicipio(alePR_RS_Cascavel[["CéuAzul"]])
+
+figuramunicipio <- function(obj, varcli = "temp_min", cid="A90", tsdur=104){
+  
+  if(cid == "A90") titulo = "Casos de Dengue"
+  if(cid == "A92.0") titulo = "Casos de Chikungunya"
+  if(cid == "A92.8") titulo = "Casos de Zika"
+  
+  geoc <- obj$data$cidade[1]
+  print(geoc)
+  param <- read.parameters(geoc, cid10 = cid)
+  
+  layout(matrix(1:3, nrow = 3, byrow = TRUE), widths = lcm(13), 
+         heights = c(rep(lcm(4),2), lcm(5)))
+  
+  n = dim(obj$data)[1]
+  objc = obj$data[(n-tsdur):n,]
+  
+  #objc <- obj$data[obj$data$SE>=201301,] 
+  # Subfigura do topo (serie temporal de casos e tweets)
+  par(mai=c(0,0,0,0),mar=c(1,4,0,3))
+  plot(objc$casos, type="l", xlab="", ylab="", axes=FALSE)
+  axis(1, pos=0, lty=0, lab=FALSE)
+  axis(2)
+  mtext(text=titulo, line=2.5,side=2, cex = 0.7)
+  maxy <- max(objc$casos, na.rm=TRUE)
+  if(cid == "A92.0")legend(25, maxy, c("casos de chikungunya"),col=c(1), lty=1, bty="n",cex=0.7)
+  if(cid == "A92.8")legend(25, maxy, c("casos de zika"),col=c(1), lty=1, bty="n",cex=0.7)
+  # colocar tweet, so dengue
+  if(cid == "A90") {
+    legend(25, maxy, c("casos de dengue","tweets"),col=c(1,3), lty=1, bty="n",cex=0.7)
+    par(new=T)
+    if(sum(is.na(objc$tweet))==nrow(objc)) objc$tweet = 0 # 
+    plot(objc$tweet, col=3, type="l", axes=FALSE , xlab="", ylab="" ) #*coefs[2] + coefs[1]
+    lines(objc$tweet, col=3, type="h") #*coefs[2] + coefs[1]
+    axis(1, pos=0, lty=0, lab=FALSE)
+    axis(4)
+    mtext(text="Tweets", line=2.5, side=4, cex = 0.7)
+  }
+  # subfigura do meio: clima
+  par(mai=c(0,0,0,0),mar=c(1,4,0,3))
+  if(varcli == "temp_min") {
+    plot(objc$temp_min, type="l", xlab="", ylab ="Temperatura min",axes=FALSE)
+    abline(h=param$clicrit, lty=2)
+  }
+  if(varcli == "umid_min") {
+    plot(objc$umid_min, type="l", xlab="", ylab ="Umidade min",axes=FALSE)
+    abline(h=param$clicrit, lty=2)
+  }
+  if(varcli == "umid_max") {
+    plot(objc$umid_max, type="l", xlab="", ylab ="Umidade max",axes=FALSE)
+    abline(h=param$clicrit, lty=2)
+  }
+  
+  legend(x="topleft",lty=c(2),col=c("black"),
+         legend=c("limiar favorável transmissão"),cex=0.85,bty="n")
+  axis(2)
+  
+  
+  # subfigura de baixo: alerta colorido
+  par(mai=c(0,0,0,0),mar=c(1,4,0,4))
+  plot_alerta(obj, geocodigo = geoc, var="casos") #"inc",ini=min(objc$SE),fim=max(objc$SE))
+  abline(h=param$limiar_epidemico*obj$data$pop[1]/1e5,lty=2, col ="red")
+  abline(h=param$limiar_preseason*obj$data$pop[1]/1e5,lty=2, col ="darkgreen")
+  abline(h=param$limiar_posseason*obj$data$pop[1]/1e5,lty=2, col ="black")
+  legend(x="topright",lty=c(3,2,2),col=c("red","darkgreen","black"),
+         legend=c("limiar epidêmico","limiar pré-epidêmico","limiar pós-epidêmico"),cex=0.85,bty="n")
+  
+}
+
 
 
 # --------- mapa.regional --------------------------------------
