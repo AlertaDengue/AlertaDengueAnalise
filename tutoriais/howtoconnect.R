@@ -104,14 +104,12 @@ hh <- dbGetQuery(con, comando)
 hhh <- hh[order(hh$SE),]
 tail(hhh, n= 15)
 
-=======
-# baixar 
+ 
 comando <- "SELECT * FROM \"Municipio\".\"Notificacao\" WHERE municipio_geocodigo > 2300000
 AND municipio_geocodigo < 2400000 AND ano_notif = 2020 AND cid10_codigo = \'A90\'"
 tw <- dbGetQuery(con, comando)
 nrow(tw)
 
->>>>>>> a0d6d6b9e32845110963a69afbc614bf1e661730
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
 comando <- "SELECT nome, geocodigo FROM \"Dengue_global\".\"Municipio\" "
 mun <- dbGetQuery(con, comando)
@@ -149,12 +147,14 @@ dSBRJ <- dbGetQuery(con, sqlquery)
 sqlquery = paste("SELECT  *
   FROM  \"Municipio\".\"Estacao_wu\" AS e 
   INNER JOIN \"Municipio\".\"Clima_wu\" AS c 
-  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id IN ", "('SBMA','SBFO','SBTU','SBTE','SBSL','SBPJ','SBPN','SBIZ','SBBE','SBCJ','SBPB','SBCI','SBAA','SNCW','SBPL')")
+  ON e.estacao_id = c.\"Estacao_wu_estacao_id\" WHERE e.estacao_id IN ", "('SBBZ','SBPI','SBCP','SBME','SBSC','SBRJ','SBJR','SBCB','SBES','SBGL','SBAF','SBBQ','SBIP','SBRS','SBPW','SBJF','SBGW','SBFS')")
 d <- dbGetQuery(con, sqlquery)
+
+
 
 names(d)
 dd <- d[,c(1:3,5, 9,6,12)]
-write.csv(dd, file = "ICAO_MA.csv")
+write.csv(dd, file = "ICAO_RJ.csv")
 
 # dados da tabela da estacao wu para a estacao SBJR , primeiros 10 registros
 
