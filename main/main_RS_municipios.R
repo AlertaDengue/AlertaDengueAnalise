@@ -61,6 +61,7 @@ if(write_report){
 save(ale.den, file = paste0("alertasRData/aleRS-mn",data_relatorio,".RData"))
 
 # ----- Fechando o banco de dados
+
 dbDisconnect(con)
 
 

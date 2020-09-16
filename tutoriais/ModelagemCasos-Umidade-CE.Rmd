@@ -1,0 +1,305 @@
+#####"Script Modelagem Casos_umidade"########
+#author: "Sara de Souza"
+
+
+### BIBLIOTECAS NECESSÁRIAS
+```{r}
+library(AlertTools)
+library(lubridate)
+library(RPostgreSQL)
+#library(ggplot2)
+#library(RColorBrewer)
+library(mgcv)
+library(zoo)
+library(MASS)
+#library(foreign)
+#library(effects)
+#library(epiDisplay)
+#library(gridExtra)
+#library(visreg)
+#library(car)
+#library(pscl)
+#library(ggthemes)
+#library(maptools)
+#library(rgdal)
+```
+
+### Chamando e organizando os dados
+
+```{r}
+setwd("~/")
+con=DenguedbConnect()
+geocodigo = 2304400
+cas = getCases(city = geocodigo, datasource = con) 
+tw = getTweet(city = geocodigo, datasource = con)
+climatemp = getWU(stations = 'SBFZ', var=c("temp_min","umid_min","umid_med","umid_max"), datasource=con)
+# juntando
+d <- mergedata(cases = cas, climate = climatemp)
+d<-Rt(d,count = "casos", gtdist = "normal", meangt = 3, sdgt=1)
+
+#acrescentando data nos dados 
+d$data <- SE2date(d$SE)$ini
+d$mes=lubridate::month(d$data)
+d$ano= lubridate::year(d$data)
+d$date=as.yearmon(d$data)
+d$sem <- d$SE - d$ano*100
+str(d)
+```
+### ver quais meses mais secos
+```{r}
+# (como eu coloco todo mundo no mesmo gráfico? 
+
+plot(1:52, d$umid_min[d$ano==2010],ylim=c(35,100),col=1,type='l',xlab="meses",main="UMIDADE",ylab="umidade minima")
+lines(1:52,d$umid_min[d$ano==2011], col=2)
+lines(1:52,d$umid_min[d$ano==2012],col=3)
+lines(1:52,d$umid_min[d$ano==2013],col=4)
+lines(1:52,d$umid_min[d$ano==2014],col=5)
+lines(1:52,d$umid_min[d$ano==2015],col=6)
+lines(1:52,d$umid_min[d$ano==2016],col=7)
+lines(1:52,d$umid_min[d$ano==2017],col=8)
+
+#colocando setembro como referência
+d$mes <- relevel(as.factor(d$mes), ref="9")
+```
+
+```{r}
+# (como eu coloco todo mundo no mesmo gráfico? 
+plot((d$sem[d$ano==2010]),d$umid_max[d$ano==2010],ylim=c(70,100),col=1,type='l',xlab="meses",main="UMIDADE MAX",ylab="umidade max")
+lines(d$sem[d$ano==2011],d$umid_max[d$ano==2011], col=2)
+lines((d$sem[d$ano==2012]),d$umid_max[d$ano==2012],col=3)
+lines(d$sem[d$ano==2013],d$umid_max[d$ano==2013],col=4)
+lines((d$sem[d$ano==2014]),d$umid_max[d$ano==2014],col=5)
+lines(d$sem[d$ano==2015],d$umid_max[d$ano==2015],col=6)
+lines((d$sem[d$ano==2016]),d$umid_max[d$ano==2016],col=7)
+lines(d$sem[d$ano==2017],d$umid_max[d$ano==2017],col=8)
+
+```
+
+
+### analise descritiva
+```{r}
+par(mfrow=c(1,3))
+boxplot(d$umid_min~(d$Rt > 1), notch = T)
+boxplot(d$umid_med~(d$Rt > 1), notch = T)
+boxplot(d$umid_max~(d$Rt > 1), notch = T)
+
+abline(h=87, col =2)
+```
+
+Umidade maxima é o que discrimina mais
+```{r}
+mod1 <- gam(I(Rt>1)~s(umid_max), data = d, family = "binomial")
+mod2 <- gam(I(Rt>1)~s(umid_med), data = d, family = "binomial")
+mod3 <- gam(I(Rt>1)~s(umid_min), data = d, family = "binomial")
+AIC(mod1,mod2,mod3)
+```
+
+ROC
+```{r}
+library(ROCR)
+d$Rt1 <- 0
+d$Rt1[d$Rt > 1] <- 1
+pred<- prediction(predictions = d$umid_max,
+                  labels = d$Rt1)
+perf<- performance(pred, "acc")
+plot(perf)
+
+# identifiando os valores maximos de acuracia
+maxacc <- max(perf@y.values[[1]]) 
+maxacc
+
+# plotando
+umid.cut = perf@x.values[[1]][which(perf@y.values[[1]]==maxacc)]
+abline(v=umid.cut)
+mtext(side = 3, text = paste("threshold is", umid.cut))
+
+```
+
+### Retas de têndencia
+```{r}
+plot(d$umid_min,d$casos,xlab="umid-min T=0", ylab="casos",main="Reta de Tendencia CasosxUmidade minT=0")
+abline(lm(d$casos~d$umid_min)) 
+summary(lm(d$casos~d$umid_min))
+plot(d$umid_med,d$casos,xlab="umid-med T=0", ylab="casos",main="Reta de Tendencia CasosxUmidade medT=0")
+abline(lm(d$casos~d$umid_med)) 
+summary(lm(d$casos~d$umid_med))
+plot(d$umid_max,d$casos,xlab="umid-max T=0", ylab="casos",main="Reta de Tendencia CasosxUmidade maxT=0")
+abline(lm(d$casos~d$umid_max)) 
+summary(lm(d$casos~d$umid_max))
+```
+
+
+
+### criando váriaveis defasadas de umidade 
+
+```{r}
+d$umid_min1 <- NA
+d$umid_min1[2:415]<-d$umid_min[1:414]
+d$umid_min2 <- NA
+d$umid_min2[2:415]<-d$umid_min1[1:414]
+d$umid_min3 <- NA
+d$umid_min3[2:415]<-d$umid_min2[1:414]
+
+d$umid_med1 <- NA
+d$umid_med1[2:415]<-d$umid_med[1:414]
+d$umid_med2 <- NA
+d$umid_med2[2:415]<-d$umid_med1[1:414]
+d$umid_med3 <- NA
+d$umid_med3[2:415]<-d$umid_med2[1:414]
+
+
+d$umid_max1 <- NA
+d$umid_max1[2:415]<-d$umid_max[1:414]
+d$umid_max2 <- NA
+d$umid_max2[2:415]<-d$umid_max1[1:414]
+d$umid_max3 <- NA
+d$umid_max3[2:415]<-d$umid_max2[1:414]
+
+```
+
+
+
+### tendencia com defasagens de umidade
+ 
+
+```{r}
+par(mfrow=c(3,1))
+plot(d$umid_min1,d$casos,xlab="umid-min T=1", ylab="casos",main="Reta de Tendencia CasosxUmidade minT=1")
+abline(lm(d$casos~d$umid_min1)) 
+summary(lm(d$casos~d$umid_min1))
+plot(d$umid_min2,d$casos,xlab="umid-min T=2", ylab="casos",main="Reta de Tendencia CasosxUmidade minT=2")
+abline(lm(d$casos~d$umid_min2)) 
+summary(lm(d$casos~d$umid_min2))
+plot(d$umid_min3,d$casos,xlab="umid-min T=3", ylab="casos",main="Reta de Tendencia CasosxUmidade minT=3")
+abline(lm(d$casos~d$umid_min3)) 
+summary(lm(d$casos~d$umid_min3))
+```
+
+```{r}
+plot(d$umid_med1,d$casos,xlab="umid-med T=1", ylab="casos",main="Reta de Tendencia CasosxUmidade medT=1")
+abline(lm(d$casos~d$umid_med1)) 
+summary(lm(d$casos~d$umid_med1))
+plot(d$umid_med2,d$casos,xlab="umid-med T=2", ylab="casos",main="Reta de Tendencia CasosxUmidade medT=2")
+abline(lm(d$casos~d$umid_med2)) 
+summary(lm(d$casos~d$umid_med2))
+plot(d$umid_med3,d$casos,xlab="umid-med T=3", ylab="casos",main="Reta de Tendencia CasosxUmidade medT=3")
+abline(lm(d$casos~d$umid_med3)) 
+summary(lm(d$casos~d$umid_med3))
+
+```
+
+```{r}
+plot(d$umid_max1,d$casos,xlab="umid-max T=1", ylab="casos",main="Reta de Tendencia CasosxUmidade maxT=1")
+abline(lm(d$casos~d$umid_max1)) 
+summary(lm(d$casos~d$umid_max1))
+plot(d$umid_max2,d$casos,xlab="umid-max T=2", ylab="casos",main="Reta de Tendencia CasosxUmidade maxT=2")
+abline(lm(d$casos~d$umid_max2)) 
+summary(lm(d$casos~d$umid_max2))
+plot(d$umid_max3,d$casos,xlab="umid-max T=3", ylab="casos",main="Reta de Tendencia CasosxUmidade maxT=3")
+abline(lm(d$casos~d$umid_max3)) 
+summary(lm(d$casos~d$umid_max3))
+
+```
+
+
+
+### Modelo gam relacao umidade X casos 1 semana depois
+```{r}
+gamcasosumin<-gam(d$casos~s(d$umid_min1)+offset(log(d$pop)))
+#aumento a partir da umidade min de 60%
+
+gamcasosumax<-gam(d$casos~s(d$umid_max1)+offset(log(d$pop)))
+AIC(gamcasosumax, gamcasosumin)
+summary(gamcasosumin)
+plot(gamcasosumin)
+abline(h=0, col=2)
+```
+
+```{r}
+#residuo e  correlação horrorosos
+par(mfrow=c(2,2))
+gam.check(gamcasos)
+acf(resid(gamcasos))
+```
+
+
+#Modelo poisson
+```{r}
+par(mfrow=c(2,2))
+poisson1.nulo<-glm(casos~1 + offset(log(pop)), family="poisson",data=d)
+poisson1<-glm(casos~ umid_min + offset(log(pop)), family="poisson",data=d)
+plot(poisson1)
+AIC(poisson1,poisson1.nulo)
+summary(poisson1)
+#overdispersion 
+```
+
+
+### Modelo binomial negativa 
+(fiz para umidades com até 3 semanas de defasagem, testei todas, so nao coloquei aqui pra nao ficar muito grande) )
+
+```{r}
+par(mfrow=c(2,2))
+nb1<-glm.nb(casos~umid_min1 + offset(log(pop)), link="log", data=d)
+summary(nb1)
+nb2<-glm.nb(casos~umid_min3 + offset(log(pop)), link="log", data=d)
+summary(nb2) 
+nb3<-glm.nb(casos~umid_med3 + offset(log(pop)), link="log", data=d)
+summary(nb3)#esse modelo foi o melhor, menor dispersão e menor AIC
+
+```
+
+
+
+### Chequemos os pressupostos do melhor modelo
+
+```{r}
+summary(nb2)
+ls(nb2)
+acf(residuals(nb2))
+
+```
+
+#muita correlação
+```{r}
+plot(residuals(nb2))
+```
+
+
+#Vamos de gam nb?
+
+```{r}
+library(mgcv)
+gamnb1<-gam(casos~umid_min3+s(as.numeric(mes))+offset(log(pop)),family=nb(),data=d)
+summary(gamnb1)
+AIC(gamnb1)
+plot(gamnb1)
+gam.check(gamnb1)
+acf(resid(gamnb1))
+
+```
+
+
+### para tentar resolver a autocorrelação: criar variável de casos SE anterior
+```{r}
+d$casos1 <- NA
+d$casos1[2:415]<-d$casos[1:414]
+gamnbmes1<-gam(casos~umid_min3+s(as.numeric(mes))+casos1+offset(log(pop)),family=nb(),data=d)
+
+```
+
+
+```{r}
+summary(gamnbmes1)
+AIC(gamnbmes1)
+par(mfrow=c(2,2))
+plot(gamnbmes1)
+gam.check(gamnbmes1)
+acf(resid(gamnbmes1))
+
+```
+
+correlação :/
+temos que usar modelo com efeito aleatorio.
+
+### 

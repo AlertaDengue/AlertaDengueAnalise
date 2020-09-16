@@ -1,0 +1,234 @@
+#####Analise do perfil climatico de MG########
+#author: "Claudia Codeço"
+#2020
+
+### BIBLIOTECAS NECESSÁRIAS
+```{r}
+library(AlertTools)
+library(lubridate)
+library(RPostgreSQL)
+library(mgcv)
+library(zoo)
+library(MASS)
+library(tidyverse)
+library(assertthat)
+library(partykit) # ctree
+library(abind)
+```
+
+```{r}
+con <- DenguedbConnect(pass = "aldengue")
+```
+
+
+```{r}
+#geocodigo Porto Alegre
+geocodigo <- 4314902
+```
+
+
+# Estacoes
+
+MG tem 9 estacoes meteorologicas válidas (com dados): 
+
+```{r}
+estacoes <- data.frame(estacoes = c("SBPA", "SBNM"),nomes = c("Aeroporto POA","Sto Angelo"))
+cli <- getWU(estacoes$estacoes,vars=c("temp_min","umid_min","umid_med","umid_max"))
+```
+
+```{r}
+cli$data <- SE2date(cli$SE)$ini
+cli$mes=lubridate::month(cli$data)
+cli$ano= lubridate::year(cli$data)
+cli$date=as.yearmon(cli$data)
+cli$sem <- cli$SE - cli$ano*100
+```
+
+
+### Casos
+
+```{r}
+cas <- getCases(4314902, dataini = "sinpri")
+```
+
+
+```{r}
+cas$data <- SE2date(cas$SE)$ini
+cas$mes=lubridate::month(cas$data)
+cas$ano= lubridate::year(cas$data)
+cas$date=as.yearmon(cas$data)
+cas$sem <- cas$SE - cas$ano*100
+```
+
+### Qualidade dos dados
+
+SBPA tá melhor
+
+```{r}
+tapply(cli$temp_min, cli$estacao, summary)
+```
+
+```{r}
+cli1 <- subset(cli, estacao == "SBPA")
+```
+
+
+### ver quais meses mais secos
+
+```{r}
+# (como eu coloco todo mundo no mesmo gráfico?
+  
+par(mfrow=c(1,3))
+boxplot(cli1$umid_min ~ cli1$mes)
+boxplot(cli1$umid_med ~ cli1$mes)
+boxplot(cli1$umid_max ~ cli1$mes)
+#colocando setembro como referência
+cli1$mes <- relevel(as.factor(cli1$mes), ref="9")
+```
+
+```{r}
+boxplot(cli1$temp_min ~ cli1$mes)
+```
+
+
+### Aplicar Rt
+
+```{r}
+cas <- Rt(obj = cas, count = "casos",gtdist="normal", meangt=3, sdgt = 1) 
+```
+
+
+## merge
+
+
+```{r}
+ d <- cas %>%
+   left_join(cli1, by="SE")
+```
+
+
+### analise descritiva
+
+```{r}
+#sigla = "RS"
+#png(paste0("fig_umid_min",sigla,".png"), width = 15, height = 30, units = "cm", res = 100)
+#par(mfrow=c(n,m), mar = c(3,3,2,1))
+boxplot(d$umid_min ~ (d$Rt > 1), notch = T)
+boxplot(d$umid_med ~ (d$Rt > 1), notch = T)
+boxplot(d$umid_max ~ (d$Rt > 1), notch = T)
+boxplot(d$temp_min ~ (d$Rt > 1), notch = T)
+#dev.off()
+
+```
+
+
+## Modelos de regressao 
+Umidade minima e temp min discriminam mais (temp é bem mais)
+
+
+```{r}
+AICs <- data.frame(cidade = geocodigo, mod1 = NA,mod2 = NA, mod3 = NA,
+                   mod4 = NA, mod5 = NA)
+
+mod1 <- gam(I(Rt>1)~s(umid_min), data = d, family = "binomial")  
+mod2 <- gam(I(Rt>1)~s(umid_med), data = d, family = "binomial")
+mod3 <- gam(I(Rt>1)~s(umid_max), data = d, family = "binomial")
+mod4 <- gam(I(Rt>1)~s(temp_min), data = d, family = "binomial")
+AIC(mod1, mod2, mod3, mod4)
+```
+
+
+```{r}
+mod5 <- gam(I(Rt>1)~s(temp_min) + s(umid_min), data = d, family = "binomial")
+mod6 <- gam(I(Rt>1)~s(temp_min, umid_min), data = d, family = "binomial")
+mod7 <- glm(I(Rt>1)~temp_min * umid_min, data = d, family = "binomial")
+AIC(mod1, mod4, mod5, mod6, mod7)
+```
+
+RESultado: mod5 é o melhor
+
+
+```{r}
+summary(mod5)
+```
+
+
+```{r}
+plot(mod5, select = 1)
+abline(h = 0, col =2) 
+```
+
+
+```{r}
+plot(mod5, select = 2)
+abline(h = 0, col =2) 
+```
+
+
+
+conclusao: 
+temp_min + umid_min é o mais razoavel 
+
+
+
+
+
+## ROC
+
+```{r}
+#library(ROCR)
+library(pROC)
+d$Rt1 <- 0
+d$Rt1[d$Rt > 1] <- 1
+
+test_prob = predict(mod2, newdata = d, type = "response")
+test_roc = roc(d$Rt1 ~ test_prob, plot = TRUE, print.auc = TRUE, CI = TRUE)
+
+```
+
+```{r}
+rocobj <- plot.roc(d$Rt1, test_prob,
+                   main = "Confidence intervals", 
+                   percent=TRUE,
+                   ci = TRUE,                  # compute AUC (of AUC by default)
+                   print.auc = TRUE)           # print the AUC (will contain the CI)
+ciobj <- ci.se(rocobj,                         # CI of sensitivity
+               specificities = seq(0, 100, 5)) # over a select set of specificities
+plot(ciobj, type = "shape", col = "#1c61b6AA")     # plot as a blue shape
+plot(ci(rocobj, of = "thresholds", thresholds = "best")) # add one threshold
+```
+
+```{r}
+plot.roc(d$Rt1, test_prob,
+main="Confidence interval of a threshold", percent=TRUE,
+ci=TRUE, of="thresholds", # compute AUC (of threshold)
+thresholds="best", # select the (best) threshold
+print.thres="best") # also highlight this threshold on the plot
+```
+
+Usando a biblioteca ROC
+
+```{r}
+library(ROCR)
+pred<- prediction(predictions =  d$temp_min, labels = d$Rt1)
+perf<- performance(pred, "acc")
+plot(perf)
+
+# identifiando os valores maximos de acuracia
+maxacc <- max(perf@y.values[[1]]) 
+maxacc
+v.cut <- 
+  
+# plotando
+plot(perf)
+abline(v=v.cut)
+mtext(side = 3, text = paste("threshold is", v.cut))
+perf
+```
+
+
+
+
+
+
+

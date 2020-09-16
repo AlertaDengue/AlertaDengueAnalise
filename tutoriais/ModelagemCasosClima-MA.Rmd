@@ -1,0 +1,243 @@
+#####Analise do perfil climatico de MA########
+#author: "Claudia Codeço"
+#2020
+
+### BIBLIOTECAS NECESSÁRIAS
+```{r}
+library(AlertTools)
+library(lubridate)
+library(RPostgreSQL)
+library(mgcv)
+library(zoo)
+library(MASS)
+library(tidyverse)
+library(assertthat)
+library(party) # ctree
+library(abind)
+```
+
+# Estacoes válidas
+
+MA tem 10 estacoes, todas as estacoes meteorologicas válidas (com dados): 
+
+```{r}
+con=DenguedbConnect(pass = "aldengue")
+cid <- getCidades(uf = "Maranhão")
+```
+
+```{r}
+estacoes <- getWUstation(cities = cid$municipio_geocodigo)
+est <- unique(c(estacoes$codigo_estacao_wu, estacoes$estacao_wu_sec))
+```
+
+
+### Chamando os dados
+
+```{r}
+cas = getCases(cities = cid$municipio_geocodigo, dataini = "sinpri")
+cas$data <- SE2date(cas$SE)$ini
+cas$mes=lubridate::month(cas$data)
+cas$ano= lubridate::year(cas$data)
+cas$date=as.yearmon(cas$data)
+cas$sem <- cas$SE - cas$ano*100
+```
+
+```{r}
+climatemp = getWU(stations = est, vars=c("temp_min","umid_min","umid_max"))
+climatemp$data <- SE2date(climatemp$SE)$ini
+climatemp$mes=lubridate::month(climatemp$data)
+climatemp$ano= lubridate::year(climatemp$data)
+climatemp$date=as.yearmon(climatemp$data)
+climatemp$sem <- climatemp$SE - climatemp$ano*100
+```
+
+### Qualidade dos dados
+
+```{r}
+climatemp %>%
+  group_by(estacao) %>%
+  summary()
+```
+
+### ver quais meses mais secos
+
+```{r}
+# (como eu coloco todo mundo no mesmo gráfico?
+par(mfrow=c(1,3))
+boxplot(climatemp$umid_min ~ climatemp$mes)
+boxplot(climatemp$umid_med ~ climatemp$mes)
+boxplot(climatemp$umid_max ~ climatemp$mes)
+#colocando setembro como referência
+climatemp$mes <- relevel(as.factor(climatemp$mes), ref="9")
+```
+
+```{r}
+boxplot(climatemp$temp_min ~ climatemp$mes)
+```
+
+
+### Aplicar Rt
+
+```{r}
+res <- data.frame()
+for (x in cid$municipio_geocodigo){
+li <- cas[cas$cidade == x,] %>%
+                  Rt(count = "casos",gtdist="normal", meangt=3, sdgt = 1) %>%
+                  arrange(SE)
+            
+res <- rbind(res,li)      
+}
+  
+```
+
+est <- getWUstation(cid$municipio_geocodigo)
+
+#### saving
+
+```{r}
+
+ save(res, cid, climatemp, est, file = "dadosMA.RData")
+```
+
+### - descondiderar abaixo, resto feito localmente
+
+### analise descritiva
+
+
+```{r}
+sigla = "MA"
+n = 5; m = 3
+png(paste0("fig_umid_min",sigla,".png"), width = 15, height = 30, units = "cm", res = 100)
+par(mfrow=c(n,m), mar = c(3,3,2,1))
+for (i in unique(res$cidade)){
+    boxplot(res2$umid_min[res2$cidade == i] ~ (res2$Rt[res2$cidade == i] > 1), notch = T, main = i) 
+}
+dev.off()
+
+```
+
+```{r}
+png(paste0("fig_umid_max",sigla,".png"), width = 15, height = 30, units = "cm", res = 100)
+par(mfrow=c(n,m), mar = c(3,3,2,1))
+for (i in unique(res2$cidade)){
+    boxplot(res2$umid_max[res2$cidade == i] ~ (res2$Rt[res2$cidade == i] > 1), notch = T, main = i) 
+}
+dev.off()
+```
+
+
+```{r}
+png(paste0("fig_temp_min",sigla,".png"), width = 15, height = 30, units = "cm", res = 100)
+par(mfrow=c(n,m), mar = c(3,3,2,1))
+for (i in unique(res2$cidade)){
+    boxplot(res2$temp_min[res2$cidade == i] ~ (res2$Rt[res2$cidade == i] > 1), notch = T, main = i) 
+}
+dev.off()
+```
+
+## Modelos de regressao 
+Umidade maxima ou temp min discriminam mais (temp é bem mais)
+
+
+```{r}
+AICs <- data.frame(cidade = unique(res2$cidade), mod1 = NA,mod2 = NA, mod3 = NA,
+                   mod4 = NA, mod5 = NA)
+
+for (i in unique(res2$cidade)){
+  d <- res2[res2$cidade == i, ]
+  mod1 <- gam(I(Rt>1)~s(umid_max), data = d, family = "binomial")
+  mod2 <- gam(I(Rt>1)~s(temp_min), data = d, family = "binomial")
+  mod3 <- gam(I(Rt>1)~s(temp_min) + s(umid_max), data = d, family = "binomial")
+  mod4 <- gam(I(Rt>1)~s(temp_min, umid_max), data = d, family = "binomial")
+  mod5 <- glm(I(Rt>1)~temp_min * umid_max, data = d, family = "binomial")
+  AICs$mod1[AICs$cidade == i] <- AIC(mod1)
+  AICs$mod2[AICs$cidade == i]  <- AIC(mod2)
+  AICs$mod3[AICs$cidade == i]  <- AIC(mod3)
+  AICs$mod4[AICs$cidade == i]  <- AIC(mod4)
+  AICs$mod5[AICs$cidade == i]  <- AIC(mod5)
+  
+}
+
+AICs
+
+```
+
+```{r}
+AICs <- as.matrix(AICs)
+
+png(paste0("AICs",sigla,".png"), width = 15, height = 30, units = "cm", res = 100)
+par(mfrow=c(n,m), mar = c(3,3,2,1))
+plot(AICs[1,], type = "l", main = macroreg$nome[i])
+for (i in 2:13) plot(AICs[i,],type = "l", main = macroreg$nome[i])
+
+dev.off()
+
+
+```
+
+conclusao: 
+temp_min + umid_max é o mais razoavel em todos , seguido por temp_min
+
+
+
+
+
+## ROC
+
+```{r}
+#library(ROCR)
+library(pROC)
+d$Rt1 <- 0
+d$Rt1[d$Rt > 1] <- 1
+
+test_prob = predict(mod2, newdata = d, type = "response")
+test_roc = roc(d$Rt1 ~ test_prob, plot = TRUE, print.auc = TRUE, CI = TRUE)
+
+```
+
+```{r}
+rocobj <- plot.roc(d$Rt1, test_prob,
+                   main = "Confidence intervals", 
+                   percent=TRUE,
+                   ci = TRUE,                  # compute AUC (of AUC by default)
+                   print.auc = TRUE)           # print the AUC (will contain the CI)
+ciobj <- ci.se(rocobj,                         # CI of sensitivity
+               specificities = seq(0, 100, 5)) # over a select set of specificities
+plot(ciobj, type = "shape", col = "#1c61b6AA")     # plot as a blue shape
+plot(ci(rocobj, of = "thresholds", thresholds = "best")) # add one threshold
+```
+
+```{r}
+plot.roc(d$Rt1, test_prob,
+main="Confidence interval of a threshold", percent=TRUE,
+ci=TRUE, of="thresholds", # compute AUC (of threshold)
+thresholds="best", # select the (best) threshold
+print.thres="best") # also highlight this threshold on the plot
+```
+
+Usando a biblioteca ROC
+
+```{r}
+library(ROCR)
+pred<- prediction(predictions =  d$temp_min, labels = d$Rt1)
+perf<- performance(pred, "acc")
+plot(perf)
+
+# identifiando os valores maximos de acuracia
+maxacc <- max(perf@y.values[[1]]) 
+maxacc
+v.cut <- 
+  
+# plotando
+plot(perf)
+abline(v=v.cut)
+mtext(side = 3, text = paste("threshold is", v.cut))
+perf
+```
+
+
+
+
+
+
+

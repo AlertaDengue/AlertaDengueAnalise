@@ -63,6 +63,10 @@ d <- dbReadTable(con, c("Municipio","alerta_mrj"))
 range(d$data)
 table(d$Rt)
 
+d <- dbReadTable(con, c("Dengue_global","parameters"))
+d$uf <- floor(d$municipio_geocodigo/100000)
+table(d$uf)
+
 # baixar a tabela de tweet filtrando para um municipio
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 2304400"
 d <- dbGetQuery(con, comando)
@@ -70,8 +74,9 @@ str(d)
 head(d)
 
 
-comando <- "SELECT nome, uf FROM \"Dengue_global\".\"Municipio\" where geocodigo = 3152139 "
-pop <- dbGetQuery(con, comando)
+comando <- "SELECT geocodigo, nome, populacao, uf FROM \"Dengue_global\".\"Municipio\" where geocodigo < 2200000 AND
+geocodigo = 2110005"
+dbGetQuery(con, comando)
 
 save(pop, file = "pop.RData")
 
@@ -81,8 +86,9 @@ d <- dbGetQuery(con, comando)
 str(d)
 
 # tabela de parametros
-comando <- "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo = 2308302::" 
-dbGetQuery(con, comando)
+comando <- "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo < 2200000 AND
+municipio_geocodigo > 2100000" 
+d <- dbGetQuery(con, comando)
 
 # baixar a tabela tweet filtrando para um municipio e apenas registros maiores que 10
 comando <- "SELECT * FROM \"Municipio\".\"Tweet\" WHERE \"Municipio_geocodigo\" = 3304557 AND numero > 10"
@@ -192,7 +198,7 @@ d <- dbReadTable(con, c("Dengue_global",""))
 str(d)
 
 sqlquery = "SELECT * FROM \"Dengue_global\".\"regional_saude\" WHERE municipio_geocodigo 
- = 3117835"
+ > 2100000 AND municipio_geocodigo < 2200000"
 dr <- dbGetQuery(con, sqlquery)
 dr
 summary(dr)
@@ -309,7 +315,8 @@ dbListFields(con, c("Municipio","Notificacao"))
 sql <- "SELECT * from \"Municipio\".\"Notificacao\" WHERE  municipio_geocodigo > 3200000 AND municipio_geocodigo < 3300000 AND ano_notif=2106"
 dd <- dbGetQuery(con, sql)
 
-#sql <- "DELETE from \"Dengue_global\".\"parameters\" WHERE  municipio_geocodigo = 3112208"
+#sql <- "DELETE from \"Dengue_global\".\"regional_saude\" WHERE  municipio_geocodigo > 2100000 AND
+#municipio_geocodigo < 2200000"
 #dbGetQuery(con, sql)
 
 

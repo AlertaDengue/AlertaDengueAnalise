@@ -17,7 +17,7 @@ dir_rel = "Relatorio/RJ/Municipios"
 
 
 # data do relatorio:---------------------
-#data_relatorio = 201952
+#data_relatorio = 202030
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # qual municipio? -------------------------------
