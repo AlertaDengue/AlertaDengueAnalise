@@ -163,7 +163,7 @@ for (i in 1:length(env$regionais)){
       cat(paste("\\input{",env$nomestabreg[i],"}\n",sep=""))
       cat("\\")
       cat("\\hyperlink{vartab}{ver descrição das variáveis}")
-       # End second page mini page
+      # End second page mini page
       cat("\\end{minipage}\\hfill") 
 
 

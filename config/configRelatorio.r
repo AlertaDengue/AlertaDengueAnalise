@@ -583,7 +583,8 @@ configRelatorioEstadual <- function(uf, sigla, data, tsdur=104 ,
 # data - data do relatorio. Duas opcoes, relatorio completo ou simples
 configRelatorioMunicipal <- function(tipo="completo", alert, estado, siglaUF, dir.out, data,  
                                      alechik, alezika, varcli = "temp_min", datasource=con,
-                                     dirb=basedir, tamanhotabela = 16, geraPDF=TRUE){
+                                     dirb=basedir, tamanhotabela = 16, geraPDF=TRUE, 
+                                     tsur = length(alert[[1]])){
   dirfigs = paste(dirb,"/",dir.out,"/figs",sep="")
   
   # Identificacao da cidade

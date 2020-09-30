@@ -21,7 +21,7 @@ figuramunicipio <- function(obj, varcli = "temp_min", cid="A90", tsdur=104){
   
   n = dim(obj$data)[1]
   objc = obj$data[(n-tsdur):n,]
-  
+  objc = obj$data
   #objc <- obj$data[obj$data$SE>=201301,] 
   # Subfigura do topo (serie temporal de casos e tweets)
   par(mai=c(0,0,0,0),mar=c(1,4,0,3))

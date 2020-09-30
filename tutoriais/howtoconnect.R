@@ -52,16 +52,6 @@ summary(tt)
 wu <- dbReadTable(con, c("Municipio","Clima_wu"))
 str(wu)
 
-est <- dbReadTable(con, c("Municipio","Estacao_wu"))
-str(est)
-
-d <- dbReadTable(con, c("Municipio","alerta_mrj"))
-range(d$data)
-
-
-d <- dbReadTable(con, c("Municipio","alerta_mrj"))
-range(d$data)
-table(d$Rt)
 
 d <- dbReadTable(con, c("Dengue_global","parameters"))
 d$uf <- floor(d$municipio_geocodigo/100000)

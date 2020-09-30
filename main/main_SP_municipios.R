@@ -18,7 +18,7 @@ out = "AlertaDengueAnalise/report/SP/Municipios"
 dir_rel = "Relatorio/SP/Municipios"
 
 
-#data_relatorio = 202033
+#data_relatorio = 202038
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
@@ -47,9 +47,9 @@ out = paste0("AlertaDengueAnalise/report/SP/Municipios/",nome)
 bol <- gera_boletim_municipio(ale.den, uf = uf, dir.out = out)  
 
 if(write_report) {  
-  dir_rel <- paste0("Relatorio/SP/Municipios/",nomesemacento) 
+  dir_rel <- paste0("Relatorio/SP/Municipios/",nome) 
   dir.create(file.path(dir_rel), showWarnings = FALSE) # check if directory exists
-  publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
+  publicar_alerta(ale = ale.den, pdf = bol, dir = dir_rel)
 }
 
 save(ale.den, file = paste0("alertasRData/aleSP-mn",data_relatorio,".RData"))

@@ -5,7 +5,6 @@
 # Cabeçalho ------------------------------
 setwd("~/")
 source("AlertaDengueAnalise/config/config_global.R") #configuracao 
-pw = "aldengue"
 con <- DenguedbConnect(pass = pw)  
 
 # parametros especificos -----------------
@@ -17,74 +16,65 @@ shapeID="CD_GEOCMU"
 out = "AlertaDengueAnalise/report/MA"
 dir_rel = "Relatorio/MA/Estado"
 
-#divisao territorial - relatorio 
-divUF = "macroreg"
-
 
 # data do relatorio:---------------------
-data_relatorio = 202030
+#data_relatorio = 202034
+#lastDBdate("tweet", 2111300)
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # cidades --------------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 pars <- read.parameters(cidades)
-print(Sys.time())
+
 
 # Calcula alerta estadual ------------------ 
-#ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
-#                            finalday = dia_relatorio) 
-#save(ale.den, pars, cidades, file="infodengueMA202009.RData")
- 
-#ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "none", 
-#                             finalday = dia_relatorio); save(ale.chik, file="alechik.RData")
+ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
+                            finalday = dia_relatorio,narule = "arima", completetail = 0) 
 
-#ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none", 
-#                            finalday = dia_relatorio); save(ale.zika, file="alezika.RData")
+ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "none", 
+                             finalday = dia_relatorio)
 
-  print(Sys.time())
+ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none", 
+                            finalday = dia_relatorio)
 
 #new_data_relatorio <- max(ale.den[[1]]$data$SE, ale.chik[[1]]$data$SE, ale.zika[[1]]$data$SE)
 #load("aledenMA.RData")
-#save(ale.den, ale.chik, ale.zika, file = "aleMA.RData")
-load("aleMA.RData")
+save(ale.den, ale.chik, ale.zika, file = "aleMA.RData")
+
 
 ## boletim dengue estadual
-#if(write_report){
-#   flog.info("writing boletim estadual...", name = alog)
-#   new_data_relatorio <- 202009 # max(ale.den[[1]]$data$SE)
-#   print(paste("Data real do relatorio:", new_data_relatorio))
-#   bol <- configRelatorioEstadual(uf=estado, sigla = sig, data=data_relatorio, tsdur=300,
-#                                     alert=ale.den, shape=shape, varid=shapeID,varcli = "umid_max",
-#                                     dir=out, datasource=con, geraPDF=TRUE)
+if(write_report){
+   flog.info("writing boletim estadual...", name = alog)
+  new_data_relatorio <- max(ale.den[[1]]$data$SE)
+  print(paste("Data real do relatorio:", new_data_relatorio))
+   bol <- configRelatorioEstadual(uf=estado, sigla = sig, data=data_relatorio, tsdur=300,
+                                     alert=ale.den, shape=shape, varid=shapeID,varcli = "umid_max",
+                                     dir=out, datasource=con, geraPDF=TRUE)
  
-#   publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
-#   write_alerta(tabela_historico(ale.den))
+   publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
+   write_alerta(tabela_historico(ale.den))
    write_alerta(tabela_historico(ale.chik))
    write_alerta(tabela_historico(ale.zika))
-#}
+}
   
-# calcula alerta São Luís ----------------------
-#out = "AlertaDengueAnalise/report/MA/Municipios/SaoLuis" 
-#flog.info("alerta dengue MA executing...", name = alog)
 
-#aledenSL <- pipe_infodengue(, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio, userinput = TRUE); save(ale.F.den,file = "aleFden.RData")
+# calcula alerta Sao Luis ----------------------
+SL.out = "AlertaDengueAnalise/report/MA/Municipios/SaoLuis" 
+flog.info("alerta dengue Sao Luis executing...", name = alog)
 
-# Boletim Dengue ----------------------------------
-#if(write_report) {
-#  flog.info("writing boletim dengue BH...", name = alog)
-#  bolFort <- configRelatorioMunicipal(alert = ale.F.den, tipo = "simples", 
-#                                    varcli = "umid_max", estado = estado, siglaUF = sig, data = data_relatorio, 
-#                                    dir.out = CE.F.out, geraPDF = TRUE)
+ale.SL.den <- pipe_infodengue(2111300, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
+ale.SL.chik <- pipe_infodengue(2111300, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
+ale.SL.zika <- pipe_infodengue(2111300, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
 
-#publicarAlerta(ale = ale.F.den, pdf = bolFort, dir = "Relatorio/MG/Municipios/Dengue")
-print(Sys.time())
-#if (!bolFort %in% ls(dirbol)) futile.logger::flog.error("pdf boletin not saved")
-#}
-
-# salvando objetos -------------------------
-#Rfile = paste0("alertasRData/aleCE",data_relatorio,".RData")
-#flog.info("saving ...", Rfile, capture = TRUE, name = alog)
-#save(ale.den, ale.chik, ale.zika, ale.F.den, ale.F.chik, ale.F.zika, file = Rfile)
+# Boletim Arbo ----------------------------------
+if(write_report) {
+  flog.info("writing boletim Arbo Sao Luis...", name = alog)
+  bolcap <- configRelatorioMunicipal(alert = ale.SL.den, alechik = ale.SL.chik, alezika = ale.SL.zika, tipo = "simples", 
+                                      varcli = "umid_max", estado = estado, siglaUF = sig, data = new_data_relatorio, 
+                                      dir.out = SL.out, geraPDF = TRUE)
+  
+  publicarAlerta(ale = ale.SL.den, pdf = bolcap, dir = "Relatorio/MA/Municipios/SaoLuis")
+}
 
 # ----- Fechando o banco de dados -----------
 dbDisconnect(con)
