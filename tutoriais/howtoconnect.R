@@ -484,51 +484,25 @@ character varying(5) DEFAULT NULL"
   dd <- dbGetQuery(con,crianewcol)
   
     # =========================
-  # cria nova coluna nas tabelas de historico para inserir tweets
+  # cria nova coluna nas tabelas de historico para inserir variaveis
   dbListFields(con, c("Municipio","Historico_alerta"))
-  #crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN tweet numeric(5) DEFAULT NULL"
-  #tab <- dbGetQuery(con,crianewcol)
+  crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN nivel_inc SMALLINT DEFAULT NULL"
+  tab <- dbGetQuery(con,crianewcol)
   
   dbListFields(con, c("Municipio","Historico_alerta_chik"))
-  #crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_chik\" ADD COLUMN tweet numeric(5) DEFAULT NULL"
+  crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_chik\" ADD COLUMN nivel_inc SMALLINT DEFAULT NULL"
+  tab <- dbGetQuery(con,crianewcol)
   
   dbListFields(con, c("Municipio","Historico_alerta_zika"))
-  #crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_zika\" ADD COLUMN tweet numeric(5) DEFAULT NULL"
+  crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_zika\" ADD COLUMN nivel_inc SMALLINT DEFAULT NULL"
+  tab <- dbGetQuery(con,crianewcol)
   
-  # para inserir pop, Rt, tempmin, umidmax na tabela de dengue
-  # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN \"Rt\" numeric(5) DEFAULT NULL"
+  # alterar tipo ----
+    # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN \"Rt\" numeric(5) DEFAULT NULL"
   altercol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ALTER COLUMN \"Rt\" decimal() DEFAULT NULL"
   tab <- dbGetQuery(con,altercol)
-  # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN pop numeric(7) DEFAULT NULL"
-  # tab <- dbGetQuery(con,crianewcol)
-  # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN tempmin numeric(4) DEFAULT NULL"
-  # tab <- dbGetQuery(con,crianewcol)
-  # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta\" ADD COLUMN umidmax numeric(4) DEFAULT NULL"
-  # tab <- dbGetQuery(con,crianewcol)
-  # dbListFields(con, c("Municipio","Historico_alerta"))
   
   
-  # para inserir pop, Rt, tempmin, umidmax na tabela de dengue
-  # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_chik\" ADD COLUMN \"Rt\" numeric(5) DEFAULT NULL"
-  # tab <- dbGetQuery(con,crianewcol)
-  # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_chik\" ADD COLUMN pop numeric(7) DEFAULT NULL"
-  # tab <- dbGetQuery(con,crianewcol)
-  # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_chik\" ADD COLUMN tempmin numeric(4) DEFAULT NULL"
-  # tab <- dbGetQuery(con,crianewcol)
-  # crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_chik\" ADD COLUMN umidmax numeric(4) DEFAULT NULL"
-  # tab <- dbGetQuery(con,crianewcol)
-  # dbListFields(con, c("Municipio","Historico_alerta_chik"))
-  # 
-  # para inserir pop, Rt, tempmin, umidmax na tabela de zika
-  crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_zika\" ADD COLUMN \"Rt\" numeric(5) DEFAULT NULL"
-  tab <- dbGetQuery(con,crianewcol)
-  crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_zika\" ADD COLUMN pop numeric(7) DEFAULT NULL"
-  tab <- dbGetQuery(con,crianewcol)
-  crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_zika\" ADD COLUMN tempmin numeric(4) DEFAULT NULL"
-  tab <- dbGetQuery(con,crianewcol)
-  crianewcol <- "ALTER TABLE \"Municipio\".\"Historico_alerta_zika\" ADD COLUMN umidmax numeric(4) DEFAULT NULL"
-  tab <- dbGetQuery(con,crianewcol)
-  dbListFields(con, c("Municipio","Historico_alerta_zika"))
   
   # ======================
   # cria nova coluna na tabela regional saude para inserir cid

@@ -18,7 +18,7 @@ out = "AlertaDengueAnalise/report/SP/Municipios"
 dir_rel = "Relatorio/SP/Municipios"
 
 
-#data_relatorio = 202038
+#data_relatorio = 201538
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
@@ -33,6 +33,7 @@ flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", 
                            finalday = dia_relatorio, narule = "arima", completetail = 0)
+
 #ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", finalday = dia_relatorio)
 #ale.zika <- pipe_infodengue(geo, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio)
 
