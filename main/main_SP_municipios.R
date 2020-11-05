@@ -1,7 +1,7 @@
 #====================================================
 ## Alertas municipais do Estado de São Paulo
 #====================================================
-# cidades: SJ Rio Preto (3549805), Bauru (3506003)
+# cidades: SJ Rio Preto (3549805), Bauru (3506003), Sorocaba (3552205)
 
 # Cabeçalho ------------------------------
 setwd("~/")
@@ -18,12 +18,12 @@ out = "AlertaDengueAnalise/report/SP/Municipios"
 dir_rel = "Relatorio/SP/Municipios"
 
 
-#data_relatorio = 201538
+#data_relatorio = 202043
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
 # cidade -------------------------------
-#geo <- 3506003
+#geo <- 3552205
 geo <- as.numeric(mn)  # from infodengue.R
 # checking the last date
 #AlertTools::lastDBdate("sinan", cities = geo)
@@ -32,7 +32,8 @@ geo <- as.numeric(mn)  # from infodengue.R
 flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", 
-                           finalday = dia_relatorio, narule = "arima", completetail = 0)
+                           finalday = dia_relatorio, narule = "arima", 
+                           completetail = 0)
 
 #ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", finalday = dia_relatorio)
 #ale.zika <- pipe_infodengue(geo, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio)

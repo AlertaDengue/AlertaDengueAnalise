@@ -1,7 +1,7 @@
 library("AlertTools"); library(assertthat) ; library(tidyverse)
 
 ### 1. O que temos desse estado no banco de dados?
-UF = "Maranhão"
+UF = "São Paulo"
 con <- DenguedbConnect(pass = pw)
 (getRegionais(uf = UF))
 (getRegionais(uf = UF, macroreg = TRUE))
@@ -13,11 +13,11 @@ head(cid)
 # Se todas as cidades estao presentes, siga para (3)
 
 ### 2. Seu municipio(s) não está? Coloque-o, usando informacao do IBGE (se adequado)
-nomedacidade = "Santa Luzia"
-geocodigo =  2110005 #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
-id =  15# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
-nomereg = "Santa Inês" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
-macroreg = "Norte"
+nomedacidade = "Sorocaba"
+geocodigo =  3552205 #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
+id =  16# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
+nomereg = "Sorocaba" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
+macroreg = "Sorocaba"
 insert_city_infodengue(geocodigo=geocodigo, regional = nomereg, id_regional=id, macroreg = macroreg)
 
 ### 2a. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
@@ -74,12 +74,12 @@ escrevewu(csvfile="estacoes/estações-mais-proximasMAmod.csv", UF = "Maranhão"
 # PS. Na mão: usar setWUstation()
 # uma:
 dados <- data.frame(municipio_geocodigo = geocodigo, 
-                    primary_station = "SBPA", secondary_station = "SBNM")
-setWUstation(dados, senha ="",UF = "Rio Grande do Sul")
+                    primary_station = "SBAU", secondary_station = "SBAU")
+setWUstation(dados, senha ="",UF = "São Paulo")
 
 # varias:
 # essa tabela foi criada a mão (verificar se os nomes estao iguais ao da getRegionais)
-#ests <- data.frame(nome = c("NORTE", "NORDESTE", "NOROESTE","JEQUITINHONHA",
+ests <- data.frame(nome = c("NORTE", "NORDESTE", "NOROESTE","JEQUITINHONHA",
                             "LESTE","CENTRO","OESTE","TRIÂNGULO DO NORTE",
                             "TRIÂNGULO DO SUL", "LESTE DO SUL","CENTRO SUL","SUL","SUDESTE"),
                    est1 = c("SBMK","SBMK","SBMK","SBMK","SBLS","SBLS","SBLS",
@@ -122,14 +122,14 @@ for (i in 1:N){
                     
 # para um local so
 
-params = data.frame(municipio_geocodigo = 2110005, cid10 = cid10,
-                    limiar_preseason = 7.009, 
-                    limiar_posseason = 7.009, 
-                    limiar_epidemico =14.0195)
+params = data.frame(municipio_geocodigo = 3506003, cid10 = cid10,
+                    limiar_preseason = 4.44, 
+                    limiar_posseason = 3.94, 
+                    limiar_epidemico = 57.6)
 res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params = params, 
-                        overwrite = TRUE, senha)
+                        overwrite = TRUE, senha = "aldengue")
 
-
+read.parameters(3506003)
 # para verificar
 sqlquery = "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo 
  = 2110005"
@@ -163,10 +163,14 @@ for (i in 1:nrow(cidee)){
 }
 
 
-# para um municipio só, a mao (POA)
-params$varcli = "temp_min"
-params$clicrit = 17
-params$codmodelo = "Af"
+# para um municipio só, a mao ()
+read.parameters(3549805)
+
+params = data.frame(municipio_geocodigo = 3549805, 
+                    cid10 = cid10,
+                    varcli = "temp_min",
+                    clicrit = 20,
+                    codmodelo = "Af")
 res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params, 
                         overwrite = TRUE, senha)
 

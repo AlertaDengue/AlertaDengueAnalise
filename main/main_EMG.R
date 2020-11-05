@@ -4,7 +4,9 @@
 
 # Cabeçalho ------------------------------
 setwd("~/")
-source("AlertaDengueAnalise/config/config_global.R") #configuracao 
+source("AlertaDengueAnalise/config/config_global_2020.R") #configuracao 
+source("AlertaDengueAnalise/config/gera_boletim_estado.R")
+
 con <- DenguedbConnect(pass = pw)  
 
 # parametros especificos -----------------
@@ -18,27 +20,32 @@ dir_rel = "Relatorio/MG/Estado"
 
 
 # data do relatorio:---------------------
-#data_relatorio = 202040
-lastDBdate("sinan", 3106200, cid10 = "A92.0")
+#data_relatorio = 201843
+ini_relatorio = data_relatorio - 200
+
+#lastDBdate("sinan", 3106200, cid10 = "A92.0") #chik
+#lastDBdate("sinan", 3106200, cid10 = "A90") #dengue
+#lastDBdate("sinan", 3106200, cid10 = "A92.8") #zika
+
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # cidades --------------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 pars <- read.parameters(cidades)
-
-
+      
 # Calcula alerta estadual ------------------ 
-ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", iniSE = 201801,
+ale.den <- pipe_infodengue(cidade, cid10 = "A90", nowcasting = "none", iniSE = ini_relatorio,
                             finalday = dia_relatorio,narule = "arima", completetail = 0) 
 
-ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "none", iniSE = 201801,
-                             finalday = dia_relatorio)
+ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "none", iniSE = ini_relatorio,
+                             finalday = dia_relatorio,narule = "arima", completetail = 0)
 
-ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none", iniSE = 201801,
-                            finalday = dia_relatorio)
+ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none", iniSE = ini_relatorio,
+                            finalday = dia_relatorio,narule = "arima", completetail = 0)
 
 #new_data_relatorio <- max(ale.den[[1]]$data$SE, ale.chik[[1]]$data$SE, ale.zika[[1]]$data$SE)
 #load("aleMG.RData")
+save(ale.den, file = "aleMG.RData")
 save(ale.den, ale.chik, ale.zika, file = "aleMG.RData")
 
 
@@ -52,22 +59,26 @@ if(write_report){
   #                                   dir=out, datasource=con, geraPDF=TRUE)
 
  #  publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
-  tt <- Sys.time()
-   write_alerta(tabela_historico(ale.den, iniSE = 201801))
-   Sys.time() - tt
-   write_alerta(tabela_historico(ale.chik, iniSE = 201801))
-   Sys.time() - tt
-   #write_alerta(tabela_historico(ale.zika))
+   
+  restab.den <- tabela_historico(ale.den, iniSE = ini_relatorio)
+  write_alerta(restab.den)
+  
+   write_alerta(tabela_historico(ale.chik, iniSE = ini_relatorio))
+   
+   write_alerta(tabela_historico(ale.zika, iniSE = ini_relatorio))
 }
 
 
-# calcula alerta BH ----------------------
+# calcula alerta para mun especificoH ----------------------
 #SL.out = "AlertaDengueAnalise/report/MG/Municipios/BeloHorizonte"
 #flog.info("alerta dengue Belo Horizonte executing...", name = alog)
 
-ale.SL.den <- pipe_infodengue(3106200, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
-ale.SL.chik <- pipe_infodengue(3106200, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
-#ale.SL.zika <- pipe_infodengue(3106200, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
+#ale.SL.den <- pipe_infodengue(c(3170206), cid10 = "A90", nowcasting = "none", 
+#                              finalday = dia_relatorio, completetail = 0)
+#ale.SL.chik <- pipe_infodengue(c(317026), cid10 = "A92.0", nowcasting = "none",
+#                               finalday = dia_relatorio, completetail = 0)
+#ale.SL.zika <- pipe_infodengue(3170206, cid10 = "A92.8", nowcasting = "none",
+#                               finalday = dia_relatorio, completetail = 0)
 
 # Boletim Arbo ----------------------------------
 #if(write_report) {
@@ -78,8 +89,9 @@ ale.SL.chik <- pipe_infodengue(3106200, cid10 = "A92.0", nowcasting = "fixedprob
 
 #  publicarAlerta(ale = ale.SL.den, pdf = bolcap, dir = "Relatorio/MG/Municipios/BeloHorizonte")
 #}
-
-write_alerta(tabela_historico(ale.SL.den, iniSE = 201801))
+#class(ale.SL.den[[1]])
+#restab.den <- tabela_historico(ale.SL.den[[1]])
+#write_alerta(restab.den)
 
 # ----- Fechando o banco de dados -----------
 dbDisconnect(con)

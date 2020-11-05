@@ -4,14 +4,15 @@ library(AlertTools)
 library(RPostgreSQL)
 con <- DenguedbConnect(pass = "aldengue")
 
-comando <- "SELECT geocodigo FROM \"Dengue_global\".\"Municipio\" where geocodigo < 2200000 AND
-geocodigo > 2100000"
+comando <- "SELECT geocodigo FROM \"Dengue_global\".\"Municipio\" where geocodigo = 3170206"
 mun_list <- dbGetQuery(con, comando)
 
 #mun_list <- getCidades(uf = "Maranhão", datasource=con)$municipio_geocodigo
-thresMA <- infodengue_apply_mem(mun_list=mun_list$geocodigo[1],database=con)
+thres <- infodengue_apply_mem(mun_list=mun_list$municipio_geocodigo[1:2],database=con)
+thres
 
-save(thresMA, file ="thresMA.RData")
+
+#save(thresMA, file ="thresMA.RData")
 
 #thresMG$mem
 
