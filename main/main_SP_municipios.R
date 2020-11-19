@@ -2,10 +2,13 @@
 ## Alertas municipais do Estado de São Paulo
 #====================================================
 # cidades: SJ Rio Preto (3549805), Bauru (3506003), Sorocaba (3552205)
+<<<<<<< HEAD
 
 # SJRio Preto: dengue e chik
 # Sorocaba: dengue e chik 
 # Bauru: dengue
+=======
+>>>>>>> 0655fecc1762ac9ac60847695a1548f72e6aa828
 
 # Cabeçalho ------------------------------
 setwd("~/")
@@ -36,7 +39,8 @@ AlertTools::lastDBdate("sinan", cid10 = "A92.0", cities = geo)
 flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "fixedprob", 
-                           finalday = dia_relatorio, narule = "arima", completetail = 0)
+                           finalday = dia_relatorio, narule = "arima", 
+                           completetail = 0)
 
 if (geo %in% c(3549805, 3552205)) {
   ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio)
