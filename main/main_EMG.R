@@ -18,8 +18,8 @@ dir_rel = "Relatorio/MG/Estado"
 
 
 # data do relatorio:---------------------
-#data_relatorio = 202040
-lastDBdate("sinan", 3106200, cid10 = "A92.0")
+#data_relatorio = 202043
+#lastDBdate("sinan", 3106200, cid10 = "A92.0")
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # cidades --------------------------------
@@ -28,36 +28,39 @@ pars <- read.parameters(cidades)
 
 
 # Calcula alerta estadual ------------------ 
-ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", iniSE = 201801,
-                            finalday = dia_relatorio,narule = "arima", completetail = 0) 
+ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", iniSE = 201001,
+                           finalday = dia_relatorio, narule = "arima", completetail = 0) 
 
-ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "none", iniSE = 201801,
-                             finalday = dia_relatorio)
+ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "none", iniSE = 201001,
+                             finalday = dia_relatorio, narule = "arima", completetail = 0)
 
-ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none", iniSE = 201801,
-                            finalday = dia_relatorio)
+ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none", iniSE = 201001,
+                            finalday = dia_relatorio, narule = "arima", completetail = 0)
 
 #new_data_relatorio <- max(ale.den[[1]]$data$SE, ale.chik[[1]]$data$SE, ale.zika[[1]]$data$SE)
-#load("aleMG.RData")
-save(ale.den, ale.chik, ale.zika, file = "aleMG.RData")
+load("aleMG.RData")
+#save(ale.den, ale.chik, ale.zika, file = "aleMG.RData")
 
 
 ## boletim dengue estadual
 if(write_report){
    flog.info("writing boletim estadual...", name = alog)
-  new_data_relatorio <- max(ale.den[[1]]$data$SE)
-  print(paste("Data real do relatorio:", new_data_relatorio))
+  #new_data_relatorio <- max(ale.den[[1]]$data$SE)
+  #print(paste("Data real do relatorio:", new_data_relatorio))
    #bol <- configRelatorioEstadual(uf=estado, sigla = sig, data=data_relatorio, tsdur=300,
   #                                   alert=ale.den, shape=shape, varid=shapeID,varcli = "temp_min",
   #                                   dir=out, datasource=con, geraPDF=TRUE)
 
  #  publicarAlerta(ale = ale.den, pdf = bol, dir = dir_rel)
-  tt <- Sys.time()
-   write_alerta(tabela_historico(ale.den, iniSE = 201801))
-   Sys.time() - tt
-   write_alerta(tabela_historico(ale.chik, iniSE = 201801))
-   Sys.time() - tt
-   #write_alerta(tabela_historico(ale.zika))
+   restab <- tabela_historico(ale.den, iniSE = 201001)
+   write_alerta(restab)
+   
+   restab.chik <- tabela_historico(ale.chik, iniSE = 201001)
+   write_alerta(restab.chik)
+   
+   restab.zika <- tabela_historico(ale.zika, iniSE = 201001)
+   write_alerta(restab.zika)
+   
 }
 
 
@@ -65,8 +68,8 @@ if(write_report){
 #SL.out = "AlertaDengueAnalise/report/MG/Municipios/BeloHorizonte"
 #flog.info("alerta dengue Belo Horizonte executing...", name = alog)
 
-ale.SL.den <- pipe_infodengue(3106200, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
-ale.SL.chik <- pipe_infodengue(3106200, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
+#ale.SL.den <- pipe_infodengue(3106200, cid10 = "A90", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
+#ale.SL.chik <- pipe_infodengue(3106200, cid10 = "A92.0", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
 #ale.SL.zika <- pipe_infodengue(3106200, cid10 = "A92.8", nowcasting = "fixedprob", finalday = dia_relatorio, completetail = 0)
 
 # Boletim Arbo ----------------------------------
@@ -79,7 +82,7 @@ ale.SL.chik <- pipe_infodengue(3106200, cid10 = "A92.0", nowcasting = "fixedprob
 #  publicarAlerta(ale = ale.SL.den, pdf = bolcap, dir = "Relatorio/MG/Municipios/BeloHorizonte")
 #}
 
-write_alerta(tabela_historico(ale.SL.den, iniSE = 201801))
+#write_alerta(tabela_historico(ale.SL.den, iniSE = 201801))
 
 # ----- Fechando o banco de dados -----------
 dbDisconnect(con)
