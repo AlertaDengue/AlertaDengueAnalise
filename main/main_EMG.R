@@ -21,7 +21,7 @@ dir_rel = "Relatorio/MG/Estado"
 
 # data do relatorio:---------------------
 #data_relatorio = 201843
-ini_relatorio = data_relatorio - 200
+ini_relatorio = 201001 # data_relatorio - 200
 
 #lastDBdate("sinan", 3106200, cid10 = "A92.0") #chik
 #lastDBdate("sinan", 3106200, cid10 = "A90") #dengue
