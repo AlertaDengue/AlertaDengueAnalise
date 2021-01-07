@@ -25,9 +25,9 @@ cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 #pars <- read.parameters(cidades)
       
 # Calcula alerta estadual ------------------ 
-ale.den1 <- pipe_infodengue(cidades[315], cid10 = "A90", nowcasting = "bayesian", iniSE = 201001,
+ale.den1 <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "bayesian", iniSE = 201001,
                            finalday = dia_relatorio, narule = "arima", completetail = 0) 
-#save(ale.den, file = nomeRData)
+save(ale.den, file = nomeRData)
 
 ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "bayesian", iniSE = 201001,
                              finalday = dia_relatorio, narule = "arima", completetail = 0)
