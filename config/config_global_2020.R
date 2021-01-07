@@ -7,7 +7,7 @@
 pkgs <- c("foreign", "forecast", "RPostgreSQL", "xtable",
           "zoo","tidyverse","assertthat","AlertTools",
           "futile.logger","ggplot2","gridExtra","lubridate",
-          "ggTimeSeries","ggridges","grid")
+          "ggTimeSeries","ggridges","grid","INLA","cgwtools")
 
 lapply(pkgs, library, character.only = TRUE ,quietly = T)
 
@@ -20,4 +20,5 @@ source("AlertaDengueAnalise/config/publicar_alerta.R")
 
 # INLA
 INLA:::inla.dynload.workaround()
+
 

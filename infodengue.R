@@ -23,6 +23,7 @@ library(futile.logger, quietly = TRUE)
 logging = TRUE
 log_level = futile.logger::TRACE
 alog <- paste0("AlertaDengueAnalise/log/",Sys.Date())
+
 flog.appender(appender.tee(alog))
 
 ## Process arguments
@@ -56,7 +57,7 @@ write_report = ifelse(myargv[["bol"]]=="yes", TRUE, FALSE)
 
 # Location of Scripts
 mains = dir("AlertaDengueAnalise/main/")
-
+print(mains)
 ## If '-uf' only is provided, run state: 
 if(any(names(myargv) %in% "uf" & !any(names(myargv) %in% c("mn", "rg")))) {
   arq = paste0("main_E",myargv[["uf"]],".R")
@@ -79,6 +80,10 @@ if(any(names(myargv) %in% "rg")) {
 ## Starting the pipeline
 flog.info("executing %s", arq, name = alog)
 flog.info("Argumentos",myargv, capture=TRUE, name = alog)
+
+con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
+                 user = "dengue", host = "localhost", 
+                 password = pw)
 
 source(paste0("AlertaDengueAnalise/main/", arq))
 
