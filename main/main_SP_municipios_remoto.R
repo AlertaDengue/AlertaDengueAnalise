@@ -22,7 +22,7 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
 estado = "São Paulo"
 uf = "SP"
 
-data_relatorio = 202053
+data_relatorio = 202102
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
@@ -30,9 +30,9 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 geo <- 3506003
 #geo <- as.numeric(mn)  # from infodengue.R
 # checking the last date
-AlertTools::lastDBdate("sinan", cid10 = "A92.0", cities = geo)
+#AlertTools::lastDBdate("sinan", cid10 = "A92.0", cities = geo)
 
-nomeRData <- paste0("alertasRData/aleSP-mn",geo,"-",data_relatorio,".RData")
+nomeRData <- paste0("alertasRData/aleSP-",geo,"-",data_relatorio,".RData")
 
 # pipeline -------------------------------
 flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
@@ -50,6 +50,9 @@ if (geo %in% c(3549805, 3552205)) {
 
 # escrevendo os dados no banco
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
+
+summary(restab.den[restab.den$SE == data_relatorio,])
+
 write_alerta(restab.den)
 
 # salvando objetos -------------------------
