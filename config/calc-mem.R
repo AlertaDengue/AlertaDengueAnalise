@@ -2,10 +2,10 @@
 library(tidyverse); library(assertthat)
 library(AlertTools)
 library(RPostgreSQL)
-con <- DenguedbConnect(pass = "aldengue")
+con <- DenguedbConnect(pass = "")
 
-comando <- "SELECT geocodigo FROM \"Dengue_global\".\"Municipio\" where geocodigo = 3170206"
-mun_list <- dbGetQuery(con, comando)
+#comando <- "SELECT geocodigo FROM \"Dengue_global\".\"Municipio\" where geocodigo = 3170206"
+#mun_list <- dbGetQuery(con, comando)
 
 #mun_list <- getCidades(uf = "Maranhão", datasource=con)$municipio_geocodigo
 thres <- infodengue_apply_mem(mun_list=mun_list$municipio_geocodigo[1:2],database=con)
