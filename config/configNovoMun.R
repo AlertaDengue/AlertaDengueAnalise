@@ -1,7 +1,7 @@
 library("AlertTools"); library(assertthat) ; library(tidyverse)
 
 
-# Coexao com banco de dados----
+UF = "Santa Catarina"
 # USAR esse se do servidor:
 con <- DenguedbConnect(pass = pw)
 
@@ -33,18 +33,19 @@ insert_city_infodengue(geocodigo=geocodigo, regional = nomereg, id_regional=id, 
 ### 2a. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
 ## (adaptar para incluir macroregiao)
 
-tabuf <- read.csv("../Dados/SC_regionais_de _saude.csv", as.is = TRUE) # qdo é custmizada a regional de saude
+tabuf <- read.csv("SC_regionais_de_saude.csv", as.is = TRUE) # qdo é custmizada a regional de saude
 head(tabuf)
 tabuf$regional <- as.factor(tabuf$regional)
 regs <- unique(tabuf$regional)
 
 for (i in 1:nrow(tabuf)){
   insert_city_infodengue(geocodigo = sevendigitgeocode(tabuf$geocodigo[i]), 
-                         id_regional = which(regs == tabuf$regional[i]), # usando pq nao tenho a info
+                         id_regional = which(regs == tabuf$regional[i]), # = tabuf$numreg[i]  usando pq nao tenho a info
                          regional = tabuf$regional[i], # tabuf$regional[i], 
                          macroreg = "Santa Catarina", #tabuf$macroregional[i],
                          datasource = con)
 }
+
 
 #macroreg=getRegionais(uf = "Minas Gerais", macroreg = TRUE)
 reg=getRegionais(uf = UF)
@@ -58,7 +59,10 @@ reg=getRegionais(uf = UF)
 # as estacoes na mao. Script:# Vamos agora verificar a qualidade das estacoes usando script 
 #tutoriais/relatorio-qualidade-dados
 
-csvfile <- "estacoes/estações-mais-proximasMAmod.csv"
+csvfile <- "estacoes/estacoes_sc.csv"
+est <- read.csv2(csvfile)
+head(est)
+table(est$Município)
 
 # funcao para escrever a partir do csv
 escrevewu <- function(csvfile=NULL, UF, senha){
@@ -103,17 +107,38 @@ cide <- cid %>%
   select(municipio_geocodigo, primary_station = est1, secondary_station = est2)
 setWUstation(cide, UF = "Minas Gerais",senha = "")
 
+# a partir da tabela do Vinicius
+csvfile <- "estacoes/estacoes_sc.csv"
+est <- read.csv2(csvfile)
+muns <- unique(est$Código)
+for (m in muns){
+  estacoes <- est$ICAO[est$Código == m]
+  if (length(estacoes) == 2) dados <- data.frame(municipio_geocodigo = m,
+                                                 primary_station = estacoes[1], 
+                                                 secondary_station = estacoes[2])
+  
+  if (length(estacoes) == 1) dados <- data.frame(municipio_geocodigo = m, 
+                                                 primary_station = estacoes[1], 
+                                                 secondary_station = estacoes[1])
+  
+  setWUstation(dados, senha ="",UF = UF)
+}
 
 # Verificando 
-getWUstation(cities = newdat$municipio_geocodigo[1:100])
-
+wus <- getWUstation(cities = cid$municipio_geocodigo)
+table(wus$codigo_estacao_wu)
 
 
 #### 4. Inserção dos parametros na tabela parameters 
 ## ------------------------------------------------------
 #Os limiares epidemicos (MEM) são obtidos no script config/calc-mem.R no terminal em bash pois pode demorar
+thresSC <- infodengue_apply_mem(mun_list=cid$municipio_geocodigo , database=con)
+thres
+
+save(thres, file = "thresSC.RData")
+
 load("AlertaDengueAnalise/config/thresMA.RData") 
-d <- thresMA; rm(thresMA)
+d <- thresSC
 names(d)
 # tem tres tipos:
   # percentile simples
@@ -131,7 +156,22 @@ for (i in 1:N){
   res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params = params, 
                           overwrite = TRUE, senha)
 }
-                    
+        
+# municipios que nao tm dados em SC
+munna <- d$thresholds$municipio_geocodigo[(is.na(d$thresholds$limiar_epidemico))]
+dd <- subset(d$min_threshold_inc, d$min_threshold_inc$municipio_geocodigo %in% munna)
+
+for (i in 1:nrow(dd)){
+  params = data.frame(municipio_geocodigo = dd$municipio_geocodigo[i], cid10 = cid10,
+                      limiar_preseason = dd$mininc_pre[i], 
+                      limiar_posseason = dd$mininc_pos[i], 
+                      limiar_epidemico =dd$mininc_epi[i])
+  res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params = params, 
+                          overwrite = TRUE, senha)
+}
+
+
+
 # para um local so
 
 params = data.frame(municipio_geocodigo = 3506003, cid10 = cid10,
