@@ -11,21 +11,21 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
                  password = pw)
 
 # parametros especificos -----------------
-estado = "Ceará"
-sig = "CE"
+estado = "Santa Catarina"
+sig = "SC"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202102
+data_relatorio = 202053
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
-nomeRData <- paste0("alertasRData/aleCE-",data_relatorio,".RData")
+nomeRData <- paste0("alertasRData/aleSC-",data_relatorio,".RData")
 
 # cidades --------------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 print(Sys.time())
 
-# Calcula alerta estadual ------------------ 
+# Calcula alerta estadual ------------------ 10 minutos
 t1 <- Sys.time()
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "bayesian", 
                            finalday = dia_relatorio, narule = "arima", 
@@ -45,20 +45,24 @@ t2 <- Sys.time()-t1
 
 # escrevendo na tabela historico_alerta
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
-summary(restab.den[restab.den$SE == data_relatorio,])
-write_alerta(restab.den)
-
 restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
-summary(restab.chik$inc[restab.chik$SE == data_relatorio])
-write_alerta(restab.chik)
-
 restab.zika <- tabela_historico(ale.zika, iniSE = data_relatorio - 100)
+
+save(restab.zika, restab.den, restab.chik, file = "restabSC.RData")
+
+# verificar se tem algum valor estranho 
+summary(restab.den[restab.den$SE == data_relatorio,])
+summary(restab.chik$inc[restab.chik$SE == data_relatorio])
 summary(restab.zika$inc[restab.zika$SE == data_relatorio])
-write_alerta(restab.zika)
 
 # salvando alerta RData no servidor  ----
 #flog.info("saving ...", Rfile, capture = TRUE, name = alog)
 system(paste("scp", nomeRData, "infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/"))
+
+# escrever no banco de dados
+write_alerta(restab.den)
+write_alerta(restab.chik)
+write_alerta(restab.zika)
 
 # ----- Fechando o banco de dados -----------
 dbDisconnect(con)

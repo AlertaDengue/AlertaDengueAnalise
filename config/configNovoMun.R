@@ -1,8 +1,18 @@
 library("AlertTools"); library(assertthat) ; library(tidyverse)
 
-### 1. O que temos desse estado no banco de dados?
-UF = "São Paulo"
+
+# Coexao com banco de dados----
+# USAR esse se do servidor:
 con <- DenguedbConnect(pass = pw)
+
+# OU esse remoto
+con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
+                 user = "dengue", host = "localhost", 
+                 password = pw)
+
+### 1. O que temos desse estado no banco de dados?
+UF = "Santa Catarina"
+
 (getRegionais(uf = UF))
 (getRegionais(uf = UF, macroreg = TRUE))
 cid = getCidades(uf = UF, datasource=con)
@@ -23,14 +33,16 @@ insert_city_infodengue(geocodigo=geocodigo, regional = nomereg, id_regional=id, 
 ### 2a. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
 ## (adaptar para incluir macroregiao)
 
-tabuf <- read.csv("REGIONAIS_MA.csv", as.is = TRUE) # qdo é custmizada a regional de saude
+tabuf <- read.csv("../Dados/SC_regionais_de _saude.csv", as.is = TRUE) # qdo é custmizada a regional de saude
 head(tabuf)
+tabuf$regional <- as.factor(tabuf$regional)
+regs <- unique(tabuf$regional)
 
 for (i in 1:nrow(tabuf)){
-  insert_city_infodengue(geocodigo = sevendigitgeocode(tabuf$codmun[i]), 
-                         id_regional = tabuf$numreg[i], 
-                         regional = tabuf$regional[i], 
-                         macroreg = tabuf$macroregional[i],
+  insert_city_infodengue(geocodigo = sevendigitgeocode(tabuf$geocodigo[i]), 
+                         id_regional = which(regs == tabuf$regional[i]), # usando pq nao tenho a info
+                         regional = tabuf$regional[i], # tabuf$regional[i], 
+                         macroreg = "Santa Catarina", #tabuf$macroregional[i],
                          datasource = con)
 }
 
