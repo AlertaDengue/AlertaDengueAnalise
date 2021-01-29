@@ -1,4 +1,5 @@
 library("AlertTools"); library(assertthat) ; library(tidyverse)
+library(RPostgreSQL)
 
 ### 1. O que temos desse estado no banco de dados?
 UF = "Santa Catarina"
@@ -122,13 +123,8 @@ table(wus$codigo_estacao_wu)
 #### 4. Inserção dos parametros na tabela parameters 
 ## ------------------------------------------------------
 #Os limiares epidemicos (MEM) são obtidos no script config/calc-mem.R no terminal em bash pois pode demorar
-thresSC <- infodengue_apply_mem(mun_list=cid$municipio_geocodigo , database=con)
-thres
-
-save(thres, file = "thresSC.RData")
-
-load("AlertaDengueAnalise/config/thresMA.RData") 
-d <- thresSC
+load("AlertaDengueAnalise/config/thresSC.RData") 
+d <- thres
 names(d)
 # tem tres tipos:
   # percentile simples
@@ -147,20 +143,6 @@ for (i in 1:N){
                           overwrite = TRUE, senha)
 }
         
-# municipios que nao tm dados em SC
-munna <- d$thresholds$municipio_geocodigo[(is.na(d$thresholds$limiar_epidemico))]
-dd <- subset(d$min_threshold_inc, d$min_threshold_inc$municipio_geocodigo %in% munna)
-
-for (i in 1:nrow(dd)){
-  params = data.frame(municipio_geocodigo = dd$municipio_geocodigo[i], cid10 = cid10,
-                      limiar_preseason = dd$mininc_pre[i], 
-                      limiar_posseason = dd$mininc_pos[i], 
-                      limiar_epidemico =dd$mininc_epi[i])
-  res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params = params, 
-                          overwrite = TRUE, senha)
-}
-
-
 
 # para um local so
 
@@ -180,20 +162,23 @@ summary(dr)
 
 ### 5. Inserção dos limiares de temperatura e umidade
 
-#
-pars1 <- data.frame(nome = c("Norte","Leste","Sul"),
-                            varcli = rep("umid_max", 3),
-                            clicrit = c(78,88.5, 94.9),
-                    codmodelo = rep("Aw",3))
-
+regs <- getRegionais(uf = UF)
+pars1 <- data.frame(nome_regional = regs,
+                    varcli = "temp_min",
+                    codmodelo = rep("Af"),
+                    clicrit = NA)
+pars1$clicrit[pars1$nome_regional %in% c("Chapecó", "São Miguel do Oeste", "Xanxerê")] <- 16.8
+pars1$clicrit[pars1$nome_regional %in% c("Joaçaba", "Videira", "Concórdia")] <- 16.8  
+pars1$clicrit[pars1$nome_regional %in% c("Lages")] <- 25
+pars1$clicrit[pars1$nome_regional %in% c("Criciúma", "Araranguá", "Tubarão")] <- 18.7
+pars1$clicrit[pars1$nome_regional %in% c("Florianópolis", "Itajaí")] <- 18.7
+pars1$clicrit[pars1$nome_regional %in% c("Blumenau", "Rio Do Sul")] <- 19
+pars1$clicrit[pars1$nome_regional %in% c("Joinville", "Jaraguá Do Sul", "Mafra")] <- 17.8
 
 cidee <- cid %>%
-  left_join(pars1, by = c("nome_macroreg" = "nome"))
+  left_join(pars1, by = c("nome_regional" = "nome_regional"))
+cid10 = "A90"
 
-# apenas Balsas tem um padrao diferente
-cidee$clicrit[cidee$nome_regional == "Balsas"] <- 89  
-
-  
 for (i in 1:nrow(cidee)){
   params = data.frame(municipio_geocodigo = cidee$municipio_geocodigo[i], cid10 = cid10,
                       varcli = cidee$varcli[i],
@@ -216,6 +201,40 @@ params = data.frame(municipio_geocodigo = 3549805,
 res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params, 
                         overwrite = TRUE, senha)
 
+## Para copiar os valores para a tabela regionais_saude
+ ## e' essa que é usada no site.
+### update tabela regional_saude
+# dados para fazer update
+#d <- dbReadTable(con, c("Dengue_global","parameters"))
+#head(d)
+d <- read.parameters(cid$municipio_geocodigo)
+
+for(i in 2:nrow(d)){
+  m <- d$municipio_geocodigo[i]
+  lpre <- d$limiar_preseason[i]
+  lpos <- d$limiar_posseason[i]
+  lepi <- d$limiar_epidemico[i]
+  #cli <- d$varcli[i]  # precisa colocar '  '
+  
+  #update_cli = paste0("UPDATE \"Dengue_global\".regional_saude 
+  #                 SET varcli = '", cli, "' 
+  #                   WHERE municipio_geocodigo = ", m)
+  
+  #if(cli == "temp_min") update_clicrit = paste0("UPDATE \"Dengue_global\".regional_saude 
+  #                   SET tcrit = ", d$clicrit[i], " WHERE municipio_geocodigo = ", m)
+#  
+  #if(cli == "umid_max") update_clicrit = paste0("UPDATE \"Dengue_global\".regional_saude 
+  #                   SET ucrit = ", d$clicrit[i], " WHERE municipio_geocodigo = ", m)
+  
+  update_limiar = paste0("UPDATE \"Dengue_global\".regional_saude 
+                   SET limiar_preseason = ", lpre, ", limiar_posseason = ",lpos," ,
+                    limiar_epidemico = ",lepi, " WHERE municipio_geocodigo = ", m)
+  
+  try(dbGetQuery(con, update_limiar))
+}
+
+
+
 
 ### Para criar estrutura de diretorios (pode ser o estado, a regional ou o municipio)
 source("config/fun_initializeSites.R")
@@ -228,9 +247,9 @@ setTree.newsite(siglaestado="MA")
 
 ###  Uma olhadinha nos casos
 # --------------------------------
-geocodigo = cid$municipio_geocodigo[cid$nome=="São Luís"]
+geocodigo = cid$municipio_geocodigo[cid$nome=="Florianópolis"]
 # dengue
-casos = getCases(cities=geocodigo, datasource = con)
+casos = getCases(cities=geocodigo, dataini = "sinpri", datasource = con)
 par(mar=c(5,5,2,2))
 plot(casos$casos, type="l")
 summary(casos$casos)
