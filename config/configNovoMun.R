@@ -1,9 +1,19 @@
 library("AlertTools"); library(assertthat) ; library(tidyverse)
 library(RPostgreSQL)
 
+
+UF = "Santa Catarina"
+# USAR esse se do servidor:
+con <- DenguedbConnect(pass = pw)
+
+# OU esse remoto
+con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
+                 user = "dengue", host = "localhost", 
+                 password = pw)
+
 ### 1. O que temos desse estado no banco de dados?
 UF = "Santa Catarina"
-con <- DenguedbConnect(pass = pw)
+
 (getRegionais(uf = UF))
 (getRegionais(uf = UF, macroreg = TRUE))
 cid = getCidades(uf = UF, datasource=con)
