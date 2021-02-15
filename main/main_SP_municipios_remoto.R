@@ -22,15 +22,15 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
 estado = "São Paulo"
 uf = "SP"
 
-data_relatorio = 202102
+data_relatorio = 202105
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
 # cidade -------------------------------
-geo <- 3506003
+geo <- 3549805
 #geo <- as.numeric(mn)  # from infodengue.R
 # checking the last date
-#AlertTools::lastDBdate("sinan", cid10 = "A92.0", cities = geo)
+#AlertTools::lastDBdate("sinan", cid10 = "A90", cities = geo)
 
 nomeRData <- paste0("alertasRData/aleSP-",geo,"-",data_relatorio,".RData")
 
@@ -38,8 +38,8 @@ nomeRData <- paste0("alertasRData/aleSP-",geo,"-",data_relatorio,".RData")
 flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "bayesian", 
-                           finalday = dia_relatorio, narule = "arima", 
-                           completetail = 0)
+                           finalday = dia_relatorio, dataini = "sinpri", 
+                           narule = "arima", completetail = 0)
 
 save(ale.den, file = nomeRData)
 

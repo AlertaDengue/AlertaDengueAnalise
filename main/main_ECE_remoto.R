@@ -16,7 +16,7 @@ sig = "CE"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202102
+data_relatorio = 202105
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/aleCE-",data_relatorio,".RData")
@@ -29,31 +29,37 @@ print(Sys.time())
 t1 <- Sys.time()
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "bayesian", 
                            finalday = dia_relatorio, narule = "arima", 
-                           iniSE = 201001, completetail = 0)
+                           iniSE = 201001, dataini = "sinpri", completetail = 0)
 save(ale.den, file = nomeRData)
 
 ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "bayesian", 
                             finalday = dia_relatorio, narule = "arima", 
-                            iniSE = 201001, completetail = 0)
+                            iniSE = 201001, dataini = "sinpri", completetail = 0)
 save(ale.den, ale.chik, file = nomeRData)
 
 ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "bayesian",
                             finalday = dia_relatorio, narule = "arima", 
-                            iniSE = 201001, completetail = 0)
+                            iniSE = 201001, dataini = "sinpri", completetail = 0)
 save(ale.den, ale.chik, ale.zika, file = nomeRData)
 t2 <- Sys.time()-t1
 
-# escrevendo na tabela historico_alerta
+# inspecionando a capital
+tail(ale.den$'2304400'$data)
+tail(ale.den$'2304400'$indices$level) # nivel
+
+# criando tabela historico_alerta
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
 summary(restab.den[restab.den$SE == data_relatorio,])
-write_alerta(restab.den)
 
 restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
-summary(restab.chik$inc[restab.chik$SE == data_relatorio])
-write_alerta(restab.chik)
+summary(restab.chik[restab.chik$SE == data_relatorio,])
 
 restab.zika <- tabela_historico(ale.zika, iniSE = data_relatorio - 100)
-summary(restab.zika$inc[restab.zika$SE == data_relatorio])
+summary(restab.zika[restab.zika$SE == data_relatorio,])
+
+# escrevendo
+write_alerta(restab.den)
+write_alerta(restab.chik)
 write_alerta(restab.zika)
 
 # salvando alerta RData no servidor  ----

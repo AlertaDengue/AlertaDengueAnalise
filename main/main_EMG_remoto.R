@@ -15,7 +15,7 @@ estado = "Minas Gerais"
 sig = "MG"
 
 # data do relatorio:---------------------
-data_relatorio = 202102
+data_relatorio = 202105
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/aleMG-",data_relatorio,".RData")
@@ -26,49 +26,46 @@ cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
 # Calcula alerta estadual ------------------ 
 
 t1 <- Sys.time()
-ale.den1_200 <- pipe_infodengue(cidades[1:200], cid10 = "A90", nowcasting = "bayesian", iniSE = 201001,
-                           finalday = dia_relatorio, narule = "arima", completetail = 0) 
-save(ale.den1_200, file = nomeRData)
-
-ale.den201_400 <- pipe_infodengue(cidades[201:400], cid10 = "A90", nowcasting = "bayesian", iniSE = 201001,
-                                finalday = dia_relatorio, narule = "arima", completetail = 0) 
-save(ale.den1_200, ale.den201_400, file = nomeRData)
-
-ale.den401_600 <- pipe_infodengue(cidades[401:600], cid10 = "A90", nowcasting = "bayesian", iniSE = 201001,
-                                  finalday = dia_relatorio, narule = "arima", completetail = 0) 
-save(ale.den1_200, ale.den201_400, ale.den401_600, file = nomeRData)
-
-ale.den601_853 <- pipe_infodengue(cidades[601:853], cid10 = "A90", nowcasting = "bayesian", iniSE = 201001,
-                                  finalday = dia_relatorio, narule = "arima", completetail = 0) 
-
-ale.den <- c(ale.den1_200, ale.den201_400, ale.den401_600, ale.den601_853)
-save(ale.den , file = nomeRData)
+ale.den1_300<- pipe_infodengue(cidades[1:300], cid10 = "A90", nowcasting = "bayesian", 
+                                iniSE = 201001, finalday = dia_relatorio, 
+                                narule = "arima", dataini = "sinpri", completetail = 0) 
+save(ale.den1_300, file = nomeRData)
+ale.den301_600<- pipe_infodengue(cidades[301:600], cid10 = "A90", nowcasting = "bayesian", 
+                               iniSE = 201001, finalday = dia_relatorio, 
+                               narule = "arima", dataini = "sinpri", completetail = 0) 
+save(ale.den1_300, ale.den301_600, file = nomeRData)
+ale.den601_853<- pipe_infodengue(cidades[601:853], cid10 = "A90", nowcasting = "bayesian", 
+                                 iniSE = 201001, finalday = dia_relatorio, 
+                                 narule = "arima", dataini = "sinpri", completetail = 0) 
+save(ale.den1_300, ale.den301_600, ale.den601_853, file = nomeRData)
+ale.den <- c(ale.den1_300, ale.den301_600, ale.den601_853)
+save(ale.den, file = nomeRData)
 t2 <- Sys.time() - t1
 
-ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "bayesian", iniSE = 201001,
-                             finalday = dia_relatorio, narule = "arima", completetail = 0)
-
+ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "bayesian", 
+                            iniSE = 201001, finalday = dia_relatorio, 
+                            narule = "arima", dataini = "sinpri", completetail = 0)
 save(ale.den, ale.chik, file = nomeRData)
 
-ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "none", iniSE = 201001,
+ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "bayesian", 
+                            iniSE = 201001, dataini = "sinpri", 
                             finalday = dia_relatorio, narule = "arima", completetail = 0)
 save(ale.den, ale.chik, ale.zika, file = nomeRData)
+t3 <- Sys.time() - t1
 
 # escrevendo na tabela historico_alerta
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
-restab.den$casos_est_max[restab.den$casos_est_max > 1e4] <- NA
-summary(restab.den[restab.den$SE == data_relatorio, ])  # verificar se tem algo estranho
-
 restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
-summary(restab.chik[restab.chik$SE == data_relatorio, ] )
-
 restab.zika <- tabela_historico(ale.zika, iniSE = data_relatorio - 100)
+save(restab.den, restab.chik, restab.zika, file = "restabMG.RData")
+
+summary(restab.den[restab.den$SE == data_relatorio, ])  # verificar se tem algo estranho
+summary(restab.chik[restab.chik$SE == data_relatorio, ] )
 summary(restab.zika[restab.zika$SE == data_relatorio, ])
 
-save(restab.den, restab.chik, restab.zika, file = "restab.RData")
-load("restab.RData")
+#load("restabMG.RData")
 write_alerta(restab.den)
-write_alerta(restab.chik[40001:46062,])
+write_alerta(restab.chik)
 write_alerta(restab.zika)
 
 

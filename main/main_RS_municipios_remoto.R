@@ -40,8 +40,8 @@ nomeRData <- paste0("alertasRData/aleRS-",geo,"-",data_relatorio,".RData")
 flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "bayesian", 
-                           finalday = dia_relatorio, completetail = 0,
-                           narule = "arima")                          
+                           finalday = dia_relatorio, dataini = "sinpri", 
+                           completetail = 0, narule = "arima")                          
 
 save(ale.den, file = nomeRData)
 

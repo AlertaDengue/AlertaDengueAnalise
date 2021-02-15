@@ -16,7 +16,7 @@ sig = "SC"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202053
+data_relatorio = 202105
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/aleSC-",data_relatorio,".RData")
@@ -29,17 +29,17 @@ print(Sys.time())
 t1 <- Sys.time()
 ale.den <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "bayesian", 
                            finalday = dia_relatorio, narule = "arima", 
-                           iniSE = 201001, completetail = 0)
+                           iniSE = 201001, dataini = "sinpri", completetail = 0)
 save(ale.den, file = nomeRData)
 
 ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "bayesian", 
                             finalday = dia_relatorio, narule = "arima", 
-                            iniSE = 201001, completetail = 0)
+                            iniSE = 201001, dataini = "sinpri", completetail = 0)
 save(ale.den, ale.chik, file = nomeRData)
 
 ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "bayesian",
                             finalday = dia_relatorio, narule = "arima", 
-                            iniSE = 201001, completetail = 0)
+                            iniSE = 201001, dataini = "sinpri", completetail = 0)
 save(ale.den, ale.chik, ale.zika, file = nomeRData)
 t2 <- Sys.time()-t1
 
@@ -48,12 +48,10 @@ restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
 restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
 restab.zika <- tabela_historico(ale.zika, iniSE = data_relatorio - 100)
 
-save(restab.zika, restab.den, restab.chik, file = "restabSC.RData")
-
 # verificar se tem algum valor estranho 
 summary(restab.den[restab.den$SE == data_relatorio,])
-summary(restab.chik$inc[restab.chik$SE == data_relatorio])
-summary(restab.zika$inc[restab.zika$SE == data_relatorio])
+summary(restab.chik[restab.chik$SE == data_relatorio,])
+summary(restab.zika[restab.zika$SE == data_relatorio,])
 
 # salvando alerta RData no servidor  ----
 #flog.info("saving ...", Rfile, capture = TRUE, name = alog)
