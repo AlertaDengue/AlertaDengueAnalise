@@ -8,7 +8,8 @@ con <- DenguedbConnect(pass = "")
 #mun_list <- dbGetQuery(con, comando)
 
 mun_list <- getCidades(uf = "Santa Catarina", datasource=con)$municipio_geocodigo
-thres <- infodengue_apply_mem(mun_list=mun_list, database=con)
+thres <- infodengue_apply_mem(mun_list=mun_list, database=con, 
+                              end_year = 2020)
 thres
 
 # aqui verificar se nao tem NA

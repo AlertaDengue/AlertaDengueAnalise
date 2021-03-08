@@ -16,7 +16,7 @@ sig = "CE"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202105
+data_relatorio = 202108
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/aleCE-",data_relatorio,".RData")
@@ -49,7 +49,8 @@ tail(ale.den$'2304400'$indices$level) # nivel
 
 # criando tabela historico_alerta
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
-summary(restab.den[restab.den$SE == data_relatorio,])
+summary(restab.den)
+restab.den$casos_est_max[restab.den$casos_est_max > 10000] <- NA
 
 restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
 summary(restab.chik[restab.chik$SE == data_relatorio,])
