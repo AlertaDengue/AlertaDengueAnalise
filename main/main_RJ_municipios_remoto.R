@@ -23,14 +23,13 @@ data_relatorio = 202108
 #lastDBdate("sinan", 3304557) # ultimo caso registrado
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
-cidade <- 3304557
 nomeRData <- paste0("alertasRData/aleRio-",data_relatorio,".RData")
 
 ### Se Boletim da cidade do Rio de Janeiro por APS ------------------------
 
-ale.den <- pipe_infodengue_intra(city = cidade, se = data_relatorio, iniSE = 201001,
+ale.den <- pipe_infodengue_intra(city = 3304557, datarelatorio = data_relatorio, iniSE = 201001,
                                  cid10 = "A90", dataini = "sinpri", delaymethod = "bayesian")
-ale.chik <- pipe_infodengue_intra(city = cidade, se = data_relatorio, iniSE = 201001, 
+ale.chik <- pipe_infodengue_intra(city = 3304557, datarelatorio = data_relatorio, iniSE = 201001, 
                       cid10 = "A920", dataini = "sinpri", delaymethod = "bayesian")
   
 save(ale.den, ale.chik, file = nomeRData)

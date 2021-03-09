@@ -10,7 +10,8 @@
 
 remove.packages("AlertTools") # remover versao antiga
 library("devtools")
-install_github("claudia-codeco/AlertTools", dependencies = TRUE)
+#install_github("claudia-codeco/AlertTools", dependencies = TRUE) # deprecated
+install_github("AlertaDengue/AlertTools", dependencies = TRUE)
 
 
 
