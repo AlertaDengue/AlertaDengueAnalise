@@ -2,7 +2,7 @@ library("AlertTools"); library(assertthat) ; library(tidyverse)
 library(RPostgreSQL)
 
 
-UF = "Santa Catarina"
+UF = "Paraná"
 # USAR esse se do servidor:
 con <- DenguedbConnect(pass = pw)
 
@@ -12,13 +12,12 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
                  password = pw)
 
 ### 1. O que temos desse estado no banco de dados?
-UF = "Santa Catarina"
-
 (getRegionais(uf = UF))
 (getRegionais(uf = UF, macroreg = TRUE))
 cid = getCidades(uf = UF, datasource=con)
 nrow(cid)
 head(cid)
+
 
 #save(cid, file = "cid.RData")
 # Se todas as cidades estao presentes, siga para (3)
@@ -51,6 +50,12 @@ for (i in 1:nrow(tabuf)){
 #macroreg=getRegionais(uf = "Minas Gerais", macroreg = TRUE)
 reg=getRegionais(uf = UF)
 
+# 2b Precisa incluir macroregioes onde já tem regionais?
+# Usar com cuidado
+
+update_sql = paste("UPDATE \"Dengue_global\".regional_saude SET nome_macroreg = \'Centro Oriental Paranaense\'
+                   WHERE nome_regional = \'Telêmaco Borba\'")
+try(dbGetQuery(con, update_sql))
 
 ### 3. Inserção das estacoes meteorologicas na tabela das regionais - requer SENHA
 # ----------------------------------------------------------------
@@ -109,7 +114,7 @@ cide <- cid %>%
 setWUstation(cide, UF = "Minas Gerais",senha = "")
 
 # a partir da tabela do Vinicius
-csvfile <- "estacoes/estacoes_sc.csv"
+csvfile <- "estacoes/estacoes_pr.csv"
 est <- read.csv2(csvfile)
 muns <- unique(est$Código)
 for (m in muns){
@@ -122,7 +127,7 @@ for (m in muns){
                                                  primary_station = estacoes[1], 
                                                  secondary_station = estacoes[1])
   
-  setWUstation(dados, senha ="",UF = UF)
+  setWUstation(dados, UF = UF)
 }
 
 # Verificando 
@@ -172,22 +177,24 @@ summary(dr)
 
 ### 5. Inserção dos limiares de temperatura e umidade
 
-regs <- getRegionais(uf = UF)
-pars1 <- data.frame(nome_regional = regs,
+mregs <- getRegionais(uf = UF, macroreg = TRUE)
+
+pars1 <- data.frame(nome_macroregional = mregs,
                     varcli = "temp_min",
                     codmodelo = rep("Af"),
                     clicrit = NA)
-pars1$clicrit[pars1$nome_regional %in% c("Chapecó", "São Miguel do Oeste", "Xanxerê")] <- 16.8
-pars1$clicrit[pars1$nome_regional %in% c("Joaçaba", "Videira", "Concórdia")] <- 16.8  
-pars1$clicrit[pars1$nome_regional %in% c("Lages")] <- 25
-pars1$clicrit[pars1$nome_regional %in% c("Criciúma", "Araranguá", "Tubarão")] <- 18.7
-pars1$clicrit[pars1$nome_regional %in% c("Florianópolis", "Itajaí")] <- 18.7
-pars1$clicrit[pars1$nome_regional %in% c("Blumenau", "Rio Do Sul")] <- 19
-pars1$clicrit[pars1$nome_regional %in% c("Joinville", "Jaraguá Do Sul", "Mafra")] <- 17.8
+pars1$clicrit[pars1$nome_macroregional %in% c("Oeste Paranaense")] <- 19.8
+pars1$clicrit[pars1$nome_macroregional %in% c("Norte Central Paranaense", "Noroeste Paranaense", 
+                                         "Centro Oriental Paranaense","Sudoeste Paranaense",
+                                         "Sudeste Paranaense", "Centro Sul Paranaense",
+                                         "Norte Pioneiro Paranaense", "Centro Ocidental Paranaense")] <- 18.6  
+pars1$clicrit[pars1$nome_macroregional %in% c("Metropolitana de Curitiba")] <- 24.8
+
 
 cidee <- cid %>%
-  left_join(pars1, by = c("nome_regional" = "nome_regional"))
+  left_join(pars1, by = c("nome_macroreg" = "nome_macroregional"))
 cid10 = "A90"
+summary(cidee)
 
 for (i in 1:nrow(cidee)){
   params = data.frame(municipio_geocodigo = cidee$municipio_geocodigo[i], cid10 = cid10,
@@ -196,7 +203,7 @@ for (i in 1:nrow(cidee)){
                       codmodelo = cidee$codmodelo[i])
   
   res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params, 
-                          overwrite = TRUE, senha)
+                          overwrite = TRUE, datasource = con)
 }
 
 

@@ -15,7 +15,7 @@ estado = "Paraná"
 sig = "PR"
 
 # data do relatorio:---------------------
-data_relatorio = 202105
+data_relatorio = 202109
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/alePR-",data_relatorio,".RData")

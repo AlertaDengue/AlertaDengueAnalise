@@ -27,7 +27,7 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
 # cidade -------------------------------
-geo <- 3549805
+geo <- 3552205
 #geo <- as.numeric(mn)  # from infodengue.R
 # checking the last date
 #AlertTools::lastDBdate("sinan", cid10 = "A90", cities = geo)
@@ -44,16 +44,21 @@ ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "bayesian",
 save(ale.den, file = nomeRData)
 
 if (geo %in% c(3549805, 3552205)) {
-  ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", finalday = dia_relatorio)
+  ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", 
+                              finalday = dia_relatorio, narule = "arima",
+                              dataini = "sinpri", completetail = 0)
   save(ale.den, ale.chik, file = nomeRData)
   }
 
 # escrevendo os dados no banco
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
+restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
 
-summary(restab.den[restab.den$SE == data_relatorio,])
+summary(restab.den)
+summary(restab.chik)
 
 write_alerta(restab.den)
+write_alerta(restab.chik)
 
 # salvando objetos -------------------------
 #flog.info("saving ...", Rfile, capture = TRUE, name = alog)
