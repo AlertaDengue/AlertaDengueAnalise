@@ -15,13 +15,14 @@ estado = "Minas Gerais"
 sig = "MG"
 
 # data do relatorio:---------------------
-data_relatorio = 202105
+data_relatorio = 202111
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/aleMG-",data_relatorio,".RData")
 
 # cidades --------------------------------
 cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
+
 
 # Calcula alerta estadual ------------------ 
 
