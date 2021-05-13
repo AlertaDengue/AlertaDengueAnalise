@@ -19,7 +19,7 @@ estado = "Rio de Janeiro"
 sig = "RJ"
 
 # data do relatorio:---------------------
-data_relatorio = 202108
+data_relatorio = 202117
 #lastDBdate("sinan", 3304557) # ultimo caso registrado
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
@@ -36,6 +36,7 @@ save(ale.den, ale.chik, file = nomeRData)
 
 # salvando alerta RData no servidor  ----
 #flog.info("saving ...", Rfile, capture = TRUE, name = alog)
+
 system(paste("scp", nomeRData, "infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/"))
 
 # criando tabela historico_alerta

@@ -1,12 +1,7 @@
 #====================================================
-## Alertas municipais do Estado de São Paulo
+## Alertas municipais do Estado do Acre
 #====================================================
-# cidades: SJ Rio Preto (3549805), Bauru (3506003), Sorocaba (3552205)
-
-
-# SJRio Preto: dengue e chik
-# Sorocaba: dengue e chik 
-# Bauru: dengue
+# cidades: Rio Branco (1200401)
 
 # ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC  
 
@@ -18,51 +13,49 @@ source("AlertaDengueAnalise/config/config_global_2020.R") #configuracao
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
                  user = "dengue", host = "localhost", 
                  password = pw)
-# parametros especificos -----------------
-estado = "São Paulo"
-uf = "SP"
 
-data_relatorio = 202117
+# parametros especificos -----------------
+estado = "Acre"
+uf = "AC"
+
+# onde salvar boletim
+out = "AlertaDengueAnalise/report/AC/Municipios"
+dir_rel = "Relatorio/AC/Municipios"
+
+
+# data do relatorio:---------------------
+data_relatorio = 202112
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
 # cidade -------------------------------
-geo <- 3506003
+geo <- 1200401
 #geo <- as.numeric(mn)  # from infodengue.R
 # checking the last date
-#AlertTools::lastDBdate("sinan", cid10 = "A90", cities = geo)
+#AlertTools::lastDBdate("sinan", cities = geo)
 
-nomeRData <- paste0("alertasRData/aleSP-",geo,"-",data_relatorio,".RData")
+nomeRData <- paste0("alertasRData/aleAC-",geo,"-",data_relatorio,".RData")
 
 # pipeline -------------------------------
-flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
+#flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "bayesian", 
                            finalday = dia_relatorio, dataini = "sinpri", 
-                           narule = "arima", completetail = 0)
+                           completetail = 0, narule = "arima")                          
 
 save(ale.den, file = nomeRData)
 
-if (geo %in% c(3549805, 3552205)) {
-  ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", 
-                              finalday = dia_relatorio, narule = "arima",
-                              dataini = "sinpri", completetail = 0)
-  save(ale.den, ale.chik, file = nomeRData)
-  }
 
 # escrevendo os dados no banco
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
-restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
-
-summary(restab.den)
-summary(restab.chik)
+summary(restab.den[restab.den$SE == data_relatorio,])  # verificar se não tem numeros extremos de casos_est e casos_estmax
 
 write_alerta(restab.den)
-write_alerta(restab.chik)
 
-# salvando objetos -------------------------
-#flog.info("saving ...", Rfile, capture = TRUE, name = alog)
-system(paste("scp", nomeRData, "infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/"))
+
+# mandando pro servidor
+comando = paste("scp ",nomeRData,"infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/")
+system(comando)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

@@ -16,7 +16,7 @@ sig = "CE"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202108
+data_relatorio = 202117
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/aleCE-",data_relatorio,".RData")
@@ -43,9 +43,6 @@ ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "bayesian",
 save(ale.den, ale.chik, ale.zika, file = nomeRData)
 t2 <- Sys.time()-t1
 
-# inspecionando a capital
-tail(ale.den$'2304400'$data)
-tail(ale.den$'2304400'$indices$level) # nivel
 
 # criando tabela historico_alerta
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)

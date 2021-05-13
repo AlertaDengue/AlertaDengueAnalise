@@ -2,9 +2,9 @@ library("AlertTools"); library(assertthat) ; library(tidyverse)
 library(RPostgreSQL)
 
 
-UF = "Paraná"
+UF = "Acre"
 # USAR esse se do servidor:
-con <- DenguedbConnect(pass = pw)
+#con <- DenguedbConnect(pass = pw)
 
 # OU esse remoto
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
@@ -14,7 +14,7 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
 ### 1. O que temos desse estado no banco de dados?
 (getRegionais(uf = UF))
 (getRegionais(uf = UF, macroreg = TRUE))
-cid = getCidades(uf = UF, datasource=con)
+cid = getCidades(uf = "Acre")
 nrow(cid)
 head(cid)
 
@@ -22,42 +22,7 @@ head(cid)
 #save(cid, file = "cid.RData")
 # Se todas as cidades estao presentes, siga para (3)
 
-### 2. Seu municipio(s) não está? Coloque-o, usando informacao do IBGE (se adequado)
-nomedacidade = "Sorocaba"
-geocodigo =  3552205 #tabuf$Código.Município.Completo[tabuf$Nome_Município==nomedacidade]
-id =  16# tabuf$Mesorregião.Geográfica[tabuf$Nome_Município==nomedacidade]
-nomereg = "Sorocaba" #tabuf$Nome_Mesorregião[tabuf$Nome_Município==nomedacidade]
-macroreg = "Sorocaba"
-insert_city_infodengue(geocodigo=geocodigo, regional = nomereg, id_regional=id, macroreg = macroreg)
-
-### 2a. Quer colocar o estado todo de uma vez? Nao se preocupe, quem tiver já no banco nao sera mexido
-## (adaptar para incluir macroregiao)
-
-tabuf <- read.csv("SC_regionais_de_saude.csv", as.is = TRUE) # qdo é custmizada a regional de saude
-head(tabuf)
-tabuf$regional <- as.factor(tabuf$regional)
-regs <- unique(tabuf$regional)
-
-for (i in 1:nrow(tabuf)){
-  insert_city_infodengue(geocodigo = sevendigitgeocode(tabuf$geocodigo[i]), 
-                         id_regional = which(regs == tabuf$regional[i]), # = tabuf$numreg[i]  usando pq nao tenho a info
-                         regional = tabuf$regional[i], # tabuf$regional[i], 
-                         macroreg = "Santa Catarina", #tabuf$macroregional[i],
-                         datasource = con)
-}
-
-
-#macroreg=getRegionais(uf = "Minas Gerais", macroreg = TRUE)
-reg=getRegionais(uf = UF)
-
-# 2b Precisa incluir macroregioes onde já tem regionais?
-# Usar com cuidado
-
-update_sql = paste("UPDATE \"Dengue_global\".regional_saude SET nome_macroreg = \'Centro Oriental Paranaense\'
-                   WHERE nome_regional = \'Telêmaco Borba\'")
-try(dbGetQuery(con, update_sql))
-
-### 3. Inserção das estacoes meteorologicas na tabela das regionais - requer SENHA
+### 2. Inserção das estacoes meteorologicas na tabela das regionais - requer SENHA
 # ----------------------------------------------------------------
 #https://estacoes.dengue.mat.br/
 
@@ -95,9 +60,9 @@ escrevewu(csvfile="estacoes/estações-mais-proximasMAmod.csv", UF = "Maranhão"
 
 # PS. Na mão: usar setWUstation()
 # uma:
-dados <- data.frame(municipio_geocodigo = geocodigo, 
-                    primary_station = "SBAU", secondary_station = "SBAU")
-setWUstation(dados, senha ="",UF = "São Paulo")
+dados <- data.frame(municipio_geocodigo = 1200401, 
+                    primary_station = "SBRB", secondary_station = "SBTK")
+setWUstation(dados, UF = "Acre")
 
 # varias:
 # essa tabela foi criada a mão (verificar se os nomes estao iguais ao da getRegionais)
@@ -131,7 +96,7 @@ for (m in muns){
 }
 
 # Verificando 
-wus <- getWUstation(cities = cid$municipio_geocodigo)
+wus <- getWUstation(cities = 1200401)
 table(wus$codigo_estacao_wu)
 
 
@@ -161,14 +126,14 @@ for (i in 1:N){
 
 # para um local so
 
-params = data.frame(municipio_geocodigo = 3506003, cid10 = cid10,
-                    limiar_preseason = 4.44, 
-                    limiar_posseason = 3.94, 
-                    limiar_epidemico = 57.6)
-res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params = params, 
-                        overwrite = TRUE, senha = "aldengue")
+params = data.frame(municipio_geocodigo = 1200401, cid10 = "A90",
+                    limiar_preseason = 12.6, 
+                    limiar_posseason = 11.5, 
+                    limiar_epidemico = 71.54)
+res <- write_parameters(city = params$municipio_geocodigo, cid10 = "A90", params = params, 
+                        overwrite = TRUE)
 
-read.parameters(3506003)
+read.parameters(1200401)
 # para verificar
 sqlquery = "SELECT * FROM \"Dengue_global\".\"parameters\" WHERE municipio_geocodigo 
  = 2110005"
@@ -210,13 +175,13 @@ for (i in 1:nrow(cidee)){
 # para um municipio só, a mao ()
 read.parameters(3549805)
 
-params = data.frame(municipio_geocodigo = 3549805, 
-                    cid10 = cid10,
+params = data.frame(municipio_geocodigo = 1200401, 
+                    cid10 = "A90",
                     varcli = "temp_min",
-                    clicrit = 20,
+                    clicrit = 22,
                     codmodelo = "Af")
-res <- write_parameters(city = params$municipio_geocodigo, cid10 = cid10, params, 
-                        overwrite = TRUE, senha)
+res <- write_parameters(city = params$municipio_geocodigo, cid10 = "A90", params, 
+                        overwrite = TRUE)
 
 ## Para copiar os valores para a tabela regionais_saude
  ## e' essa que é usada no site.

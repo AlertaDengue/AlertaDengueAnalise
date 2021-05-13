@@ -16,7 +16,7 @@ sig = "SC"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202105
+data_relatorio = 202117
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/aleSC-",data_relatorio,".RData")

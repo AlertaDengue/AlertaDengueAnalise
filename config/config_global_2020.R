@@ -19,6 +19,6 @@ print(basedir)
 source("AlertaDengueAnalise/config/publicar_alerta.R")
 
 # INLA
-INLA:::inla.dynload.workaround()
+#INLA::inla.binary.install()
 
 

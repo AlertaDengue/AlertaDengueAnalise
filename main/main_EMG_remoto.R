@@ -15,7 +15,7 @@ estado = "Minas Gerais"
 sig = "MG"
 
 # data do relatorio:---------------------
-data_relatorio = 202111
+data_relatorio = 202117
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/aleMG-",data_relatorio,".RData")
@@ -43,6 +43,7 @@ ale.den <- c(ale.den1_300, ale.den301_600, ale.den601_853)
 save(ale.den, file = nomeRData)
 t2 <- Sys.time() - t1
 
+
 ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "bayesian", 
                             iniSE = 201001, finalday = dia_relatorio, 
                             narule = "arima", dataini = "sinpri", completetail = 0)
@@ -53,6 +54,7 @@ ale.zika <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "bayesian",
                             finalday = dia_relatorio, narule = "arima", completetail = 0)
 save(ale.den, ale.chik, ale.zika, file = nomeRData)
 t3 <- Sys.time() - t1
+
 
 # escrevendo na tabela historico_alerta
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)

@@ -24,7 +24,7 @@ dir_rel = "Relatorio/RS/Municipios"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202102
+data_relatorio = 202117
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
@@ -37,7 +37,7 @@ geo <- 4314902
 nomeRData <- paste0("alertasRData/aleRS-",geo,"-",data_relatorio,".RData")
 
 # pipeline -------------------------------
-flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
+#flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
 
 ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "bayesian", 
                            finalday = dia_relatorio, dataini = "sinpri", 
@@ -54,7 +54,6 @@ write_alerta(restab.den)
 
 
 # mandando pro servidor
-system("ssh infodengue@info.dengue.mat.br 'cd alertasRData && ls'")
 comando = paste("scp ",nomeRData,"infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/")
 system(comando)
 

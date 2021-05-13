@@ -15,7 +15,7 @@ estado = "Rio de Janeiro"
 sig = "RJ"
 
 # data do relatorio:---------------------
-data_relatorio = 202105
+data_relatorio = 202117
 #lastDBdate("historico_alerta", 2111300)
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
@@ -36,7 +36,7 @@ ale.chik <- pipe_infodengue(cidades, cid10 = "A92.0", nowcasting = "bayesian",
                            narule = "arima", dataini = "sinpri", completetail = 0)
 
 save(ale.den, ale.chik, file = nomeRData)
-t2 <- Sys.time()-t1
+t2 <- Sys.time()-t1  # 11.4min
 
 # escrevendo na tabela historico_alerta
 restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)

@@ -4,7 +4,7 @@
 
 # ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC
 # 3 arboviroses
-
+# Fortaleza = 2111300
 
 # Cabeçalho ------------------------------
 setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/")
@@ -18,8 +18,8 @@ estado = "Maranhão"
 sig = "MA"
 
 # data do relatorio:---------------------
-data_relatorio = 202105
-lastDBdate("sinan", 2111300) # ultimo caso registrado
+data_relatorio = 202117
+#lastDBdate("sinan", 2111300) # ultimo caso registrado
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # cidades --------------------------------
