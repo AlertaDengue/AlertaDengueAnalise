@@ -25,11 +25,12 @@ if (!require('ggTimeSeries')){
     library("devtools")
     install_github("install_github("AtherEnergy/ggTimeSeries")} 
 
-INLA:
-https://www.r-inla.org/download-install
+INLA: https://www.r-inla.org/download-install
+
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)
+
 install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 
 
