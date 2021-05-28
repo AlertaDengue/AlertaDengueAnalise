@@ -16,10 +16,12 @@ if (!require('gridExtra')){install.packages("gridExtra")}
 if (!require('ggridges')){install.packages("ggridges")} 
 if (!require('grid')){install.packages("grid")} 
 if (!require('cgwtools')){install.packages("cgwtools")} 
+
 if (!require('AlertTools')){
     if(!require("devtools")) install.packages("devtools")
     library("devtools")
     install_github("AlertaDengue/AlertTools", dependencies = TRUE)} 
+
 if (!require('ggTimeSeries')){
     if(!require("devtools")) install.packages("devtools")
     library("devtools")
