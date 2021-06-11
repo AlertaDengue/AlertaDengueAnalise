@@ -3,7 +3,7 @@
 ## Gerar o objeto alerta de forma remota
 
 Para gerar o alerta, as seguintes bibliotecas são necessárias: 
-
+```bash
 if (!require('foreign')){install.packages("foreign")} 
 if (!require('forecast')){install.packages("forecast")} 
 if (!require('RPostgreSQL')){install.packages("RPostgreSQL")} 
@@ -34,13 +34,14 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)
 
 install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+```
 
 
 Essas bibliotes estão listadas: (AlertaDengueAnalise/blob/master/config/config_global_2020.R)
 
 Os códigos parar gerar o objeto alerta para os respectivos estados e municípios estão no diretório: (AlertaDengue/AlertaDengueAnalise/tree/master/main). 
 
-É necessário uma conexão ssh com o sistema (ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC) e cada objeto para estado e/ou município deve ser gerado de forma separada, sendo necessário a edição apenas da data do relatório. 
+É necessário uma conexão via chave ssh com o sistema (ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC) e cada objeto para estado e/ou município deve ser gerado de forma separada, sendo necessário a edição apenas da data do relatório. 
 
 
 
