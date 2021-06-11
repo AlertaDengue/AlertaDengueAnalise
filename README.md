@@ -37,7 +37,7 @@ install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-dow
 ```
 
 
-Essas bibliotes estão listadas: (AlertaDengueAnalise/blob/master/config/config_global_2020.R)
+Essas bibliotecas estão listadas: (AlertaDengueAnalise/blob/master/config/config_global_2020.R)
 
 Os códigos parar gerar o objeto alerta para os respectivos estados e municípios estão no diretório: (AlertaDengue/AlertaDengueAnalise/tree/master/main). 
 
