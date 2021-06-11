@@ -23,7 +23,7 @@ if (!require('AlertTools')){
 if (!require('ggTimeSeries')){
     if(!require("devtools")) install.packages("devtools")
     library("devtools")
-    install_github("install_github("AtherEnergy/ggTimeSeries")} 
+    install_github("AtherEnergy/ggTimeSeries")} 
 
 # INLA: https://www.r-inla.org/download-install
 
