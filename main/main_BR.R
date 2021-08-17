@@ -1,39 +1,39 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue Nacional
 # =============================================================================
-# ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC
-
-setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/")
+setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/github")
 
 # ++++++++++++++++++++++++++++++++++
 # Definicao dos alertas a rodar ----
 # ++++++++++++++++++++++++++++++++++
-source("AlertaDengueAnalise/config/config_global_2020.R") #lista de estados
+source("AlertaDengueAnalise/config/config_global_2020.R") 
 
+#lista de estados com relatorios semanais
 estados_Infodengue  
 
 # PS. se quiser rodar para outros estados sem mexer na configuracao, 
 # pode substituir a tabela estados_Infodengue:
 
 estados_Infodengue <- data.frame(
-  estado = c("São Paulo"),
+  estado = c("Acre"),
   sigla = "SP",
-  dengue = "sim",
-  chik = "sim",
-  zika = "nao"
+  dengue = TRUE,
+  chik = TRUE,
+  zika = FALSE
 )
 
 
 # ++++++++++++++++++++++++
 # data do relatorio:----
 # ++++++++++++++++++++++++
-data_relatorio = 202116
+data_relatorio = 202120
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # ++++++++++++++++++++++++
 # ----- Conexao ----
 # ++++++++++++++++++++++++
 # com banco remoto do Infodengue (original)
+# ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
                  user = "dengue", host = "localhost", 
                  password = pw)
@@ -56,7 +56,7 @@ for(i in 1:nrow(estados_Infodengue)){
     sig <- estados_Infodengue$sigla[i]
     
     agravos <- c("dengue","chik","zika")[which(
-      estados_Infodengue[i, 3:5] == "sim")]
+      estados_Infodengue[i, 3:5] == TRUE)]
 
     # nome do arquivo para salvar alertas (como lista)
     nomeRData <- paste0("alertasRData/ale-",sig,
@@ -65,49 +65,47 @@ for(i in 1:nrow(estados_Infodengue)){
     # cidades --------------------------------
     cidades <- getCidades(uf = estado)[,"municipio_geocodigo"]
     
-    # lista para guardar os alertas do estado
-    res <- list()
-    
-    if("dengue" %in% agravos) {
+    res <- list() # guardar tudo numa lista
+    # alerta dengue
+    if(estados_Infodengue$dengue[estados_Infodengue$estado == estado]) {
       res[["ale.den"]] <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "bayesian", 
                                finalday = dia_relatorio, narule = "arima", 
                                iniSE = 201001, dataini = "sinpri", completetail = 0)
     
-      restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)  # so as ultimas 100 semanas
+      res[["restab.den"]] <- tabela_historico(res[["ale.den"]], iniSE = data_relatorio - 100)  # so as ultimas 100 semanas
+      save(res, file = nomeRData)
+    }
+    
+    # alerta chik
+    if(estados_Infodengue$chik[estados_Infodengue$estado == estado]){
+      res[["ale.chik"]] <- pipe_infodengue(cidades, cid10 = "A92", nowcasting = "bayesian", 
+                                           finalday = dia_relatorio, narule = "arima", 
+                                           iniSE = 201001, dataini = "sinpri", completetail = 0)  
+      
+      res[["restab.chik"]] <- tabela_historico(res[["ale.chik"]], iniSE = data_relatorio - 100)  # so as ultimas 100 semanas
+      save(res, file = nomeRData)
     }
       
-    if("chik" %in% agravos) res[["ale.chik"]] <- pipe_infodengue(cidades, cid10 = "A92", nowcasting = "bayesian", 
-                                                    finalday = dia_relatorio, narule = "arima", 
-                                                    iniSE = 201001, dataini = "sinpri", completetail = 0)  
+    # alerta zika
+    if(estados_Infodengue$zika[estados_Infodengue$estado == estado]){
+    res[["ale.zika"]] <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "bayesian", 
+                                           finalday = dia_relatorio, narule = "arima", 
+                                           iniSE = 201001, dataini = "sinpri", completetail = 0)  
+    res[["restab.zika"]] <- tabela_historico(res[["ale.zika"]], iniSE = data_relatorio - 100)  # so as ultimas 100 semanas
+    save(res, file = nomeRData)
+    }
     
-    if("zika" %in% agravos) res[["ale.zika"]] <- pipe_infodengue(cidades, cid10 = "A92.8", nowcasting = "bayesian", 
-                                                        finalday = dia_relatorio, narule = "arima", 
-                                                        iniSE = 201001, dataini = "sinpri", completetail = 0)  
+    # copiar o arquivo RData para o servidor (o formato mudou! os ale.* estao todos dentro de uma lista)
+    system(paste("scp", nomeRData, "infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/"))
     
-    # salvando os objetos gerados para o estado (usados pelo relatorio)
-    save(res, nomeRData)
-    
-    #system(paste("scp", nomeRData, "infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/"))
-    
-    # update da tabela historico_alerta
-     semanas
-    
-    summary(restab.den)  # verificar se tem algo estranho (numero estourado)
-    write_alerta(restab.den)
-    
-    
+    # escrevendo no servidor
+    if("restab.den" %in% names(res)) write_alerta(res[["restab.den"]])
+    if("restab.chik" %in% names(res)) write_alerta(res[["restab.chik"]])
+    if("restab.zika" %in% names(res)) write_alerta(res[["restab.zika"]])
     
   }
-
-
   t2 <- Sys.time()
   message(paste("total time was", t2-t1))
-
-
-
-# salvando alerta RData no servidor  ----
-#flog.info("saving ...", Rfile, capture = TRUE, name = alog)
-#system(paste("scp", nomeRData, "infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/"))
 
 # ----- Fechando o banco de dados local -----------
 dbDisconnect(con)
