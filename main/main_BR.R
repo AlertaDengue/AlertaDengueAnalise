@@ -161,8 +161,18 @@ for (i in seq_along(file_paths)){
 restab_chik <- eval(parse(text =paste0("rbind(",paste0("restab_chik[[",seq_along(file_paths),"]]", collapse = ","),")")))
 
 
+restab_zika <- list()
+for (i in seq_along(file_paths)){
+  data <- eval(parse(text=paste0("res",i,"[['restab.zika']] %>% bind_rows()")))# unlist data
+  restab_zika[[i]] <-data
+}
+
+restab_zika <- eval(parse(text =paste0("rbind(",paste0("restab_zika[[",seq_along(file_paths),"]]", collapse = ","),")")))
+
+
 restab_den$casos_est_max[restab_den$casos_est_max > 10000] <- NA
 restab_chik$casos_est_max[restab_chik$casos_est_max > 10000] <- NA
+restab_zika$casos_est_max[restab_zika$casos_est_max > 10000] <- NA
 
 # ++++++++++++++++++++++++
 # criar diretório para salvar o output.sql:----
@@ -171,6 +181,5 @@ if(!dir.exists(paste0('AlertaDengueAnalise/main/sql'))){dir.create(paste0('Alert
 
 #escrevendo alerta
 write_alerta(restab_den, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_dengue.sql"))
-
 write_alerta(restab_chik, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_chik.sql"))
-
+write_alerta(restab_zika, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_zika.sql"))
