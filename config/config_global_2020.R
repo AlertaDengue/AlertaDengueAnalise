@@ -6,7 +6,7 @@
 
 pkgs <- c("foreign", "forecast", "RPostgreSQL", "xtable",
           "zoo","assertthat","AlertTools","DBI",
-          "futile.logger","lubridate", "grid","INLA","cgwtools","tidyverse")
+          "futile.logger","lubridate", "grid","INLA","cgwtools","tidyverse","fs","miceadds")
 
 lapply(pkgs, library, character.only = TRUE ,quietly = T)
 

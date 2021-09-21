@@ -24,7 +24,7 @@ dir_rel = "Relatorio/RS/Municipios"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202117
+data_relatorio = 202136
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 
@@ -34,7 +34,7 @@ geo <- 4314902
 # checking the last date
 #AlertTools::lastDBdate("sinan", cities = geo)
 
-nomeRData <- paste0("alertasRData/aleRS-",geo,"-",data_relatorio,".RData")
+nomeRData <- paste0("aleRS-",geo,"-",data_relatorio,".RData")
 
 # pipeline -------------------------------
 #flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
