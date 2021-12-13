@@ -39,7 +39,7 @@ Essas bibliotecas estão listadas: (AlertaDengueAnalise/blob/master/config/confi
 
 Os códigos parar gerar o objeto alerta para os respectivos estados e municípios estão no diretório: (AlertaDengue/AlertaDengueAnalise/tree/master/main). 
 
-Para rodar o script é necessário uma conexão via chave ssh com o sistema (ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC) e cada objeto para estado e/ou município deve ser gerado de forma separada. Não é necessário nenhuma edição nos scripts, sendo apenas definido a data do relatório. 
+Para rodar o script é necessário uma conexão via chave ssh com o sistema (ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC), não é necessário nenhuma edição nos scripts, sendo apenas definido a data do relatório. Os objetos serão salvos dentro do diretório (main/alertas/'data_relatorio') e o output SQL (main/sql)
 
 
 
