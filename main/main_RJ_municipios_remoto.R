@@ -7,7 +7,10 @@
 
 
 # Cabeçalho ------------------------------
-setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/")
+if(!require("rstudioapi")) {install.packages("rstudioapi"); library(rstudioapi)}
+folder <- strsplit(getActiveDocumentContext()$path, "/")[[1]]
+basedir <- paste0(paste(folder[1:(length(folder)-3)], collapse="/"), "/")
+setwd(basedir)
 source("AlertaDengueAnalise/config/config_global_2020.R")  #configuracao 
 #con <- DenguedbConnect(pass = pw)  
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
@@ -19,11 +22,11 @@ estado = "Rio de Janeiro"
 sig = "RJ"
 
 # data do relatorio:---------------------
-data_relatorio = 202117
+data_relatorio = 202147
 #lastDBdate("sinan", 3304557) # ultimo caso registrado
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
-nomeRData <- paste0("alertasRData/aleRio-",data_relatorio,".RData")
+nomeRData <- paste0("aleRio-",data_relatorio,".RData")
 
 ### Se Boletim da cidade do Rio de Janeiro por APS ------------------------
 

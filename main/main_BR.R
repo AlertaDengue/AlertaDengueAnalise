@@ -1,13 +1,11 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue Nacional
 # =============================================================================
-#setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/github")
-setwd("~/infodengue/")
+setwd("~/infodengue")
 # ++++++++++++++++++++++++++++++++++
 # Definicao dos alertas a rodar ----
 # ++++++++++++++++++++++++++++++++++
 source("AlertaDengueAnalise/config/config_global_2020.R") 
-
 #lista de estados com relatorios semanais
 #estados_Infodengue  
 
@@ -15,28 +13,29 @@ source("AlertaDengueAnalise/config/config_global_2020.R")
 # pode substituir a tabela estados_Infodengue:
 
 estados_Infodengue <- data.frame(
-#    estado = c("Acre","Amazonas","Amapá", "Pará", "Rondônia", "Roraima" , "Tocantins",
-#               "Alagoas","Bahia","Ceará","Maranhão","Piauí","Pernambuco","Paraíba","Rio Grande do Norte","Sergipe",
-#               "Goiás", "Mato Grosso", "Mato Grosso do Sul","Distrito Federal",
-#               "Espírito Santo", "Minas Gerais", "Rio de Janeiro", "São Paulo",
-#               "Paraná", "Rio Grande do Sul","Santa Catarina"),
-  estado = c("Ceará","Santa Catarina","Maranhão","Rio de Janeiro","Paraná"),
-  sigla = c("CE","SC","MA","RJ","PR"),
-#    sigla = c("AC","AM","AP","PA","RO","RR","TO",
-#              "AL","BA","CE","MA","PI","PE","PB","RN","SE",
-#              "GO","MT","MS","DF",
-#              "ES","MG","RJ","SP",
-#              "PR","RS","SC"),
-  dengue = TRUE,
-  chik = c(TRUE,T,T,T,F),
-  zika = c(TRUE,T,T,F,F)
+    estado = c("Acre","Amazonas","Amapá", "Pará", "Rondônia", "Roraima" , "Tocantins",
+               "Alagoas","Bahia","Ceará","Maranhão","Piauí","Pernambuco","Paraíba","Rio Grande do Norte","Sergipe",
+               "Goiás", "Mato Grosso", "Mato Grosso do Sul","Distrito Federal",
+               "Espírito Santo", "Minas Gerais", "Rio de Janeiro", "São Paulo",
+               "Paraná", "Rio Grande do Sul","Santa Catarina"),
+#estado = c("Santa Catarina","Minas Gerais"),
+#sigla = c("SC","MG"),
+sigla = c("AC","AM","AP","PA","RO","RR","TO",
+              "AL","BA","CE","MA","PI","PE","PB","RN","SE",
+              "GO","MT","MS","DF",
+              "ES","MG","RJ","SP",
+              "PR","RS","SC"),
+ dengue = TRUE,
+  chik = c(T),
+#  zika = c(T,T)
+ zika = c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,T)
 )
 
 
 # ++++++++++++++++++++++++
 # data do relatorio:----
 # ++++++++++++++++++++++++
-data_relatorio = 202137
+data_relatorio = 202148
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # ++++++++++++++++++++++++
@@ -130,7 +129,7 @@ dbDisconnect(con)
 # ++++++++++++++++++++++++ 
 #Diretório definido para os alertas estaduais
 file_paths <- fs::dir_ls(paste0("AlertaDengueAnalise/main/alertas/",data_relatorio,"/"))
-file_paths
+file_paths 
    
 #Load alertas
 j <- 1
@@ -169,10 +168,15 @@ for (i in seq_along(file_paths)){
 
 restab_zika <- eval(parse(text =paste0("rbind(",paste0("restab_zika[[",seq_along(file_paths),"]]", collapse = ","),")")))
 
+summary(restab_chik)
+summary(restab_den)
+summary(restab_zika)
 
 restab_den$casos_est_max[restab_den$casos_est_max > 10000] <- NA
 restab_chik$casos_est_max[restab_chik$casos_est_max > 10000] <- NA
 restab_zika$casos_est_max[restab_zika$casos_est_max > 10000] <- NA
+
+
 
 # ++++++++++++++++++++++++
 # criar diretório para salvar o output.sql:----

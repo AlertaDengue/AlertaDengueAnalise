@@ -7,7 +7,7 @@
 
 # Cabeçalho ------------------------------
 #setwd("~/")
-setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/")
+setwd("~/infodengue/")
 source("AlertaDengueAnalise/config/config_global_2020.R") #configuracao 
 #con <- DenguedbConnect(pass = pw)  
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
@@ -24,8 +24,17 @@ dir_rel = "Relatorio/RS/Municipios"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202136
+data_relatorio = 202148
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
+
+# ++++++++++++++++++++++++
+# criar diretório para salvar o alerta:----
+# ++++++++++++++++++++++++
+if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas'))){dir.create(paste0('AlertaDengueAnalise/main/alertas'))}
+
+if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))){dir.create(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))}
+
+if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,"municipal"))){dir.create(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,"municipal"))}
 
 
 # cidade -------------------------------
@@ -34,7 +43,7 @@ geo <- 4314902
 # checking the last date
 #AlertTools::lastDBdate("sinan", cities = geo)
 
-nomeRData <- paste0("aleRS-",geo,"-",data_relatorio,".RData")
+nomeRData <- paste0("ale-RS-",geo,"-",data_relatorio,".RData")
 
 # pipeline -------------------------------
 #flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
@@ -43,7 +52,7 @@ ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "bayesian",
                            finalday = dia_relatorio, dataini = "sinpri", 
                            completetail = 0, narule = "arima")                          
 
-save(ale.den, file = nomeRData)
+save(ale.den, file = paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,'/municipal/',nomeRData))
 
 
 # escrevendo os dados no banco

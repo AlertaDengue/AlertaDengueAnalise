@@ -22,8 +22,17 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
 estado = "São Paulo"
 uf = "SP"
 
-data_relatorio = 202117
+data_relatorio = 202147
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
+
+# ++++++++++++++++++++++++
+# criar diretório para salvar o alerta:----
+# ++++++++++++++++++++++++
+if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas'))){dir.create(paste0('AlertaDengueAnalise/main/alertas'))}
+
+if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))){dir.create(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))}
+
+if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,"municipal"))){dir.create(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,"municipal"))}
 
 
 # cidade -------------------------------
@@ -32,7 +41,8 @@ geo <- 3506003
 # checking the last date
 #AlertTools::lastDBdate("sinan", cid10 = "A90", cities = geo)
 
-nomeRData <- paste0("alertasRData/aleSP-",geo,"-",data_relatorio,".RData")
+
+nomeRData <- paste0("ale-SP-",geo,"-",data_relatorio,".RData")
 
 # pipeline -------------------------------
 flog.info(paste("alerta dengue", geo ,"executing..."), name = alog)
@@ -41,13 +51,13 @@ ale.den <- pipe_infodengue(geo, cid10 = "A90", nowcasting = "bayesian",
                            finalday = dia_relatorio, dataini = "sinpri", 
                            narule = "arima", completetail = 0)
 
-save(ale.den, file = nomeRData)
+save(ale.den, file = paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,'/municipal/',nomeRData))
 
 if (geo %in% c(3549805, 3552205)) {
   ale.chik <- pipe_infodengue(geo, cid10 = "A92.0", nowcasting = "bayesian", 
                               finalday = dia_relatorio, narule = "arima",
                               dataini = "sinpri", completetail = 0)
-  save(ale.den, ale.chik, file = nomeRData)
+  save(ale.den, ale.chik, file = paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,'/municipal/',nomeRData))
   }
 
 # escrevendo os dados no banco
