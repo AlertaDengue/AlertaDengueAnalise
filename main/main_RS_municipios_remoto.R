@@ -32,9 +32,7 @@ dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 # ++++++++++++++++++++++++
 if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas'))){dir.create(paste0('AlertaDengueAnalise/main/alertas'))}
 
-if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))){dir.create(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))}
-
-if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,"municipal"))){dir.create(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,"municipal"))}
+if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/municipal'))){dir.create(paste0('AlertaDengueAnalise/main/alertas/municipal'))}
 
 
 # cidade -------------------------------
