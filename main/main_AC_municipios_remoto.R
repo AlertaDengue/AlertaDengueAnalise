@@ -8,6 +8,7 @@
 # Cabeçalho ------------------------------
 #setwd("~/")
 setwd("~/infodengue/")
+setwd("/home/claudia/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/pipeline/")
 source("AlertaDengueAnalise/config/config_global_2020.R") #configuracao 
 #con <- DenguedbConnect(pass = pw)  
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
@@ -24,7 +25,7 @@ dir_rel = "Relatorio/AC/Municipios"
 
 
 # data do relatorio:---------------------
-data_relatorio = 202144
+data_relatorio = 202204
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # ++++++++++++++++++++++++
@@ -64,12 +65,12 @@ summary(restab.den[restab.den$SE == data_relatorio,])  # verificar se não tem n
 
 restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
 
-write_alerta(restab.den)
-write_alerta(restab.chik)
+#write_alerta(restab.den)
+#write_alerta(restab.chik)
 
 # mandando pro servidor
-comando = paste("scp ",nomeRData,"infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/")
-system(comando)
+#comando = paste("scp ",nomeRData,"infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/")
+#system(comando)
 
 # ----- Fechando o banco de dados
 dbDisconnect(con)

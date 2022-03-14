@@ -12,7 +12,7 @@
 
 # Cabeçalho ------------------------------
 #setwd("~/")
-setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/")
+setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/pipeline")
 source("AlertaDengueAnalise/config/config_global_2020.R") #configuracao 
 #con <- DenguedbConnect(pass = pw)  
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
@@ -22,7 +22,7 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
 estado = "São Paulo"
 uf = "SP"
 
-data_relatorio = 202147
+data_relatorio = 202207
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # ++++++++++++++++++++++++
@@ -34,7 +34,7 @@ if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/municipal'))){dir.create
 
 
 # cidade -------------------------------
-geo <- 3506003
+geo <- 3552205
 #geo <- as.numeric(mn)  # from infodengue.R
 # checking the last date
 #AlertTools::lastDBdate("sinan", cid10 = "A90", cities = geo)
@@ -59,14 +59,14 @@ if (geo %in% c(3549805, 3552205)) {
   }
 
 # escrevendo os dados no banco
-restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 100)
+restab.den <- tabela_historico(ale.den, iniSE = data_relatorio - 10)
 restab.chik <- tabela_historico(ale.chik, iniSE = data_relatorio - 100)
 
 summary(restab.den)
 summary(restab.chik)
 
 write_alerta(restab.den)
-write_alerta(restab.chik)
+write_alerta(restab.chik, writetofile = TRUE)
 
 # salvando objetos -------------------------
 #flog.info("saving ...", Rfile, capture = TRUE, name = alog)

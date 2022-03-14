@@ -2,6 +2,7 @@
 # Arquivo de execução do Alerta Dengue Nacional
 # =============================================================================
 setwd("~/infodengue")
+setwd("/home/claudia/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/pipeline/")
 # ++++++++++++++++++++++++++++++++++
 # Definicao dos alertas a rodar ----
 # ++++++++++++++++++++++++++++++++++
@@ -31,11 +32,11 @@ sigla = c("AC","AM","AP","PA","RO","RR","TO",
  zika = c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,T)
 )
 
-
+ww <- c(10,11,22,23,25:27)
 # ++++++++++++++++++++++++
 # data do relatorio:----
 # ++++++++++++++++++++++++
-data_relatorio = 202148
+data_relatorio = 202204
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # ++++++++++++++++++++++++
@@ -68,7 +69,8 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
 
 t1 <- Sys.time()
 
-for(i in 1:nrow(estados_Infodengue)){
+#for(i in 1:nrow(estados_Infodengue)){
+for(i in ww){
   estado <- estados_Infodengue$estado[i] 
   sig <- estados_Infodengue$sigla[i]
   
@@ -89,7 +91,7 @@ for(i in 1:nrow(estados_Infodengue)){
                                         finalday = dia_relatorio, narule = "arima", 
                                         iniSE = 201001, dataini = "sinpri", completetail = 0)
     
-    res[["restab.den"]] <- tabela_historico(res[["ale.den"]], iniSE = data_relatorio - 100)  # so as ultimas 100 semanas
+    res[["restab.den"]] <- tabela_historico(res[["ale.den"]], iniSE = data_relatorio - 100) # so as ultimas 100 semanas
     save(res, file = paste0('AlertaDengueAnalise/main/alertas/',data_relatorio,'/',nomeRData))
   }
   
