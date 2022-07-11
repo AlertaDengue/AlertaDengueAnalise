@@ -8,7 +8,7 @@
 rm(list = ls()) # apagar a memoria
 
 # Cabeçalho ------------------------------
-setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/")
+setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/pipeline")
 source("AlertaDengueAnalise/config/config_global_2020.R") #configuracao 
 #con <- DenguedbConnect(pass = pw)  
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
@@ -19,7 +19,7 @@ estado = "Ceará"
 sig = "CE"
 
 # data do relatorio:---------------------
-data_relatorio = 202051
+data_relatorio = 202218
 #lastDBdate("tweet", 2111300)
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
@@ -28,7 +28,7 @@ geos <- c(2304400)
 
 # Calcula alertas municipais ------------------ 
 
-ale.den <- pipe_infodengue(geos, cid10 = "A90", nowcasting = "bayesian",
+ale.den <- pipe_infodengue(geos, cid10 = "A90", nowcasting = "none",
                              finalday = dia_relatorio, narule = "arima", 
                              completetail = 0)
   

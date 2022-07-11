@@ -57,14 +57,27 @@ table(para$uf)
 #   
 }
 
+## +++++++++++++++++++++++++++++++++++++++++++++++
+## 1. Inserir todos os UFs na tabela parameters (so na primeira vez)
+## +++++++++++++++++++++++++++++++++++++++++++++++
+ufs
+for (j in 1:nrow(ufs)){
+  pp = data.frame(municipio_geocodigo = ufs$geocodigo[j], 
+                  cid10 = "A90", varcli = "temp_min")
+  #     
+  res <- write_parameters(city = pp$municipio_geocodigo,
+                          cid10 = pp$cid10, 
+                          params = pp, 
+                          datasource = con)
+}
 
 # ------------------------------------------
-# 2. inserir estacoes (se precisar atualizar)
+# 2. inserir estacoes MUNICIPAIS 
 # ------------------------------------------
 for (i in 1:27){
   sig <- ufs$uf[i]
   nome <- str_to_title(ufs$nome[i])
-  wufile <- paste0("estacoes/estacoes_",sig,".csv")
+  wufile <- paste0("../../AlertaDengueAnalise/estacoes/estacoes_",sig,".csv")
   wu <- read.csv2(wufile)
   names(wu) <- c("x","municipio","geocodigo","ICAO")
   muns <- unique(wu$geocodigo)
@@ -84,6 +97,30 @@ for (i in 1:27){
 
 
 read.parameters(cities = muns, cid10 = "A90")  # tudo OK?
+
+# ------------------------------------------
+# 2b. inserir estacoes ESTADUAIS: duas mais frequentes 
+# ------------------------------------------
+for (i in 1:27){
+  sig <- ufs$uf[i]
+  code <- ufs$geocodigo[i]
+  nome <- str_to_title(ufs$nome[i])
+  wufile <- paste0("../../AlertaDengueAnalise/estacoes/estacoes_",sig,".csv")
+  wu <- read.csv2(wufile)
+  names(wu) <- c("x","municipio","geocodigo","ICAO")
+  muns <- unique(wu$geocodigo)
+  
+  top2 <- names(sort(table(wu$ICAO), decreasing = TRUE))[1:2]
+  
+  dados <- data.frame(municipio_geocodigo = code,
+                     primary_station = top2[1], 
+                     secondary_station =top2[2])
+  setWUstation(dados)
+  }
+  
+
+read.parameters(uf = ufs$geocodigo, cid10 = "A90")  # tudo OK?
+
 
 #+++++++++++++++++++++++
 # 3. limiares

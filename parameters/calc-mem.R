@@ -4,9 +4,9 @@
 # PS. requer conexao con bd
 
 library(tidyverse); library(assertthat)
-library(AlertTools)
+#library(AlertTools)
 library(lubridate)  
-
+devtools::load_all()
 
 ## Por municipio ----
 
@@ -25,7 +25,7 @@ library(lubridate)
 #                                 end_year = 2020)
 # save(thresRJ, file = "limiar_mem_municipal_RJ_2010_2020.RData")
 
-# 2. Para todos os municipios 
+# 2. Para todos os municipios - metodo novo
 
 #thres.mun <- c()
 
@@ -42,7 +42,7 @@ for (u in ufs){
   print(u)
   mun_list <- getCidades(uf = u, datasource=con)$municipio_geocodigo  
   thres <- infodengue_apply_mem(mun_list=mun_list, database=con,
-                                end_year = 2020)
+                                end_year = 2021)
   thres.mem <- thres$mem
   thres.mem$pop <- thres$min_threshold_inc$populacao
   thres.mem$limiar_preaseason <- thres$thresholds$limiar_preseason
@@ -56,7 +56,7 @@ for (u in ufs){
   thres.mem$ano_fim <- thres$thresholds$ano_fim
   
   thres.mun <- rbind(thres.mun, thres.mem)
-  save(thres.mun, file = "limiar_mem_municipal_2010_2020.RData")
+  save(thres.mun, file = "limiar_mem_municipal_2010_2021.RData")
 }
 
 thres.mun$uf <- as.factor(thres.mun$uf)
@@ -118,8 +118,8 @@ dev.off()
 
 
 ## Por regional ----
-# 1. Agora é a versao nova, para agregar por regional.
-# Exemplo de uso: Amazonas
+# 1. Agora é a versao que calcula limiares por regional. precisa fazer um loop pelos estados, 
+# esse codigo pode ser bem melhorado.
 
 # Norte ----
 cidadesAC <- getCidades(uf = "Acre")
@@ -218,8 +218,8 @@ for (i in regs) {
 
 
 resN <- rbind(resAC, resAM, resAP, resRR, resRO, resPA, resTO)
-save(resN, file = "memN2020.RData")
-load("memN2020.RData")
+save(resN, file = "memN2021.RData")
+load("memN2021.RData")
 
 ### Centro oeste ----
 
@@ -555,11 +555,32 @@ mem <- rbind(resN, resNE, resCO, resSE, resS)
 write.csv(mem, file = "mem_regional_2010_2020_BR.csv")
 
 
-
-
-
-# Tarefa : rodar para todos os estados e salvar num arquivo csv. 
 # criar uma coluna UF no csv
+
+load("data/cidades.rda") # no AlertTools
+## Por UF ----
+
+# dengue
+ufs <- unique(cidades$uf)
+res <- infodengue_apply_mem_agreg(muns,nome = ufs[3])
+for(i in c(4:27,1:2)){
+  print(i)
+  muns <- cidades$municipio_geocodigo[cidades$uf == ufs[i]]
+  res <- rbind(res,infodengue_apply_mem_agreg(muns,nome = ufs[i]))
+}
+ 
+# chik
+ufs <- unique(cidades$uf)
+resC <- list()
+resC[[1]] <- infodengue_apply_mem_agreg(muns,nome = ufs[1], cid10 = "A92.0")
+for(i in 2:27){
+  print(i)
+  muns <- cidades$municipio_geocodigo[cidades$uf == ufs[i]]
+  resC[[i]] <- infodengue_apply_mem_agreg(muns,nome = ufs[i], cid10 = "A92.0")
+}
+save(resC, file = "memC_uf.RData")
+
+
 
 #### OLD #############
 # sempre verificar se tem NA

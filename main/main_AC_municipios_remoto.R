@@ -8,7 +8,7 @@
 # Cabeçalho ------------------------------
 #setwd("~/")
 setwd("~/infodengue/")
-setwd("/home/claudia/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/pipeline/")
+setwd("/home/claudia/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/")
 source("AlertaDengueAnalise/config/config_global_2020.R") #configuracao 
 #con <- DenguedbConnect(pass = pw)  
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 

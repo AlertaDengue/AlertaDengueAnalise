@@ -8,8 +8,13 @@
 # Goal: calculate the first event of transmission 
 
 library(tidyverse)
-library(RPostgreSQL)
+#library(RPostgreSQL)
 library(zoo)
+library(lubridate)
+library(DescTools) 
+library(sf)
+library(brazilmaps)
+
 
 # 1) get data table (precisa de conexao com o banco de dados)
 # dengue
@@ -27,51 +32,54 @@ load("historico-alerta.RData")
 
 # contar semanas consecutivas com Rt > 1
 
-dd <- d %>%
-  group_by(municipio_geocodigo) %>%
-  mutate(transmissao2 = zoo::rollapply(transmissao, 2, sum, align = "right", fill = NA),
+dd <- d |>
+  group_by(municipio_geocodigo) |>
+  mutate(pop = mean(pop),
+         transmissao2 = zoo::rollapply(transmissao, 2, sum, align = "right", fill = NA),
+         transmissao3 = zoo::rollapply(transmissao, 3, sum, align = "right", fill = NA)) 
+
+
+cc <- ch |>
+  group_by(municipio_geocodigo) |>
+  mutate(pop = mean(pop),
+         transmissao2 = zoo::rollapply(transmissao, 2, sum, align = "right", fill = NA),
          transmissao3 = zoo::rollapply(transmissao, 3, sum, align = "right", fill = NA))
 
-# data do primeiro evento de transmissao (1 semana)
-tt1 <- d %>%
-  filter(transmissao ==1) %>%
-  group_by(municipio_geocodigo) %>%
-  summarise(initrans = min(data_iniSE))
+# data do primeiro evento de transmissao (2 semanas)
+tt2 <- dd |>
+  filter(transmissao2 ==2) |>
+  group_by(municipio_geocodigo) |>
+  summarise(initrans = min(data_iniSE),
+            pop = mean(pop))
 
 # data do primeiro evento de transmissao (2 semanas)
-tt2 <- dd %>%
-  filter(transmissao2 ==2) %>%
-  group_by(municipio_geocodigo) %>%
+cc2 <- cc |>
+  filter(transmissao2 ==2) |>
+  group_by(municipio_geocodigo) |>
   summarise(initrans = min(data_iniSE))
 
-# data do primeiro evento de transmissao (3 semanas)
-tt3 <- dd %>%
-  filter(transmissao3 ==3) %>%
-  group_by(municipio_geocodigo) %>%
-  summarise(initrans = min(data_iniSE))
+tt2$initrans <- format(as.Date(tt2$initrans, format="%Y-%m-%d"),"%Y")
+cc2$initrans <- format(as.Date(cc2$initrans, format="%Y-%m-%d"),"%Y")
 
-## chik ----
+tapply(tt2$municipio_geocodigo, tt2$initrans,length)
 
-cc <- ch %>%
-  group_by(municipio_geocodigo) %>%
-  mutate(transmissao2 = zoo::rollapply(transmissao, 2, sum, align = "right", fill = NA),
-         transmissao3 = zoo::rollapply(transmissao, 3, sum, align = "right", fill = NA))
+mean(tapply(tt2$municipio_geocodigo, tt2$initrans,length)[9:13])
+tttt <- tapply(tt2$pop, tt2$initrans,sum)
+sum(tttt[9:13])
+sd(tttt[8:13])
 
-# data do primeiro evento de transmissao (1 semana)
-cc1 <- ch %>%
-  filter(transmissao ==1) %>%
-  group_by(municipio_geocodigo) %>%
-  summarise(initrans = min(data_iniSE))
+# focus on 2022
+m22 <- tt2 %>%
+  filter(initrans == 2022) %>%
+  mutate(uf = floor(municipio_geocodigo/10^5))
 
-# data do primeiro evento de transmissao (2 semanas)
-cc2 <- cc %>%
-  filter(transmissao2 ==2) %>%
-  group_by(municipio_geocodigo) %>%
-  summarise(initrans = min(data_iniSE))
+table(m22$uf)
+(8+11+14)/sum(table(m22$uf))
+## Mapa
+shape_city <- get_brmap("City")
+shape_uf <- get_brmap("State")
 
-# data do primeiro evento de transmissao (3 semanas)
-cc3 <- cc %>%
-  filter(transmissao3 ==3) %>%
-  group_by(municipio_geocodigo) %>%
-  summarise(initrans = min(data_iniSE))
+shape_den <- shape_city %>%
+  left_join(tt2, by = c("City"="municipio_geocodigo"))
 
+st_write(shape_den, "mapa-1a-transmissao-dengue.shp")

@@ -5,9 +5,9 @@
 #------- Pacotes para carregar 
 
 pkgs <- c("foreign", "tidyverse", "forecast", "RPostgreSQL", "xtable",
-          "zoo","assertthat","AlertTools","DBI",
+          "zoo","assertthat","DBI",
           "futile.logger","lubridate", "grid","INLA",
-          "cgwtools","fs","miceadds")
+          "cgwtools","fs","miceadds","AlertTools")
 
 lapply(pkgs, library, character.only = TRUE ,quietly = T)
 
