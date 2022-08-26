@@ -43,7 +43,7 @@ cas$sem <- cas$SE - cas$ano*100
 ```
 
 ```{r}
-climatemp = getWU(stations = est, vars=c("temp_min","umid_min","umid_max"))
+climatemp = getWU(stations = est, vars=c("temp_min","temp_max","umid_min","umid_max"))
 climatemp$data <- SE2date(climatemp$SE)$ini
 climatemp$mes=lubridate::month(climatemp$data)
 climatemp$ano= lubridate::year(climatemp$data)

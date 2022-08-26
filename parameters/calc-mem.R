@@ -4,9 +4,10 @@
 # PS. requer conexao con bd
 
 library(tidyverse); library(assertthat)
-#library(AlertTools)
+library(AlertTools)
 library(lubridate)  
-devtools::load_all()
+#devtools::install_github("AlertaDengue/AlertTools")
+#devtools::load_all()
 
 ## Por municipio ----
 
@@ -29,15 +30,17 @@ devtools::load_all()
 
 #thres.mun <- c()
 
-ufs <- c("Rondônia", "Roraima", "Amazonas", "Pará", "Amapá", "Tocantins")
-ufs <- c("Alagoas", "Bahia", "Ceará", "Maranhão", "Paraíba", "Pernambuco", "Piauí",
+ufs1 <- c("Rondônia", "Roraima", "Amazonas", "Pará", "Amapá", "Tocantins")
+ufs2 <- c("Alagoas", "Bahia", "Ceará", "Maranhão", "Paraíba", "Pernambuco", "Piauí",
          "Rio Grande do Norte", "Sergipe")
-ufs <- c("Mato Grosso", "Mato Grosso do Sul", "Distrito Federal", "Goiás", "São Paulo")
-ufs <- c("Rio Grande do Sul", "Rio de Janeiro")
-ufs <- c("Minas Gerais", "Espírito Santo",  "Paraná")
+ufs3 <- c("Mato Grosso", "Mato Grosso do Sul", "Distrito Federal", "Goiás", "São Paulo")
+ufs4 <- c("Rio Grande do Sul", "Rio de Janeiro")
+ufs5 <- c("Minas Gerais", "Espírito Santo",  "Paraná")
 
+estados <- c(ufs1, ufs2, ufs3, ufs4, ufs5)
+thres.22 <- list()
 
-for (u in ufs){
+for (u in estados){
   rm(thres, thres.mem, mun_list)
   print(u)
   mun_list <- getCidades(uf = u, datasource=con)$municipio_geocodigo  
@@ -51,17 +54,21 @@ for (u in ufs){
   thres.mem$mininc_pre <- thres$min_threshold_inc$mininc_pre
   thres.mem$mininc_pos <- thres$min_threshold_inc$mininc_pos
   thres.mem$mininc_epi <- thres$min_threshold_inc$mininc_epi
+  thres.mem$duracao <- thres$mem$duracao
+  thres.mem$duracao.ic <- thres$mem$duracao.ic
+  thres.mem$inicio <- thres$mem$inicio
+  thres.mem$inicio.ic <- thres$mem$inicio.ic
   thres.mem$uf <- u
   thres.mem$ano_ini <- thres$thresholds$ano_inicio
   thres.mem$ano_fim <- thres$thresholds$ano_fim
   
-  thres.mun <- rbind(thres.mun, thres.mem)
-  save(thres.mun, file = "limiar_mem_municipal_2010_2021.RData")
+  thres.22[[u]] <- thres.mem
+  save(thres.22, file = "thres22.RData")
 }
 
-thres.mun$uf <- as.factor(thres.mun$uf)
-levels(thres.mun$uf)
-thres.mun.copy <- thres.mun
+data <- thres.22 %>% bind_rows()
+data$uf <- as.factor(data$uf)
+levels(data$uf)
 ufs_ordered <-  c("Roraima","Amapá","Acre",
                            "Amazonas","Pará","Rondônia","Tocantins",
                            "Maranhão","Piauí","Ceará","Rio Grande do Norte",
@@ -69,42 +76,42 @@ ufs_ordered <-  c("Roraima","Amapá","Acre",
                            "Goiás", "Distrito Federal","Mato Grosso" , "Mato Grosso do Sul",
                            "Minas Gerais", "Espírito Santo","Rio de Janeiro",
                            "São Paulo","Paraná", "Santa Catarina", "Rio Grande do Sul")
-thres.mun$uf <- ordered(thres.mun$uf, levels = ufs_ordered)
-levels(thres.mun$uf) <- c("RR","AP","AC","AM","PA","RO","TO","MA","PI","CE","RN",
+data$uf <- ordered(data$uf, levels = ufs_ordered)
+levels(data$uf) <- c("RR","AP","AC","AM","PA","RO","TO","MA","PI","CE","RN",
                           "PB","PE","AL","SE","BA","GO","DF","MT","MS","MG","ES","RJ",
                           "SP","PR","SC","RS")
 
-thres.mun$pop_cat <- cut(thres.mun$pop, breaks = c(0,1000,1e4,1e5,1e6,1e7,1e8))
+data$pop_cat <- cut(data$pop, breaks = c(0,1000,1e4,1e5,1e6,1e7,1e8))
 
-png("mem_ini_duracao_temporada.png", width = 700)
+png("mem_ini_duracao_temporada_2010_2021.png", width = 700)
 par(mfrow = c(2,1), mar = c(3,4,3,1))
 # inicio
-boxplot(inicio ~ uf, data = thres.mun, xlab = "", 
+boxplot(inicio ~ uf, data = data, xlab = "", 
         main = "Início temporada típica de dengue",
         ylab = "semana", col = c(rep("green", 7), rep("cyan", 9), rep("orange", 4),
                                  rep("darkblue", 4), rep("violet", 3)),cex.axis = 0.8)
 #duracao
-boxplot(duracao ~ uf, data = thres.mun, xlab = "", 
+boxplot(duracao ~ uf, data = data, xlab = "", 
         main = "Duração temporada típica de dengue",
         ylab = "semanas", col = c(rep("green", 7), rep("cyan", 9), rep("orange", 4),
                                  rep("darkblue", 4), rep("violet", 3)),cex.axis = 0.8)
 dev.off()
 
 #incidencia pre-season
-png("mem_inc_preseason.png", width = 700)
+png("mem_inc_preseason_2010_2021.png", width = 700)
 par(mfrow = c(2,1), mar = c(3,4,3,1))
-boxplot(inc_preseason ~ uf, data = thres.mun, xlab = "", ylim = c(0,15),
+boxplot(inc_preseason ~ uf, data = data, xlab = "", ylim = c(0,15),
         main = "Limiar início de temporada de dengue",
         ylab = "incidência (por 100.000)", col = c(rep("green", 7), rep("cyan", 9), rep("orange", 4),
                                   rep("darkblue", 4), rep("violet", 3)),cex.axis = 0.8)
 
-boxplot(inc_preseason ~ pop_cat, data = thres.mun, 
+boxplot(inc_preseason ~ pop_cat, data = data, 
         main = "Limiar início de temporada de dengue", xlab = "populaçao", ylim = c(0,20),
         ylab = "incidência (por 100.000)",cex.axis = 0.8)
 dev.off()
 
 #incidencia limiar epidemico
-png("mem_inc_epidemico.png", width = 700)
+png("mem_inc_epidemico_2010_2021.png", width = 700)
 par(mfrow = c(2,1), mar = c(3,4,3,1))
 boxplot(inc_epidemico ~ uf, data = thres.mun, xlab = "", ylim = c(0,300),
         main = "Limiar epidêmico de dengue",
@@ -116,6 +123,7 @@ boxplot(inc_epidemico ~ pop_cat, data = thres.mun,
         ylab = "incidência (por 100.000)",cex.axis = 0.8)
 dev.off()
 
+write.csv(data, file = "parameters/mem_mun_2010_2021_BR.csv")
 
 ## Por regional ----
 # 1. Agora é a versao que calcula limiares por regional. precisa fazer um loop pelos estados, 
