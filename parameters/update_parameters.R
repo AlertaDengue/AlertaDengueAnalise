@@ -126,10 +126,11 @@ read.parameters(uf = ufs$geocodigo, cid10 = "A90")  # tudo OK?
 # 3. limiares
 #+++++++++++++++++++++++
 
-load("parameters/limiar_mem_municipal_2010_2020.RData")
+thres.mun <- read.csv("parameters/mem_mun_2010_2021_BR.csv")
 
 names(thres.mun)
-n = which(is.na(thres.mun$limiar_preaseason))
+n = which(is.na(thres.mun$limiar_preaseason)) # mem did not fit 
+thres.mun$municipio_geocodigo[n]
 
 for (i in 1:nrow(thres.mun)){
   if(i %in% n){
@@ -153,7 +154,22 @@ for (i in 1:nrow(thres.mun)){
                           overwrite = TRUE, datasource = con)
 }
 
+# em 2021, um municipio ficou sem mem, porque teve 0 casos
+# sql2 <- paste("SELECT nome,populacao,geocodigo from \"Dengue_global\".\"Municipio\"
+#WHERE geocodigo = 2611533")
+#varglobais <- dbGetQuery(con, sql2)
+# Quixada, com 6805 pessoas. Vou colocar na mao.
 
+pars = data.frame(municipio_geocodigo = 2611533, 
+                    cid10 = "A90",
+                    limiar_preseason = 5/6805*100000,
+                    limiar_posseason = 5/6805*100000,
+                    limiar_epidemico = 10/6805*100000)
+
+res <- write_parameters(city = pars$municipio_geocodigo,
+                        cid10 = pars$cid10, 
+                        params = pars, 
+                        overwrite = TRUE, datasource = con)
 
 ## ++++++++++++++++++++++++++++++++++++++++++++++++
 ## 4. Atualizacao dos parametros de receptividade 

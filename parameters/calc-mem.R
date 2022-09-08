@@ -4,6 +4,7 @@
 # PS. requer conexao con bd
 
 library(tidyverse); library(assertthat)
+library(RPostgreSQL)
 library(AlertTools)
 library(lubridate)  
 #devtools::install_github("AlertaDengue/AlertTools")
@@ -36,9 +37,11 @@ ufs2 <- c("Alagoas", "Bahia", "Ceará", "Maranhão", "Paraíba", "Pernambuco", "
 ufs3 <- c("Mato Grosso", "Mato Grosso do Sul", "Distrito Federal", "Goiás", "São Paulo")
 ufs4 <- c("Rio Grande do Sul", "Rio de Janeiro")
 ufs5 <- c("Minas Gerais", "Espírito Santo",  "Paraná")
-
-estados <- c(ufs1, ufs2, ufs3, ufs4, ufs5)
+ufs6 <- c("Santa Catarina", "Acre") 
+estados <- c(ufs1, ufs2, ufs3, ufs4, ufs5, ufs6)
 thres.22 <- list()
+
+load("thres22.RData")
 
 for (u in estados){
   rm(thres, thres.mem, mun_list)
@@ -63,8 +66,10 @@ for (u in estados){
   thres.mem$ano_fim <- thres$thresholds$ano_fim
   
   thres.22[[u]] <- thres.mem
-  save(thres.22, file = "thres22.RData")
+  #save(thres.22, file = "thres22.RData")
 }
+
+save(thres.22, file = "thres22.RData")
 
 data <- thres.22 %>% bind_rows()
 data$uf <- as.factor(data$uf)
