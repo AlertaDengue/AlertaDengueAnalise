@@ -183,6 +183,8 @@ restab_zika$casos_est_max[restab_zika$casos_est_max > 10000] <- NA
 if(!dir.exists(paste0('AlertaDengueAnalise/main/sql'))){dir.create(paste0('AlertaDengueAnalise/main/sql'))}
 
 #escrevendo alerta
+#Caso writetofile = TRUE, seguir os passos para a atualização das tabelas no repositório https://github.com/AlertaDengue/UpdateHistoricoAlerta
+
 write_alerta(restab_den, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_dengue.sql"))
 write_alerta(restab_chik, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_chik.sql"))
 write_alerta(restab_zika, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_zika.sql"))
