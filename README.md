@@ -33,13 +33,15 @@ BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)
 
 install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 ```
+Essas bibliotecas estão listadas: (https://github.com/AlertaDengue/AlertaDengueAnalise/blob/master/config/config_global_2020.R)
 
+Para rodar o script é necessário uma conexão via chave ssh com o sistema.
 
-Essas bibliotecas estão listadas: (AlertaDengueAnalise/blob/master/config/config_global_2020.R)
+### Gerar o alerta
 
-Os códigos parar gerar o objeto alerta para os respectivos estados e municípios estão no diretório: (AlertaDengue/AlertaDengueAnalise/tree/master/main). 
+O código parar gerar o objeto alerta estadual: https://github.com/AlertaDengue/AlertaDengueAnalise/blob/master/main/main_BR.R 
+ 
 
-Para rodar o script é necessário uma conexão via chave ssh com o sistema (ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC), não é necessário nenhuma edição nos scripts, sendo apenas definido a data do relatório. Os objetos serão salvos dentro do diretório (main/alertas/'data_relatorio') e o output SQL (main/sql)
 
 
 
