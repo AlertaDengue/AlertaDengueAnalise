@@ -24,15 +24,40 @@ probs_and_n <- function(x) {
 }
 
 
-# odds - ratio (nao vou usar, fica a memoria)
+# odds - ratio 
 #The odds ratio (OR) is a measure of how strongly an event is associated 
 #with exposure. The odds ratio is a ratio of two sets of odds: the odds of the 
 #event occurring in an exposed group versus the odds of the event occurring in 
 #a non-exposed group.  
-# odds(exposed) = (receptivo com Rt1)/(receptivo sem Rt1) 
-#nu <- cumsum(x$nRt1)/cumsum((x$n - x$nRt1))
-#nu <- x$nRt1/(x$n - x$nRt1)
-# odds(non-exposed) = (naoreceptivo com Rt1)/(naoreceptivo sem Rt1)
-#de <- (sum(x$n) - cumsum(x$nRt1))/(sum(x$n) - cumsum((x$n - x$nRt1)))
-#de <- (x$n - x$nRt1)/(x$n - (x$n - x$nRt1))
-#nu/de
+
+# acumulado
+tree.odds <- function(n, x, acum = TRUE){
+  # n = total number of cases in the node
+  # x = number of events in the node
+  
+  if (acum == TRUE){
+    a <- cumsum(x)  # # Rt1 [ receptivo]
+    c <- max(a)-a   # # Rt1 [nao receptivo]
+    b <- cumsum(n - x)  # not Rt1 [receptivo]
+    d <- max(b)-b    # not Rt1 [not receptivo]
+  } else {
+    a <- x  # # Rt1 [ receptivo]
+    c <- sum(x)-x   # # Rt1 [nao receptivo]
+    b <- n - x  # not Rt1 [receptivo]
+    d <- sum(n)-b # not Rt1 [not receptivo]
+  }
+
+  odds <- (a * d) / (b * c)
+  odds
+}
+
+#tree.odds(summ.regras$n, summ.regras$nRt1)
+#tree.odds(summ.regras$n, summ.regras$nRt1, acum = FALSE)
+
+#summ.regras <- summ.regras[, 1:8]
+#summ.regras$odds <- tree.odds(summ.regras$n, summ.regras$nRt1, acum = FALSE)
+
+# ranking de regras:
+#summ.regras <- summ.regras[order(summ.regras$odds, decreasing = TRUE),]
+#summ.regras
+

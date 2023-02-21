@@ -4,7 +4,7 @@
 # ssh -f infodengue@info.dengue.mat.br -L 5432:localhost:5432 -nNTC
 
 # Cabeçalho ------------------------------
-setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/")
+setwd("~/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/pipeline")
 source("AlertaDengueAnalise/config/config_global_2020.R") #configuracao 
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
                  user = "dengue", host = "localhost", 
@@ -15,7 +15,7 @@ estado = "Paraná"
 sig = "PR"
 
 # data do relatorio:---------------------
-data_relatorio = 202117
+data_relatorio = 202217
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 nomeRData <- paste0("alertasRData/alePR-",data_relatorio,".RData")

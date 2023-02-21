@@ -1,7 +1,8 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue Nacional
 # =============================================================================
-setwd("~/infodengue")
+setwd("/home/claudia/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/pipeline")
+
 # ++++++++++++++++++++++++++++++++++
 # Definicao dos alertas a rodar ----
 # ++++++++++++++++++++++++++++++++++
@@ -18,17 +19,17 @@ estados_Infodengue <- data.frame(
              "Alagoas","Bahia","Ceará","Maranhão","Piauí","Pernambuco","Paraíba","Rio Grande do Norte","Sergipe",
              "Goiás", "Mato Grosso", "Mato Grosso do Sul","Distrito Federal",
              "Espírito Santo", "Minas Gerais", "Rio de Janeiro", "São Paulo",
-             "Paraná", "Rio Grande do Sul","Santa Catarina"),
+             "Paraná", "Rio Grande do Sul"), #,"Santa Catarina"),
   #estado = c("Minas Gerais"),
   #sigla = c("MG"),
   sigla = c("AC","AM","AP","PA","RO","RR","TO",
             "AL","BA","CE","MA","PI","PE","PB","RN","SE",
             "GO","MT","MS","DF",
             "ES","MG","RJ","SP",
-            "PR","RS","SC"),
-  dengue = TRUE,
-  chik = c(T),
-  zika = c(F)
+            "PR","RS"),#,"SC"),
+  dengue = F,
+  chik = c(F),
+  zika = c(T)
   # zika = c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,T)
 )
 
@@ -69,6 +70,7 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
 t1 <- Sys.time()
 
 for(i in 1:nrow(estados_Infodengue)){
+  print(i)
   estado <- estados_Infodengue$estado[i] 
   sig <- estados_Infodengue$sigla[i]
   
