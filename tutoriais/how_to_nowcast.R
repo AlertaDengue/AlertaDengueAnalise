@@ -14,7 +14,7 @@ lapply(pkgs, library, character.only = TRUE ,quietly = T)
 # USE: 
 # connection
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
-                 user = "infodenguedev", host = "159.69.25.201", port ="15432",
+                 user = "dengueadmin", host = "159.69.25.201", port ="15432",
                  password = pw)
 
 # setting nowcast date
