@@ -53,7 +53,7 @@ if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))){dir.
 # ++++++++++++++++++++++++
 # conectar com a hetzner
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
-                 user = "dengueadmin", host = "159.69.25.201", port ="15432",
+                 user = "infodenguedev", host = "info.dengue.mat.br", port ="5432",
                  password = pw)
 
 # com banco local SQlite: para implementar ainda 
