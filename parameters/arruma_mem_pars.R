@@ -44,3 +44,9 @@ ggplot(data = shape) +
   ggtitle(paste("Very High")) + 
   coord_sf()
 
+
+# mem
+mem <- read.csv("mem/mem_regional_2010_2020_BR.csv")
+names(mem)
+mem %>% filter(regiao == "Nordeste") %>% select(regional_id,inicio, inicio.ic,populacao) %>% arrange(populacao)
+

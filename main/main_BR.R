@@ -15,21 +15,21 @@ source("AlertaDengueAnalise/config/config_global_2020.R")
 
 
 estados_Infodengue <- data.frame(
-  estado = c("Acre","Amazonas","Amapá", "Pará", "Rondônia", "Roraima" , "Tocantins",
-             "Alagoas","Bahia","Ceará","Maranhão","Piauí","Pernambuco","Paraíba","Rio Grande do Norte","Sergipe",
-             "Goiás", "Mato Grosso", "Mato Grosso do Sul","Distrito Federal",
-             "Espírito Santo", "Minas Gerais", "Rio de Janeiro", "São Paulo",
-             "Paraná", "Rio Grande do Sul"), #,"Santa Catarina"),
-  #estado = c("Minas Gerais"),
-  #sigla = c("MG"),
-  sigla = c("AC","AM","AP","PA","RO","RR","TO",
-            "AL","BA","CE","MA","PI","PE","PB","RN","SE",
-            "GO","MT","MS","DF",
-            "ES","MG","RJ","SP",
-            "PR","RS"),#,"SC"),
-  dengue = F,
-  chik = c(F),
-  zika = c(T)
+  #estado = c("Acre","Amazonas","Amapá", "Pará", "Rondônia", "Roraima" , "Tocantins",
+  #           "Alagoas","Bahia","Ceará","Maranhão","Piauí","Pernambuco","Paraíba","Rio Grande do Norte","Sergipe",
+  #           "Goiás", "Mato Grosso", "Mato Grosso do Sul","Distrito Federal",
+  #           "Espírito Santo", "Minas Gerais", "Rio de Janeiro", "São Paulo",
+  #           "Paraná", "Rio Grande do Sul","Santa Catarina"),
+  estado = c("Rio Grande do Sul"),
+  #sigla = c("AC","AM","AP","PA","RO","RR","TO",
+  #          "AL","BA","CE","MA","PI","PE","PB","RN","SE",
+  #          "GO","MT","MS","DF",
+  #          "ES","MG","RJ","SP",
+  #          "PR","RS","SC"),
+  sigla = c("RS"),
+  dengue = T,
+  chik = T,
+  zika = F
   # zika = c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,T)
 )
 
@@ -37,7 +37,7 @@ estados_Infodengue <- data.frame(
 # ++++++++++++++++++++++++
 # data do relatorio:----
 # ++++++++++++++++++++++++
-data_relatorio = 202304
+data_relatorio = 202346
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # ++++++++++++++++++++++++
@@ -53,10 +53,10 @@ if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))){dir.
 # ++++++++++++++++++++++++
 # conectar com a hetzner
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
-                 user = "infodenguedev", host = "info.dengue.mat.br", port ="5432",
+                 user = "infodenguedev", host = "localhost", port ="25432",
                  password = pw)
 
-# com banco local SQlite: para implementar ainda 
+# com banco local SQlite:  
 #con <- dbConnect(RSQLite::SQLite(), 
 #                   "AlertaDengueAnalise/mydengue.sqlite")
 
