@@ -1,7 +1,7 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue Nacional
 # =============================================================================
-setwd("/home/claudia/MEGA/Pesquisa/Linhas-de-Pesquisa/e-vigilancia/pipeline")
+setwd("/home/claudia/MEGA/Pesquisa/Linhas-de-Pesquisa/Infodengue/pipeline")
 
 # ++++++++++++++++++++++++++++++++++
 # Definicao dos alertas a rodar ----
@@ -37,7 +37,7 @@ estados_Infodengue <- data.frame(
 # ++++++++++++++++++++++++
 # data do relatorio:----
 # ++++++++++++++++++++++++
-data_relatorio = 202346
+data_relatorio = 202101
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # ++++++++++++++++++++++++
@@ -57,8 +57,8 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
                  password = pw)
 
 # com banco local SQlite:  
-#con <- dbConnect(RSQLite::SQLite(), 
-#                   "AlertaDengueAnalise/mydengue.sqlite")
+con <- dbConnect(RSQLite::SQLite(), 
+                   "mydengue.sqlite")
 
 #dbListTables(con) # verificar se as tabelas estão todas no banco. 
 # se estiver vazio, ou o endereco está errado, ou o banco sqlite nao foi criado.
@@ -87,7 +87,7 @@ for(i in 1:nrow(estados_Infodengue)){
   res <- list() # guardar tudo numa lista
   # alerta dengue
   if(estados_Infodengue$dengue[estados_Infodengue$estado == estado]) {
-    res[["ale.den"]] <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "bayesian", 
+    res[["ale.den"]] <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
                                         finalday = dia_relatorio, narule = "arima", 
                                         iniSE = 201001, dataini = "sinpri", completetail = 0)
     
