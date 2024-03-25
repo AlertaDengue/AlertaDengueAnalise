@@ -51,17 +51,28 @@ if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))){dir.
 # ++++++++++++++++++++++++
 # ----- Conexao ----
 # ++++++++++++++++++++++++
+# com banco remoto do Infodengue (original)
+# ssh -p 22 -f administrador@65.21.204.98 -L 5432:localhost:5432 -nNTC
+
 # conectar com a hetzner
 con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
                  user = "infodenguedev", host = "localhost", port ="25432",
                  password = pw)
 
-# com banco local SQlite:  
-con <- dbConnect(RSQLite::SQLite(), 
-                   "mydengue.sqlite")
+con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
+                 user = "dengueadmin", host = "localhost", port ="5432",
+                 password = pw)
+#con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
+#                 user = "dengueadmin", host = "159.69.25.201", port ="15432",
+#                password = "aldengue")
+
+# com banco local SQlite: para implementar ainda 
+#con <- dbConnect(RSQLite::SQLite(), 
+#                   "AlertaDengueAnalise/mydengue.sqlite")
 
 #dbListTables(con) # verificar se as tabelas estão todas no banco. 
 # se estiver vazio, ou o endereco está errado, ou o banco sqlite nao foi criado.
+
 
 # +++++++++++++++++++++++++
 # Pipeline ----
@@ -116,7 +127,7 @@ for(i in 1:nrow(estados_Infodengue)){
   
   # copiar o arquivo RData para o servidor (o formato mudou! os ale.* estao todos dentro de uma lista)
   #system(paste("scp", paste0("AlertaDengueAnalise/main/alertas/",data_relatorio,"/",nomeRData), "infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/"))
-  system(paste("scp -P 1030", paste0("AlertaDengueAnalise/main/alertas/",data_relatorio,"/",nomeRData), "infodengue@159.69.25.201:/Storage/infodengue_data/alertasRData/"))
+  system(paste("scp -P 22", paste0("AlertaDengueAnalise/main/alertas/",data_relatorio,"/",nomeRData), "administrador@65.21.204.98:/Storage/infodengue_data/alertasRData/"))
   
 }
 t2 <- Sys.time()
