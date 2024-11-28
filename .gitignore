@@ -1,14 +1,4 @@
 *.pyc
 *.html
-*.RData
-*.Rhistory
-*.tex
-*.log
-*.gz
-*.png
-*.pdf
-*~
-.Rproj.user
-.idea
-.log
-.gz
+.RData
+.Rhistory
