@@ -12,3 +12,6 @@
 .idea
 .log
 .gz
+
+# Local env
+.Renviron
