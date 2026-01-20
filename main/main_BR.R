@@ -1,8 +1,7 @@
 # =============================================================================
 # Arquivo de execução do Alerta Dengue Nacional
 # =============================================================================
-setwd("/home/claudia/MEGA/Pesquisa/Linhas-de-Pesquisa/Infodengue/pipeline")
-
+setwd("~/infodengue")
 # ++++++++++++++++++++++++++++++++++
 # Definicao dos alertas a rodar ----
 # ++++++++++++++++++++++++++++++++++
@@ -15,29 +14,27 @@ source("AlertaDengueAnalise/config/config_global_2020.R")
 
 
 estados_Infodengue <- data.frame(
-  #estado = c("Acre","Amazonas","Amapá", "Pará", "Rondônia", "Roraima" , "Tocantins",
-  #           "Alagoas","Bahia","Ceará","Maranhão","Piauí","Pernambuco","Paraíba","Rio Grande do Norte","Sergipe",
-  #           "Goiás", "Mato Grosso", "Mato Grosso do Sul","Distrito Federal",
-  #           "Espírito Santo", "Minas Gerais", "Rio de Janeiro", "São Paulo",
-  #           "Paraná", "Rio Grande do Sul","Santa Catarina"),
-  estado = c("Rio Grande do Sul"),
-  #sigla = c("AC","AM","AP","PA","RO","RR","TO",
-  #          "AL","BA","CE","MA","PI","PE","PB","RN","SE",
-  #          "GO","MT","MS","DF",
-  #          "ES","MG","RJ","SP",
-  #          "PR","RS","SC"),
-  sigla = c("RS"),
-  dengue = T,
-  chik = T,
-  zika = F
-  # zika = c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,T)
+  estado = c("Acre","Amazonas","Amapá", "Pará", "Rondônia", "Roraima" , "Tocantins",
+             "Alagoas","Bahia","Ceará","Maranhão","Piauí","Pernambuco","Paraíba","Rio Grande do Norte","Sergipe",
+             "Goiás", "Mato Grosso do Sul","Distrito Federal",
+             "Espírito Santo", "Minas Gerais", "Rio de Janeiro", "São Paulo",
+             "Paraná", "Rio Grande do Sul","Santa Catarina", "Mato Grosso"),
+  sigla = c("AC","AM","AP","PA","RO","RR","TO",
+            "AL","BA","CE","MA","PI","PE","PB","RN","SE",
+            "GO","MS","DF",
+            "ES","MG","RJ","SP",
+            "PR","RS","SC","MT"),
+ dengue = T,
+  chik = c(T),
+  zika = c(F)
+# zika = c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,T)
 )
 
 
 # ++++++++++++++++++++++++
 # data do relatorio:----
 # ++++++++++++++++++++++++
-data_relatorio = 202101
+data_relatorio = 202601
 dia_relatorio = seqSE(data_relatorio,data_relatorio)$Termino
 
 # ++++++++++++++++++++++++
@@ -47,31 +44,38 @@ if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas'))){dir.create(paste0('A
 
 if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))){dir.create(paste0('AlertaDengueAnalise/main/alertas/',data_relatorio))}
 
+# -------------------------------------------------------------------
+# Conexao com banco PostgreSQL (via variaveis de ambiente)
+# -------------------------------------------------------------------
 
-# ++++++++++++++++++++++++
-# ----- Conexao ----
-# ++++++++++++++++++++++++
-# com banco remoto do Infodengue (original)
-# ssh -p 22 -f administrador@65.21.204.98 -L 5432:localhost:5432 -nNTC
+library(DBI)
+library(RPostgres)
 
-# conectar com a hetzner
-con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
-                 user = "infodenguedev", host = "localhost", port ="25432",
-                 password = pw)
+required_env <- c(
+  "INFODENGUE_DB_NAME",
+  "INFODENGUE_DB_HOST",
+  "INFODENGUE_DB_PORT",
+  "INFODENGUE_DB_USER",
+  "INFODENGUE_DB_PASS"
+)
 
-con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
-                 user = "dengueadmin", host = "localhost", port ="5432",
-                 password = pw)
-#con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue", 
-#                 user = "dengueadmin", host = "159.69.25.201", port ="15432",
-#                password = "aldengue")
+missing_env <- required_env[Sys.getenv(required_env) == ""]
+if (length(missing_env) > 0) {
+  stop(
+    "Variaveis de ambiente nao definidas: ",
+    paste(missing_env, collapse = ", "),
+    call. = FALSE
+  )
+}
 
-# com banco local SQlite: para implementar ainda 
-#con <- dbConnect(RSQLite::SQLite(), 
-#                   "AlertaDengueAnalise/mydengue.sqlite")
-
-#dbListTables(con) # verificar se as tabelas estão todas no banco. 
-# se estiver vazio, ou o endereco está errado, ou o banco sqlite nao foi criado.
+con <- dbConnect(
+  RPostgres::Postgres(),
+  dbname   = Sys.getenv("INFODENGUE_DB_NAME"),   
+  host     = Sys.getenv("INFODENGUE_DB_HOST"),   
+  port     = as.integer(Sys.getenv("INFODENGUE_DB_PORT")), 
+  user     = Sys.getenv("INFODENGUE_DB_USER"),   
+  password = Sys.getenv("INFODENGUE_DB_PASS")    
+)
 
 
 # +++++++++++++++++++++++++
@@ -81,7 +85,6 @@ con <- dbConnect(drv = dbDriver("PostgreSQL"), dbname = "dengue",
 t1 <- Sys.time()
 
 for(i in 1:nrow(estados_Infodengue)){
-  print(i)
   estado <- estados_Infodengue$estado[i] 
   sig <- estados_Infodengue$sigla[i]
   
@@ -98,7 +101,7 @@ for(i in 1:nrow(estados_Infodengue)){
   res <- list() # guardar tudo numa lista
   # alerta dengue
   if(estados_Infodengue$dengue[estados_Infodengue$estado == estado]) {
-    res[["ale.den"]] <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "none", 
+    res[["ale.den"]] <- pipe_infodengue(cidades, cid10 = "A90", nowcasting = "bayesian", 
                                         finalday = dia_relatorio, narule = "arima", 
                                         iniSE = 201001, dataini = "sinpri", completetail = 0)
     
@@ -126,16 +129,15 @@ for(i in 1:nrow(estados_Infodengue)){
   }
   
   # copiar o arquivo RData para o servidor (o formato mudou! os ale.* estao todos dentro de uma lista)
-  #system(paste("scp", paste0("AlertaDengueAnalise/main/alertas/",data_relatorio,"/",nomeRData), "infodengue@info.dengue.mat.br:/home/infodengue/alertasRData/"))
   system(paste("scp -P 22", paste0("AlertaDengueAnalise/main/alertas/",data_relatorio,"/",nomeRData), "administrador@65.21.204.98:/Storage/infodengue_data/alertasRData/"))
-  
+  gc() 
+   
 }
 t2 <- Sys.time()
 message(paste("total time was", t2-t1))
 
 # ----- Fechando o banco de dados local -----------
 dbDisconnect(con)
-
 # ++++++++++++++++++++++++
 # Write Alerta:----
 # ++++++++++++++++++++++++ 
@@ -146,13 +148,13 @@ file_paths <- fs::dir_ls(paste0("AlertaDengueAnalise/main/alertas/",data_relator
 #Load alertas
 j <- 1
 for (i in seq_along(file_paths)){
-  load.Rdata(file_paths[i], "res")
-  assign(paste0("res", j),res)
-  j = j+1
-  load(file_paths[i])
-}
+    load.Rdata(file_paths[i], "res")
+    assign(paste0("res", j),res)
+    j = j+1
+    load(file_paths[i])
+  }
 rm(res) 
-
+  
 #Unindo dataframe
 restab_den <- list()
 for (i in seq_along(file_paths)){
@@ -189,6 +191,13 @@ restab_chik$casos_est_max[restab_chik$casos_est_max > 10000] <- NA
 restab_zika$casos_est_max[restab_zika$casos_est_max > 10000] <- NA
 
 
+restab_br <- rbind.data.frame(restab_den,restab_chik)
+
+# criar diretório para salvar o alerta:----
+if(!dir.exists(paste0('AlertaDengueAnalise/main/alertas/BR'))){dir.create(paste0('AlertaDengueAnalise/main/alertas/BR'))}
+
+#save(restab_br, file = paste0('AlertaDengueAnalise/main/alertas/BR/restab_br-',data_relatorio,".RData"))
+
 
 # ++++++++++++++++++++++++
 # criar diretório para salvar o output.sql:----
@@ -196,12 +205,9 @@ restab_zika$casos_est_max[restab_zika$casos_est_max > 10000] <- NA
 if(!dir.exists(paste0('AlertaDengueAnalise/main/sql'))){dir.create(paste0('AlertaDengueAnalise/main/sql'))}
 
 #escrevendo alerta
-#Caso writetofile = TRUE, seguir os passos para a atualização das tabelas no repositório https://github.com/AlertaDengue/UpdateHistoricoAlerta
-
 write_alerta(restab_den, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_dengue.sql"))
 write_alerta(restab_chik, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_chik.sql"))
 write_alerta(restab_zika, writetofile = TRUE, arq = paste0("AlertaDengueAnalise/main/sql/output_zika.sql"))
-
 
 # ++++++++++++++++++++++++
 # criar o alerta BR para os boletins:----
