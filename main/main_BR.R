@@ -4,7 +4,7 @@
 
 options(stringsAsFactors = FALSE)
 
-# Logger padronizado para saída em stdout (útil para execução via Makim/CI).
+# Logger padronizado para saída em stdout.
 log_msg <- function(..., level = "INFO") {
   ts <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   msg <- paste0(...)
@@ -66,9 +66,28 @@ cfg_path <- if (file.exists(file.path(repo_root, "config",
   file.path(repo_root, "AlertaDengueAnalise", "config", "config_global_2020.R")
 }
 log_msg("Loading config: ", cfg_path)
+
 source(cfg_path)
 
-# Garante disponibilidade de mclapply (muitas rotinas do pipeline usam paralelismo).
+# Função para garantir que o INLA está carregado corretamente.
+ensure_inla_loaded <- function() {
+  if (!requireNamespace("INLA", quietly = TRUE)) {
+    return(FALSE)
+  }
+
+  ok <- suppressWarnings(
+    suppressPackageStartupMessages(
+      require("INLA", quietly = TRUE, character.only = TRUE)
+    )
+  )
+
+  isTRUE(ok) && exists("inla", mode = "function")
+}
+
+has_inla_flag <- ensure_inla_loaded()
+
+# Garante disponibilidade de mclapply (onde rotinas do pipeline usam paralelismo).
+
 if (!exists("mclapply", mode = "function")) {
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("Missing base R package 'parallel'.", call. = FALSE)
@@ -77,7 +96,35 @@ if (!exists("mclapply", mode = "function")) {
   log_msg("Enabled parallel::mclapply()")
 }
 
-# Semana epidemiológica de referência (YYYYWW), fornecida via ambiente (Makim).
+if (!exists("detectCores", mode = "function")) {
+  if (!requireNamespace("parallel", quietly = TRUE)) {
+    stop("Missing base R package 'parallel'.", call. = FALSE)
+  }
+  detectCores <- parallel::detectCores
+  log_msg("Enabled parallel::detectCores()")
+}
+
+# Função para resolver o modo de nowcasting, com fallback se INLA não estiver
+# disponível.
+has_inla_flag <- exists("has_inla", inherits = TRUE) && isTRUE(has_inla)
+
+resolve_nowcasting <- function(mode) {
+  if (!identical(mode, "bayesian")) {
+    return(mode)
+  }
+
+  if (!has_inla_flag) {
+    log_msg(
+      "INLA indisponível: usando nowcasting='none' (fallback).",
+      level = "WARN"
+    )
+    return("none")
+  }
+
+  mode
+}
+
+# Semana epidemiológica de referência (YYYYWW), fornecida linha de comando (Makim).
 data_relatorio <- as.integer(
   get_env_any(c("ALERTA_DATA_RELATORIO", "DATA_RELATORIO"), default = NA)
 )
@@ -140,13 +187,39 @@ on.exit(try(DBI::dbDisconnect(con), silent = TRUE), add = TRUE)
 log_msg("DB connected OK")
 
 # Publicação opcional dos .RData via scp (independente do banco ser local/remoto).
+
 do_scp <- tolower(get_env_any(c("ALERTA_DO_SCP"), default = "0")) %in%
   c("1", "true", "yes", "y")
-scp_port <- get_env_any(c("ALERTA_SCP_PORT"), default = "22")
-scp_target <- get_env_any(
-  c("ALERTA_SCP_TARGET"),
-  default = "administrador@65.21.204.98:/Storage/infodengue_data/alertasRData/"
-)
+
+scp_endpoint_raw <- get_env_any(c("ALERTA_SCP_ENDPOINT"), default = "")
+scp_path <- get_env_any(c("ALERTA_SCP_PATH"), default = "")
+
+scp_hostpart <- ""
+scp_port <- "22"
+scp_target <- ""
+
+if (do_scp) {
+  if (!nzchar(scp_endpoint_raw) || !nzchar(scp_path)) {
+    stop(
+      "SCP habilitado, mas faltam variáveis: ALERTA_SCP_ENDPOINT e/ou ALERTA_SCP_PATH.",
+      call. = FALSE
+    )
+  }
+
+  if (!grepl("/$", scp_path)) {
+    scp_path <- paste0(scp_path, "/")
+  }
+
+  if (grepl(":[0-9]+$", scp_endpoint_raw)) {
+    scp_port <- sub("^.*:([0-9]+)$", "\\1", scp_endpoint_raw)
+    scp_hostpart <- sub(":([0-9]+)$", "", scp_endpoint_raw)
+  } else {
+    scp_hostpart <- scp_endpoint_raw
+  }
+
+  scp_target <- paste0(scp_hostpart, ":", scp_path)
+  log_msg("SCP habilitado. Destino remoto: ", scp_path)
+}
 
 t1 <- Sys.time()
 n_states <- nrow(estados_Infodengue)
@@ -174,12 +247,14 @@ for (i in seq_len(n_states)) {
   res <- list()
 
   # Dengue
+  now_mode <- resolve_nowcasting("bayesian")
+  log_msg(" - dengue: running pipe_infodengue (nowcasting=", now_mode, ")")
   if (isTRUE(row_i$dengue)) {
     log_msg(" - dengue: running pipe_infodengue")
     res[["ale.den"]] <- pipe_infodengue(
       cidades,
       cid10 = "A90",
-      nowcasting = "none",
+      nowcasting = now_mode,
       finalday = dia_relatorio,
       narule = "arima",
       iniSE = 201001,
@@ -195,12 +270,14 @@ for (i in seq_len(n_states)) {
   }
 
   # Chikungunya
+  now_mode <- resolve_nowcasting("bayesian")
+  log_msg(" - chik: running pipe_infodengue (nowcasting=", now_mode, ")")
   if (isTRUE(row_i$chik)) {
     log_msg(" - chik: running pipe_infodengue")
     res[["ale.chik"]] <- pipe_infodengue(
       cidades,
-      cid10 = "A92",
-      nowcasting = "bayesian",
+      cid10 = "A92.0",
+      nowcasting = now_mode,
       finalday = dia_relatorio,
       narule = "arima",
       iniSE = 201001,
@@ -216,12 +293,14 @@ for (i in seq_len(n_states)) {
   }
 
   # Zika
+  now_mode <- resolve_nowcasting("bayesian")
+  log_msg(" - zika: running pipe_infodengue (nowcasting=", now_mode, ")")
   if (isTRUE(row_i$zika)) {
     log_msg(" - zika: running pipe_infodengue")
     res[["ale.zika"]] <- pipe_infodengue(
       cidades,
       cid10 = "A92.8",
-      nowcasting = "bayesian",
+      nowcasting = now_mode,
       finalday = dia_relatorio,
       narule = "arima",
       iniSE = 201001,
