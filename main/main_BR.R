@@ -1,15 +1,18 @@
 # =============================================================================
-# Alerta Dengue Nacional (runnable via Rscript + Makim)
+# Alerta Dengue Nacional (executável via Rscript + Makim)
 # =============================================================================
 
 options(stringsAsFactors = FALSE)
 
+# Logger padronizado para saída em stdout (útil para execução via Makim/CI).
 log_msg <- function(..., level = "INFO") {
   ts <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   msg <- paste0(...)
   cat(sprintf("[%s] [%s] %s\n", ts, level, msg))
 }
 
+# Localiza a raiz do repositório a partir de um diretório inicial, subindo
+# alguns níveis e validando a existência de arquivos-chave do projeto.
 find_repo_root <- function(start_dir) {
   cur <- normalizePath(start_dir, winslash = "/", mustWork = FALSE)
   for (i in 1:8) {
@@ -32,6 +35,7 @@ find_repo_root <- function(start_dir) {
   stop("Could not locate repo root from: ", start_dir, call. = FALSE)
 }
 
+# Obtém a primeira variável de ambiente disponível dentre os nomes fornecidos.
 get_env_any <- function(names, default = NULL) {
   for (nm in names) {
     val <- Sys.getenv(nm, unset = "")
@@ -40,6 +44,8 @@ get_env_any <- function(names, default = NULL) {
   default
 }
 
+# Determina o diretório do script em execução para resolução consistente
+# de paths relativos e descoberta da raiz do repositório.
 args0 <- commandArgs(trailingOnly = FALSE)
 file_arg <- sub("^--file=", "", args0[grep("^--file=", args0)])
 script_dir <- if (length(file_arg)) {
@@ -52,6 +58,7 @@ repo_root <- find_repo_root(script_dir)
 setwd(repo_root)
 log_msg("Repo root: ", repo_root)
 
+# Carrega a configuração global do pipeline (lista de estados, funções, libs).
 cfg_path <- if (file.exists(file.path(repo_root, "config",
                                      "config_global_2020.R"))) {
   file.path(repo_root, "config", "config_global_2020.R")
@@ -61,6 +68,7 @@ cfg_path <- if (file.exists(file.path(repo_root, "config",
 log_msg("Loading config: ", cfg_path)
 source(cfg_path)
 
+# Garante disponibilidade de mclapply (muitas rotinas do pipeline usam paralelismo).
 if (!exists("mclapply", mode = "function")) {
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("Missing base R package 'parallel'.", call. = FALSE)
@@ -69,6 +77,7 @@ if (!exists("mclapply", mode = "function")) {
   log_msg("Enabled parallel::mclapply()")
 }
 
+# Semana epidemiológica de referência (YYYYWW), fornecida via ambiente (Makim).
 data_relatorio <- as.integer(
   get_env_any(c("ALERTA_DATA_RELATORIO", "DATA_RELATORIO"), default = NA)
 )
@@ -77,9 +86,14 @@ if (is.na(data_relatorio)) {
 }
 log_msg("Week (data_relatorio): ", data_relatorio)
 
+# Data de término do período do relatório (a partir da SE informada).
 dia_relatorio <- seqSE(data_relatorio, data_relatorio)$Termino
 log_msg("Report end date (dia_relatorio): ", as.character(dia_relatorio))
 
+# Diretórios de saída:
+# - alertas_dir: RData por estado/semana
+# - sql_dir: scripts SQL gerados
+# - br_dir: RData agregado nacional (BR)
 out_base <- get_env_any(
   c("ALERTA_OUT_DIR"),
   default = file.path(repo_root, "main")
@@ -97,6 +111,7 @@ log_msg(" - alertas_dir: ", alertas_dir)
 log_msg(" - sql_dir:     ", sql_dir)
 log_msg(" - br_dir:      ", br_dir)
 
+# Parâmetros de conexão ao Postgres (obtidos via ambiente/.env).
 db_host <- get_env_any(c("ALERTA_DB_HOST", "DB_HOST"), default = "127.0.0.1")
 db_port <- as.integer(get_env_any(c("ALERTA_DB_PORT", "DB_PORT"),
                                   default = "5432"))
@@ -111,6 +126,7 @@ if (!nzchar(db_user) || !nzchar(db_pass)) {
 log_msg("Connecting DB: host=", db_host, " port=", db_port, " dbname=", db_name,
         " user=", db_user)
 
+# Abre conexão com o banco (usada por rotinas do pipeline para parâmetros e dados).
 con <- DBI::dbConnect(
   drv = RPostgreSQL::PostgreSQL(),
   dbname = db_name,
@@ -123,6 +139,7 @@ on.exit(try(DBI::dbDisconnect(con), silent = TRUE), add = TRUE)
 
 log_msg("DB connected OK")
 
+# Publicação opcional dos .RData via scp (independente do banco ser local/remoto).
 do_scp <- tolower(get_env_any(c("ALERTA_DO_SCP"), default = "0")) %in%
   c("1", "true", "yes", "y")
 scp_port <- get_env_any(c("ALERTA_SCP_PORT"), default = "22")
@@ -136,6 +153,7 @@ n_states <- nrow(estados_Infodengue)
 
 log_msg("Starting pipeline for ", n_states, " state row(s)")
 
+# Execução do pipeline por linha da configuração de estados.
 for (i in seq_len(n_states)) {
   row_i <- estados_Infodengue[i, ]
   estado <- as.character(row_i$estado)
@@ -143,9 +161,11 @@ for (i in seq_len(n_states)) {
 
   log_msg(sprintf("[state] %d/%d %s (%s)", i, n_states, estado, sig))
 
+  # Arquivo de saída por estado: lista 'res' contendo 'ale.*' e 'restab.*'.
   nomeRData <- paste0("ale-", sig, "-", data_relatorio, ".RData")
   out_rdata <- file.path(alertas_dir, nomeRData)
 
+  # Municípios (geocódigos) utilizados para cálculo do alerta estadual.
   cidades <- getCidades(uf = estado)[, "municipio_geocodigo"]
   if (length(cidades) == 0) {
     stop("No cities returned for state: ", estado, call. = FALSE)
@@ -153,6 +173,7 @@ for (i in seq_len(n_states)) {
 
   res <- list()
 
+  # Dengue
   if (isTRUE(row_i$dengue)) {
     log_msg(" - dengue: running pipe_infodengue")
     res[["ale.den"]] <- pipe_infodengue(
@@ -173,6 +194,7 @@ for (i in seq_len(n_states)) {
     log_msg(" - dengue: skipped")
   }
 
+  # Chikungunya
   if (isTRUE(row_i$chik)) {
     log_msg(" - chik: running pipe_infodengue")
     res[["ale.chik"]] <- pipe_infodengue(
@@ -193,6 +215,7 @@ for (i in seq_len(n_states)) {
     log_msg(" - chik: skipped")
   }
 
+  # Zika
   if (isTRUE(row_i$zika)) {
     log_msg(" - zika: running pipe_infodengue")
     res[["ale.zika"]] <- pipe_infodengue(
@@ -231,12 +254,14 @@ for (i in seq_len(n_states)) {
 t2 <- Sys.time()
 log_msg("Pipeline loop finished. Elapsed: ", as.character(t2 - t1))
 
+# Agregação dos resultados salvos em alertas_dir para geração dos outputs finais.
 log_msg("Loading .RData outputs from: ", alertas_dir)
 file_paths <- list.files(alertas_dir, full.names = TRUE, pattern = "\\.RData$")
 if (length(file_paths) == 0) {
   stop("No .RData files found in: ", alertas_dir, call. = FALSE)
 }
 
+# Carrega cada arquivo em ambiente isolado e coleta o objeto 'res'.
 res_list <- vector("list", length(file_paths))
 for (k in seq_along(file_paths)) {
   env_k <- new.env(parent = emptyenv())
@@ -248,6 +273,7 @@ for (k in seq_along(file_paths)) {
 }
 log_msg("Loaded ", length(res_list), " result file(s)")
 
+# Consolida as tabelas históricas ('restab.*') dos estados.
 combine_restab <- function(key) {
   parts <- lapply(res_list, function(r) r[[key]])
   parts <- Filter(Negate(is.null), parts)
@@ -267,6 +293,7 @@ restab_den <- combine_restab("restab.den")
 restab_chik <- combine_restab("restab.chik")
 restab_zika <- combine_restab("restab.zika")
 
+# Ajuste de segurança para valores extremos de 'casos_est_max'.
 cap_max <- function(df) {
   if (is.null(df)) return(NULL)
   if ("casos_est_max" %in% names(df)) {
@@ -279,6 +306,7 @@ restab_den <- cap_max(restab_den)
 restab_chik <- cap_max(restab_chik)
 restab_zika <- cap_max(restab_zika)
 
+# Geração dos arquivos SQL por agravo (quando houver dados).
 if (!is.null(restab_den)) {
   out_sql <- file.path(sql_dir, "output_dengue.sql")
   log_msg("Writing SQL dengue: ", out_sql)
@@ -303,6 +331,7 @@ if (!is.null(restab_zika)) {
   log_msg("No zika restab found. Skipping zika SQL.", level = "WARN")
 }
 
+# Consolida as estruturas 'ale.*' para produzir um RData agregado nacional.
 collect_ale <- function(key) {
   parts <- lapply(res_list, function(r) r[[key]])
   parts <- Filter(Negate(is.null), parts)
