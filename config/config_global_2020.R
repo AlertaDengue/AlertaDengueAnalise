@@ -4,12 +4,23 @@
 
 #------- Pacotes para carregar 
 
-pkgs <- c("foreign", "tidyverse", "forecast", "RPostgreSQL", "xtable",
-          "zoo","assertthat","DBI",
-          "futile.logger","lubridate", "grid","INLA",
-          "cgwtools","fs","miceadds","AlertTools")
+pkgs <- c(
+  "parallel",
+  "foreign", "tidyverse", "forecast", "RPostgreSQL", "xtable",
+  "zoo", "assertthat", "DBI",
+  "futile.logger", "lubridate", "grid",
+  "cgwtools", "fs", "miceadds", "AlertTools"
+)
 
-lapply(pkgs, library, character.only = TRUE ,quietly = T)
+
+lapply(pkgs, library, character.only = TRUE, quietly = TRUE)
+
+has_inla <- requireNamespace("INLA", quietly = TRUE)
+if (has_inla) {
+  suppressPackageStartupMessages(library("INLA", character.only = TRUE))
+} else {
+  message("[config] INLA not installed. Bayesian nowcasting will be disabled.")
+}
 
 # tirei: "ggplot2","gridExtra","ggTimeSeries","ggridges" 
 # explicita o diretorio base
@@ -17,14 +28,8 @@ basedir = system("pwd", intern=TRUE)
 print(basedir)
 
 # estados no Infodengue
-estados_Infodengue <- data.frame(estado = c("Santa Catarina", "Paraná", "Rio de Janeiro", "Minas Gerais",
-                                            "Espírito Santo","Ceará", "Maranhão", "Acre"),
-                                 sigla = c("SC","PR","RJ","MG","ES","CE","MA","AC"),
+estados_Infodengue <- data.frame(estado = c("Acre"),
+                                 sigla = c("AC"),
                                  dengue = TRUE,
-                                 chik = c(FALSE,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,FALSE),
-                                 zika = c(FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,FALSE))
-
-
-# INLA
-#INLA::inla.binary.install()
-
+                                 chik = FALSE,
+                                 zika = FALSE)

@@ -1,0 +1,86 @@
+groups:
+  deps:
+    tasks:
+      install:
+        help: Install R deps inside the conda env (CRAN + GitHub).
+        args:
+          env:
+            help: Conda environment name
+            type: string
+            default: alertadengueanalise
+        env:
+          MAKEFLAGS: "-j1"
+        run: |
+          conda run -n "${{ args.env }}" Rscript --vanilla scripts/install_deps.R
+
+      check:
+        help: Smoke-test critical packages after install.
+        args:
+          env:
+            help: Conda environment name
+            type: string
+            default: alertadengueanalise
+        run: |
+          conda run -n "${{ args.env }}" Rscript --vanilla -e \
+            'stopifnot(requireNamespace("zendown"), requireNamespace("brpop"), requireNamespace("AlertTools")); cat("OK\n")'
+
+  db:
+    tasks:
+      check:
+        help: Check Postgres connection using .env variables.
+        backend: bash
+        args:
+          env:
+            help: Conda environment name
+            type: string
+            default: alertadengueanalise
+        run: |
+          set -euo pipefail
+
+          if [ ! -f .env ]; then
+            echo "ERROR: .env not found in repo root"
+            exit 2
+          fi
+
+          set -a
+          . ./.env
+          set +a
+
+          conda run -n "${{ args.env }}" \
+            Rscript --vanilla scripts/db_check.R
+
+  pipeline:
+    tasks:
+      run-br:
+        help: Run BR pipeline for a given epidemiological week (YYYYWW).
+        backend: bash
+        args:
+          env:
+            help: Conda environment name
+            type: string
+            default: alertadengueanalise
+          week:
+            help: Epidemiological week in YYYYWW (e.g., 202601)
+            type: string
+            required: true
+        run: |
+          set -euo pipefail
+
+          set -a
+          . ./.env
+          set +a
+
+          if ! [[ "${{ args.week }}" =~ ^[0-9]{6}$ ]]; then
+            echo "ERROR: --week must be YYYYWW (6 digits), got '${{ args.week }}'"
+            exit 2
+          fi
+
+          export ALERTA_DATA_RELATORIO="${{ args.week }}"
+
+          mkdir -p logs
+
+          # stdbuf -oL -eL conda run --no-capture-output -n "${{ args.env }}" \
+          #   Rscript --vanilla main/main_BR.R \
+          #   2>&1 | tee "logs/pipeline-${{ args.week }}.log"
+          stdbuf -oL -eL conda run -n "${{ args.env }}" \
+            Rscript --vanilla main/main_BR.R 2>&1 | tee -a "logs/pipeline-${{ args.week }}.log"
