@@ -12,6 +12,8 @@
 .idea
 .log
 .gz
+*.sql
 
 # Local env
 .Renviron
+.env

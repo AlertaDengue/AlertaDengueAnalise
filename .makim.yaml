@@ -1,0 +1,105 @@
+groups:
+  deps:
+    tasks:
+      install:
+        help: "Instalar dependências de R dentro do ambiente conda (CRAN + GitHub)."
+        args:
+          env:
+            help: "Nome do ambiente conda."
+            type: string
+            default: alertadengueanalise
+        env:
+          MAKEFLAGS: "-j1"
+        run: |
+          conda run --no-capture-output -n "${{ args.env }}" \
+            Rscript --vanilla scripts/install_deps.R
+
+      inla:
+        help: Install and validate R-INLA (minimal)
+        args:
+          env:
+            type: string
+            help: Conda env name (optional; defaults to current env)
+            required: false
+        run: |
+          bash scripts/install_inla.sh "${{ args.env }}"
+
+      check:
+        help: "Teste rápido de pacotes críticos após a instalação."
+        args:
+          env:
+            help: "Nome do ambiente conda."
+            type: string
+            default: alertadengueanalise
+        run: |
+          conda run --no-capture-output -n "${{ args.env }}" Rscript --vanilla -e \
+            'stopifnot(requireNamespace("zendown"), requireNamespace("brpop"), requireNamespace("AlertTools")); cat("OK\n")'
+
+  db:
+    tasks:
+      check:
+        help: "Verificar conexão com o Postgres usando variáveis do arquivo .env."
+        backend: bash
+        args:
+          env:
+            help: "Nome do ambiente conda."
+            type: string
+            default: alertadengueanalise
+        run: |
+          set -euo pipefail
+
+          if [ ! -f .env ]; then
+            echo "ERRO: arquivo .env não encontrado na raiz do repositório."
+            exit 2
+          fi
+
+          set -a
+          . ./.env
+          set +a
+
+          conda run --no-capture-output -n "${{ args.env }}" \
+            Rscript --vanilla scripts/db_check.R
+
+  pipeline:
+    tasks:
+      run-br:
+        help: "Executar o pipeline BR para uma semana epidemiológica (YYYYWW)."
+        backend: bash
+        args:
+          env:
+            help: "Nome do ambiente conda."
+            type: string
+            default: alertadengueanalise
+          week:
+            help: "Semana epidemiológica no formato YYYYWW (ex.: 202601)."
+            type: string
+            required: true
+          scp:
+            help: "Se true, publica os .RData via SCP usando ALERTA_SCP_ENDPOINT e ALERTA_SCP_PATH do .env."
+            type: bool
+            default: false
+        run: |
+          set -euo pipefail
+
+          if [ ! -f .env ]; then
+            echo "ERRO: arquivo .env não encontrado na raiz do repositório."
+            exit 2
+          fi
+
+          set -a
+          . ./.env
+          set +a
+
+          if ! [[ "${{ args.week }}" =~ ^[0-9]{6}$ ]]; then
+            echo "ERRO: --week deve estar no formato YYYYWW (6 dígitos), recebido '${{ args.week }}'."
+            exit 2
+          fi
+
+          export ALERTA_DATA_RELATORIO="${{ args.week }}"
+          export ALERTA_DO_SCP="${{ args.scp }}"
+
+          mkdir -p logs
+
+          stdbuf -oL -eL conda run --no-capture-output -n "${{ args.env }}" \
+            Rscript --vanilla main/main_BR.R 2>&1 | \
+            tee -a "logs/pipeline-${{ args.week }}.log"

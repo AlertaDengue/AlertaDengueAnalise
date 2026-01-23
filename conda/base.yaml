@@ -1,0 +1,77 @@
+name: alertadengueanalise
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python
+  - pip
+  - git
+
+  # Build toolchain (only used when a CRAN package has native code)
+  - pkg-config
+  - make
+  - cmake
+  - c-compiler
+  - cxx-compiler
+  - gfortran
+
+  # System libs commonly needed by R packages
+  - zlib
+  - libpng
+  - libjpeg-turbo
+  - freetype
+  - fontconfig
+  - harfbuzz
+  - fribidi
+  - cairo
+  - pango
+  - libxml2
+  - libcurl
+  - openssl
+  - gmp
+  - mpfr
+
+  # R runtime
+  - r-base
+
+  # Core R packages (prebuilt on conda-forge)
+  - r-foreign
+  - r-forecast
+  - r-rpostgresql
+  - r-xtable
+  - r-zoo
+  - r-tidyverse
+  - r-assertthat
+  - r-futile.logger
+  - r-gridextra
+  - r-ggridges
+  - r-dbi
+  - r-jsonlite
+  - r-optparse
+  - r-remotes
+  - r-testthat
+
+  # Critical: avoid source build of RCurl/GMP
+  - r-rcurl
+  - r-curl
+  - r-gmp
+  - r-rmpfr
+
+  # Reporting stack (only if you really need it)
+  - pandoc
+  - r-knitr
+  - r-rmarkdown
+  - r-bslib
+  - r-fontawesome
+  - r-jquerylib
+  - r-shiny
+  - r-htmlwidgets
+  - r-miniui
+  - r-profvis
+  - r-pkgdown
+  - r-rcmdcheck
+  - r-usethis
+  - r-miceadds
+
+  - pip:
+      - makim==1.27.0
