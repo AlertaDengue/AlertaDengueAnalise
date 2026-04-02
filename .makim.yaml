@@ -14,7 +14,7 @@ groups:
           conda run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla scripts/install_deps.R
 
-      inla:
+      install-inla:
         help: Install and validate R-INLA (minimal)
         args:
           env:
