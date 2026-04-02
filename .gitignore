@@ -17,3 +17,7 @@
 # Local env
 .Renviron
 .env
+
+# tests
+tests/testthat/*.RData
+tests/_snaps*
