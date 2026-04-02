@@ -1,7 +1,9 @@
 #!/usr/bin/env Rscript
 
-options(repos = c(CRAN = "https://cloud.r-project.org"))
-options(Ncpus = 1)
+options(
+  repos = c(CRAN = "https://cloud.r-project.org"),
+  Ncpus = 1
+)
 
 is_installed <- function(pkg) {
   requireNamespace(pkg, quietly = TRUE)
@@ -9,8 +11,16 @@ is_installed <- function(pkg) {
 
 cran_install <- function(pkgs) {
   missing <- pkgs[!vapply(pkgs, is_installed, logical(1))]
-  if (length(missing) == 0) return(invisible(TRUE))
-  install.packages(missing, dependencies = TRUE, Ncpus = 1)
+  if (length(missing) == 0) {
+    return(invisible(TRUE))
+  }
+
+  install.packages(
+    missing,
+    dependencies = c("Depends", "Imports", "LinkingTo"),
+    Ncpus = 1
+  )
+
   still_missing <- missing[!vapply(missing, is_installed, logical(1))]
   if (length(still_missing) > 0) {
     stop(
@@ -19,20 +29,34 @@ cran_install <- function(pkgs) {
       call. = FALSE
     )
   }
+
   invisible(TRUE)
 }
 
-github_install <- function(repo, ref = NULL) {
+github_install <- function(pkg, repo, ref = NULL) {
+  if (is_installed(pkg)) {
+    return(invisible(TRUE))
+  }
+
   if (!is_installed("remotes")) {
     install.packages("remotes", Ncpus = 1)
   }
+
   remotes::install_github(
     repo = repo,
     ref = ref,
-    dependencies = TRUE,
-    upgrade = "never",
-    force = TRUE
+    dependencies = FALSE,
+    upgrade = "never"
   )
+
+  if (!is_installed(pkg)) {
+    stop(
+      "Could not install GitHub package: ",
+      pkg,
+      call. = FALSE
+    )
+  }
+
   invisible(TRUE)
 }
 
@@ -42,6 +66,7 @@ conda_prefix <- Sys.getenv("CONDA_PREFIX", unset = "")
 if (nzchar(conda_prefix)) {
   inc <- file.path(conda_prefix, "include")
   lib <- file.path(conda_prefix, "lib")
+
   Sys.setenv(
     CFLAGS = paste0("-I", inc, " ", Sys.getenv("CFLAGS", "")),
     CPPFLAGS = paste0("-I", inc, " ", Sys.getenv("CPPFLAGS", "")),
@@ -55,16 +80,45 @@ if (nzchar(conda_prefix)) {
   )
 }
 
-cran_install(c("cgwtools", "zendown"))
+cran_pkgs <- c(
+  "cgwtools",
+  "zendown",
+  "fs",
+  "sn"
+)
 
-cat("[deps] Installing brpop from GitHub (CRAN may not support this R)...\n")
-github_install("rfsaldanha/brpop")  # documented install path :contentReference[oaicite:1]{index=1}
+cat("[deps] Installing CRAN packages...\n")
+cran_install(cran_pkgs)
+
+cat("[deps] Installing brpop from GitHub...\n")
+github_install("brpop", "rfsaldanha/brpop")
 
 cat("[deps] Installing AlertTools from GitHub...\n")
-github_install("AlertaDengue/AlertTools")
+github_install("AlertTools", "AlertaDengue/AlertTools")
 
 cat("[deps] Installing ggTimeSeries from GitHub...\n")
-github_install("AtherEnergy/ggTimeSeries")
+github_install("ggTimeSeries", "AtherEnergy/ggTimeSeries")
 
-stopifnot(is_installed("brpop"), is_installed("AlertTools"))
-cat("[deps] OK: brpop + AlertTools installed and loadable.\n")
+required <- c(
+  "cgwtools",
+  "zendown",
+  "fs",
+  "sn",
+  "brpop",
+  "AlertTools",
+  "ggTimeSeries"
+)
+
+missing_required <- required[
+  !vapply(required, is_installed, logical(1))
+]
+
+if (length(missing_required) > 0) {
+  stop(
+    "Missing required packages after installation: ",
+    paste(missing_required, collapse = ", "),
+    call. = FALSE
+  )
+}
+
+cat("[deps] OK: required extra packages installed and loadable.\n")
