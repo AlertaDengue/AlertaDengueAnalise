@@ -145,10 +145,10 @@ resolve_nowcasting <- function(mode) {
 }
 
 report_epiweek <- as.integer(
-  get_env_any(c("ALERTA_report_epiweek", "report_epiweek"), default = NA)
+  get_env_any(c("ALERTA_REPORT_EPIWEEK", "report_epiweek"), default = NA)
 )
 if (is.na(report_epiweek)) {
-  stop("Missing ALERTA_report_epiweek (expected YYYYWW).", call. = FALSE)
+  stop("Missing ALERTA_REPORT_EPIWEEK (expected YYYYWW).", call. = FALSE)
 }
 log_msg("Report epiweek: ", report_epiweek)
 
