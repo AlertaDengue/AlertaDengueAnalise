@@ -144,18 +144,27 @@ resolve_nowcasting <- function(mode) {
   mode
 }
 
-# Semana epidemiológica de referência (YYYYWW), fornecida linha de comando (Makim).
-data_relatorio <- as.integer(
-  get_env_any(c("ALERTA_DATA_RELATORIO", "DATA_RELATORIO"), default = NA)
+report_epiweek <- as.integer(
+  get_env_any(c("ALERTA_report_epiweek", "report_epiweek"), default = NA)
 )
-if (is.na(data_relatorio)) {
-  stop("Missing ALERTA_DATA_RELATORIO (expected YYYYWW).", call. = FALSE)
+if (is.na(report_epiweek)) {
+  stop("Missing ALERTA_report_epiweek (expected YYYYWW).", call. = FALSE)
 }
-log_msg("Week (data_relatorio): ", data_relatorio)
+log_msg("Report epiweek: ", report_epiweek)
 
-# Data de término do período do relatório (a partir da SE informada).
-dia_relatorio <- seqSE(data_relatorio, data_relatorio)$Termino
-log_msg("Report end date (dia_relatorio): ", as.character(dia_relatorio))
+report_end_date <- seqSE(report_epiweek, report_epiweek)$Termino
+log_msg("Report end date: ", as.character(report_end_date))
+
+window_weeks <- as.integer(
+  get_env_any(c("ALERTA_WINDOW_WEEKS"), default = "100")
+)
+if (is.na(window_weeks) || window_weeks < 1) {
+  stop(
+    "Invalid ALERTA_WINDOW_WEEKS (expected positive integer).",
+    call. = FALSE
+  )
+}
+log_msg("Historical window (weeks): ", window_weeks)
 
 # Diretórios de saída:
 # - alertas_dir: RData por estado/semana
@@ -165,7 +174,7 @@ out_base <- get_env_any(
   c("ALERTA_OUT_DIR"),
   default = file.path(repo_root, "main")
 )
-alertas_dir <- file.path(out_base, "alertas", as.character(data_relatorio))
+alertas_dir <- file.path(out_base, "alertas", as.character(report_epiweek))
 sql_dir <- file.path(out_base, "sql")
 br_dir <- file.path(out_base, "alertas", "BR")
 
@@ -255,7 +264,7 @@ for (i in seq_len(n_states)) {
   log_msg(sprintf("[state] %d/%d %s (%s)", i, n_states, estado, sig))
 
   # Arquivo de saída por estado: lista 'res' contendo 'ale.*' e 'restab.*'.
-  nomeRData <- paste0("ale-", sig, "-", data_relatorio, ".RData")
+  nomeRData <- paste0("ale-", sig, "-", report_epiweek, ".RData")
   out_rdata <- file.path(alertas_dir, nomeRData)
 
   # Municípios (geocódigos) utilizados para cálculo do alerta estadual.
@@ -275,7 +284,7 @@ for (i in seq_len(n_states)) {
       cidades,
       cid10 = "A90",
       nowcasting = now_mode,
-      finalday = dia_relatorio,
+      finalday = report_end_date,
       narule = "arima",
       iniSE = 201001,
       dataini = "sinpri",
@@ -283,7 +292,7 @@ for (i in seq_len(n_states)) {
     )
     res[["restab.den"]] <- tabela_historico(
       res[["ale.den"]],
-      iniSE = data_relatorio - 100
+      iniSE = report_epiweek - window_weeks
     )
   } else {
     log_msg(" - dengue: skipped")
@@ -298,7 +307,7 @@ for (i in seq_len(n_states)) {
       cidades,
       cid10 = "A92.0",
       nowcasting = now_mode,
-      finalday = dia_relatorio,
+      finalday = report_end_date,
       narule = "arima",
       iniSE = 201001,
       dataini = "sinpri",
@@ -306,7 +315,7 @@ for (i in seq_len(n_states)) {
     )
     res[["restab.chik"]] <- tabela_historico(
       res[["ale.chik"]],
-      iniSE = data_relatorio - 100
+      iniSE = report_epiweek - window_weeks
     )
   } else {
     log_msg(" - chik: skipped")
@@ -321,7 +330,7 @@ for (i in seq_len(n_states)) {
       cidades,
       cid10 = "A92.8",
       nowcasting = now_mode,
-      finalday = dia_relatorio,
+      finalday = report_end_date,
       narule = "arima",
       iniSE = 201001,
       dataini = "sinpri",
@@ -329,7 +338,7 @@ for (i in seq_len(n_states)) {
     )
     res[["restab.zika"]] <- tabela_historico(
       res[["ale.zika"]],
-      iniSE = data_relatorio - 100
+      iniSE = report_epiweek - window_weeks
     )
   } else {
     log_msg(" - zika: skipped")
@@ -458,7 +467,7 @@ d <- if (length(parts_br) > 0) dplyr::bind_rows(parts_br) else NULL
 if (is.null(d)) {
   log_msg("No 'ale.*' data found. Skipping BR RData.", level = "WARN")
 } else {
-  out_br <- file.path(br_dir, paste0("ale-BR-", data_relatorio, ".RData"))
+  out_br <- file.path(br_dir, paste0("ale-BR-", report_epiweek, ".RData"))
   log_msg("Saving BR RData: ", out_br)
   save(d, file = out_br)
 }
