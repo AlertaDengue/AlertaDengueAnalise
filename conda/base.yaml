@@ -72,6 +72,9 @@ dependencies:
   - r-rcmdcheck
   - r-usethis
   - r-miceadds
-
+  - r-units
+  - r-s2
+  - r-sf
+  - r-fmesher
   - pip:
       - makim==1.27.0
