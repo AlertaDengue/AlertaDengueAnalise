@@ -120,14 +120,21 @@ groups:
             help: "Janela histórica em semanas para tabela_historico."
             type: string
             default: "100"
+          states:
+            help: "Lista opcional de UFs separadas por vírgula (ex.: RJ ou RJ,ES,MG)."
+            type: string
+            required: false
+            default: ""
+          load:
+            help: "Se true, aplica os SQLs gerados no banco."
+            type: bool
+            default: false
           scp:
             help: "Se true, publica os .RData via SCP usando ALERTA_SCP_ENDPOINT e ALERTA_SCP_PATH do .env."
             type: bool
             default: false
-          load:
-            help: "Se true, aplica os SQLs gerados no banco."
-            type: bool
-            default: true
+        run: |
+          set -euo pipefail
         run: |
           set -euo pipefail
 
@@ -166,6 +173,7 @@ groups:
           export ALERTA_DATA_RELATORIO="${WEEK}"
           export ALERTA_WINDOW_WEEKS="${{ args.window_weeks }}"
           export ALERTA_DO_SCP="${{ args.scp }}"
+          export ALERTA_STATES="${{ args.states }}"
 
           mkdir -p logs
 
@@ -173,6 +181,12 @@ groups:
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
           echo "[II] window_weeks=${{ args.window_weeks }}" | tee -a "${LOG_FILE}"
+
+          if [ -n "${{ args.states }}" ]; then
+            echo "[II] states=${{ args.states }}" | tee -a "${LOG_FILE}"
+          else
+            echo "[II] states=ALL" | tee -a "${LOG_FILE}"
+          fi
 
           stdbuf -oL -eL conda run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla main/main_BR.R 2>&1 | \

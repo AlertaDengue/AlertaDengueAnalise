@@ -70,7 +70,6 @@ log_msg("Loading config: ", cfg_path)
 source(cfg_path)
 
 # Garante disponibilidade de mclapply (onde rotinas do pipeline usam paralelismo).
-
 if (!exists("mclapply", mode = "function")) {
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("Missing base R package 'parallel'.", call. = FALSE)
@@ -216,7 +215,6 @@ on.exit(try(DBI::dbDisconnect(con), silent = TRUE), add = TRUE)
 log_msg("DB connected OK")
 
 # Publicação opcional dos .RData via scp (independente do banco ser local/remoto).
-
 do_scp <- tolower(get_env_any(c("ALERTA_DO_SCP"), default = "0")) %in%
   c("1", "true", "yes", "y")
 
@@ -251,7 +249,43 @@ if (do_scp) {
 }
 
 t1 <- Sys.time()
+
+# Filtro de estados (opcional)
+states_filter_raw <- get_env_any(c("ALERTA_STATES"), default = "")
+states_filter <- character(0)
+
+if (nzchar(states_filter_raw)) {
+  states_filter <- unlist(strsplit(states_filter_raw, ",", fixed = TRUE))
+  states_filter <- trimws(states_filter)
+  states_filter <- toupper(states_filter)
+  states_filter <- states_filter[nzchar(states_filter)]
+  states_filter <- unique(states_filter)
+
+  invalid_states <- setdiff(states_filter, estados_Infodengue$sigla)
+  if (length(invalid_states) > 0) {
+    stop(
+      "Invalid ALERTA_STATES value(s): ",
+      paste(invalid_states, collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  estados_Infodengue <- estados_Infodengue[
+    estados_Infodengue$sigla %in% states_filter,
+    ,
+    drop = FALSE
+  ]
+
+  log_msg(
+    "State filter enabled: ",
+    paste(states_filter, collapse = ", ")
+  )
+}
+
 n_states <- nrow(estados_Infodengue)
+if (n_states == 0) {
+  stop("No states selected for execution.", call. = FALSE)
+}
 
 log_msg("Starting pipeline for ", n_states, " state row(s)")
 
