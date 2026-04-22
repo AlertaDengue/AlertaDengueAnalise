@@ -10,8 +10,10 @@ groups:
             default: alertadengueanalise
         env:
           MAKEFLAGS: "-j1"
+          XONSH_SUBPROC_CMD_RAISE_ERROR: "True"
+        backend: xonsh
         run: |
-          conda run --no-capture-output -n "${{ args.env }}" \
+          $CONDA_EXE run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla scripts/install_deps.R
 
       install-inla:
@@ -21,6 +23,9 @@ groups:
             type: string
             help: Conda env name (optional; defaults to current env)
             required: false
+        env:
+          XONSH_SUBPROC_CMD_RAISE_ERROR: "True"
+        backend: xonsh
         run: |
           bash scripts/install_inla.sh "${{ args.env }}"
 
@@ -31,8 +36,11 @@ groups:
             help: "Nome do ambiente conda."
             type: string
             default: alertadengueanalise
+        env:
+          XONSH_SUBPROC_CMD_RAISE_ERROR: "True"
+        backend: xonsh
         run: |
-          conda run --no-capture-output -n "${{ args.env }}" Rscript --vanilla -e \
+          $CONDA_EXE run --no-capture-output -n "${{ args.env }}" Rscript --vanilla -e \
             'stopifnot(requireNamespace("zendown"), requireNamespace("brpop"), requireNamespace("AlertTools")); cat("OK\n")'
 
   db:
@@ -57,7 +65,7 @@ groups:
           . ./.env
           set +a
 
-          conda run --no-capture-output -n "${{ args.env }}" \
+          ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla scripts/db_check.R
 
   pipeline:
@@ -100,7 +108,7 @@ groups:
 
           mkdir -p logs
 
-          stdbuf -oL -eL conda run --no-capture-output -n "${{ args.env }}" \
+          ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla main/main_BR.R 2>&1 | \
             tee -a "logs/pipeline-${{ args.week }}.log"
 
@@ -133,8 +141,6 @@ groups:
             help: "Se true, publica os .RData via SCP usando ALERTA_SCP_ENDPOINT e ALERTA_SCP_PATH do .env."
             type: bool
             default: false
-        run: |
-          set -euo pipefail
         run: |
           set -euo pipefail
 
@@ -188,7 +194,7 @@ groups:
             echo "[II] states=ALL" | tee -a "${LOG_FILE}"
           fi
 
-          stdbuf -oL -eL conda run --no-capture-output -n "${{ args.env }}" \
+          ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla main/main_BR.R 2>&1 | \
             tee -a "${LOG_FILE}"
 
