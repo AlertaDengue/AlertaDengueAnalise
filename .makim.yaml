@@ -104,6 +104,7 @@ groups:
           fi
 
           export ALERTA_DATA_RELATORIO="${{ args.week }}"
+          export ALERTA_REPORT_EPIWEEK="${{ args.week }}"
           export ALERTA_DO_SCP="${{ args.scp }}"
 
           mkdir -p logs
@@ -177,6 +178,7 @@ groups:
           fi
 
           export ALERTA_DATA_RELATORIO="${WEEK}"
+          export ALERTA_REPORT_EPIWEEK="${WEEK}"
           export ALERTA_WINDOW_WEEKS="${{ args.window_weeks }}"
           export ALERTA_DO_SCP="${{ args.scp }}"
           export ALERTA_STATES="${{ args.states }}"
