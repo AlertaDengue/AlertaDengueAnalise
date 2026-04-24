@@ -1,0 +1,68 @@
+name: R smoke validation
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    paths:
+      - ".github/workflows/run-r-script.yml"
+      - ".makim.yaml"
+      - "conda/base.yaml"
+      - "config/**"
+      - "main/**"
+      - "scripts/**"
+      - "**/*.R"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Conda
+        uses: conda-forge/setup-miniforge@v3
+        with:
+          miniforge-version: latest
+          use-mamba: true
+          activate-environment: alertadengueanalise
+          environment-file: conda/base.yaml
+
+      - name: Show environment info
+        run: |
+          conda info
+          conda list
+          R --version
+          python --version
+
+      - name: Install extra R dependencies via Makim
+        run: |
+          python -m pip install makim==1.27.0
+          makim deps.install
+
+      - name: Tiny config smoke check
+        run: |
+          Rscript --vanilla -e '
+          source("config/config_global_2020.R")
+          stopifnot(exists("estados_Infodengue"))
+          stopifnot(is.data.frame(estados_Infodengue))
+          stopifnot(nrow(estados_Infodengue) > 0)
+          stopifnot(exists("has_inla"))
+          cat("OK: config smoke check passed\n")
+          '
+
+      - name: Parse main script
+        run: |
+          Rscript --vanilla -e '
+          parse(file = "main/main_BR.R")
+          cat("OK: main_BR.R parses successfully\n")
+          '
