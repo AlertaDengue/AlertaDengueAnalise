@@ -246,7 +246,7 @@ groups:
             type: string
             default: alertadengueanalise
           week:
-            help: "Semana epidemiológica no formato YYYYWW, ou 'latest' para usar a última SE disponível."
+            help: "Semana epidemiológica no formato YYYYWW, ou 'latest'."
             type: string
             default: latest
           states:
@@ -254,11 +254,11 @@ groups:
             type: string
             default: ALL
           diseases:
-            help: "Lista de agravos separadas por vírgula: dengue, chikungunya, ou ALL."
+            help: "Lista de agravos separadas por vírgula: dengue, chikungunya, zika, ou ALL."
             type: string
             default: ALL
           output-dir:
-            help: "Diretório de saída dos mapas."
+            help: "Diretório de saída dos mapas estaduais."
             type: string
             default: sync_maps/incidence_maps/state
           window-weeks:
@@ -319,7 +319,6 @@ groups:
           fi
 
           mkdir -p logs
-
           LOG_FILE="logs/maps-state-${WEEK}.log"
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
@@ -327,14 +326,11 @@ groups:
           echo "[II] diseases=${{ args.diseases }}" | tee -a "${LOG_FILE}"
           echo "[II] window_weeks=${{ args.window_weeks }}" | tee -a "${LOG_FILE}"
           echo "[II] output_dir=${{ args.output_dir }}" | tee -a "${LOG_FILE}"
-          echo "[II] conda_prefix=${CONDA_PREFIX_RESOLVED}" | tee -a "${LOG_FILE}"
-          echo "[II] PROJ_LIB=${PROJ_LIB:-}" | tee -a "${LOG_FILE}"
-          echo "[II] PROJ_DATA=${PROJ_DATA:-}" | tee -a "${LOG_FILE}"
-          echo "[II] GDAL_DATA=${GDAL_DATA:-}" | tee -a "${LOG_FILE}"
 
           ${CONDA_BIN} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla main/script_maps_state.R 2>&1 | \
             tee -a "${LOG_FILE}"
+
 
       maps-br:
         help: "Gerar mapas nacionais de incidência acumulada nas últimas SEs."

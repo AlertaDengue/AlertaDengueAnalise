@@ -13,7 +13,7 @@ log_msg <- function(..., level = "INFO") {
 find_repo_root <- function(start_dir) {
   cur <- normalizePath(start_dir, winslash = "/", mustWork = FALSE)
 
-  for (i in 1:8) {
+  for (i in seq_len(8)) {
     has_script <- file.exists(file.path(cur, "main", "script_maps_state.R"))
     has_main <- file.exists(file.path(cur, "main", "main_BR.R"))
     has_cfg <- file.exists(file.path(cur, "config", "config_global_2020.R"))
@@ -26,7 +26,10 @@ find_repo_root <- function(start_dir) {
     }
 
     parent <- normalizePath(file.path(cur, ".."), winslash = "/", mustWork = FALSE)
-    if (identical(parent, cur)) break
+    if (identical(parent, cur)) {
+      break
+    }
+
     cur <- parent
   }
 
@@ -36,7 +39,9 @@ find_repo_root <- function(start_dir) {
 get_env_any <- function(names, default = NULL) {
   for (nm in names) {
     val <- Sys.getenv(nm, unset = "")
-    if (nzchar(val)) return(val)
+    if (nzchar(val)) {
+      return(val)
+    }
   }
 
   default
@@ -97,7 +102,8 @@ load_required_packages <- function() {
     "ggplot2",
     "tidyr",
     "purrr",
-    "stringr"
+    "stringr",
+    "tibble"
   )
 
   missing_pkgs <- required_pkgs[
@@ -123,6 +129,7 @@ load_required_packages <- function() {
     library(tidyr)
     library(purrr)
     library(stringr)
+    library(tibble)
   })
 }
 
@@ -140,6 +147,7 @@ parse_csv_arg <- function(value, default = character(0)) {
   items <- unlist(strsplit(value, ",", fixed = TRUE))
   items <- trimws(items)
   items <- items[nzchar(items)]
+
   unique(items)
 }
 
@@ -147,7 +155,7 @@ normalize_diseases <- function(value) {
   diseases <- parse_csv_arg(value, default = "ALL")
 
   if (length(diseases) == 1 && diseases == "ALL") {
-    return(c("dengue", "chikungunya"))
+    return(c("dengue", "chikungunya", "zika"))
   }
 
   diseases <- tolower(diseases)
@@ -156,7 +164,9 @@ normalize_diseases <- function(value) {
     den = "dengue",
     dengue = "dengue",
     chik = "chikungunya",
-    chikungunya = "chikungunya"
+    chikungunya = "chikungunya",
+    zika = "zika",
+    zikv = "zika"
   )
 
   normalized <- unname(aliases[diseases])
@@ -166,7 +176,7 @@ normalize_diseases <- function(value) {
     stop(
       "Invalid disease value(s): ",
       paste(invalid, collapse = ", "),
-      ". Expected: dengue, chikungunya, or ALL.",
+      ". Expected: dengue, chikungunya, zika, or ALL.",
       call. = FALSE
     )
   }
@@ -220,8 +230,26 @@ connect_db <- function(db_cfg) {
     password = db_cfg$password
   )
 
+  invisible(DBI::dbGetQuery(con, "SELECT 1"))
   log_msg("DB connected OK")
+
   con
+}
+
+table_exists <- function(con, schema, table_name) {
+  sql <- glue::glue_sql(
+    '
+    SELECT EXISTS (
+      SELECT 1
+      FROM information_schema.tables
+      WHERE table_schema = {schema}
+        AND table_name = {table_name}
+    ) AS exists
+    ',
+    .con = con
+  )
+
+  isTRUE(DBI::dbGetQuery(con, as.character(sql))$exists[[1]])
 }
 
 get_disease_config <- function(disease) {
@@ -229,12 +257,20 @@ get_disease_config <- function(disease) {
     dengue = list(
       label = "Dengue",
       slug = "dengue",
-      table = "Historico_alerta"
+      table = "Historico_alerta",
+      allow_empty = FALSE
     ),
     chikungunya = list(
       label = "Chikungunya",
       slug = "chikungunya",
-      table = "Historico_alerta_chik"
+      table = "Historico_alerta_chik",
+      allow_empty = FALSE
+    ),
+    zika = list(
+      label = "Zika",
+      slug = "zika",
+      table = "Historico_alerta_zika",
+      allow_empty = TRUE
     )
   )
 
@@ -245,6 +281,21 @@ get_disease_config <- function(disease) {
   }
 
   cfg
+}
+
+legend_levels <- function() {
+  c("0-10", "10-50", "50-100", "100-200", "200-300", "300 ou mais")
+}
+
+incidence_palette <- function() {
+  c(
+    "0-10" = "#FFF7EC",
+    "10-50" = "#FDD49E",
+    "50-100" = "#FC8D59",
+    "100-200" = "#EF6548",
+    "200-300" = "#B30000",
+    "300 ou mais" = "#7F0000"
+  )
 }
 
 get_state_rows <- function(states_arg) {
@@ -283,15 +334,22 @@ resolve_epiweek <- function(con, requested_week, states, diseases) {
     return(as.integer(requested_week))
   }
 
-  disease_tables <- vapply(
-    diseases,
-    function(disease) get_disease_config(disease)$table,
-    character(1)
-  )
+  reference_tables <- c("Historico_alerta", "Historico_alerta_chik")
+  reference_tables <- reference_tables[
+    vapply(
+      reference_tables,
+      function(table_name) table_exists(con, "Municipio", table_name),
+      logical(1)
+    )
+  ]
+
+  if (length(reference_tables) == 0) {
+    stop("Could not resolve latest SE: no reference alert table exists.", call. = FALSE)
+  }
 
   state_names <- as.character(states$estado)
 
-  latest_values <- purrr::map_int(disease_tables, function(table_name) {
+  latest_values <- purrr::map_int(reference_tables, function(table_name) {
     sql <- glue::glue_sql(
       '
       SELECT MAX(h."SE") AS latest_se
@@ -315,7 +373,7 @@ resolve_epiweek <- function(con, requested_week, states, diseases) {
   latest_values <- latest_values[!is.na(latest_values)]
 
   if (length(latest_values) == 0) {
-    stop("Could not resolve latest SE from selected states/diseases.", call. = FALSE)
+    stop("Could not resolve latest SE from selected states.", call. = FALSE)
   }
 
   min(latest_values)
@@ -335,7 +393,6 @@ load_shape <- function(repo_root, states) {
   }
 
   siglas <- as.character(states$sigla)
-
   shape <- sf::read_sf(shape_path)
 
   required_cols <- c("code_muni", "abbrev_state")
@@ -355,30 +412,82 @@ load_shape <- function(repo_root, states) {
     dplyr::filter(abbrev_state %in% siglas)
 }
 
-fetch_incidence_data <- function(con, state_name, disease_cfg, epiweek, window_weeks) {
-  table_name <- disease_cfg$table
+fetch_state_window_weeks <- function(con, state_name, epiweek, window_weeks) {
+  reference_tables <- c("Historico_alerta", "Historico_alerta_chik")
+  reference_tables <- reference_tables[
+    vapply(
+      reference_tables,
+      function(table_name) table_exists(con, "Municipio", table_name),
+      logical(1)
+    )
+  ]
 
-  sql <- glue::glue_sql(
-    '
-    WITH se_uf AS (
-      SELECT DISTINCT m."uf", h."SE"
+  if (length(reference_tables) == 0) {
+    return(integer())
+  }
+
+  queries <- purrr::map_chr(reference_tables, function(table_name) {
+    glue::glue_sql(
+      '
+      SELECT DISTINCT h."SE"
       FROM "Municipio".{`table_name`} h
       INNER JOIN "Dengue_global"."Municipio" m
         ON h."municipio_geocodigo" = m."geocodigo"
       WHERE h."SE" <= {epiweek}
         AND m."uf" = {state_name}
-    ),
-    ultimas_se AS (
-      SELECT "uf", "SE"
-      FROM (
-        SELECT
-          "uf",
-          "SE",
-          ROW_NUMBER() OVER (PARTITION BY "uf" ORDER BY "SE" DESC) AS ordem
-        FROM se_uf
-      ) x
-      WHERE ordem <= {window_weeks}
+      ',
+      .con = con
+    ) |>
+      as.character()
+  })
+
+  sql <- paste(
+    'SELECT DISTINCT "SE" FROM (',
+    paste(queries, collapse = " UNION "),
+    ') selected_weeks ORDER BY "SE" DESC LIMIT ',
+    as.integer(window_weeks)
+  )
+
+  DBI::dbGetQuery(con, sql)$SE |>
+    as.integer() |>
+    sort()
+}
+
+fetch_incidence_data <- function(con, state_name, disease_cfg, reference_weeks) {
+  table_name <- disease_cfg$table
+
+  empty_result <- function() {
+    tibble::tibble(
+      SE = integer(),
+      data_iniSE = as.Date(character()),
+      cidade = integer(),
+      nome = character(),
+      uf_nome = character(),
+      casos_est = numeric(),
+      pop = numeric()
     )
+  }
+
+  if (length(reference_weeks) == 0) {
+    return(empty_result())
+  }
+
+  if (!table_exists(con, "Municipio", table_name)) {
+    if (isTRUE(disease_cfg$allow_empty)) {
+      log_msg(
+        "Table Municipio.", table_name,
+        " not found. Generating empty map.",
+        level = "WARN"
+      )
+
+      return(empty_result())
+    }
+
+    stop("Table Municipio.", table_name, " not found.", call. = FALSE)
+  }
+
+  sql <- glue::glue_sql(
+    '
     SELECT
       h."SE",
       h."data_iniSE",
@@ -390,10 +499,8 @@ fetch_incidence_data <- function(con, state_name, disease_cfg, epiweek, window_w
     FROM "Municipio".{`table_name`} h
     INNER JOIN "Dengue_global"."Municipio" m
       ON h."municipio_geocodigo" = m."geocodigo"
-    INNER JOIN ultimas_se u
-      ON h."SE" = u."SE"
-      AND m."uf" = u."uf"
     WHERE m."uf" = {state_name}
+      AND h."SE" IN ({reference_weeks*})
     ',
     .con = con
   )
@@ -420,10 +527,23 @@ calculate_accumulated_incidence <- function(data) {
       inc_interval = cut(
         inc,
         breaks = c(0, 10, 50, 100, 200, 300, Inf),
-        labels = c("0-10", "10-50", "50-100", "100-200", "200-300", "300+"),
-        include.lowest = TRUE
-      )
+        labels = legend_levels(),
+        include.lowest = TRUE,
+        right = TRUE
+      ),
+      inc_interval = factor(as.character(inc_interval), levels = legend_levels())
     )
+}
+
+empty_incidence_data <- function(shape_state) {
+  tibble::tibble(
+    cidade_chr = as.character(shape_state$CD_GEOCMU),
+    nome = NA_character_,
+    casos_est_window = 0,
+    pop = NA_real_,
+    inc = 0,
+    inc_interval = factor("0-10", levels = legend_levels())
+  )
 }
 
 format_week_label <- function(weeks) {
@@ -456,34 +576,57 @@ format_week_label <- function(weeks) {
 map_theme <- function() {
   ggplot2::theme(
     plot.title = ggplot2::element_text(
-      family = "sans",
+      family = "Helvetica Neue",
       vjust = 1.5,
       hjust = 0.5,
-      size = 14,
-      face = "bold"
+      size = 14
     ),
     plot.subtitle = ggplot2::element_text(
-      family = "sans",
+      family = "Helvetica Neue",
       vjust = 2,
       hjust = 0.5,
       size = 10
     ),
+    legend.direction = "horizontal",
     legend.position = "bottom",
-    legend.title = ggplot2::element_text(size = 10),
-    legend.text = ggplot2::element_text(size = 8),
+    legend.title = ggplot2::element_text(
+      family = "Helvetica Neue",
+      size = 10
+    ),
+    legend.key.size = ggplot2::unit(0.4, "cm"),
+    legend.text = ggplot2::element_text(
+      family = "Helvetica Neue",
+      size = 8
+    ),
     axis.text = ggplot2::element_blank(),
     axis.ticks = ggplot2::element_blank(),
+    axis.title = ggplot2::element_blank(),
     panel.background = ggplot2::element_rect(fill = "transparent"),
     plot.background = ggplot2::element_rect(fill = "transparent", color = NA),
-    panel.grid = ggplot2::element_blank()
+    panel.grid.major = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank(),
+    legend.background = ggplot2::element_blank(),
+    legend.box.background = ggplot2::element_blank()
   )
 }
 
 build_map <- function(shape_state, incidence_data, disease_cfg, subtitle) {
-  palette <- c("#FFF7EC", "#FDD49E", "#FC8D59", "#EF6548", "#B30000", "#7F0000")
+  levels_inc <- legend_levels()
+  palette <- incidence_palette()
 
   map_data <- shape_state |>
-    dplyr::left_join(incidence_data, by = c("CD_GEOCMU" = "cidade_chr"))
+    dplyr::left_join(incidence_data, by = c("CD_GEOCMU" = "cidade_chr")) |>
+    dplyr::mutate(
+      inc_interval = dplyr::if_else(
+        is.na(as.character(inc_interval)),
+        "0-10",
+        as.character(inc_interval)
+      ),
+      inc_interval = factor(inc_interval, levels = levels_inc)
+    )
+
+  legend_data <- map_data[rep(1, length(levels_inc)), ]
+  legend_data$inc_interval <- factor(levels_inc, levels = levels_inc)
 
   matched <- sum(!is.na(map_data$inc))
   unmatched <- sum(is.na(map_data$inc))
@@ -497,25 +640,39 @@ build_map <- function(shape_state, incidence_data, disease_cfg, subtitle) {
       ggplot2::aes(fill = inc_interval),
       linewidth = 0.02,
       color = "black",
-      alpha = 0.95
+      alpha = 1,
+      show.legend = TRUE
+    ) +
+    ggplot2::geom_sf(
+      data = legend_data,
+      ggplot2::aes(fill = inc_interval),
+      alpha = 0,
+      color = NA,
+      show.legend = TRUE
     ) +
     ggplot2::scale_fill_manual(
       values = palette,
+      breaks = levels_inc,
+      limits = levels_inc,
+      labels = levels_inc,
       name = "Incidência por 100 mil habitantes",
-      na.value = "#f0f0f0",
-      drop = FALSE
+      drop = FALSE,
+      na.translate = FALSE,
+      na.value = "transparent"
     ) +
-    ggplot2::ggtitle(
-      disease_cfg$label,
-      subtitle = subtitle
-    ) +
+    ggplot2::ggtitle(disease_cfg$label, subtitle = subtitle) +
     ggplot2::coord_sf(crs = sf::st_crs(shape_state), datum = NA) +
     map_theme() +
     ggplot2::guides(
       fill = ggplot2::guide_legend(
-        nrow = 1,
         title.position = "top",
-        title.hjust = 0.5
+        title.hjust = 0.5,
+        nrow = 1,
+        label.position = "bottom",
+        override.aes = list(
+          alpha = 1,
+          color = NA
+        )
       )
     )
 }
@@ -528,15 +685,17 @@ save_map <- function(plot, output_dir, state_sigla, disease_cfg, epiweek) {
     paste0("incidence_", state_sigla, "_", disease_cfg$slug, ".png")
   )
 
-  ggplot2::ggsave(
+  grDevices::png(
     filename = output_file,
-    plot = plot,
-    width = 10,
-    height = 11,
-    units = "in",
-    dpi = 150,
-    bg = "transparent"
+    width = 390,
+    height = 404,
+    bg = "transparent",
+    units = "px",
+    res = 85
   )
+
+  print(plot)
+  grDevices::dev.off()
 
   log_msg("Saved: ", normalizePath(output_file, winslash = "/", mustWork = FALSE))
   log_msg("Size KB: ", round(file.info(output_file)$size / 1024, 1))
@@ -564,17 +723,41 @@ run_state_disease_map <- function(
     " window_weeks=", window_weeks
   )
 
-  data <- fetch_incidence_data(
+  shape_state <- shape_data |>
+    dplyr::filter(abbrev_state == state_sigla)
+
+  if (nrow(shape_state) == 0) {
+    stop("No shape rows found for state: ", state_sigla, call. = FALSE)
+  }
+
+  reference_weeks <- fetch_state_window_weeks(
     con = con,
     state_name = state_name,
-    disease_cfg = disease_cfg,
     epiweek = epiweek,
     window_weeks = window_weeks
   )
 
+  subtitle <- format_week_label(reference_weeks)
+
+  data <- fetch_incidence_data(
+    con = con,
+    state_name = state_name,
+    disease_cfg = disease_cfg,
+    reference_weeks = reference_weeks
+  )
+
   log_msg("Query returned rows: ", nrow(data))
 
-  if (nrow(data) == 0) {
+  if (nrow(data) == 0 && isTRUE(disease_cfg$allow_empty)) {
+    log_msg(
+      "No data found for state=", state_sigla,
+      " disease=", disease_cfg$slug,
+      ". Generating empty map.",
+      level = "WARN"
+    )
+
+    incidence_data <- empty_incidence_data(shape_state)
+  } else if (nrow(data) == 0) {
     log_msg(
       "No data found for state=", state_sigla,
       " disease=", disease_cfg$slug,
@@ -582,20 +765,12 @@ run_state_disease_map <- function(
       level = "WARN"
     )
     return(invisible(NULL))
+  } else {
+    incidence_data <- calculate_accumulated_incidence(data)
   }
-
-  incidence_data <- calculate_accumulated_incidence(data)
-  subtitle <- format_week_label(data$SE)
 
   log_msg("Incidence calculated for municipalities: ", nrow(incidence_data))
   log_msg("Subtitle: ", subtitle)
-
-  shape_state <- shape_data |>
-    dplyr::filter(abbrev_state == state_sigla)
-
-  if (nrow(shape_state) == 0) {
-    stop("No shape rows found for state: ", state_sigla, call. = FALSE)
-  }
 
   plot <- build_map(
     shape_state = shape_state,
