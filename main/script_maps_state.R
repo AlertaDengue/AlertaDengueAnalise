@@ -426,6 +426,33 @@ calculate_accumulated_incidence <- function(data) {
     )
 }
 
+format_week_label <- function(weeks) {
+  weeks <- sort(unique(as.integer(weeks)))
+
+  if (length(weeks) == 0) {
+    return("SE não disponível")
+  }
+
+  first_week <- weeks[[1]]
+  last_week <- weeks[[length(weeks)]]
+
+  year_first <- substr(first_week, 1, 4)
+  year_last <- substr(last_week, 1, 4)
+
+  week_first <- as.integer(substr(first_week, 5, 6))
+  week_last <- as.integer(substr(last_week, 5, 6))
+
+  if (length(weeks) == 1) {
+    return(paste0("SE ", week_last, "/", year_last))
+  }
+
+  if (identical(year_first, year_last)) {
+    return(paste0("SE ", week_first, "-", week_last, "/", year_last))
+  }
+
+  paste0("SE ", week_first, "/", year_first, " - ", week_last, "/", year_last)
+}
+
 map_theme <- function() {
   ggplot2::theme(
     plot.title = ggplot2::element_text(
@@ -452,7 +479,7 @@ map_theme <- function() {
   )
 }
 
-build_map <- function(shape_state, incidence_data, disease_cfg, state_sigla, epiweek, window_weeks) {
+build_map <- function(shape_state, incidence_data, disease_cfg, subtitle) {
   palette <- c("#FFF7EC", "#FDD49E", "#FC8D59", "#EF6548", "#B30000", "#7F0000")
 
   map_data <- shape_state |>
@@ -474,13 +501,13 @@ build_map <- function(shape_state, incidence_data, disease_cfg, state_sigla, epi
     ) +
     ggplot2::scale_fill_manual(
       values = palette,
-      name = "Incidência por 100 mil hab.",
+      name = "Incidência por 100 mil habitantes",
       na.value = "#f0f0f0",
       drop = FALSE
     ) +
     ggplot2::ggtitle(
       disease_cfg$label,
-      subtitle = paste0("SE ", epiweek, " - ", state_sigla, " - ", window_weeks, " SEs")
+      subtitle = subtitle
     ) +
     ggplot2::coord_sf(crs = sf::st_crs(shape_state), datum = NA) +
     map_theme() +
@@ -558,7 +585,10 @@ run_state_disease_map <- function(
   }
 
   incidence_data <- calculate_accumulated_incidence(data)
+  subtitle <- format_week_label(data$SE)
+
   log_msg("Incidence calculated for municipalities: ", nrow(incidence_data))
+  log_msg("Subtitle: ", subtitle)
 
   shape_state <- shape_data |>
     dplyr::filter(abbrev_state == state_sigla)
@@ -571,9 +601,7 @@ run_state_disease_map <- function(
     shape_state = shape_state,
     incidence_data = incidence_data,
     disease_cfg = disease_cfg,
-    state_sigla = state_sigla,
-    epiweek = epiweek,
-    window_weeks = window_weeks
+    subtitle = subtitle
   )
 
   save_map(
