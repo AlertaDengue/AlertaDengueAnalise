@@ -525,7 +525,7 @@ save_map <- function(plot, output_dir, state_sigla, disease_cfg, epiweek) {
 
   output_file <- file.path(
     output_dir,
-    paste0("incidence_", state_sigla, "_", disease_cfg$slug, "_SE", epiweek, ".png")
+    paste0("incidence_", state_sigla, "_", disease_cfg$slug, ".png")
   )
 
   ggplot2::ggsave(
