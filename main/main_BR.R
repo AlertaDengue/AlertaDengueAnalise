@@ -144,7 +144,10 @@ resolve_nowcasting <- function(mode) {
 }
 
 report_epiweek <- as.integer(
-  get_env_any(c("ALERTA_REPORT_EPIWEEK", "report_epiweek"), default = NA)
+  get_env_any(
+    c("ALERTA_REPORT_EPIWEEK", "ALERTA_DATA_RELATORIO", "report_epiweek"),
+    default = NA
+  )
 )
 if (is.na(report_epiweek)) {
   stop("Missing ALERTA_REPORT_EPIWEEK (expected YYYYWW).", call. = FALSE)
@@ -201,17 +204,21 @@ if (!nzchar(db_user) || !nzchar(db_pass)) {
 log_msg("Connecting DB: host=", db_host, " port=", db_port, " dbname=", db_name,
         " user=", db_user)
 
-# Abre conexão com o banco (usada por rotinas do pipeline para parâmetros e dados).
-con <- DBI::dbConnect(
-  drv = RPostgreSQL::PostgreSQL(),
-  dbname = db_name,
-  host = db_host,
-  port = db_port,
-  user = db_user,
-  password = db_pass
-)
-on.exit(try(DBI::dbDisconnect(con), silent = TRUE), add = TRUE)
+connect_db <- function() {
+  DBI::dbConnect(
+    drv = RPostgreSQL::PostgreSQL(),
+    dbname = db_name,
+    host = db_host,
+    port = db_port,
+    user = db_user,
+    password = db_pass
+  )
+}
 
+# Valida a conexão no processo principal. Cada worker de estado abre sua própria
+# conexão para evitar compartilhar um socket de Postgres após fork/mclapply.
+con_check <- connect_db()
+try(DBI::dbDisconnect(con_check), silent = TRUE)
 log_msg("DB connected OK")
 
 # Publicação opcional dos .RData via scp (independente do banco ser local/remoto).
@@ -289,13 +296,25 @@ if (n_states == 0) {
 
 log_msg("Starting pipeline for ", n_states, " state row(s)")
 
-# Execução do pipeline por linha da configuração de estados.
-for (i in seq_len(n_states)) {
+parallel_cores <- as.integer(get_env_any(c("ALERTA_PARALLEL_CORES"),
+                                         default = "1"))
+if (is.na(parallel_cores) || parallel_cores < 1) {
+  stop("Invalid ALERTA_PARALLEL_CORES (expected positive integer).",
+       call. = FALSE)
+}
+parallel_cores <- min(parallel_cores, n_states)
+log_msg("State parallel workers: ", parallel_cores)
+
+run_state_pipeline <- function(i) {
   row_i <- estados_Infodengue[i, ]
   estado <- as.character(row_i$estado)
   sig <- as.character(row_i$sigla)
 
   log_msg(sprintf("[state] %d/%d %s (%s)", i, n_states, estado, sig))
+
+  con <- connect_db()
+  assign("con", con, envir = .GlobalEnv)
+  on.exit(try(DBI::dbDisconnect(con), silent = TRUE), add = TRUE)
 
   # Arquivo de saída por estado: lista 'res' contendo 'ale.*' e 'restab.*'.
   nomeRData <- paste0("ale-", sig, "-", report_epiweek, ".RData")
@@ -391,6 +410,27 @@ for (i in seq_len(n_states)) {
     log_msg("SCP: ", cmd)
     system(cmd)
   }
+
+  out_rdata
+}
+
+# Execução do pipeline por linha da configuração de estados.
+state_outputs <- if (parallel_cores > 1 && n_states > 1) {
+  parallel::mclapply(
+    seq_len(n_states),
+    run_state_pipeline,
+    mc.cores = parallel_cores,
+    mc.preschedule = FALSE
+  )
+} else {
+  lapply(seq_len(n_states), run_state_pipeline)
+}
+
+failed_states <- vapply(state_outputs, inherits, logical(1), "try-error")
+if (any(failed_states)) {
+  failed_labels <- paste(estados_Infodengue$sigla[failed_states],
+                         collapse = ", ")
+  stop("State pipeline failed for: ", failed_labels, call. = FALSE)
 }
 
 t2 <- Sys.time()

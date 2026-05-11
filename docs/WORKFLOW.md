@@ -6,6 +6,12 @@ This document explains what happens when you run:
 makim pipeline.run-br --week YYYYWW
 ```
 
+To process multiple states at the same time, pass `--cores N`:
+
+```bash
+makim pipeline.run-br --week YYYYWW --cores 4
+```
+
 ## High-level flow
 
 1. **Load environment variables**
@@ -52,6 +58,11 @@ makim pipeline.run-br --week YYYYWW
    * The pipeline fetches raw notifications from the database, aggregates
      cases by onset date, runs alert computations, and builds historical
      tables.
+
+   By default states run sequentially. When `--cores N` is greater than `1`,
+   Makim exports `ALERTA_PARALLEL_CORES=N` and `main/main_BR.R` dispatches the
+   state jobs with `parallel::mclapply()`. Each worker opens its own PostgreSQL
+   connection, so choose `N` according to the database capacity.
 
 7. **Persist per-state results**
 

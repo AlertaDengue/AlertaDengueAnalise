@@ -79,6 +79,12 @@ Run the pipeline for week `YYYYWW` (example: `202601`):
 makim pipeline.run-br --env alertadengueanalise --week 202601
 ```
 
+To process states in parallel, add `--cores N`:
+
+```bash
+makim pipeline.run-br --env alertadengueanalise --week 202601 --cores 4
+```
+
 ## Documentation
 
 * Pipeline behavior and steps: `docs/WORKFLOW.md`

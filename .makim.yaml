@@ -86,6 +86,10 @@ groups:
             help: "Se true, publica os .RData via SCP usando ALERTA_SCP_ENDPOINT e ALERTA_SCP_PATH do .env."
             type: bool
             default: false
+          cores:
+            help: "Número de estados processados em paralelo via parallel::mclapply em R."
+            type: string
+            default: "1"
         run: |
           set -euo pipefail
 
@@ -103,9 +107,15 @@ groups:
             exit 2
           fi
 
+          if ! [[ "${{ args.cores }}" =~ ^[0-9]+$ ]] || [ "${{ args.cores }}" -lt 1 ]; then
+            echo "ERRO: --cores deve ser inteiro positivo."
+            exit 2
+          fi
+
           export ALERTA_DATA_RELATORIO="${{ args.week }}"
           export ALERTA_REPORT_EPIWEEK="${{ args.week }}"
           export ALERTA_DO_SCP="${{ args.scp }}"
+          export ALERTA_PARALLEL_CORES="${{ args.cores }}"
 
           mkdir -p logs
 
@@ -142,6 +152,10 @@ groups:
             help: "Se true, publica os .RData via SCP usando ALERTA_SCP_ENDPOINT e ALERTA_SCP_PATH do .env."
             type: bool
             default: false
+          cores:
+            help: "Número de estados processados em paralelo via parallel::mclapply em R."
+            type: string
+            default: "1"
         run: |
           set -euo pipefail
 
@@ -166,6 +180,11 @@ groups:
             exit 2
           fi
 
+          if ! [[ "${{ args.cores }}" =~ ^[0-9]+$ ]] || [ "${{ args.cores }}" -lt 1 ]; then
+            echo "ERRO: --cores deve ser inteiro positivo."
+            exit 2
+          fi
+
           DB_HOST="${ALERTA_DB_HOST:-${DB_HOST:-}}"
           DB_PORT="${ALERTA_DB_PORT:-${DB_PORT:-5432}}"
           DB_NAME="${ALERTA_DB_NAME:-${DB_NAME:-}}"
@@ -182,6 +201,7 @@ groups:
           export ALERTA_WINDOW_WEEKS="${{ args.window_weeks }}"
           export ALERTA_DO_SCP="${{ args.scp }}"
           export ALERTA_STATES="${{ args.states }}"
+          export ALERTA_PARALLEL_CORES="${{ args.cores }}"
 
           mkdir -p logs
 
@@ -189,6 +209,7 @@ groups:
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
           echo "[II] window_weeks=${{ args.window_weeks }}" | tee -a "${LOG_FILE}"
+          echo "[II] cores=${{ args.cores }}" | tee -a "${LOG_FILE}"
 
           if [ -n "${{ args.states }}" ]; then
             echo "[II] states=${{ args.states }}" | tee -a "${LOG_FILE}"
