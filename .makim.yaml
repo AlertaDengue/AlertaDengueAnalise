@@ -328,7 +328,7 @@ groups:
           echo "[II] output_dir=${{ args.output_dir }}" | tee -a "${LOG_FILE}"
 
           ${CONDA_BIN} run --no-capture-output -n "${{ args.env }}" \
-            Rscript --vanilla main/script_maps_state.R 2>&1 | \
+            Rscript --vanilla incidence_maps/state.R 2>&1 | \
             tee -a "${LOG_FILE}"
 
 
@@ -422,5 +422,5 @@ groups:
           echo "[II] GDAL_DATA=${GDAL_DATA:-}" | tee -a "${LOG_FILE}"
 
           ${CONDA_BIN} run --no-capture-output -n "${{ args.env }}" \
-            Rscript --vanilla main/script_maps_br.R 2>&1 | \
+            Rscript --vanilla incidence_maps/br.R 2>&1 | \
             tee -a "${LOG_FILE}"

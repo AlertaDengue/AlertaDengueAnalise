@@ -94,6 +94,40 @@ Expected:
 * At least one SQL file exists under `main/sql/` (for enabled diseases).
 * A BR `.RData` exists under `main/alertas/BR/` if consolidation completed.
 
+
+## 4) Incidence Maps
+
+Incidence maps are generated as PNG images and stored in:
+
+```
+
+sync_maps/incidence_maps/
+
+```
+
+Subdirectories:
+
+- `country/`: National-level maps (e.g., `incidence_Nacional_dengue.png`)
+- `state/`: State-level maps (e.g., `incidence_RJ_dengue_SE202617.png`)
+
+These maps are generated using the scripts in `incidence_maps/` and require spatial data located in `r_maps_scripts/dados/shape/`.
+
+## Verifying outputs after a run
+...
+Check:
+
+```bash
+ls -lh main/alertas/202601/
+ls -lh main/sql/
+ls -lh main/alertas/BR/
+ls -lh sync_maps/incidence_maps/country/
+ls -lh sync_maps/incidence_maps/state/
+```
+
+Expected:
+
+* PNG maps are generated in the corresponding `sync_maps/incidence_maps/` directories.
+
 ```
 
 ---

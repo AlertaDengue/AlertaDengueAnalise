@@ -70,6 +70,24 @@ makim pipeline.run-br --week YYYYWW
    * A consolidated `.RData` is saved under:
      `main/alertas/BR/`
 
+10. **Generate Incidence Maps (Optional)**
+
+    After the pipeline completes and the database is updated with the new results, you can generate incidence maps:
+
+    * **National Map**:
+      ```bash
+      makim pipeline.maps-br --week YYYYWW
+      ```
+      This executes `incidence_maps/br.R`.
+
+    * **State Maps**:
+      ```bash
+      makim pipeline.maps-state --week YYYYWW --states ALL
+      ```
+      This executes `incidence_maps/state.R`.
+
+    These scripts fetch data from the PostgreSQL database and use spatial data from `r_maps_scripts/dados/shape/` to produce PNG outputs in `sync_maps/incidence_maps/`.
+
 ## How to run a small test (single state)
 
 To validate the setup quickly, configure `estados_Infodengue` with a single row
