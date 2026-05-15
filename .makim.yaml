@@ -445,3 +445,70 @@ groups:
           ${CONDA_BIN} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla incidence_maps/br.R 2>&1 | \
             tee -a "${LOG_FILE}"
+  release:
+    tasks:
+      ci:
+        help: Create GitHub release + bump DESCRIPTION version (patch)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Rscript -e '
+          ver <- read.dcf("DESCRIPTION", fields="Version")[1,1];
+          new_ver <- usethis:::bump_version(ver, "patch");
+          cat("Bumped to:", new_ver, "\n");
+          usethis::use_github_release(quiet = TRUE);
+          cat("Release v", new_ver, " created\n", sep="");
+          '
+
+      dry:
+        help: Preview release actions without modifying repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Rscript -e '
+          ver <- read.dcf("DESCRIPTION", fields="Version")[1,1];
+          next_patch <- paste0(
+            gsub("(\\d+\\.\\d+\\.)(\\d+)", "\\1", ver),
+            as.integer(gsub(".*\\.(\\d+)$", "\\1", ver)) + 1
+          );
+          cat(
+            "[DRY] Current:",
+            ver,
+            "| Next patch:",
+            next_patch,
+            "\n"
+          );
+          '
+
+      bump:
+        help: Bump DESCRIPTION version (patch|minor|major)
+        args:
+          type:
+            help: Version bump type
+            type: string
+            default: patch
+
+        run: |
+          Rscript -e '
+          ver <- read.dcf("DESCRIPTION", fields="Version")[1,1];
+          bump <- "${{ args.type }}";
+          allowed <- c("patch", "minor", "major");
+          if (!(bump %in% allowed)) {
+            stop(
+              paste0(
+                "Invalid bump type: ",
+                bump,
+                ". Allowed values: patch, minor, major"
+              )
+            );
+          }
+          new_ver <- usethis:::bump_version(ver, bump);
+          cat(
+            "Bumped ",
+            ver,
+            " -> ",
+            new_ver,
+            "\n",
+            sep=""
+          );
+          '

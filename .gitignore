@@ -13,6 +13,7 @@
 .log
 .gz
 *.sql
+.vscode
 
 # Local env
 .Renviron
