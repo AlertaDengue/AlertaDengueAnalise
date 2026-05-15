@@ -15,9 +15,6 @@ on:
       - "**/*.R"
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   smoke:
     runs-on: ubuntu-22.04
@@ -29,13 +26,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Conda
-        uses: conda-forge/setup-miniforge@v3
+      - name: Set up Miniforge
+        uses: conda-incubator/setup-miniconda@v4
         with:
           miniforge-version: latest
-          use-mamba: true
+          channels: conda-forge
+          channel-priority: strict
           activate-environment: alertadengueanalise
           environment-file: conda/base.yaml
+          auto-activate: true
+          use-mamba: true
 
       - name: Show environment info
         run: |
