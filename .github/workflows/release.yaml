@@ -3,7 +3,7 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]  # or 'main' if that's your default
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -15,8 +15,8 @@ jobs:
     timeout-minutes: 50
 
     permissions:
-      contents: write  # for creating releases/tags
-      issues: write    # optional: for release issue automation
+      contents: write
+      issues: write
 
     defaults:
       run:
@@ -26,9 +26,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # required for git history in versioning
+          fetch-depth: 0
 
-      - name: Set up Miniforge
+      - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v4
         with:
           miniforge-version: latest

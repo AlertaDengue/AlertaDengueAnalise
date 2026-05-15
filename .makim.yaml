@@ -447,34 +447,40 @@ groups:
             tee -a "${LOG_FILE}"
 
   release:
-    vars:
-      app: |
-        Rscript -e '
-        library(usethis);
-        library(glue);
-        ver <- read.dcf("DESCRIPTION", fields = "Version")[1,1];
-        cat("Current version:", ver, "\n");
-        release_type <- Sys.getenv("RELEASE_TYPE", "patch");
-        if (release_type == "dry") {
-          cat("[DRY RUN] Would bump", release_type, "version\n");
-          quit(save = "no", status = 0)
-        };
-        new_ver <- usethis:::bump_version(ver, release_type);
-        cat("Bumped to:", new_ver, "\n");
-        usethis::use_github_release(quiet = TRUE);
-        cat("GitHub release created for v", new_ver, "\n", sep=");
-        '
-
     tasks:
       ci:
         help: Create GitHub release + bump DESCRIPTION version
-        run: ${{ vars.app }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Rscript -e '
+          library(usethis);
+          ver <- read.dcf("DESCRIPTION", fields = "Version")[1,1];
+          cat("Current version:", ver, "\n");
+          # Dry-run mode: just report, don't modify
+          if (Sys.getenv("RELEASE_DRY") == "true") {
+            cat("[DRY RUN] No changes made\n");
+            quit(save = "no", status = 0)
+          };
+          # Bump version (patch by default)
+          new_ver <- usethis:::bump_version(ver, "patch");
+          cat("Bumped to:", new_ver, "\n");
+          usethis::use_github_release(quiet = TRUE);
+          cat("GitHub release created for v", new_ver, "\n", sep="");
+          '
 
       dry:
         help: Preview release actions without modifying repo
         env:
-          RELEASE_TYPE: dry
-        run: ${{ vars.app }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_DRY: "true"
+        run: |
+          Rscript -e '
+          library(usethis);
+          ver <- read.dcf("DESCRIPTION", fields = "Version")[1,1];
+          cat("[DRY] Current version:", ver, "\n");
+          cat("[DRY] Would create GitHub release for next patch version\n");
+          '
 
       bump:
         help: Bump version only (patch|minor|major)
