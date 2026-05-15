@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]  # or 'main' if that's your default
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  release:
+    if: ${{ !github.event.pull_request.draft }}
+    name: Release
+    runs-on: ubuntu-22.04
+    timeout-minutes: 50
+
+    permissions:
+      contents: write  # for creating releases/tags
+      issues: write    # optional: for release issue automation
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # required for git history in versioning
+
+      - name: Set up Miniforge
+        uses: conda-incubator/setup-miniconda@v4
+        with:
+          miniforge-version: latest
+          channels: conda-forge
+          channel-priority: strict
+          activate-environment: alertadengueanalise
+          environment-file: conda/base.yaml
+          auto-activate: true
+          use-mamba: true
+
+      - name: Configure Git credentials
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Dry-run release (PRs / non-dispatch)
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: makim release.dry
+
+      - name: Execute release (manual dispatch only)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: makim release.ci

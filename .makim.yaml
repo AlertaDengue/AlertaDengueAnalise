@@ -445,3 +445,44 @@ groups:
           ${CONDA_BIN} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla incidence_maps/br.R 2>&1 | \
             tee -a "${LOG_FILE}"
+
+  release:
+    vars:
+      app: |
+        Rscript -e '
+        library(usethis);
+        library(glue);
+        ver <- read.dcf("DESCRIPTION", fields = "Version")[1,1];
+        cat("Current version:", ver, "\n");
+        release_type <- Sys.getenv("RELEASE_TYPE", "patch");
+        if (release_type == "dry") {
+          cat("[DRY RUN] Would bump", release_type, "version\n");
+          quit(save = "no", status = 0)
+        };
+        new_ver <- usethis:::bump_version(ver, release_type);
+        cat("Bumped to:", new_ver, "\n");
+        usethis::use_github_release(quiet = TRUE);
+        cat("GitHub release created for v", new_ver, "\n", sep=");
+        '
+
+    tasks:
+      ci:
+        help: Create GitHub release + bump DESCRIPTION version
+        run: ${{ vars.app }}
+
+      dry:
+        help: Preview release actions without modifying repo
+        env:
+          RELEASE_TYPE: dry
+        run: ${{ vars.app }}
+
+      bump:
+        help: Bump version only (patch|minor|major)
+        args:
+          type:
+            type: string
+            default: patch
+            choices: [patch, minor, major]
+        env:
+          RELEASE_TYPE: ${{ args.type }}
+        run: ${{ vars.app }}
