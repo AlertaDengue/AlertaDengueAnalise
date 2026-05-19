@@ -116,6 +116,12 @@ groups:
           export ALERTA_REPORT_EPIWEEK="${{ args.week }}"
           export ALERTA_DO_SCP="${{ args.scp }}"
           export ALERTA_PARALLEL_CORES="${{ args.cores }}"
+          export OMP_NUM_THREADS=1
+          export OPENBLAS_NUM_THREADS=1
+          export MKL_NUM_THREADS=1
+          export BLIS_NUM_THREADS=1
+          export VECLIB_MAXIMUM_THREADS=1
+          export RCPP_PARALLEL_NUM_THREADS=1
 
           mkdir -p logs
 
@@ -202,6 +208,12 @@ groups:
           export ALERTA_DO_SCP="${{ args.scp }}"
           export ALERTA_STATES="${{ args.states }}"
           export ALERTA_PARALLEL_CORES="${{ args.cores }}"
+          export OMP_NUM_THREADS=1
+          export OPENBLAS_NUM_THREADS=1
+          export MKL_NUM_THREADS=1
+          export BLIS_NUM_THREADS=1
+          export VECLIB_MAXIMUM_THREADS=1
+          export RCPP_PARALLEL_NUM_THREADS=1
 
           mkdir -p logs
 
