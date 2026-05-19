@@ -348,113 +348,199 @@ if (is.na(parallel_cores) || parallel_cores < 1) {
 parallel_cores <- min(parallel_cores, n_states)
 log_msg("State parallel workers: ", parallel_cores)
 
+log_memory <- function(label, level = "INFO") {
+  gc_info <- gc()
+  used_mb <- NA_real_
+
+  if (all(c("Ncells", "Vcells") %in% rownames(gc_info)) &&
+      "used" %in% colnames(gc_info)) {
+    used_mb <- (
+      gc_info["Ncells", "used"] * 56 +
+        gc_info["Vcells", "used"] * 8
+    ) / 1024^2
+  }
+
+  if (is.na(used_mb)) {
+    log_msg("Memory [", label, "]: gc used=", paste(gc_info[, "used"],
+                                                    collapse = "/"),
+            level = level)
+  } else {
+    log_msg("Memory [", label, "]: approx_used_mb=",
+            sprintf("%.1f", used_mb), level = level)
+  }
+}
+
+log_call_stack <- function(label) {
+  calls <- sys.calls()
+  if (length(calls) == 0) {
+    log_msg(label, ": call stack unavailable", level = "ERROR")
+    return(invisible(NULL))
+  }
+
+  calls <- tail(calls, 12)
+  lines <- vapply(calls, function(call) {
+    paste(deparse(call), collapse = " ")
+  }, character(1))
+
+  for (line in lines) {
+    log_msg(label, ": ", line, level = "ERROR")
+  }
+
+  invisible(NULL)
+}
+
 run_state_pipeline <- function(i) {
   row_i <- estados_Infodengue[i, ]
   estado <- as.character(row_i$estado)
   sig <- as.character(row_i$sigla)
+  current_step <- "initializing"
 
-  log_msg(sprintf("[state] %d/%d %s (%s)", i, n_states, estado, sig))
+  tryCatch({
+    log_msg(sprintf("[state] %d/%d %s (%s)", i, n_states, estado, sig))
+    log_memory(paste0(sig, " state start"))
 
-  con <- connect_db()
-  assign("con", con, envir = .GlobalEnv)
-  on.exit(try(DBI::dbDisconnect(con), silent = TRUE), add = TRUE)
+    current_step <- "connecting database"
+    con <- connect_db()
+    assign("con", con, envir = .GlobalEnv)
+    on.exit(try(DBI::dbDisconnect(con), silent = TRUE), add = TRUE)
 
-  # Arquivo de saída por estado: lista 'res' contendo 'ale.*' e 'restab.*'.
-  nomeRData <- paste0("ale-", sig, "-", report_epiweek, ".RData")
-  out_rdata <- file.path(alertas_dir, nomeRData)
+    # Arquivo de saída por estado: lista 'res' contendo 'ale.*' e 'restab.*'.
+    nomeRData <- paste0("ale-", sig, "-", report_epiweek, ".RData")
+    out_rdata <- file.path(alertas_dir, nomeRData)
 
-  # Municípios (geocódigos) utilizados para cálculo do alerta estadual.
-  cidades <- getCidades(uf = estado)[, "municipio_geocodigo"]
-  if (length(cidades) == 0) {
-    stop("No cities returned for state: ", estado, call. = FALSE)
-  }
+    current_step <- "loading cities"
+    # Municípios (geocódigos) utilizados para cálculo do alerta estadual.
+    cidades <- getCidades(uf = estado)[, "municipio_geocodigo"]
+    if (length(cidades) == 0) {
+      stop("No cities returned for state: ", estado, call. = FALSE)
+    }
 
-  res <- list()
+    res <- list()
 
-  # Dengue
-  now_mode <- resolve_nowcasting("bayesian")
-  log_msg(" - dengue: running pipe_infodengue (nowcasting=", now_mode, ")")
-  if (isTRUE(row_i$dengue)) {
-    log_msg(" - dengue: running pipe_infodengue")
-    res[["ale.den"]] <- pipe_infodengue(
-      cidades,
-      cid10 = "A90",
-      nowcasting = now_mode,
-      finalday = report_end_date,
-      narule = "arima",
-      iniSE = 201001,
-      dataini = "sinpri",
-      completetail = 0
+    # Dengue
+    now_mode <- resolve_nowcasting("bayesian")
+    log_msg(" - dengue: running pipe_infodengue (nowcasting=", now_mode, ")")
+    if (isTRUE(row_i$dengue)) {
+      current_step <- "dengue pipe_infodengue"
+      log_memory(paste0(sig, " dengue before pipe_infodengue"))
+      log_msg(" - dengue: running pipe_infodengue")
+      res[["ale.den"]] <- pipe_infodengue(
+        cidades,
+        cid10 = "A90",
+        nowcasting = now_mode,
+        finalday = report_end_date,
+        narule = "arima",
+        iniSE = 201001,
+        dataini = "sinpri",
+        completetail = 0
+      )
+      log_memory(paste0(sig, " dengue after pipe_infodengue"))
+      current_step <- "dengue tabela_historico"
+      res[["restab.den"]] <- tabela_historico(
+        res[["ale.den"]],
+        iniSE = report_epiweek - window_weeks
+      )
+      log_memory(paste0(sig, " dengue after tabela_historico"))
+    } else {
+      log_msg(" - dengue: skipped")
+    }
+
+    # Chikungunya
+    now_mode <- resolve_nowcasting("bayesian")
+    log_msg(" - chik: running pipe_infodengue (nowcasting=", now_mode, ")")
+    if (isTRUE(row_i$chik)) {
+      current_step <- "chik pipe_infodengue"
+      log_memory(paste0(sig, " chik before pipe_infodengue"))
+      log_msg(" - chik: running pipe_infodengue")
+      res[["ale.chik"]] <- pipe_infodengue(
+        cidades,
+        cid10 = "A92.0",
+        nowcasting = now_mode,
+        finalday = report_end_date,
+        narule = "arima",
+        iniSE = 201001,
+        dataini = "sinpri",
+        completetail = 0
+      )
+      log_memory(paste0(sig, " chik after pipe_infodengue"))
+      current_step <- "chik tabela_historico"
+      res[["restab.chik"]] <- tabela_historico(
+        res[["ale.chik"]],
+        iniSE = report_epiweek - window_weeks
+      )
+      log_memory(paste0(sig, " chik after tabela_historico"))
+    } else {
+      log_msg(" - chik: skipped")
+    }
+
+    # Zika
+    now_mode <- resolve_nowcasting("bayesian")
+    log_msg(" - zika: running pipe_infodengue (nowcasting=", now_mode, ")")
+    if (isTRUE(row_i$zika)) {
+      current_step <- "zika pipe_infodengue"
+      log_memory(paste0(sig, " zika before pipe_infodengue"))
+      log_msg(" - zika: running pipe_infodengue")
+      res[["ale.zika"]] <- pipe_infodengue(
+        cidades,
+        cid10 = "A92.8",
+        nowcasting = now_mode,
+        finalday = report_end_date,
+        narule = "arima",
+        iniSE = 201001,
+        dataini = "sinpri",
+        completetail = 0
+      )
+      log_memory(paste0(sig, " zika after pipe_infodengue"))
+      current_step <- "zika tabela_historico"
+      res[["restab.zika"]] <- tabela_historico(
+        res[["ale.zika"]],
+        iniSE = report_epiweek - window_weeks
+      )
+      log_memory(paste0(sig, " zika after tabela_historico"))
+    } else {
+      log_msg(" - zika: skipped")
+    }
+
+    current_step <- "saving state RData"
+    log_memory(paste0(sig, " before save"))
+    save(res, file = out_rdata)
+    log_msg("Saved: ", out_rdata)
+    log_memory(paste0(sig, " after save"))
+
+    if (do_scp) {
+      current_step <- "scp state RData"
+      cmd <- paste(
+        "scp -P",
+        shQuote(scp_port),
+        shQuote(out_rdata),
+        shQuote(scp_target)
+      )
+      log_msg("SCP: ", cmd)
+      system(cmd)
+    }
+
+    out_rdata
+  }, error = function(e) {
+    log_msg(
+      "[state] failed ",
+      sig,
+      " during ",
+      current_step,
+      ": ",
+      conditionMessage(e),
+      level = "ERROR"
     )
-    res[["restab.den"]] <- tabela_historico(
-      res[["ale.den"]],
-      iniSE = report_epiweek - window_weeks
+    log_call_stack(paste0("[state] ", sig, " call"))
+    log_memory(paste0(sig, " failure"), level = "ERROR")
+    structure(
+      list(
+        state = sig,
+        step = current_step,
+        message = conditionMessage(e)
+      ),
+      class = "state-error"
     )
-  } else {
-    log_msg(" - dengue: skipped")
-  }
-
-  # Chikungunya
-  now_mode <- resolve_nowcasting("bayesian")
-  log_msg(" - chik: running pipe_infodengue (nowcasting=", now_mode, ")")
-  if (isTRUE(row_i$chik)) {
-    log_msg(" - chik: running pipe_infodengue")
-    res[["ale.chik"]] <- pipe_infodengue(
-      cidades,
-      cid10 = "A92.0",
-      nowcasting = now_mode,
-      finalday = report_end_date,
-      narule = "arima",
-      iniSE = 201001,
-      dataini = "sinpri",
-      completetail = 0
-    )
-    res[["restab.chik"]] <- tabela_historico(
-      res[["ale.chik"]],
-      iniSE = report_epiweek - window_weeks
-    )
-  } else {
-    log_msg(" - chik: skipped")
-  }
-
-  # Zika
-  now_mode <- resolve_nowcasting("bayesian")
-  log_msg(" - zika: running pipe_infodengue (nowcasting=", now_mode, ")")
-  if (isTRUE(row_i$zika)) {
-    log_msg(" - zika: running pipe_infodengue")
-    res[["ale.zika"]] <- pipe_infodengue(
-      cidades,
-      cid10 = "A92.8",
-      nowcasting = now_mode,
-      finalday = report_end_date,
-      narule = "arima",
-      iniSE = 201001,
-      dataini = "sinpri",
-      completetail = 0
-    )
-    res[["restab.zika"]] <- tabela_historico(
-      res[["ale.zika"]],
-      iniSE = report_epiweek - window_weeks
-    )
-  } else {
-    log_msg(" - zika: skipped")
-  }
-
-  save(res, file = out_rdata)
-  log_msg("Saved: ", out_rdata)
-
-  if (do_scp) {
-    cmd <- paste(
-      "scp -P",
-      shQuote(scp_port),
-      shQuote(out_rdata),
-      shQuote(scp_target)
-    )
-    log_msg("SCP: ", cmd)
-    system(cmd)
-  }
-
-  out_rdata
+  })
 }
 
 # Execução do pipeline por linha da configuração de estados.
@@ -469,10 +555,21 @@ state_outputs <- if (parallel_cores > 1 && n_states > 1) {
   lapply(seq_len(n_states), run_state_pipeline)
 }
 
-failed_states <- vapply(state_outputs, inherits, logical(1), "try-error")
+failed_states <- vapply(state_outputs, function(x) {
+  inherits(x, "try-error") || inherits(x, "state-error")
+}, logical(1))
 if (any(failed_states)) {
   failed_labels <- paste(estados_Infodengue$sigla[failed_states],
                          collapse = ", ")
+  failure_messages <- vapply(state_outputs[failed_states], function(x) {
+    if (inherits(x, "state-error")) {
+      paste0(x$state, " during ", x$step, ": ", x$message)
+    } else {
+      as.character(x)
+    }
+  }, character(1))
+  log_msg("State failure details: ", paste(failure_messages, collapse = " | "),
+          level = "ERROR")
   stop("State pipeline failed for: ", failed_labels, call. = FALSE)
 }
 
