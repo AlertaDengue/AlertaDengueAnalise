@@ -127,6 +127,49 @@ has_inla_flag <- check_inla_runtime()
 has_inla_flag <- exists("has_inla", inherits = TRUE) && isTRUE(has_inla)
 log_msg("INLA available: ", has_inla_flag)
 
+configure_inla_threads <- function() {
+  if (!has_inla_flag) {
+    return(invisible(FALSE))
+  }
+
+  set_option <- get0(
+    "inla.setOption",
+    envir = asNamespace("INLA"),
+    inherits = FALSE
+  )
+
+  if (!is.function(set_option)) {
+    log_msg(
+      "INLA thread option helper not available; keeping INLA defaults.",
+      level = "WARN"
+    )
+    return(invisible(FALSE))
+  }
+
+  ok <- tryCatch(
+    {
+      set_option(num.threads = "1:1")
+      TRUE
+    },
+    error = function(e) {
+      log_msg(
+        "Could not set INLA num.threads='1:1': ",
+        conditionMessage(e),
+        level = "WARN"
+      )
+      FALSE
+    }
+  )
+
+  if (ok) {
+    log_msg("INLA num.threads set to 1:1")
+  }
+
+  invisible(ok)
+}
+
+configure_inla_threads()
+
 resolve_nowcasting <- function(mode) {
   if (!identical(mode, "bayesian")) {
     return(mode)
