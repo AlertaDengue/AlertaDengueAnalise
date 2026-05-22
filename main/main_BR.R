@@ -94,20 +94,40 @@ configure_inla_threads <- function() {
     return(invisible(FALSE))
   }
 
-  tryCatch(
+  set_option <- get0(
+    "inla.setOption",
+    envir = asNamespace("INLA"),
+    inherits = FALSE
+  )
+
+  if (!is.function(set_option)) {
+    log_msg(
+      "INLA thread option helper not available; keeping INLA defaults.",
+      level = "WARN"
+    )
+    return(invisible(FALSE))
+  }
+
+  ok <- tryCatch(
     {
-      INLA::inla.setOption(num.threads = "1:1")
-      invisible(TRUE)
+      set_option(num.threads = "1:1")
+      TRUE
     },
     error = function(e) {
       log_msg(
-        "Could not configure INLA threads: ",
+        "Could not set INLA num.threads='1:1': ",
         conditionMessage(e),
         level = "WARN"
       )
-      invisible(FALSE)
+      FALSE
     }
   )
+
+  if (ok) {
+    log_msg("INLA num.threads set to 1:1")
+  }
+
+  invisible(ok)
 }
 
 args0 <- commandArgs(trailingOnly = FALSE)
@@ -298,7 +318,7 @@ connect_db <- function() {
 con_check <- connect_db()
 try(DBI::dbDisconnect(con_check), silent = TRUE)
 log_msg("DB connected OK")
- 
+
 # Publicação opcional dos .RData via scp (independente do banco ser local/remoto).
 do_scp <- tolower(get_env_any(c("ALERTA_DO_SCP"), default = "0")) %in%
   c("1", "true", "yes", "y")
@@ -399,7 +419,14 @@ combine_ale_parts <- function(parts) {
 }
 
 run_city_pipeline <- function(city, cid10, now_mode, disease_label, sig) {
-  tryCatch(
+  log_msg(
+    "[state] ", sig,
+    " ", disease_label,
+    " city=", city,
+    " started"
+  )
+
+  result <- tryCatch(
     {
       pipe_infodengue(
         city,
@@ -416,13 +443,35 @@ run_city_pipeline <- function(city, cid10, now_mode, disease_label, sig) {
       log_msg(
         "[state] ", sig,
         " ", disease_label,
-        " city ", city,
+        " city=", city,
         " failed: ", conditionMessage(e),
         level = "ERROR"
       )
       NULL
+    },
+    warning = function(w) {
+      log_msg(
+        "[state] ", sig,
+        " ", disease_label,
+        " city=", city,
+        " warning: ", conditionMessage(w),
+        level = "WARN"
+      )
+      invokeRestart("muffleWarning")
     }
   )
+
+  if (is.null(result)) {
+    log_msg(
+      "[state] ", sig,
+      " ", disease_label,
+      " city=", city,
+      " returned no result after fallback execution",
+      level = "WARN"
+    )
+  }
+
+  result
 }
 
 run_disease_pipeline_by_city <- function(cidades, cid10, now_mode,
