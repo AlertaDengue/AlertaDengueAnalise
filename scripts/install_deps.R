@@ -84,14 +84,12 @@ cran_pkgs <- c(
   "cgwtools",
   "zendown",
   "fs",
-  "sn"
+  "sn",
+  "brpop"
 )
 
 cat("[deps] Installing CRAN packages...\n")
 cran_install(cran_pkgs)
-
-cat("[deps] Installing brpop from GitHub...\n")
-github_install("brpop", "rfsaldanha/brpop")
 
 cat("[deps] Installing AlertTools from GitHub...\n")
 github_install("AlertTools", "AlertaDengue/AlertTools")
