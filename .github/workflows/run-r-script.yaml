@@ -50,7 +50,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pip install makim==1.27.0
+          python -c '
+          import click
+          import makim
+          print("Click:", click.__version__)
+          print("Makim import: OK")
+          '
+          makim --version
           makim deps.install
 
       - name: Tiny config smoke check

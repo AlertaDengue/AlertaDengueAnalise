@@ -77,4 +77,5 @@ dependencies:
   - r-sf
   - r-fmesher
   - pip:
+      - click>=8.1,<9
       - makim==1.27.0
