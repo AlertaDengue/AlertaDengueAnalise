@@ -488,9 +488,12 @@ groups:
           WEEK="${{ args.week }}"
           DISEASES="${{ args.diseases }}"
           CORES="${{ args.cores }}"
-          MAPS_SOURCE="sync_maps/incidence_maps"
-          MAPS_TARGET="../AlertaDengue/AlertaDengue/static/img/incidence_maps"
-          ALERTS_DIR="/opt/services/AlertaDengueAnalise/main/alertas"
+          ROOT_DIR="$(pwd)"
+          ALERTADENGUE_DIR="${ROOT_DIR}/../AlertaDengue"
+          ALERTS_DIR="${ROOT_DIR}/main/alertas"
+          MAPS_SOURCE="${ROOT_DIR}/sync_maps/incidence_maps"
+          MAPS_TARGET="${ALERTADENGUE_DIR}/AlertaDengue/static/img/incidence_maps"
+          ARCHIVE_FILE="${ROOT_DIR}/alertas_${WEEK}.tar.gz"
 
           if ! [[ "${WEEK}" =~ ^[0-9]{6}$ ]]; then
             echo "ERRO: --week deve estar no formato YYYYWW."
@@ -502,35 +505,17 @@ groups:
             exit 2
           fi
 
-          echo "[II] running refresh-alertas for ${WEEK}"
+          if [ ! -d "${ALERTADENGUE_DIR}" ]; then
+            echo "ERRO: repositório AlertaDengue não encontrado em ${ALERTADENGUE_DIR}."
+            exit 2
+          fi
 
+          echo "[II] running refresh-alertas for ${WEEK}"
           makim pipeline.refresh-alertas \
             --env "${{ args.env }}" \
             --week "${WEEK}" \
             --load \
             --cores "${CORES}"
-
-          LOG_FILE="$(
-            find logs \
-              -maxdepth 1 \
-              -type f \
-              -name "refresh-alertas-${WEEK}-*.log" \
-              -printf '%T@ %p\n' |
-            sort -nr |
-            sed -n '1{s/^[^ ]* //;p;}'
-          )"
-
-          if [ -z "${LOG_FILE}" ] || [ ! -f "${LOG_FILE}" ]; then
-            echo "ERRO: log de refresh-alertas não encontrado para ${WEEK}."
-            exit 1
-          fi
-
-          if ! tail -n 50 "${LOG_FILE}" | grep -q \
-            "\[II\] refresh-alertas completed successfully."; then
-            echo "ERRO: refresh-alertas não finalizou com sucesso."
-            tail -n 80 "${LOG_FILE}"
-            exit 1
-          fi
 
           echo "[II] cleaning generated maps"
           rm -rf "${MAPS_SOURCE}"
@@ -549,8 +534,7 @@ groups:
             --states ALL \
             --diseases "${DISEASES}"
 
-          if [ ! -d "${MAPS_SOURCE}" ] ||
-            [ -z "$(find "${MAPS_SOURCE}" -mindepth 1 -print -quit)" ]; then
+          if [ ! -d "${MAPS_SOURCE}" ] || [ -z "$(find "${MAPS_SOURCE}" -mindepth 1 -print -quit)" ]; then
             echo "ERRO: nenhum mapa foi gerado em ${MAPS_SOURCE}."
             exit 1
           fi
@@ -560,14 +544,20 @@ groups:
           mkdir -p "${MAPS_TARGET}"
           cp -a "${MAPS_SOURCE}/." "${MAPS_TARGET}/"
 
+          if [ ! -d "${ALERTS_DIR}/${WEEK}" ]; then
+            echo "ERRO: diretório de alertas não encontrado: ${ALERTS_DIR}/${WEEK}."
+            exit 1
+          fi
+
           echo "[II] creating alert archive"
-          tar -czvf "alertas_${WEEK}.tar.gz" \
+          rm -f "${ARCHIVE_FILE}"
+          tar -czf "${ARCHIVE_FILE}" \
             -C "${ALERTS_DIR}" \
             "${WEEK}"
 
           echo "[II] updating historico_alerta in AlertaDengue"
           (
-            cd ../AlertaDengue
+            cd "${ALERTADENGUE_DIR}"
             "${CONDA_EXE:-conda}" run --no-capture-output \
               -n "${{ args.alerta_env }}" \
               bash update_historico_alerta.sh
