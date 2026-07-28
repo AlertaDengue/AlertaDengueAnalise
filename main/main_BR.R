@@ -428,15 +428,28 @@ run_city_pipeline <- function(city, cid10, now_mode, disease_label, sig) {
 
   result <- tryCatch(
     {
-      pipe_infodengue(
-        city,
-        cid10 = cid10,
-        nowcasting = now_mode,
-        finalday = report_end_date,
-        narule = "arima",
-        iniSE = 201001,
-        dataini = "sinpri",
-        completetail = 0
+      withCallingHandlers(
+        pipe_infodengue(
+          city,
+          cid10 = cid10,
+          nowcasting = now_mode,
+          finalday = report_end_date,
+          narule = "arima",
+          iniSE = 201001,
+          dataini = "sinpri",
+          completetail = 0
+        ),
+        warning = function(w) {
+          log_msg(
+            "[state] ", sig,
+            " ", disease_label,
+            " city=", city,
+            " warning: ", conditionMessage(w),
+            level = "WARN"
+          )
+
+          invokeRestart("muffleWarning")
+        }
       )
     },
     error = function(e) {
@@ -448,16 +461,6 @@ run_city_pipeline <- function(city, cid10, now_mode, disease_label, sig) {
         level = "ERROR"
       )
       NULL
-    },
-    warning = function(w) {
-      log_msg(
-        "[state] ", sig,
-        " ", disease_label,
-        " city=", city,
-        " warning: ", conditionMessage(w),
-        level = "WARN"
-      )
-      invokeRestart("muffleWarning")
     }
   )
 

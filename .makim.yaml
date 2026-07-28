@@ -217,7 +217,7 @@ groups:
 
           mkdir -p logs
 
-          LOG_FILE="logs/refresh-alertas-${WEEK}.log"
+          LOG_FILE="logs/refresh-alertas-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
           echo "[II] window_weeks=${{ args.window_weeks }}" | tee -a "${LOG_FILE}"
@@ -352,7 +352,7 @@ groups:
           fi
 
           mkdir -p logs
-          LOG_FILE="logs/maps-state-${WEEK}.log"
+          LOG_FILE="logs/maps-state-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
           echo "[II] states=${{ args.states }}" | tee -a "${LOG_FILE}"
@@ -443,7 +443,7 @@ groups:
 
           mkdir -p logs
 
-          LOG_FILE="logs/maps-br-${WEEK}.log"
+          LOG_FILE="logs/maps-br-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
           echo "[II] diseases=${{ args.diseases }}" | tee -a "${LOG_FILE}"
@@ -457,6 +457,114 @@ groups:
           ${CONDA_BIN} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla incidence_maps/br.R 2>&1 | \
             tee -a "${LOG_FILE}"
+
+      refresh-alertas-full:
+        help: "Run refresh-alertas, generate maps, publish maps, archive alerts, and update alerta history."
+        backend: bash
+        args:
+          env:
+            help: "Conda env for AlertaDengueAnalise."
+            type: string
+            default: alertadengueanalise
+          alerta-env:
+            help: "Conda env for AlertaDengue."
+            type: string
+            default: alertadengue
+          week:
+            help: "Semana epidemiológica no formato YYYYWW."
+            type: string
+            required: true
+          diseases:
+            help: "dengue, chikungunya, zika, or ALL."
+            type: string
+            default: ALL
+          cores:
+            help: "Número de cores."
+            type: string
+            default: "4"
+        run: |
+          set -euo pipefail
+
+          WEEK="${{ args.week }}"
+          DISEASES="${{ args.diseases }}"
+          CORES="${{ args.cores }}"
+          ROOT_DIR="$(pwd)"
+          ALERTADENGUE_DIR="${ROOT_DIR}/../AlertaDengue"
+          ALERTS_DIR="${ROOT_DIR}/main/alertas"
+          MAPS_SOURCE="${ROOT_DIR}/sync_maps/incidence_maps"
+          MAPS_TARGET="${ALERTADENGUE_DIR}/AlertaDengue/static/img/incidence_maps"
+          ARCHIVE_FILE="${ROOT_DIR}/alertas_${WEEK}.tar.gz"
+
+          if ! [[ "${WEEK}" =~ ^[0-9]{6}$ ]]; then
+            echo "ERRO: --week deve estar no formato YYYYWW."
+            exit 2
+          fi
+
+          if ! [[ "${CORES}" =~ ^[0-9]+$ ]] || [ "${CORES}" -lt 1 ]; then
+            echo "ERRO: --cores deve ser inteiro positivo."
+            exit 2
+          fi
+
+          if [ ! -d "${ALERTADENGUE_DIR}" ]; then
+            echo "ERRO: repositório AlertaDengue não encontrado em ${ALERTADENGUE_DIR}."
+            exit 2
+          fi
+
+          echo "[II] running refresh-alertas for ${WEEK}"
+          makim pipeline.refresh-alertas \
+            --env "${{ args.env }}" \
+            --week "${WEEK}" \
+            --load \
+            --cores "${CORES}"
+
+          echo "[II] cleaning generated maps"
+          rm -rf "${MAPS_SOURCE}"
+          mkdir -p "${MAPS_SOURCE}"
+
+          echo "[II] generating BR maps"
+          makim pipeline.maps-br \
+            --env "${{ args.env }}" \
+            --week "${WEEK}" \
+            --diseases "${DISEASES}"
+
+          echo "[II] generating state maps"
+          makim pipeline.maps-state \
+            --env "${{ args.env }}" \
+            --week "${WEEK}" \
+            --states ALL \
+            --diseases "${DISEASES}"
+
+          if [ ! -d "${MAPS_SOURCE}" ] || [ -z "$(find "${MAPS_SOURCE}" -mindepth 1 -print -quit)" ]; then
+            echo "ERRO: nenhum mapa foi gerado em ${MAPS_SOURCE}."
+            exit 1
+          fi
+
+          echo "[II] publishing maps"
+          rm -rf "${MAPS_TARGET}"
+          mkdir -p "${MAPS_TARGET}"
+          cp -a "${MAPS_SOURCE}/." "${MAPS_TARGET}/"
+
+          if [ ! -d "${ALERTS_DIR}/${WEEK}" ]; then
+            echo "ERRO: diretório de alertas não encontrado: ${ALERTS_DIR}/${WEEK}."
+            exit 1
+          fi
+
+          echo "[II] creating alert archive"
+          rm -f "${ARCHIVE_FILE}"
+          tar -czf "${ARCHIVE_FILE}" \
+            -C "${ALERTS_DIR}" \
+            "${WEEK}"
+
+          echo "[II] updating historico_alerta in AlertaDengue"
+          (
+            cd "${ALERTADENGUE_DIR}"
+            "${CONDA_EXE:-conda}" run --no-capture-output \
+              -n "${{ args.alerta_env }}" \
+              bash update_historico_alerta.sh
+          )
+
+          echo "[II] full refresh completed successfully for ${WEEK}"
+
   release:
     tasks:
       ci:
