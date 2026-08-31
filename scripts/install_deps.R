@@ -5,8 +5,32 @@ options(
   Ncpus = 1
 )
 
+ALERTTOOLS_REF <- "9199ac34e066a5617985ce5b73003b47056bcd6d"
+
 is_installed <- function(pkg) {
   requireNamespace(pkg, quietly = TRUE)
+}
+
+installed_github_sha <- function(
+  pkg,
+  is_installed_fn = is_installed,
+  package_description_fn = utils::packageDescription
+) {
+  if (!is_installed_fn(pkg)) {
+    return(NULL)
+  }
+
+  description <- package_description_fn(pkg)
+  sha <- description$RemoteSha
+  if (is.null(sha) || length(sha) != 1L || is.na(sha) || !nzchar(sha)) {
+    sha <- description$GithubSHA1
+  }
+
+  if (is.null(sha) || length(sha) != 1L || is.na(sha) || !nzchar(sha)) {
+    return(NULL)
+  }
+
+  as.character(sha)
 }
 
 cran_install <- function(pkgs) {
@@ -33,23 +57,45 @@ cran_install <- function(pkgs) {
   invisible(TRUE)
 }
 
-github_install <- function(pkg, repo, ref = NULL) {
-  if (is_installed(pkg)) {
+github_install <- function(
+  pkg,
+  repo,
+  ref = NULL,
+  is_installed_fn = is_installed,
+  installed_sha_fn = installed_github_sha,
+  install_github_fn = remotes::install_github
+) {
+  installed <- is_installed_fn(pkg)
+
+  if (installed && is.null(ref)) {
     return(invisible(TRUE))
+  }
+
+  if (installed && !is.null(ref)) {
+    installed_sha <- installed_sha_fn(pkg)
+    if (!is.null(installed_sha) && identical(tolower(installed_sha), tolower(ref))) {
+      return(invisible(TRUE))
+    }
+
+    cat("[deps] Reinstalling ", pkg, " to match GitHub SHA ", ref, "...\n", sep = "")
   }
 
   if (!is_installed("remotes")) {
     install.packages("remotes", Ncpus = 1)
   }
 
-  remotes::install_github(
+  install_args <- list(
     repo = repo,
     ref = ref,
     dependencies = FALSE,
     upgrade = "never"
   )
+  if (installed && !is.null(ref)) {
+    install_args$force <- TRUE
+  }
+  do.call(install_github_fn, install_args)
 
-  if (!is_installed(pkg)) {
+  if (!is_installed_fn(pkg)) {
     stop(
       "Could not install GitHub package: ",
       pkg,
@@ -57,10 +103,21 @@ github_install <- function(pkg, repo, ref = NULL) {
     )
   }
 
+  if (!is.null(ref)) {
+    installed_sha <- installed_sha_fn(pkg)
+    if (is.null(installed_sha) || !identical(tolower(installed_sha), tolower(ref))) {
+      stop(
+        "GitHub package ", pkg, " is not installed at requested SHA ", ref,
+        call. = FALSE
+      )
+    }
+  }
+
   invisible(TRUE)
 }
 
-cat("[deps] R version: ", as.character(getRversion()), "\n", sep = "")
+if (sys.nframe() == 0L) {
+  cat("[deps] R version: ", as.character(getRversion()), "\n", sep = "")
 
 conda_prefix <- Sys.getenv("CONDA_PREFIX", unset = "")
 if (nzchar(conda_prefix)) {
@@ -93,8 +150,12 @@ cran_install(cran_pkgs)
 cat("[deps] Installing brpop from GitHub...\n")
 github_install("brpop", "rfsaldanha/brpop")
 
-cat("[deps] Installing AlertTools from GitHub...\n")
-github_install("AlertTools", "AlertaDengue/AlertTools")
+  cat("[deps] Installing AlertTools from GitHub...\n")
+  github_install(
+    "AlertTools",
+    "AlertaDengue/AlertTools",
+    ref = ALERTTOOLS_REF
+  )
 
 cat("[deps] Installing ggTimeSeries from GitHub...\n")
 github_install("ggTimeSeries", "AtherEnergy/ggTimeSeries")
@@ -121,4 +182,5 @@ if (length(missing_required) > 0) {
   )
 }
 
-cat("[deps] OK: required extra packages installed and loadable.\n")
+  cat("[deps] OK: required extra packages installed and loadable.\n")
+}
