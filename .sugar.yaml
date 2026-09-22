@@ -18,6 +18,7 @@ profiles:
     project-name: alertadengueanalise-staging
     config-path:
       - containers/compose.yaml
+      - containers/compose-staging.yaml
     services:
       default:
         - analysis

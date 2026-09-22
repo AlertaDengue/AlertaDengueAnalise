@@ -43,12 +43,13 @@ Create a `.env` file at the repo root with your Postgres connection settings.
 
 Supported variables:
 
-* `DB_HOST`
-* `DB_PORT`
-* `DB_NAME`
-* `DB_USER`
-* `DB_PASSWORD`
-* `DB_SSLMODE` (optional)
+* `DB_HOST` / `ALERTA_DB_HOST`
+* `DB_PORT` / `ALERTA_DB_PORT`
+* `DB_NAME` / `ALERTA_DB_NAME`
+* `DB_USER` / `ALERTA_DB_USER`
+* `DB_PASSWORD` / `ALERTA_DB_PASSWORD`
+
+*(Note: `scripts/db_check.R` and DBI PostgreSQL drivers connect directly using host, port, database, user, and password).*
 
 Example:
 
@@ -99,16 +100,31 @@ AlertaDengue checkout. Build it from this repository:
 Normal operational commands use Containers Sugar:
 
 ```bash
+export HOST_UID="$(id -u)"
+export HOST_GID="$(id -g)"
+mkdir -p artifacts
+
 sugar --profile dev compose build
 sugar --profile dev compose run --service analysis --options "--rm" \
   --cmd "makim deps.check"
 ```
 
-The service exits after the requested command. To retain artifacts, select an
-output directory before running the analysis job:
+To run against a staging database attached to the external InfoDengue network,
+use the `staging` profile:
 
 ```bash
-ALERTA_OUTPUT_DIR=/some/host/path \
+sugar --profile staging compose run --service analysis --options "--rm" \
+  --cmd "makim db.check"
+```
+
+The service exits after the requested command. To retain artifacts, make sure
+the host output directory exists and is writable by `HOST_UID`/`HOST_GID` before
+running the analysis job:
+
+```bash
+mkdir -p artifacts
+
+ALERTA_OUTPUT_DIR="$(pwd)/artifacts" \
   sugar --profile dev compose run --service analysis --options "--rm" \
   --cmd "makim pipeline.refresh-alertas-job --week YYYYWW --states DF --cores 1 --load false"
 ```
@@ -145,10 +161,15 @@ docker run --rm --network <staging-network> --env-file <staging-env-file> \
 ```
 
 `pipeline.refresh-alertas-job` is the container-safe orchestration task. It
-runs analysis and maps but never accesses the sibling AlertaDengue checkout or
-publishes maps there. Mount an output directory to preserve artifacts after the
-job exits. `--load false` is the safe default; setting `--load true` applies
-generated SQL to the configured database.
+runs analysis and conditional map generation without accessing the sibling
+AlertaDengue checkout or publishing maps there. Mount an output directory to
+preserve artifacts after the job exits.
+
+- `--load false`: runs analysis, produces `.RData` and SQL update files, but does
+  NOT apply SQL to PostgreSQL. Map generation is skipped because the database
+  still contains `Historico_alerta` data from previous weeks.
+- `--load true`: runs analysis, applies generated SQL to the database, then
+  generates BR and state incidence maps from the refreshed database tables.
 
 ```bash
 docker run --rm --network <staging-network> --env-file <staging-env-file> \
@@ -168,6 +189,6 @@ docker run --rm --network <staging-network> --env-file <staging-env-file> \
 
   * CPU usage: `ps -o pid,etime,pcpu,pmem,cmd -p <PID>`
   * New files created under `main/alertas/<YYYYWW>/`
-  * Log file under `logs/` (if enabled by your pipeline wrapper)
+  * Log file under `logs/` (or `${ALERTA_OUT_DIR}/logs` / `${ALERTA_LOG_DIR}`)
 
 ## License

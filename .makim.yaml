@@ -10,10 +10,9 @@ groups:
             default: alertadengueanalise
         env:
           MAKEFLAGS: "-j1"
-          XONSH_SUBPROC_CMD_RAISE_ERROR: "True"
-        backend: xonsh
+        backend: bash
         run: |
-          $CONDA_EXE run --no-capture-output -n "${{ args.env }}" \
+          ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla scripts/install_deps.R
 
       install-inla:
@@ -23,9 +22,7 @@ groups:
             help: "Conda env for AlertaDengueAnalise."
             type: string
             required: false
-        env:
-          XONSH_SUBPROC_CMD_RAISE_ERROR: "True"
-        backend: xonsh
+        backend: bash
         run: |
           bash scripts/install_inla.sh "${{ args.env }}"
 
@@ -36,11 +33,9 @@ groups:
             help: "Nome do ambiente conda."
             type: string
             default: alertadengueanalise
-        env:
-          XONSH_SUBPROC_CMD_RAISE_ERROR: "True"
-        backend: xonsh
+        backend: bash
         run: |
-          $CONDA_EXE run --no-capture-output -n "${{ args.env }}" Rscript --vanilla -e \
+          ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" Rscript --vanilla -e \
             'stopifnot(requireNamespace("zendown"), requireNamespace("brpop"), requireNamespace("AlertTools")); cat("OK\n")'
 
   db:
@@ -117,9 +112,17 @@ groups:
           export VECLIB_MAXIMUM_THREADS=1
           export RCPP_PARALLEL_NUM_THREADS=1
 
-          mkdir -p logs
+          LOG_DIR="${ALERTA_LOG_DIR:-}"
+          if [ -z "${LOG_DIR}" ]; then
+            if [ -n "${ALERTA_OUT_DIR:-}" ]; then
+              LOG_DIR="${ALERTA_OUT_DIR}/logs"
+            else
+              LOG_DIR="logs"
+            fi
+          fi
+          mkdir -p "${LOG_DIR}"
 
-          LOG_FILE="logs/pipeline-${{ args.week }}-$(date +%Y%m%d-%H%M%S).log"
+          LOG_FILE="${LOG_DIR}/pipeline-${{ args.week }}-$(date +%Y%m%d-%H%M%S).log"
 
           ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla main/main_BR.R 2>&1 | \
@@ -147,9 +150,9 @@ groups:
             required: false
             default: ""
           load:
-            help: "Se true, aplica os SQLs gerados no banco."
-            type: string
-            default: "false"
+            help: "Se presente, aplica os SQLs gerados no banco."
+            type: bool
+            default: false
           scp:
             help: "Se true, publica os .RData via SCP usando ALERTA_SCP_ENDPOINT e ALERTA_SCP_PATH do .env."
             type: bool
@@ -213,9 +216,17 @@ groups:
           export VECLIB_MAXIMUM_THREADS=1
           export RCPP_PARALLEL_NUM_THREADS=1
 
-          mkdir -p logs
+          LOG_DIR="${ALERTA_LOG_DIR:-}"
+          if [ -z "${LOG_DIR}" ]; then
+            if [ -n "${ALERTA_OUT_DIR:-}" ]; then
+              LOG_DIR="${ALERTA_OUT_DIR}/logs"
+            else
+              LOG_DIR="logs"
+            fi
+          fi
+          mkdir -p "${LOG_DIR}"
 
-          LOG_FILE="logs/refresh-alertas-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
+          LOG_FILE="${LOG_DIR}/refresh-alertas-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
           echo "[II] window_weeks=${{ args.window_weeks }}" | tee -a "${LOG_FILE}"
@@ -231,7 +242,7 @@ groups:
             Rscript --vanilla main/main_BR.R 2>&1 | \
             tee -a "${LOG_FILE}"
 
-          if [ "${{ args.load }}" != "true" ]; then
+          if [ "${{ args.load }}" != "True" ] && [ "${{ args.load }}" != "true" ]; then
             echo "[II] load=false, skipping SQL apply." | tee -a "${LOG_FILE}"
             exit 0
           fi
@@ -346,8 +357,17 @@ groups:
             export GDAL_DATA="${CONDA_PREFIX_RESOLVED}/share/gdal"
           fi
 
-          mkdir -p logs
-          LOG_FILE="logs/maps-state-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
+          LOG_DIR="${ALERTA_LOG_DIR:-}"
+          if [ -z "${LOG_DIR}" ]; then
+            if [ -n "${ALERTA_OUT_DIR:-}" ]; then
+              LOG_DIR="${ALERTA_OUT_DIR}/logs"
+            else
+              LOG_DIR="logs"
+            fi
+          fi
+          mkdir -p "${LOG_DIR}"
+
+          LOG_FILE="${LOG_DIR}/maps-state-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
           echo "[II] states=${{ args.states }}" | tee -a "${LOG_FILE}"
@@ -433,9 +453,17 @@ groups:
             export GDAL_DATA="${CONDA_PREFIX_RESOLVED}/share/gdal"
           fi
 
-          mkdir -p logs
+          LOG_DIR="${ALERTA_LOG_DIR:-}"
+          if [ -z "${LOG_DIR}" ]; then
+            if [ -n "${ALERTA_OUT_DIR:-}" ]; then
+              LOG_DIR="${ALERTA_OUT_DIR}/logs"
+            else
+              LOG_DIR="logs"
+            fi
+          fi
+          mkdir -p "${LOG_DIR}"
 
-          LOG_FILE="logs/maps-br-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
+          LOG_FILE="${LOG_DIR}/maps-br-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
 
           echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
           echo "[II] diseases=${{ args.diseases }}" | tee -a "${LOG_FILE}"
@@ -496,9 +524,12 @@ groups:
           STATES="${{ args.states }}"
           MAP_STATES="${STATES:-ALL}"
 
-          makim pipeline.refresh-alertas --env "${{ args.env }}" --week "${WEEK}" --window-weeks "${{ args.window_weeks }}" --states "${{ args.states }}" --cores "${{ args.cores }}" --load "${{ args.load }}"
-          makim pipeline.maps-br --env "${{ args.env }}" --week "${WEEK}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/country"
-          makim pipeline.maps-state --env "${{ args.env }}" --week "${WEEK}" --states "${MAP_STATES}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/state"
+          LOAD_ARG=""
+          if [ "${{ args.load }}" = "true" ]; then
+            LOAD_ARG="--load"
+          fi
+
+          makim pipeline.refresh-alertas --env "${{ args.env }}" --week "${WEEK}" --window-weeks "${{ args.window_weeks }}" --states "${{ args.states }}" --cores "${{ args.cores }}" ${LOAD_ARG}
 
           if [ ! -d "${OUT_BASE}/alertas/${WEEK}" ] || [ -z "$(find "${OUT_BASE}/alertas/${WEEK}" -name '*.RData' -print -quit)" ]; then
             echo "ERRO: nenhum RData estadual foi gerado em ${OUT_BASE}/alertas/${WEEK}."
@@ -512,10 +543,20 @@ groups:
             echo "ERRO: nenhum SQL de alerta foi gerado em ${OUT_BASE}/sql."
             exit 1
           fi
-          if [ -z "$(find "${MAPS_BASE}" -type f -name '*.png' -print -quit)" ]; then
-            echo "ERRO: nenhum mapa PNG foi gerado em ${MAPS_BASE}."
-            exit 1
+
+          if [ "${{ args.load }}" = "true" ]; then
+            echo "[II] load=true: generating maps"
+            makim pipeline.maps-br --env "${{ args.env }}" --week "${WEEK}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/country"
+            makim pipeline.maps-state --env "${{ args.env }}" --week "${WEEK}" --states "${MAP_STATES}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/state"
+
+            if [ -z "$(find "${MAPS_BASE}" -type f -name '*.png' -print -quit)" ]; then
+              echo "ERRO: nenhum mapa PNG foi gerado em ${MAPS_BASE}."
+              exit 1
+            fi
+          else
+            echo "[II] load=false: skipping map generation because database was not updated."
           fi
+
           echo "[II] refresh-alertas-job completed successfully for ${WEEK}"
 
       refresh-alertas-full:
@@ -574,7 +615,7 @@ groups:
           makim pipeline.refresh-alertas \
             --env "${{ args.env }}" \
             --week "${WEEK}" \
-            --load true \
+            --load \
             --cores "${CORES}"
 
           echo "[II] cleaning generated maps"

@@ -4,6 +4,7 @@ services:
       context: ..
       dockerfile: containers/Dockerfile
     image: alertadengueanalise:local
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     command: ["makim", "--help"]
     environment:
       ALERTA_OUT_DIR: /outputs

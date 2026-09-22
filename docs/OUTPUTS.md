@@ -126,12 +126,9 @@ ls -lh sync_maps/incidence_maps/state/
 
 Expected:
 
-* PNG maps are generated in the corresponding `sync_maps/incidence_maps/` directories.
+* PNG maps are generated in the corresponding `sync_maps/incidence_maps/` directories when map generation is executed against an updated database.
 
-When `pipeline.refresh-alertas-job` is run with `ALERTA_OUT_DIR=/outputs`, the
-analysis artifacts are under `/outputs/alertas/` and `/outputs/sql/`; its maps
-are under `/outputs/incidence_maps/`. This makes all generated artifacts
-available through a mounted container volume.
+When `pipeline.refresh-alertas-job` is run with `ALERTA_OUT_DIR=/outputs`, analysis artifacts are saved under `/outputs/alertas/` and `/outputs/sql/`. When run with `--load true`, generated maps are stored under `/outputs/incidence_maps/`. When run with `--load false`, map generation is skipped because the database tables are not updated.
 
 ```
 

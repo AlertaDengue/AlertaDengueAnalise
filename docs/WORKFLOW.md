@@ -137,18 +137,19 @@ If console output is sparse during long runs:
 
 ## Container-safe job
 
-`makim pipeline.refresh-alertas-job` runs `refresh-alertas`, national maps,
-and state maps, validating the generated analysis, SQL, and map artifacts. It
-does not access or publish into the sibling AlertaDengue repository. Use
+`makim pipeline.refresh-alertas-job` orchestrates analysis and optional map
+generation without accessing the sibling AlertaDengue repository. Use
 `ALERTA_OUT_DIR` to direct analysis outputs to a mounted container volume; maps
-are written below `<ALERTA_OUT_DIR>/incidence_maps/` for this job.
+are written below `<ALERTA_OUT_DIR>/incidence_maps/` when enabled.
+
+- `--load false`: runs analysis, produces `.RData` and SQL update files, but does
+  NOT apply SQL to PostgreSQL. Map generation is skipped because maps query
+  PostgreSQL `Historico_alerta`, which still contains data from previous weeks.
+- `--load true`: runs analysis, applies generated SQL to PostgreSQL, then
+  generates BR and state incidence maps from the refreshed database tables.
 
 The older `pipeline.refresh-alertas-full` remains the host-only operational
 task because it intentionally publishes into the sibling checkout and invokes
 its history-update script.
 
-Use `sugar --profile dev compose run --service analysis --options "--rm" --cmd
-"<command>"` for normal local container operation. The `analysis` Compose service is intentionally a
-one-shot job; it does not start a daemon. Direct Docker commands are reserved
-for image-level debugging. Staging database integration remains blocked until
-the staging PostgreSQL service is available on its Docker network.
+Use `sugar --profile dev compose run --service analysis --options "--rm" --cmd "<command>"` for normal local container operation. Use `--profile staging` to run against a staging database attached to the external InfoDengue Docker network via `containers/compose-staging.yaml`. The `analysis` Compose service is intentionally a one-shot job; it does not start a daemon. Direct Docker commands are reserved for image-level debugging.
