@@ -1,0 +1,17 @@
+.env
+.git
+.github
+.agents
+.codex
+AGENTS.md
+instructions_plan.md
+evidence
+logs
+artifacts
+main/alertas
+main/sql/output_*.sql
+sync_maps/incidence_maps
+__pycache__
+*.py[cod]
+*.RData
+*.tar.gz

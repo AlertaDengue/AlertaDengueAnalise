@@ -1,0 +1,25 @@
+backend: compose
+
+defaults:
+  profile: dev
+  project-name: alertadengueanalise-dev
+
+profiles:
+  dev:
+    project-name: alertadengueanalise-dev
+    config-path:
+      - containers/compose.yaml
+    services:
+      default:
+        - analysis
+      available:
+        - name: analysis
+  staging:
+    project-name: alertadengueanalise-staging
+    config-path:
+      - containers/compose.yaml
+    services:
+      default:
+        - analysis
+      available:
+        - name: analysis

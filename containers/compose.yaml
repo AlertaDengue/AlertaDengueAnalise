@@ -1,0 +1,14 @@
+services:
+  analysis:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile
+    image: alertadengueanalise:local
+    command: ["makim", "--help"]
+    environment:
+      ALERTA_OUT_DIR: /outputs
+    volumes:
+      - ${ALERTA_OUTPUT_DIR:-../artifacts}:/outputs
+    restart: "no"
+    stdin_open: false
+    tty: false

@@ -6,6 +6,8 @@ dependencies:
   - python
   - pip
   - git
+  # PostgreSQL command-line client used when refresh-alertas applies SQL.
+  - postgresql
 
   # Build toolchain (only used when a CRAN package has native code)
   - pkg-config
@@ -14,6 +16,8 @@ dependencies:
   - c-compiler
   - cxx-compiler
   - gfortran
+  # Provides libatomic.so.1 required by the existing CentOS 7 x86_64 INLA binary.
+  - libgcc
 
   # System libs commonly needed by R packages
   - zlib
@@ -78,4 +82,5 @@ dependencies:
   - r-fmesher
   - pip:
       - click>=8.1,<9
+      - containers-sugar >=1.19,<2.0
       - makim==1.27.0

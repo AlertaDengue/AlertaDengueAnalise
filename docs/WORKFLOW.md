@@ -16,8 +16,10 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
 1. **Load environment variables**
 
-   * Makim loads `.env` from the repository root and exports the variables
-     into the process environment.
+   * When present, Makim loads `.env` from the repository root and exports its
+     variables into the process environment. A `.env` file is optional: values
+     already supplied by the environment (for example Docker `--env-file`) are
+     used directly.
 
 2. **Set the epidemiological week**
 
@@ -132,3 +134,21 @@ If console output is sparse during long runs:
   functions like `mclapply()` / `detectCores()` are referenced.
 * Slow DB queries or database resource constraints (CPU/IO).
 * Waiting on external network steps (disabled in local-only runs).
+
+## Container-safe job
+
+`makim pipeline.refresh-alertas-job` runs `refresh-alertas`, national maps,
+and state maps, validating the generated analysis, SQL, and map artifacts. It
+does not access or publish into the sibling AlertaDengue repository. Use
+`ALERTA_OUT_DIR` to direct analysis outputs to a mounted container volume; maps
+are written below `<ALERTA_OUT_DIR>/incidence_maps/` for this job.
+
+The older `pipeline.refresh-alertas-full` remains the host-only operational
+task because it intentionally publishes into the sibling checkout and invokes
+its history-update script.
+
+Use `sugar --profile dev compose run --service analysis --options "--rm" --cmd
+"<command>"` for normal local container operation. The `analysis` Compose service is intentionally a
+one-shot job; it does not start a daemon. Direct Docker commands are reserved
+for image-level debugging. Staging database integration remains blocked until
+the staging PostgreSQL service is available on its Docker network.

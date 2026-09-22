@@ -90,6 +90,73 @@ makim pipeline.run-br --env alertadengueanalise --week 202601 --cores 4
 * Pipeline behavior and steps: `docs/WORKFLOW.md`
 * Outputs and where to find them: `docs/OUTPUTS.md`
 
+## Container batch job
+
+The container is a one-shot analysis job. It includes the existing Conda/R,
+INLA, Makim and PostgreSQL-client runtime, but no database credentials and no
+AlertaDengue checkout. Build it from this repository:
+
+Normal operational commands use Containers Sugar:
+
+```bash
+sugar --profile dev compose build
+sugar --profile dev compose run --service analysis --options "--rm" \
+  --cmd "makim deps.check"
+```
+
+The service exits after the requested command. To retain artifacts, select an
+output directory before running the analysis job:
+
+```bash
+ALERTA_OUTPUT_DIR=/some/host/path \
+  sugar --profile dev compose run --service analysis --options "--rm" \
+  --cmd "makim pipeline.refresh-alertas-job --week YYYYWW --states DF --cores 1 --load false"
+```
+
+Direct Docker commands remain useful for debugging:
+
+```bash
+docker build -f containers/Dockerfile -t alertadengueanalise:local .
+```
+
+Run a dependency smoke test:
+
+```bash
+docker run --rm alertadengueanalise:local makim deps.check
+```
+
+Runtime variables may be supplied with `--env-file` or `-e`; a repository
+`.env` is optional. To check a staging database on its Docker network:
+
+```bash
+docker run --rm --network <staging-network> --env-file <staging-env-file> \
+  alertadengueanalise:local makim db.check
+```
+
+To run the existing limited integration suite against staging, use a known
+historical staging week and state. The suite writes only to its temporary
+sandbox.
+
+```bash
+docker run --rm --network <staging-network> --env-file <staging-env-file> \
+  -e ALERTA_RUN_LOCAL_INTEGRATION=true -e ALERTA_TEST_STATE=DF \
+  -e ALERTA_TEST_WEEK=<known-staging-week> \
+  alertadengueanalise:local Rscript --vanilla tests/testthat.R
+```
+
+`pipeline.refresh-alertas-job` is the container-safe orchestration task. It
+runs analysis and maps but never accesses the sibling AlertaDengue checkout or
+publishes maps there. Mount an output directory to preserve artifacts after the
+job exits. `--load false` is the safe default; setting `--load true` applies
+generated SQL to the configured database.
+
+```bash
+docker run --rm --network <staging-network> --env-file <staging-env-file> \
+  -v /some/host/path:/outputs -e ALERTA_OUT_DIR=/outputs \
+  alertadengueanalise:local makim pipeline.refresh-alertas-job \
+  --week YYYYWW --states DF --cores 1 --load false
+```
+
 ## Troubleshooting
 
 * If you see missing R packages during execution, run:

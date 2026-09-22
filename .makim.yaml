@@ -20,8 +20,8 @@ groups:
         help: Install and validate R-INLA (minimal)
         args:
           env:
+            help: "Conda env for AlertaDengueAnalise."
             type: string
-            help: Conda env name (optional; defaults to current env)
             required: false
         env:
           XONSH_SUBPROC_CMD_RAISE_ERROR: "True"
@@ -56,14 +56,11 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ ! -f .env ]; then
-            echo "ERRO: arquivo .env não encontrado na raiz do repositório."
-            exit 2
+          if [ -f .env ]; then
+            set -a
+            . ./.env
+            set +a
           fi
-
-          set -a
-          . ./.env
-          set +a
 
           ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla scripts/db_check.R
@@ -93,14 +90,11 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ ! -f .env ]; then
-            echo "ERRO: arquivo .env não encontrado na raiz do repositório."
-            exit 2
+          if [ -f .env ]; then
+            set -a
+            . ./.env
+            set +a
           fi
-
-          set -a
-          . ./.env
-          set +a
 
           if ! [[ "${{ args.week }}" =~ ^[0-9]{6}$ ]]; then
             echo "ERRO: --week deve estar no formato YYYYWW (6 dígitos), recebido '${{ args.week }}'."
@@ -125,9 +119,11 @@ groups:
 
           mkdir -p logs
 
+          LOG_FILE="logs/pipeline-${{ args.week }}-$(date +%Y%m%d-%H%M%S).log"
+
           ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla main/main_BR.R 2>&1 | \
-            tee -a "logs/pipeline-${{ args.week }}.log"
+            tee -a "${LOG_FILE}"
 
       refresh-alertas:
         help: "Executar geração BR de alertas, exportar SQL e carregar dengue/chik no banco."
@@ -152,8 +148,8 @@ groups:
             default: ""
           load:
             help: "Se true, aplica os SQLs gerados no banco."
-            type: bool
-            default: false
+            type: string
+            default: "false"
           scp:
             help: "Se true, publica os .RData via SCP usando ALERTA_SCP_ENDPOINT e ALERTA_SCP_PATH do .env."
             type: bool
@@ -165,14 +161,11 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ ! -f .env ]; then
-            echo "ERRO: arquivo .env não encontrado na raiz do repositório."
-            exit 2
+          if [ -f .env ]; then
+            set -a
+            . ./.env
+            set +a
           fi
-
-          set -a
-          . ./.env
-          set +a
 
           WEEK="${{ args.week }}"
 
@@ -191,6 +184,11 @@ groups:
             exit 2
           fi
 
+          if [[ "${{ args.load }}" != "true" && "${{ args.load }}" != "false" ]]; then
+            echo "ERRO: --load deve ser true ou false."
+            exit 2
+          fi
+
           DB_HOST="${ALERTA_DB_HOST:-${DB_HOST:-}}"
           DB_PORT="${ALERTA_DB_PORT:-${DB_PORT:-5432}}"
           DB_NAME="${ALERTA_DB_NAME:-${DB_NAME:-}}"
@@ -198,7 +196,7 @@ groups:
           DB_PASS="${ALERTA_DB_PASSWORD:-${DB_PASSWORD:-}}"
 
           if [ -z "${DB_HOST}" ] || [ -z "${DB_NAME}" ] || [ -z "${DB_USER}" ] || [ -z "${DB_PASS}" ]; then
-            echo "ERRO: faltam variáveis de banco. Verifique ALERTA_DB_* ou DB_* no .env."
+            echo "ERRO: faltam variáveis de banco. Defina ALERTA_DB_* ou DB_* no ambiente ou .env."
             exit 2
           fi
 
@@ -233,7 +231,7 @@ groups:
             Rscript --vanilla main/main_BR.R 2>&1 | \
             tee -a "${LOG_FILE}"
 
-          if [ "${{ args.load }}" != "True" ]; then
+          if [ "${{ args.load }}" != "true" ]; then
             echo "[II] load=false, skipping SQL apply." | tee -a "${LOG_FILE}"
             exit 0
           fi
@@ -301,14 +299,11 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ ! -f .env ]; then
-            echo "ERRO: arquivo .env não encontrado na raiz do repositório."
-            exit 2
+          if [ -f .env ]; then
+            set -a
+            . ./.env
+            set +a
           fi
-
-          set -a
-          . ./.env
-          set +a
 
           WEEK="${{ args.week }}"
 
@@ -392,14 +387,11 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ ! -f .env ]; then
-            echo "ERRO: arquivo .env não encontrado na raiz do repositório."
-            exit 2
+          if [ -f .env ]; then
+            set -a
+            . ./.env
+            set +a
           fi
-
-          set -a
-          . ./.env
-          set +a
 
           WEEK="${{ args.week }}"
 
@@ -457,6 +449,74 @@ groups:
           ${CONDA_BIN} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla incidence_maps/br.R 2>&1 | \
             tee -a "${LOG_FILE}"
+      refresh-alertas-job:
+        help: "Executar análise e mapas sem dependência do repositório AlertaDengue."
+        backend: bash
+        args:
+          env:
+            help: "Nome do ambiente conda."
+            type: string
+            default: alertadengueanalise
+          week:
+            help: "Semana epidemiológica no formato YYYYWW."
+            type: string
+            required: true
+          window-weeks:
+            help: "Janela histórica em semanas para tabela_historico."
+            type: string
+            default: "100"
+          states:
+            help: "Lista opcional de UFs separadas por vírgula."
+            type: string
+            default: ""
+          diseases:
+            help: "Lista de agravos para os mapas."
+            type: string
+            default: ALL
+          load:
+            help: "Se true, aplica os SQLs gerados no banco."
+            type: string
+            default: "false"
+          cores:
+            help: "Número de estados processados em paralelo."
+            type: string
+            default: "1"
+        run: |
+          set -euo pipefail
+          WEEK="${{ args.week }}"
+          ROOT_DIR="$(pwd)"
+          OUT_BASE="${ALERTA_OUT_DIR:-${ROOT_DIR}/main}"
+          MAPS_BASE="${OUT_BASE}/incidence_maps"
+
+          if ! [[ "${WEEK}" =~ ^[0-9]{6}$ ]]; then
+            echo "ERRO: --week deve estar no formato YYYYWW."
+            exit 2
+          fi
+
+          STATES="${{ args.states }}"
+          MAP_STATES="${STATES:-ALL}"
+
+          makim pipeline.refresh-alertas --env "${{ args.env }}" --week "${WEEK}" --window-weeks "${{ args.window_weeks }}" --states "${{ args.states }}" --cores "${{ args.cores }}" --load "${{ args.load }}"
+          makim pipeline.maps-br --env "${{ args.env }}" --week "${WEEK}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/country"
+          makim pipeline.maps-state --env "${{ args.env }}" --week "${WEEK}" --states "${MAP_STATES}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/state"
+
+          if [ ! -d "${OUT_BASE}/alertas/${WEEK}" ] || [ -z "$(find "${OUT_BASE}/alertas/${WEEK}" -name '*.RData' -print -quit)" ]; then
+            echo "ERRO: nenhum RData estadual foi gerado em ${OUT_BASE}/alertas/${WEEK}."
+            exit 1
+          fi
+          if [ ! -f "${OUT_BASE}/alertas/BR/ale-BR-${WEEK}.RData" ]; then
+            echo "ERRO: RData consolidado BR não encontrado."
+            exit 1
+          fi
+          if [ -z "$(find "${OUT_BASE}/sql" -name 'output_*.sql' -print -quit)" ]; then
+            echo "ERRO: nenhum SQL de alerta foi gerado em ${OUT_BASE}/sql."
+            exit 1
+          fi
+          if [ -z "$(find "${MAPS_BASE}" -type f -name '*.png' -print -quit)" ]; then
+            echo "ERRO: nenhum mapa PNG foi gerado em ${MAPS_BASE}."
+            exit 1
+          fi
+          echo "[II] refresh-alertas-job completed successfully for ${WEEK}"
 
       refresh-alertas-full:
         help: "Run refresh-alertas, generate maps, publish maps, archive alerts, and update alerta history."
@@ -514,7 +574,7 @@ groups:
           makim pipeline.refresh-alertas \
             --env "${{ args.env }}" \
             --week "${WEEK}" \
-            --load \
+            --load true \
             --cores "${CORES}"
 
           echo "[II] cleaning generated maps"
