@@ -187,10 +187,12 @@ groups:
             exit 2
           fi
 
-          if [[ "${{ args.load }}" != "true" && "${{ args.load }}" != "false" ]]; then
-            echo "ERRO: --load deve ser true ou false."
-            exit 2
-          fi
+          ROOT_DIR="$(pwd)"
+          OUT_BASE="${ALERTA_OUT_DIR:-${ROOT_DIR}/main}"
+          SQL_DIR="${OUT_BASE}/sql"
+
+          DENGUE_SQL="${SQL_DIR}/output_dengue.sql"
+          CHIK_SQL="${SQL_DIR}/output_chik.sql"
 
           DB_HOST="${ALERTA_DB_HOST:-${DB_HOST:-}}"
           DB_PORT="${ALERTA_DB_PORT:-${DB_PORT:-5432}}"
@@ -247,8 +249,8 @@ groups:
             exit 0
           fi
 
-          if [ -f main/sql/output_dengue.sql ]; then
-            echo "[II] applying main/sql/output_dengue.sql" | tee -a "${LOG_FILE}"
+          if [ -f "${DENGUE_SQL}" ]; then
+            echo "[II] applying ${DENGUE_SQL}" | tee -a "${LOG_FILE}"
             PGPASSWORD="${DB_PASS}" \
               psql \
                 -v ON_ERROR_STOP=1 \
@@ -256,14 +258,14 @@ groups:
                 -p "${DB_PORT}" \
                 -U "${DB_USER}" \
                 -d "${DB_NAME}" \
-                -f main/sql/output_dengue.sql 2>&1 | \
+                -f "${DENGUE_SQL}" 2>&1 | \
               tee -a "${LOG_FILE}"
           else
-            echo "[WW] output_dengue.sql not found, skipping." | tee -a "${LOG_FILE}"
+            echo "[WW] ${DENGUE_SQL} not found, skipping." | tee -a "${LOG_FILE}"
           fi
 
-          if [ -f main/sql/output_chik.sql ]; then
-            echo "[II] applying main/sql/output_chik.sql" | tee -a "${LOG_FILE}"
+          if [ -f "${CHIK_SQL}" ]; then
+            echo "[II] applying ${CHIK_SQL}" | tee -a "${LOG_FILE}"
             PGPASSWORD="${DB_PASS}" \
               psql \
                 -v ON_ERROR_STOP=1 \
@@ -271,10 +273,10 @@ groups:
                 -p "${DB_PORT}" \
                 -U "${DB_USER}" \
                 -d "${DB_NAME}" \
-                -f main/sql/output_chik.sql 2>&1 | \
+                -f "${CHIK_SQL}" 2>&1 | \
               tee -a "${LOG_FILE}"
           else
-            echo "[WW] output_chik.sql not found, skipping." | tee -a "${LOG_FILE}"
+            echo "[WW] ${CHIK_SQL} not found, skipping." | tee -a "${LOG_FILE}"
           fi
 
           echo "[II] refresh-alertas completed successfully." | tee -a "${LOG_FILE}"

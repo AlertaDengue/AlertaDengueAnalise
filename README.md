@@ -119,13 +119,16 @@ sugar --profile staging compose run --service analysis --options "--rm" \
 
 The service exits after the requested command. To retain artifacts, make sure
 the host output directory exists and is writable by `HOST_UID`/`HOST_GID` before
-running the analysis job:
+running the analysis job (use `--profile staging` to connect to the external
+InfoDengue network with database credentials):
 
 ```bash
+export HOST_UID="$(id -u)"
+export HOST_GID="$(id -g)"
 mkdir -p artifacts
 
 ALERTA_OUTPUT_DIR="$(pwd)/artifacts" \
-  sugar --profile dev compose run --service analysis --options "--rm" \
+  sugar --profile staging compose run --service analysis --options "--rm" \
   --cmd "makim pipeline.refresh-alertas-job --week YYYYWW --states DF --cores 1 --load false"
 ```
 
