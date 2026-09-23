@@ -9,6 +9,7 @@ ENV CONDA_DEFAULT_ENV=alertadengueanalise \
     CONDA_EXE=/opt/conda/bin/conda \
     PATH=/opt/conda/envs/alertadengueanalise/bin:/opt/conda/bin:${PATH} \
     LD_LIBRARY_PATH=/opt/conda/envs/alertadengueanalise/lib \
+    TZ=UTC \
     OMP_NUM_THREADS=1 \
     OPENBLAS_NUM_THREADS=1 \
     MKL_NUM_THREADS=1 \
@@ -17,7 +18,9 @@ ENV CONDA_DEFAULT_ENV=alertadengueanalise \
     RCPP_PARALLEL_NUM_THREADS=1
 
 COPY . .
-RUN mamba run --no-capture-output -n alertadengueanalise Rscript --vanilla scripts/install_deps.R \
+RUN touch /opt/alertadengueanalise/caselist.RData \
+ && chmod 0666 /opt/alertadengueanalise/caselist.RData \
+ && mamba run --no-capture-output -n alertadengueanalise Rscript --vanilla scripts/install_deps.R \
  && bash scripts/install_inla.sh alertadengueanalise \
  && mamba run --no-capture-output -n alertadengueanalise Rscript --vanilla scripts/check_deps.R \
  && conda clean --all --yes
