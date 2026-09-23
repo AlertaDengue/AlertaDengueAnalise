@@ -45,7 +45,9 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
 5. **Connect to PostgreSQL**
 
-   * The pipeline uses `DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWORD`.
+   * The pipeline prefers `ALERTA_DB_HOST`, `ALERTA_DB_PORT`,
+     `ALERTA_DB_NAME`, `ALERTA_DB_USER`, and `ALERTA_DB_PASSWORD`.
+     The corresponding `DB_*` names remain compatible.
    * A successful connection is required before data extraction.
 
 6. **Run per-state processing**
@@ -55,7 +57,7 @@ makim pipeline.run-br --week YYYYWW --cores 4
    * Run disease pipelines depending on flags:
 
      * dengue (`cid10 = "A90"`)
-     * chik (`cid10 = "A92"`)
+     * chik (`cid10 = "A92.0"`)
      * zika (`cid10 = "A92.8"`)
    * The pipeline fetches raw notifications from the database, aggregates
      cases by onset date, runs alert computations, and builds historical
@@ -103,12 +105,12 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
 ## How to run a small test (single state)
 
-To validate the setup quickly, configure `estados_Infodengue` with a single row
-and run only dengue (disable chik/zika). This is the recommended first check to:
+To validate the setup with one state, pass `--states DF` to a refresh task.
+This checks:
 
-* confirm DB connectivity
-* confirm the pipeline produces `.RData`
-* confirm SQL generation
+* database connectivity
+* `.RData` output generation
+* SQL generation
 
 ## Observability
 
@@ -152,4 +154,16 @@ The older `pipeline.refresh-alertas-full` remains the host-only operational
 task because it intentionally publishes into the sibling checkout and invokes
 its history-update script.
 
-Use `sugar --profile dev compose run --service analysis --options "--rm" --cmd "<command>"` for normal local container operation. Use `--profile staging` to run against a staging database attached to the external InfoDengue Docker network via `containers/compose-staging.yaml`. The `analysis` Compose service is intentionally a one-shot job; it does not start a daemon. Direct Docker commands are reserved for image-level debugging.
+The three Sugar profiles use the same one-shot `analysis` service and separate
+external InfoDengue networks:
+
+| Profile | Overlay | Default external network |
+| --- | --- | --- |
+| dev | `containers/compose-dev.yaml` | `infodengue-dev_infodengue` |
+| staging | `containers/compose-staging.yaml` | `infodengue-staging_infodengue` |
+| prod | `containers/compose-prod.yaml` | `infodengue-prod_infodengue` |
+
+Each overlay passes `ALERTA_DB_*` values into the container. A shell-level
+`INFODENGUE_NETWORK` override can select another external network for one
+command. See the [README](../README.md) for the exact build, check, analysis,
+and SQL loading sequence. Direct Docker commands are for image-level debugging.

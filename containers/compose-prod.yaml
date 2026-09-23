@@ -12,4 +12,4 @@ services:
 networks:
   infodengue:
     external: true
-    name: ${INFODENGUE_NETWORK:-infodengue-staging_infodengue}
+    name: ${INFODENGUE_NETWORK:-infodengue-prod_infodengue}

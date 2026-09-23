@@ -9,6 +9,7 @@ profiles:
     project-name: alertadengueanalise-dev
     config-path:
       - containers/compose.yaml
+      - containers/compose-dev.yaml
     services:
       default:
         - analysis
@@ -19,6 +20,16 @@ profiles:
     config-path:
       - containers/compose.yaml
       - containers/compose-staging.yaml
+    services:
+      default:
+        - analysis
+      available:
+        - name: analysis
+  prod:
+    project-name: alertadengueanalise-prod
+    config-path:
+      - containers/compose.yaml
+      - containers/compose-prod.yaml
     services:
       default:
         - analysis
