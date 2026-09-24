@@ -55,6 +55,41 @@ safe_gc <- function() {
   invisible(gc(verbose = FALSE))
 }
 
+normalize_state_filter <- function(raw, valid_states) {
+  if (is.null(raw) || length(raw) == 0 || is.na(raw[[1]])) {
+    raw <- ""
+  }
+  raw <- trimws(raw[[1]])
+  if (!nzchar(raw) || identical(toupper(raw), "ALL")) {
+    return(character(0))
+  }
+
+  states <- toupper(trimws(unlist(strsplit(raw, ",", fixed = TRUE))))
+  states <- unique(states[nzchar(states)])
+  invalid <- setdiff(states, valid_states)
+  if (length(invalid) > 0) {
+    stop(
+      "Invalid ALERTA_STATES value(s): ",
+      paste(invalid, collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  states
+}
+
+state_scratch_dir <- function(sig) {
+  scratch_dir <- tempfile(
+    pattern = paste0("alertadengue-", sig, "-"),
+    tmpdir = tempdir()
+  )
+  dir.create(scratch_dir, recursive = TRUE, showWarnings = FALSE)
+  if (!dir.exists(scratch_dir)) {
+    stop("Could not create state scratch directory: ", scratch_dir, call. = FALSE)
+  }
+  scratch_dir
+}
+
 format_call_stack <- function(max_calls = 20) {
   calls <- sys.calls()
   if (length(calls) == 0) {
@@ -357,24 +392,12 @@ t1 <- Sys.time()
 
 # Filtro de estados (opcional)
 states_filter_raw <- get_env_any(c("ALERTA_STATES"), default = "")
-states_filter <- character(0)
+states_filter <- normalize_state_filter(
+  states_filter_raw,
+  estados_Infodengue$sigla
+)
 
-if (nzchar(states_filter_raw)) {
-  states_filter <- unlist(strsplit(states_filter_raw, ",", fixed = TRUE))
-  states_filter <- trimws(states_filter)
-  states_filter <- toupper(states_filter)
-  states_filter <- states_filter[nzchar(states_filter)]
-  states_filter <- unique(states_filter)
-
-  invalid_states <- setdiff(states_filter, estados_Infodengue$sigla)
-  if (length(invalid_states) > 0) {
-    stop(
-      "Invalid ALERTA_STATES value(s): ",
-      paste(invalid_states, collapse = ", "),
-      call. = FALSE
-    )
-  }
-
+if (length(states_filter) > 0) {
   estados_Infodengue <- estados_Infodengue[
     estados_Infodengue$sigla %in% states_filter,
     ,
@@ -566,6 +589,17 @@ run_state_pipeline <- function(i) {
   estado <- as.character(row_i$estado)
   sig <- as.character(row_i$sigla)
   current_step <- "initializing"
+  scratch_dir <- state_scratch_dir(sig)
+  original_wd <- getwd()
+  setwd(scratch_dir)
+  on.exit(
+    {
+      try(setwd(original_wd), silent = TRUE)
+      try(unlink(scratch_dir, recursive = TRUE, force = TRUE), silent = TRUE)
+    },
+    add = TRUE
+  )
+  log_msg("[state] ", sig, " scratch dir: ", scratch_dir)
 
   tryCatch(
     {

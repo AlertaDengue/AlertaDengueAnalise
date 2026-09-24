@@ -18,9 +18,7 @@ ENV CONDA_DEFAULT_ENV=alertadengueanalise \
     RCPP_PARALLEL_NUM_THREADS=1
 
 COPY . .
-RUN touch /opt/alertadengueanalise/caselist.RData \
- && chmod 0666 /opt/alertadengueanalise/caselist.RData \
- && mamba run --no-capture-output -n alertadengueanalise Rscript --vanilla scripts/install_deps.R \
+RUN mamba run --no-capture-output -n alertadengueanalise Rscript --vanilla scripts/install_deps.R \
  && bash scripts/install_inla.sh alertadengueanalise \
  && mamba run --no-capture-output -n alertadengueanalise Rscript --vanilla scripts/check_deps.R \
  && conda clean --all --yes
