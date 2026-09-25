@@ -526,40 +526,62 @@ groups:
           STATES="${{ args.states }}"
           MAP_STATES="${STATES:-ALL}"
 
+          LOG_DIR="${ALERTA_LOG_DIR:-}"
+          if [ -z "${LOG_DIR}" ]; then
+            if [ -n "${ALERTA_OUT_DIR:-}" ]; then
+              LOG_DIR="${ALERTA_OUT_DIR}/logs"
+            else
+              LOG_DIR="logs"
+            fi
+          fi
+          mkdir -p "${LOG_DIR}"
+          LOG_FILE="${LOG_DIR}/refresh-alertas-job-${WEEK}-$(date +%Y%m%d-%H%M%S).log"
+
+          echo "[II] week=${WEEK}" | tee -a "${LOG_FILE}"
+          echo "[II] states=${MAP_STATES}" | tee -a "${LOG_FILE}"
+          echo "[II] cores=${{ args.cores }}" | tee -a "${LOG_FILE}"
+          if [ -n "${ALERTA_JOB_ID:-}" ]; then
+            printf '[II] job_id=%s\n' "${ALERTA_JOB_ID}" | tee -a "${LOG_FILE}"
+          fi
+          if [ -n "${ALERTA_INPUT_FINGERPRINT:-}" ]; then
+            printf '[II] input_fingerprint=%s\n' \
+              "${ALERTA_INPUT_FINGERPRINT}" | tee -a "${LOG_FILE}"
+          fi
+
           LOAD_ARG=""
           if [ "${{ args.load }}" = "true" ]; then
             LOAD_ARG="--load"
           fi
 
-          makim pipeline.refresh-alertas --env "${{ args.env }}" --week "${WEEK}" --window-weeks "${{ args.window_weeks }}" --states "${{ args.states }}" --cores "${{ args.cores }}" ${LOAD_ARG}
+          makim pipeline.refresh-alertas --env "${{ args.env }}" --week "${WEEK}" --window-weeks "${{ args.window_weeks }}" --states "${{ args.states }}" --cores "${{ args.cores }}" ${LOAD_ARG} 2>&1 | tee -a "${LOG_FILE}"
 
           if [ ! -d "${OUT_BASE}/alertas/${WEEK}" ] || [ -z "$(find "${OUT_BASE}/alertas/${WEEK}" -name '*.RData' -print -quit)" ]; then
-            echo "ERRO: nenhum RData estadual foi gerado em ${OUT_BASE}/alertas/${WEEK}."
+            echo "ERRO: nenhum RData estadual foi gerado em ${OUT_BASE}/alertas/${WEEK}." | tee -a "${LOG_FILE}"
             exit 1
           fi
           if [ ! -f "${OUT_BASE}/alertas/BR/ale-BR-${WEEK}.RData" ]; then
-            echo "ERRO: RData consolidado BR não encontrado."
+            echo "ERRO: RData consolidado BR não encontrado." | tee -a "${LOG_FILE}"
             exit 1
           fi
           if [ -z "$(find "${OUT_BASE}/sql" -name 'output_*.sql' -print -quit)" ]; then
-            echo "ERRO: nenhum SQL de alerta foi gerado em ${OUT_BASE}/sql."
+            echo "ERRO: nenhum SQL de alerta foi gerado em ${OUT_BASE}/sql." | tee -a "${LOG_FILE}"
             exit 1
           fi
 
           if [ "${{ args.load }}" = "true" ]; then
-            echo "[II] load=true: generating maps"
-            makim pipeline.maps-br --env "${{ args.env }}" --week "${WEEK}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/country"
-            makim pipeline.maps-state --env "${{ args.env }}" --week "${WEEK}" --states "${MAP_STATES}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/state"
+            echo "[II] load=true: generating maps" | tee -a "${LOG_FILE}"
+            makim pipeline.maps-br --env "${{ args.env }}" --week "${WEEK}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/country" 2>&1 | tee -a "${LOG_FILE}"
+            makim pipeline.maps-state --env "${{ args.env }}" --week "${WEEK}" --states "${MAP_STATES}" --diseases "${{ args.diseases }}" --output-dir "${MAPS_BASE}/state" 2>&1 | tee -a "${LOG_FILE}"
 
             if [ -z "$(find "${MAPS_BASE}" -type f -name '*.png' -print -quit)" ]; then
-              echo "ERRO: nenhum mapa PNG foi gerado em ${MAPS_BASE}."
+              echo "ERRO: nenhum mapa PNG foi gerado em ${MAPS_BASE}." | tee -a "${LOG_FILE}"
               exit 1
             fi
           else
-            echo "[II] load=false: skipping map generation because database was not updated."
+            echo "[II] load=false: skipping map generation because database was not updated." | tee -a "${LOG_FILE}"
           fi
 
-          echo "[II] refresh-alertas-job completed successfully for ${WEEK}"
+          echo "[II] refresh-alertas-job completed successfully for ${WEEK}" | tee -a "${LOG_FILE}"
 
       refresh-alertas-full:
         help: "Run refresh-alertas, generate maps, publish maps, archive alerts, and update alerta history."

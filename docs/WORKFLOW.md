@@ -66,7 +66,8 @@ makim pipeline.run-br --week YYYYWW --cores 4
    By default states run sequentially. When `--cores N` is greater than `1`,
    Makim exports `ALERTA_PARALLEL_CORES=N` and `main/main_BR.R` dispatches the
    state jobs with `parallel::mclapply()`. Each worker opens its own PostgreSQL
-   connection, so choose `N` according to the database capacity.
+   connection and an isolated scratch directory, so choose `N` according to
+   the database capacity.
 
 7. **Persist per-state results**
 
@@ -139,10 +140,14 @@ If console output is sparse during long runs:
 
 ## Container-safe job
 
-`makim pipeline.refresh-alertas-job` orchestrates analysis and optional map
-generation without accessing the sibling AlertaDengue repository. Use
+`makim pipeline.refresh-alertas-job` is the container-safe,
+repository-independent entrypoint for analysis and optional map generation.
+It does not access the sibling AlertaDengue repository. Use
 `ALERTA_OUT_DIR` to direct analysis outputs to a mounted container volume; maps
 are written below `<ALERTA_OUT_DIR>/incidence_maps/` when enabled.
+The task writes `refresh-alertas-job-*.log` under the output `logs/` directory,
+including job-level output-validation errors. Optional `ALERTA_JOB_ID` and
+`ALERTA_INPUT_FINGERPRINT` are supplied per invocation by the runner.
 
 - `--load false`: runs analysis, produces `.RData` and SQL update files, but does
   NOT apply SQL to PostgreSQL. Map generation is skipped because maps query
@@ -155,7 +160,7 @@ task because it intentionally publishes into the sibling checkout and invokes
 its history-update script.
 
 The three Sugar profiles use the same one-shot `analysis` service and separate
-external InfoDengue networks:
+external Infodengue networks:
 
 | Profile | Overlay | Default external network |
 | --- | --- | --- |
@@ -166,4 +171,5 @@ external InfoDengue networks:
 Each overlay passes `ALERTA_DB_*` values into the container. A shell-level
 `INFODENGUE_NETWORK` override can select another external network for one
 command. See the [README](../README.md) for the exact build, check, analysis,
-and SQL loading sequence. Direct Docker commands are for image-level debugging.
+and SQL loading sequence. External runner semantics are in the
+[job contract](JOB_CONTRACT.md).
