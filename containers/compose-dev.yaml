@@ -1,0 +1,15 @@
+services:
+  analysis:
+    networks:
+      - infodengue
+    environment:
+      ALERTA_DB_HOST: ${ALERTA_DB_HOST:-${DB_HOST:-}}
+      ALERTA_DB_PORT: ${ALERTA_DB_PORT:-${DB_PORT:-5432}}
+      ALERTA_DB_NAME: ${ALERTA_DB_NAME:-${DB_NAME:-}}
+      ALERTA_DB_USER: ${ALERTA_DB_USER:-${DB_USER:-}}
+      ALERTA_DB_PASSWORD: ${ALERTA_DB_PASSWORD:-${DB_PASSWORD:-}}
+
+networks:
+  infodengue:
+    external: true
+    name: ${INFODENGUE_NETWORK:-infodengue-dev_infodengue}

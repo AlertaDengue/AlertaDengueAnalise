@@ -16,8 +16,10 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
 1. **Load environment variables**
 
-   * Makim loads `.env` from the repository root and exports the variables
-     into the process environment.
+   * When present, Makim loads `.env` from the repository root and exports its
+     variables into the process environment. A `.env` file is optional: values
+     already supplied by the environment (for example Docker `--env-file`) are
+     used directly.
 
 2. **Set the epidemiological week**
 
@@ -43,7 +45,9 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
 5. **Connect to PostgreSQL**
 
-   * The pipeline uses `DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWORD`.
+   * The pipeline prefers `ALERTA_DB_HOST`, `ALERTA_DB_PORT`,
+     `ALERTA_DB_NAME`, `ALERTA_DB_USER`, and `ALERTA_DB_PASSWORD`.
+     The corresponding `DB_*` names remain compatible.
    * A successful connection is required before data extraction.
 
 6. **Run per-state processing**
@@ -53,7 +57,7 @@ makim pipeline.run-br --week YYYYWW --cores 4
    * Run disease pipelines depending on flags:
 
      * dengue (`cid10 = "A90"`)
-     * chik (`cid10 = "A92"`)
+     * chik (`cid10 = "A92.0"`)
      * zika (`cid10 = "A92.8"`)
    * The pipeline fetches raw notifications from the database, aggregates
      cases by onset date, runs alert computations, and builds historical
@@ -62,24 +66,32 @@ makim pipeline.run-br --week YYYYWW --cores 4
    By default states run sequentially. When `--cores N` is greater than `1`,
    Makim exports `ALERTA_PARALLEL_CORES=N` and `main/main_BR.R` dispatches the
    state jobs with `parallel::mclapply()`. Each worker opens its own PostgreSQL
-   connection, so choose `N` according to the database capacity.
+   connection and an isolated scratch directory, so choose `N` according to
+   the database capacity.
 
 7. **Persist per-state results**
 
    * Results are saved as `.RData` files under:
      `main/alertas/YYYYWW/`
+   * Before state execution, the pipeline removes existing output files for
+     the selected states and week. Other state files are left in place.
 
 8. **Build consolidated outputs**
    After all states finish:
 
-   * The pipeline loads all state `.RData` files for the week.
+   * The pipeline requires and loads only the current run's selected-state
+     `.RData` files. Stale files for other states cannot enter consolidation.
    * It consolidates tables (e.g., dengue/chik/zika historical tables).
-   * It writes SQL scripts to `main/sql/`.
+   * It clears the three generated disease SQL paths before execution and
+     writes current-run SQL scripts to `main/sql/`.
 
 9. **Generate BR-level artifact**
 
    * A consolidated `.RData` is saved under:
      `main/alertas/BR/`
+   * The current week's previous BR file is removed before execution. The
+     pipeline requires a newly written nonempty BR file before completion;
+     other weeks' BR files are untouched.
 
 10. **Generate Incidence Maps (Optional)**
 
@@ -101,12 +113,12 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
 ## How to run a small test (single state)
 
-To validate the setup quickly, configure `estados_Infodengue` with a single row
-and run only dengue (disable chik/zika). This is the recommended first check to:
+To validate the setup with one state, pass `--states DF` to a refresh task.
+This checks:
 
-* confirm DB connectivity
-* confirm the pipeline produces `.RData`
-* confirm SQL generation
+* database connectivity
+* `.RData` output generation
+* SQL generation
 
 ## Observability
 
@@ -132,3 +144,41 @@ If console output is sparse during long runs:
   functions like `mclapply()` / `detectCores()` are referenced.
 * Slow DB queries or database resource constraints (CPU/IO).
 * Waiting on external network steps (disabled in local-only runs).
+
+## Container-safe job
+
+`makim pipeline.refresh-alertas-job` is the container-safe,
+repository-independent entrypoint for analysis and optional map generation.
+It does not access the sibling AlertaDengue repository. Use
+`ALERTA_OUT_DIR` to direct analysis outputs to a mounted container volume; maps
+are written below `<ALERTA_OUT_DIR>/incidence_maps/` when enabled.
+The task writes `refresh-alertas-job-*.log` under the output `logs/` directory,
+including job-level output-validation errors. Optional `ALERTA_JOB_ID` and
+`ALERTA_INPUT_FINGERPRINT` are supplied per invocation by the runner.
+
+- `--load false`: runs analysis, produces `.RData` and SQL update files, but does
+  NOT apply SQL to PostgreSQL. Map generation is skipped because maps query
+  PostgreSQL `Historico_alerta`, which still contains data from previous weeks.
+- `--load true`: runs analysis, applies generated SQL to PostgreSQL, then
+  generates BR and state incidence maps from the refreshed database tables.
+  It requires nonempty current-run dengue and chik SQL before applying either
+  file; missing SQL fails the job before any SQL application.
+
+The older `pipeline.refresh-alertas-full` remains the host-only operational
+task because it intentionally publishes into the sibling checkout and invokes
+its history-update script.
+
+The three Sugar profiles use the same one-shot `analysis` service and separate
+external Infodengue networks:
+
+| Profile | Overlay | Default external network |
+| --- | --- | --- |
+| dev | `containers/compose-dev.yaml` | `infodengue-dev_infodengue` |
+| staging | `containers/compose-staging.yaml` | `infodengue-staging_infodengue` |
+| prod | `containers/compose-prod.yaml` | `infodengue-prod_infodengue` |
+
+Each overlay passes `ALERTA_DB_*` values into the container. A shell-level
+`INFODENGUE_NETWORK` override can select another external network for one
+command. See the [README](../README.md) for the exact build, check, analysis,
+and SQL loading sequence. External runner semantics are in the
+[job contract](JOB_CONTRACT.md).

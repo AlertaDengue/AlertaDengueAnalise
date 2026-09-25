@@ -6,16 +6,16 @@ dependencies:
   - python
   - pip
   - git
+  - postgresql
 
-  # Build toolchain (only used when a CRAN package has native code)
   - pkg-config
   - make
   - cmake
   - c-compiler
   - cxx-compiler
   - gfortran
+  - libgcc
 
-  # System libs commonly needed by R packages
   - zlib
   - libpng
   - libjpeg-turbo
@@ -31,10 +31,8 @@ dependencies:
   - gmp
   - mpfr
 
-  # R runtime
   - r-base
 
-  # Core R packages (prebuilt on conda-forge)
   - r-foreign
   - r-forecast
   - r-rpostgresql
@@ -51,13 +49,11 @@ dependencies:
   - r-remotes
   - r-testthat
 
-  # Critical: avoid source build of RCurl/GMP
   - r-rcurl
   - r-curl
   - r-gmp
   - r-rmpfr
 
-  # Reporting stack (only if you really need it)
   - pandoc
   - r-knitr
   - r-rmarkdown
@@ -78,4 +74,5 @@ dependencies:
   - r-fmesher
   - pip:
       - click>=8.1,<9
+      - containers-sugar >=1.19,<2.0
       - makim==1.27.0
