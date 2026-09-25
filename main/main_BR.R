@@ -176,6 +176,7 @@ script_dir <- if (length(file_arg)) {
 repo_root <- find_repo_root(script_dir)
 setwd(repo_root)
 log_msg("Repo root: ", repo_root)
+source(file.path(repo_root, "main", "artifact_guard.R"))
 
 # Carrega a configuração global do pipeline (lista de estados, funções, libs).
 cfg_path <- if (file.exists(file.path(repo_root, "config",
@@ -414,6 +415,16 @@ n_states <- nrow(estados_Infodengue)
 if (n_states == 0) {
   stop("No states selected for execution.", call. = FALSE)
 }
+
+expected_state_files <- selected_state_output_paths(
+  alertas_dir,
+  report_epiweek,
+  as.character(estados_Infodengue$sigla)
+)
+expected_br_file <- br_output_path(br_dir, report_epiweek)
+clear_generated_artifacts(expected_state_files)
+clear_generated_artifacts(expected_br_file)
+clear_generated_artifacts(generated_sql_paths(sql_dir))
 
 log_msg("Starting pipeline for ", n_states, " state row(s)")
 
@@ -779,12 +790,9 @@ if (any(failed_states)) {
 t2 <- Sys.time()
 log_msg("Pipeline loop finished. Elapsed: ", as.character(t2 - t1))
 
-# Agregação dos resultados salvos em alertas_dir para geração dos outputs finais.
-log_msg("Loading .RData outputs from: ", alertas_dir)
-file_paths <- list.files(alertas_dir, full.names = TRUE, pattern = "\\.RData$")
-if (length(file_paths) == 0) {
-  stop("No .RData files found in: ", alertas_dir, call. = FALSE)
-}
+# Agrega somente os outputs dos estados selecionados nesta execução.
+file_paths <- require_current_artifacts(expected_state_files, "state RData")
+log_msg("Loading current-run .RData outputs from: ", alertas_dir)
 
 load_state_result <- function(path) {
   env <- new.env(parent = emptyenv())
@@ -952,11 +960,12 @@ safe_gc()
 if (is.null(d)) {
   log_msg("No 'ale.*' data found. Skipping BR RData.", level = "WARN")
 } else {
-  out_br <- file.path(br_dir, paste0("ale-BR-", report_epiweek, ".RData"))
-  log_msg("Saving BR RData: ", out_br)
-  save(d, file = out_br)
+  log_msg("Saving BR RData: ", expected_br_file)
+  save(d, file = expected_br_file)
   rm(d)
   safe_gc()
 }
+
+require_current_artifacts(expected_br_file, "BR RData")
 
 log_msg("DONE")

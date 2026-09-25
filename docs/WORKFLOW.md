@@ -73,18 +73,25 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
    * Results are saved as `.RData` files under:
      `main/alertas/YYYYWW/`
+   * Before state execution, the pipeline removes existing output files for
+     the selected states and week. Other state files are left in place.
 
 8. **Build consolidated outputs**
    After all states finish:
 
-   * The pipeline loads all state `.RData` files for the week.
+   * The pipeline requires and loads only the current run's selected-state
+     `.RData` files. Stale files for other states cannot enter consolidation.
    * It consolidates tables (e.g., dengue/chik/zika historical tables).
-   * It writes SQL scripts to `main/sql/`.
+   * It clears the three generated disease SQL paths before execution and
+     writes current-run SQL scripts to `main/sql/`.
 
 9. **Generate BR-level artifact**
 
    * A consolidated `.RData` is saved under:
      `main/alertas/BR/`
+   * The current week's previous BR file is removed before execution. The
+     pipeline requires a newly written nonempty BR file before completion;
+     other weeks' BR files are untouched.
 
 10. **Generate Incidence Maps (Optional)**
 
@@ -154,6 +161,8 @@ including job-level output-validation errors. Optional `ALERTA_JOB_ID` and
   PostgreSQL `Historico_alerta`, which still contains data from previous weeks.
 - `--load true`: runs analysis, applies generated SQL to PostgreSQL, then
   generates BR and state incidence maps from the refreshed database tables.
+  It requires nonempty current-run dengue and chik SQL before applying either
+  file; missing SQL fails the job before any SQL application.
 
 The older `pipeline.refresh-alertas-full` remains the host-only operational
 task because it intentionally publishes into the sibling checkout and invokes

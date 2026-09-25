@@ -193,6 +193,7 @@ groups:
 
           DENGUE_SQL="${SQL_DIR}/output_dengue.sql"
           CHIK_SQL="${SQL_DIR}/output_chik.sql"
+          ZIKA_SQL="${SQL_DIR}/output_zika.sql"
 
           DB_HOST="${ALERTA_DB_HOST:-${DB_HOST:-}}"
           DB_PORT="${ALERTA_DB_PORT:-${DB_PORT:-5432}}"
@@ -240,6 +241,8 @@ groups:
             echo "[II] states=ALL" | tee -a "${LOG_FILE}"
           fi
 
+          rm -f -- "${DENGUE_SQL}" "${CHIK_SQL}" "${ZIKA_SQL}"
+
           ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla main/main_BR.R 2>&1 | \
             tee -a "${LOG_FILE}"
@@ -249,35 +252,34 @@ groups:
             exit 0
           fi
 
-          if [ -f "${DENGUE_SQL}" ]; then
-            echo "[II] applying ${DENGUE_SQL}" | tee -a "${LOG_FILE}"
-            PGPASSWORD="${DB_PASS}" \
-              psql \
-                -v ON_ERROR_STOP=1 \
-                -h "${DB_HOST}" \
-                -p "${DB_PORT}" \
-                -U "${DB_USER}" \
-                -d "${DB_NAME}" \
-                -f "${DENGUE_SQL}" 2>&1 | \
-              tee -a "${LOG_FILE}"
-          else
-            echo "[WW] ${DENGUE_SQL} not found, skipping." | tee -a "${LOG_FILE}"
-          fi
+          for REQUIRED_SQL in "${DENGUE_SQL}" "${CHIK_SQL}"; do
+            if [ ! -s "${REQUIRED_SQL}" ]; then
+              echo "ERRO: required current-run SQL missing or empty: ${REQUIRED_SQL}" | tee -a "${LOG_FILE}"
+              exit 1
+            fi
+          done
 
-          if [ -f "${CHIK_SQL}" ]; then
-            echo "[II] applying ${CHIK_SQL}" | tee -a "${LOG_FILE}"
-            PGPASSWORD="${DB_PASS}" \
-              psql \
-                -v ON_ERROR_STOP=1 \
-                -h "${DB_HOST}" \
-                -p "${DB_PORT}" \
-                -U "${DB_USER}" \
-                -d "${DB_NAME}" \
-                -f "${CHIK_SQL}" 2>&1 | \
-              tee -a "${LOG_FILE}"
-          else
-            echo "[WW] ${CHIK_SQL} not found, skipping." | tee -a "${LOG_FILE}"
-          fi
+          echo "[II] applying ${DENGUE_SQL}" | tee -a "${LOG_FILE}"
+          PGPASSWORD="${DB_PASS}" \
+            psql \
+              -v ON_ERROR_STOP=1 \
+              -h "${DB_HOST}" \
+              -p "${DB_PORT}" \
+              -U "${DB_USER}" \
+              -d "${DB_NAME}" \
+              -f "${DENGUE_SQL}" 2>&1 | \
+            tee -a "${LOG_FILE}"
+
+          echo "[II] applying ${CHIK_SQL}" | tee -a "${LOG_FILE}"
+          PGPASSWORD="${DB_PASS}" \
+            psql \
+              -v ON_ERROR_STOP=1 \
+              -h "${DB_HOST}" \
+              -p "${DB_PORT}" \
+              -U "${DB_USER}" \
+              -d "${DB_NAME}" \
+              -f "${CHIK_SQL}" 2>&1 | \
+            tee -a "${LOG_FILE}"
 
           echo "[II] refresh-alertas completed successfully." | tee -a "${LOG_FILE}"
 
@@ -559,8 +561,8 @@ groups:
             echo "ERRO: nenhum RData estadual foi gerado em ${OUT_BASE}/alertas/${WEEK}." | tee -a "${LOG_FILE}"
             exit 1
           fi
-          if [ ! -f "${OUT_BASE}/alertas/BR/ale-BR-${WEEK}.RData" ]; then
-            echo "ERRO: RData consolidado BR não encontrado." | tee -a "${LOG_FILE}"
+          if [ ! -s "${OUT_BASE}/alertas/BR/ale-BR-${WEEK}.RData" ]; then
+            echo "ERRO: RData consolidado BR ausente ou vazio." | tee -a "${LOG_FILE}"
             exit 1
           fi
           if [ -z "$(find "${OUT_BASE}/sql" -name 'output_*.sql' -print -quit)" ]; then

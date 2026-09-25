@@ -47,9 +47,9 @@ execution, state-level parallelism, PostgreSQL reads, R/INLA execution,
 generated `.RData` and SQL, optional SQL application, map generation, analysis
 logs, and process exit status.
 
-The runtime must not require an AlertaDengue checkout, an AlertFlow checkout,
-another sibling repository or repository mount, Celery, RabbitMQ, Airflow, or
-an ingestion model.
+The `pipeline.refresh-alertas-job` OCI runtime must not require an
+AlertaDengue checkout, an AlertFlow checkout, another sibling repository or
+repository mount, Celery, RabbitMQ, Airflow, or an ingestion model.
 
 ## Scalability boundary
 

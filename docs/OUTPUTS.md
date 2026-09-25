@@ -28,6 +28,8 @@ Example:
 
 These `.RData` files contain the per-state computed results (alerts and
 historical tables) used later for SQL generation and BR aggregation.
+Consolidation reads only the selected states' files from the current run.
+Previous files for other states in the same week directory are ignored.
 
 ## 2) SQL scripts
 
@@ -51,6 +53,9 @@ Notes:
   may not be generated.
 - Empty or missing SQL files usually indicate that the pipeline did not reach
   the consolidation stage or that no valid disease tables were produced.
+- The pipeline clears only `output_dengue.sql`, `output_chik.sql`, and
+  `output_zika.sql` before generating current-run SQL. A `--load true` refresh
+  requires nonempty current-run dengue and chik SQL before applying either.
 
 ## 3) BR consolidated artifact
 
@@ -71,6 +76,8 @@ Example:
 - `main/alertas/BR/ale-BR-202601.RData`
 
 This file is intended for downstream reporting/boletins workflows.
+The current week's previous BR file is cleared before analysis. Completion
+requires a newly written nonempty file; BR files for other weeks remain.
 
 ## Verifying outputs after a run
 
