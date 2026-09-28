@@ -1,0 +1,17 @@
+services:
+  analysis:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile
+    image: ${ALERTA_ANALYSIS_IMAGE:-alertadengueanalise:local}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    command: ["makim", "--help"]
+    environment:
+      ALERTA_OUT_DIR: /outputs
+      ALERTA_JOB_ID: ${ALERTA_JOB_ID:-}
+      ALERTA_INPUT_FINGERPRINT: ${ALERTA_INPUT_FINGERPRINT:-}
+    volumes:
+      - ${ALERTA_OUTPUT_DIR:-../artifacts}:/outputs
+    restart: "no"
+    stdin_open: false
+    tty: false

@@ -55,6 +55,41 @@ safe_gc <- function() {
   invisible(gc(verbose = FALSE))
 }
 
+normalize_state_filter <- function(raw, valid_states) {
+  if (is.null(raw) || length(raw) == 0 || is.na(raw[[1]])) {
+    raw <- ""
+  }
+  raw <- trimws(raw[[1]])
+  if (!nzchar(raw) || identical(toupper(raw), "ALL")) {
+    return(character(0))
+  }
+
+  states <- toupper(trimws(unlist(strsplit(raw, ",", fixed = TRUE))))
+  states <- unique(states[nzchar(states)])
+  invalid <- setdiff(states, valid_states)
+  if (length(invalid) > 0) {
+    stop(
+      "Invalid ALERTA_STATES value(s): ",
+      paste(invalid, collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  states
+}
+
+state_scratch_dir <- function(sig) {
+  scratch_dir <- tempfile(
+    pattern = paste0("alertadengue-", sig, "-"),
+    tmpdir = tempdir()
+  )
+  dir.create(scratch_dir, recursive = TRUE, showWarnings = FALSE)
+  if (!dir.exists(scratch_dir)) {
+    stop("Could not create state scratch directory: ", scratch_dir, call. = FALSE)
+  }
+  scratch_dir
+}
+
 format_call_stack <- function(max_calls = 20) {
   calls <- sys.calls()
   if (length(calls) == 0) {
@@ -141,6 +176,7 @@ script_dir <- if (length(file_arg)) {
 repo_root <- find_repo_root(script_dir)
 setwd(repo_root)
 log_msg("Repo root: ", repo_root)
+source(file.path(repo_root, "main", "artifact_guard.R"))
 
 # Carrega a configuração global do pipeline (lista de estados, funções, libs).
 cfg_path <- if (file.exists(file.path(repo_root, "config",
@@ -357,24 +393,12 @@ t1 <- Sys.time()
 
 # Filtro de estados (opcional)
 states_filter_raw <- get_env_any(c("ALERTA_STATES"), default = "")
-states_filter <- character(0)
+states_filter <- normalize_state_filter(
+  states_filter_raw,
+  estados_Infodengue$sigla
+)
 
-if (nzchar(states_filter_raw)) {
-  states_filter <- unlist(strsplit(states_filter_raw, ",", fixed = TRUE))
-  states_filter <- trimws(states_filter)
-  states_filter <- toupper(states_filter)
-  states_filter <- states_filter[nzchar(states_filter)]
-  states_filter <- unique(states_filter)
-
-  invalid_states <- setdiff(states_filter, estados_Infodengue$sigla)
-  if (length(invalid_states) > 0) {
-    stop(
-      "Invalid ALERTA_STATES value(s): ",
-      paste(invalid_states, collapse = ", "),
-      call. = FALSE
-    )
-  }
-
+if (length(states_filter) > 0) {
   estados_Infodengue <- estados_Infodengue[
     estados_Infodengue$sigla %in% states_filter,
     ,
@@ -391,6 +415,16 @@ n_states <- nrow(estados_Infodengue)
 if (n_states == 0) {
   stop("No states selected for execution.", call. = FALSE)
 }
+
+expected_state_files <- selected_state_output_paths(
+  alertas_dir,
+  report_epiweek,
+  as.character(estados_Infodengue$sigla)
+)
+expected_br_file <- br_output_path(br_dir, report_epiweek)
+clear_generated_artifacts(expected_state_files)
+clear_generated_artifacts(expected_br_file)
+clear_generated_artifacts(generated_sql_paths(sql_dir))
 
 log_msg("Starting pipeline for ", n_states, " state row(s)")
 
@@ -566,6 +600,17 @@ run_state_pipeline <- function(i) {
   estado <- as.character(row_i$estado)
   sig <- as.character(row_i$sigla)
   current_step <- "initializing"
+  scratch_dir <- state_scratch_dir(sig)
+  original_wd <- getwd()
+  setwd(scratch_dir)
+  on.exit(
+    {
+      try(setwd(original_wd), silent = TRUE)
+      try(unlink(scratch_dir, recursive = TRUE, force = TRUE), silent = TRUE)
+    },
+    add = TRUE
+  )
+  log_msg("[state] ", sig, " scratch dir: ", scratch_dir)
 
   tryCatch(
     {
@@ -745,12 +790,9 @@ if (any(failed_states)) {
 t2 <- Sys.time()
 log_msg("Pipeline loop finished. Elapsed: ", as.character(t2 - t1))
 
-# Agregação dos resultados salvos em alertas_dir para geração dos outputs finais.
-log_msg("Loading .RData outputs from: ", alertas_dir)
-file_paths <- list.files(alertas_dir, full.names = TRUE, pattern = "\\.RData$")
-if (length(file_paths) == 0) {
-  stop("No .RData files found in: ", alertas_dir, call. = FALSE)
-}
+# Agrega somente os outputs dos estados selecionados nesta execução.
+file_paths <- require_current_artifacts(expected_state_files, "state RData")
+log_msg("Loading current-run .RData outputs from: ", alertas_dir)
 
 load_state_result <- function(path) {
   env <- new.env(parent = emptyenv())
@@ -918,11 +960,12 @@ safe_gc()
 if (is.null(d)) {
   log_msg("No 'ale.*' data found. Skipping BR RData.", level = "WARN")
 } else {
-  out_br <- file.path(br_dir, paste0("ale-BR-", report_epiweek, ".RData"))
-  log_msg("Saving BR RData: ", out_br)
-  save(d, file = out_br)
+  log_msg("Saving BR RData: ", expected_br_file)
+  save(d, file = expected_br_file)
   rm(d)
   safe_gc()
 }
+
+require_current_artifacts(expected_br_file, "BR RData")
 
 log_msg("DONE")
