@@ -15,7 +15,8 @@ maps. The container runs one analysis job and exits.
 
 ## Environment configuration
 
-Set deployment-specific values in the shell, then materialize the tracked
+Provision the repository-root `.env` once per deployment/server. During setup,
+set deployment-specific values in the shell, then materialize the tracked
 placeholder template with `envsubst`:
 
 ```bash
@@ -37,11 +38,25 @@ mkdir -p artifacts
 ```
 
 `.env.tpl` is tracked and contains deployment placeholders only. `.env` is
-generated locally and gitignored. Keep deployment values in the shell or
-deployment environment; never commit secrets. Optional `ALERTA_JOB_ID` and
-`ALERTA_INPUT_FINGERPRINT` identify one invocation and are supplied by its
-runner, outside the long-lived `.env`. Each Sugar profile uses a separate
-external Infodengue network by default:
+generated locally and gitignored; never commit secrets. Sugar explicitly loads
+this file for dev, staging, and prod, including in a clean non-interactive shell.
+Operators and automation do not need to source `.env` or export DB variables
+before each Sugar command. Do not regenerate `.env` for each analysis job.
+Missing or empty DB host, name, user, or password fails during Compose rendering
+with a deployment configuration error. The existing `DB_*` fallback remains
+supported; the DB port defaults to `5432`.
+
+For staging, configure `ALERTA_DB_HOST=postgres` and `ALERTA_DB_PORT=5432`
+in the deployment `.env`. The container reaches PostgreSQL through the shared
+Docker network; use its service hostname rather than the public VPS address.
+
+Optional `ALERTA_JOB_ID` and `ALERTA_INPUT_FINGERPRINT` identify one invocation
+and are supplied by its runner, outside the long-lived `.env` and `.env.tpl`.
+Shell/process values take precedence over deployment file values. Set
+`ALERTA_OUTPUT_DIR` per job to override the deployment output directory;
+Compose passes the optional metadata into the container and mounts that host
+directory at `/outputs`. Each Sugar profile uses a separate external
+Infodengue network by default:
 
 | Profile | Default network |
 | --- | --- |
@@ -81,8 +96,9 @@ can apply SQL with `--load true`; review its target before doing so.
 ## Container execution
 
 Sugar uses `containers/compose.yaml` plus the chosen profile's network and DB
-overlay. The `analysis` service is a one-shot batch job, not a persistent
-daemon. Use `compose run` for each operation; `docker compose up` is not the
+overlay, with the repository-root `.env` supplied automatically. The `analysis`
+service is a one-shot batch job, not a persistent daemon. Use `compose run` for
+each operation; `docker compose up` is not the
 normal analysis workflow.
 
 ### Build
@@ -102,6 +118,17 @@ sugar --profile dev compose run \
 The image defaults to `alertadengueanalise:local` and is shared by all profiles.
 Set `ALERTA_ANALYSIS_IMAGE` to select another OCI image. The profile selects
 runtime network and database environment wiring.
+
+Validate deployment environment loading without starting a container or
+connecting to PostgreSQL (requires R `testthat`, `yaml`, Sugar, and Compose):
+
+```bash
+Rscript --vanilla -e 'testthat::test_file("tests/testthat/test-compose-env.R", stop_on_failure = TRUE)'
+```
+
+This test renders the real Compose profiles with a temporary fake `.env`,
+checks runtime overrides and missing configuration, and never reads deployment
+credentials.
 
 ### Development
 

@@ -177,7 +177,18 @@ external Infodengue networks:
 | staging | `containers/compose-staging.yaml` | `infodengue-staging_infodengue` |
 | prod | `containers/compose-prod.yaml` | `infodengue-prod_infodengue` |
 
-Each overlay passes `ALERTA_DB_*` values into the container. A shell-level
+Sugar loads the repository-root `.env` automatically at both configuration and
+profile levels. Provision it once per deployment/server using
+`.env.tpl` and `envsubst`; no manual sourcing or DB exports are needed for each
+job. Each overlay passes `ALERTA_DB_*` values into the container, retains the
+legacy `DB_*` fallback, and rejects missing or empty host, name, user, and
+password during Compose rendering. The port defaults to `5432`. Staging uses
+`postgres:5432` on its external Docker network.
+
+Process environment values override deployment values. The runner can supply
+`ALERTA_OUTPUT_DIR` for an isolated host mount and `ALERTA_JOB_ID` and
+`ALERTA_INPUT_FINGERPRINT` for metadata passed into the container. Do not put
+job metadata into `.env.tpl` or regenerate `.env` per invocation. A shell-level
 `INFODENGUE_NETWORK` override can select another external network for one
 command. See the [README](../README.md) for the exact build, check, analysis,
 and SQL loading sequence. External runner semantics are in the

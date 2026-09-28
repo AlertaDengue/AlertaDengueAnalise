@@ -1,4 +1,5 @@
 backend: compose
+env-file: .env
 
 defaults:
   profile: dev
@@ -7,6 +8,7 @@ defaults:
 profiles:
   dev:
     project-name: alertadengueanalise-dev
+    env-file: .env
     config-path:
       - containers/compose.yaml
       - containers/compose-dev.yaml
@@ -17,6 +19,7 @@ profiles:
         - name: analysis
   staging:
     project-name: alertadengueanalise-staging
+    env-file: .env
     config-path:
       - containers/compose.yaml
       - containers/compose-staging.yaml
@@ -27,6 +30,7 @@ profiles:
         - name: analysis
   prod:
     project-name: alertadengueanalise-prod
+    env-file: .env
     config-path:
       - containers/compose.yaml
       - containers/compose-prod.yaml

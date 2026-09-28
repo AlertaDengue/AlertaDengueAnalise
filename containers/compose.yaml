@@ -8,6 +8,8 @@ services:
     command: ["makim", "--help"]
     environment:
       ALERTA_OUT_DIR: /outputs
+      ALERTA_JOB_ID: ${ALERTA_JOB_ID:-}
+      ALERTA_INPUT_FINGERPRINT: ${ALERTA_INPUT_FINGERPRINT:-}
     volumes:
       - ${ALERTA_OUTPUT_DIR:-../artifacts}:/outputs
     restart: "no"
