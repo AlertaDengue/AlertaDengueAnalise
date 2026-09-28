@@ -42,9 +42,10 @@ generated locally and gitignored; never commit secrets. Sugar explicitly loads
 this file for dev, staging, and prod, including in a clean non-interactive shell.
 Operators and automation do not need to source `.env` or export DB variables
 before each Sugar command. Do not regenerate `.env` for each analysis job.
-Missing or empty DB host, name, user, or password fails during Compose rendering
-with a deployment configuration error. The existing `DB_*` fallback remains
-supported; the DB port defaults to `5432`.
+Compose requires nonempty `ALERTA_DB_HOST`, `ALERTA_DB_NAME`, `ALERTA_DB_USER`,
+and `ALERTA_DB_PASSWORD`; missing or empty values fail during rendering.
+`ALERTA_DB_PORT` defaults to `5432`. Deployment overlays accept only
+`ALERTA_DB_*` values and do not use legacy `DB_*` variables.
 
 For staging, configure `ALERTA_DB_HOST=postgres` and `ALERTA_DB_PORT=5432`
 in the deployment `.env`. The container reaches PostgreSQL through the shared
