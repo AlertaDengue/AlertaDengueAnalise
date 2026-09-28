@@ -47,7 +47,8 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
    * The pipeline prefers `ALERTA_DB_HOST`, `ALERTA_DB_PORT`,
      `ALERTA_DB_NAME`, `ALERTA_DB_USER`, and `ALERTA_DB_PASSWORD`.
-     The corresponding `DB_*` names remain compatible.
+     Direct host execution also accepts the corresponding legacy `DB_*`
+     names; Compose deployments require `ALERTA_DB_*` values.
    * A successful connection is required before data extraction.
 
 6. **Run per-state processing**
@@ -180,9 +181,10 @@ external Infodengue networks:
 Sugar loads the repository-root `.env` automatically at both configuration and
 profile levels. Provision it once per deployment/server using
 `.env.tpl` and `envsubst`; no manual sourcing or DB exports are needed for each
-job. Each overlay passes `ALERTA_DB_*` values into the container, retains the
-legacy `DB_*` fallback, and rejects missing or empty host, name, user, and
-password during Compose rendering. The port defaults to `5432`. Staging uses
+job. Each overlay passes only `ALERTA_DB_*` values into the container and
+rejects missing or empty `ALERTA_DB_HOST`, `ALERTA_DB_NAME`, `ALERTA_DB_USER`,
+and `ALERTA_DB_PASSWORD` during Compose rendering. Legacy `DB_*` variables
+are not used by the overlays. `ALERTA_DB_PORT` defaults to `5432`. Staging uses
 `postgres:5432` on its external Docker network.
 
 Process environment values override deployment values. The runner can supply
