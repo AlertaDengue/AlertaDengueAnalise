@@ -20,7 +20,7 @@ expect_install_args <- function(args, repo, ref, force) {
 
 test_that("AlertTools uses the required production SHA", {
   installer <- load_installer()
-  expect_identical(installer$ALERTTOOLS_REF, "9199ac34e066a5617985ce5b73003b47056bcd6d")
+  expect_identical(installer$ALERTTOOLS_REF, "80714262d1ffd20bf20c4ec37b6e84cbbd3f10b5")
 })
 
 test_that("installed_github_sha uses RemoteSha before GithubSHA1", {

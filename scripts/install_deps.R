@@ -5,7 +5,7 @@ options(
   Ncpus = 1
 )
 
-ALERTTOOLS_REF <- "9199ac34e066a5617985ce5b73003b47056bcd6d"
+ALERTTOOLS_REF <- "80714262d1ffd20bf20c4ec37b6e84cbbd3f10b5"
 
 is_installed <- function(pkg) {
   requireNamespace(pkg, quietly = TRUE)
