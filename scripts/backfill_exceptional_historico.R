@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-# One-time, insert-only dengue history backfill for issue 1129.
+# One-time, insert-only dengue and chikungunya history backfill for issue 1129.
 # Run with --week YYYYWW; --apply is required for any database write.
 
 targets <- data.frame(
@@ -15,6 +15,13 @@ targets <- data.frame(
   start_se = c(201001L, 201001L, 201001L, 201001L, 202124L,
                202124L, 201001L, 201001L, 201001L),
   end_se = rep(202341L, 9L)
+)
+
+diseases <- list(
+  dengue = list(cid10 = "A90", table = "Historico_alerta",
+                constraint = "alertas_unicos"),
+  chikungunya = list(cid10 = "A92.0", table = "Historico_alerta_chik",
+                     constraint = "alertas_unicos_chik")
 )
 
 parse_args <- function(args) {
@@ -42,13 +49,13 @@ calendar_weeks <- function(start_se, end_se) {
   as.integer(weeks)
 }
 
-validate_rows <- function(rows, target) {
+validate_rows <- function(rows, target, disease) {
   weeks <- calendar_weeks(target$start_se, target$end_se)
   required <- c("SE", "municipio_geocodigo", "CID10", "Localidade_id", "data_iniSE")
   if (!is.data.frame(rows) || !all(required %in% names(rows)) ||
       nrow(rows) != length(weeks) || anyNA(rows[, required]) ||
       any(rows$municipio_geocodigo != target$municipio_geocodigo) ||
-      any(rows$CID10 != "A90") || any(rows$Localidade_id != 0L) ||
+      any(rows$CID10 != disease$cid10) || any(rows$Localidade_id != 0L) ||
       any(rows$SE < target$start_se | rows$SE > target$end_se) ||
       anyDuplicated(rows[c("SE", "municipio_geocodigo", "Localidade_id")]) ||
       !setequal(as.integer(rows$SE), weeks) ||
@@ -72,13 +79,29 @@ validate_rows <- function(rows, target) {
   invisible(TRUE)
 }
 
-existing_rows <- function(con, target) {
-  DBI::dbGetQuery(con, paste0(
-    'SELECT "SE", municipio_geocodigo, "Localidade_id", xmin::text AS row_version ',
-    'FROM "Municipio"."Historico_alerta" WHERE municipio_geocodigo = ',
+validate_existing_dates <- function(rows, target, disease) {
+  if (!nrow(rows)) return(invisible(TRUE))
+  expected <- as.Date(AlertTools::SE2date(as.integer(rows$SE))$ini)
+  actual <- as.Date(rows$data_iniSE)
+  bad <- which(is.na(expected) | is.na(actual) | actual != expected)
+  if (length(bad)) {
+    stop("Invalid existing data_iniSE in ", disease$table, " (", disease$cid10,
+         ") for municipality ", target$municipio_geocodigo,
+         " SE ", rows$SE[[bad[[1L]]]], call. = FALSE)
+  }
+  invisible(TRUE)
+}
+
+existing_rows <- function(con, target, disease) {
+  rows <- DBI::dbGetQuery(con, paste0(
+    'SELECT "SE", municipio_geocodigo, "Localidade_id", "data_iniSE", ',
+    'xmin::text AS row_version FROM "Municipio"."', disease$table,
+    '" WHERE municipio_geocodigo = ',
     target$municipio_geocodigo, ' AND "SE" BETWEEN ', target$start_se,
     ' AND ', target$end_se, ' AND "Localidade_id" = 0 ORDER BY "SE"'
   ))
+  validate_existing_dates(rows, target, disease)
+  rows
 }
 
 missing_rows <- function(rows, existing) {
@@ -100,7 +123,8 @@ source_columns <- c(
   'umid_max', 'receptivo', 'transmissao', 'nivel_inc'
 )
 
-insert_sql <- function(con, row, quote_string = function(x) DBI::dbQuoteString(con, x)) {
+insert_sql <- function(con, row, disease,
+                       quote_string = function(x) DBI::dbQuoteString(con, x)) {
   if (nrow(row) != 1L || !all(source_columns %in% names(row))) {
     stop("Incomplete historical row", call. = FALSE)
   }
@@ -111,10 +135,10 @@ insert_sql <- function(con, row, quote_string = function(x) DBI::dbQuoteString(c
     }
     as.character(quote_string(as.character(value)))
   }, character(1L))
-  paste0('INSERT INTO "Municipio"."Historico_alerta" (',
+  paste0('INSERT INTO "Municipio"."', disease$table, '" (',
          paste(insert_columns, collapse = ", "), ') VALUES (',
          paste(values, collapse = ", "),
-         ') ON CONFLICT ON CONSTRAINT alertas_unicos DO NOTHING')
+         ') ON CONFLICT ON CONSTRAINT ', disease$constraint, ' DO NOTHING')
 }
 
 preflight <- function(con) {
@@ -133,13 +157,19 @@ preflight <- function(con) {
     print(old, row.names = FALSE)
     stop("Notifications remain under invalid geocodes", call. = FALSE)
   }
-  source <- DBI::dbGetQuery(con, paste0(
-    'SELECT municipio_geocodigo, COUNT(*) AS n FROM "Municipio"."Notificacao" ',
-    "WHERE cid10_codigo = 'A90' AND municipio_geocodigo IN (", codes,
-    ') GROUP BY municipio_geocodigo'
-  ))
-  absent <- setdiff(targets$municipio_geocodigo, source$municipio_geocodigo)
-  if (length(absent)) stop("No source A90 notifications for: ", paste(absent, collapse = ", "))
+  for (name in names(diseases)) {
+    disease <- diseases[[name]]
+    source <- DBI::dbGetQuery(con, paste0(
+      'SELECT municipio_geocodigo, COUNT(*) AS n FROM "Municipio"."Notificacao" ',
+      "WHERE cid10_codigo = '", disease$cid10, "' AND municipio_geocodigo IN (", codes,
+      ') GROUP BY municipio_geocodigo'
+    ))
+    absent <- setdiff(targets$municipio_geocodigo, source$municipio_geocodigo)
+    if (length(absent)) {
+      stop("No source ", name, " (", disease$cid10, ") notifications for: ",
+           paste(absent, collapse = ", "), call. = FALSE)
+    }
+  }
 }
 
 nowcasting_mode <- function() {
@@ -199,31 +229,32 @@ run_backfill <- function(week, apply = FALSE) {
   oldwd <- getwd()
   setwd(scratch)
   on.exit({setwd(oldwd); unlink(scratch, recursive = TRUE)}, add = TRUE)
-  generated <- vector("list", nrow(targets))
-  summary <- targets[c("municipio_geocodigo", "start_se", "end_se")]
-  summary$expected <- 0L
-  summary$generated <- 0L
-  summary$existing <- 0L
-  summary$missing <- 0L
-  summary$start_date <- as.Date(NA)
-  summary$end_date <- as.Date(NA)
-  for (i in seq_len(nrow(targets))) {
-    target <- targets[i, ]
-    cat("Generating ", target$municipio_geocodigo, " (", target$uf, ")\n", sep = "")
-    result <- pipe_infodengue(target$municipio_geocodigo, cid10 = "A90",
-      finalday = report_end_date, narule = "arima", iniSE = 201001,
-      dataini = "sinpri", completetail = 0, nowcasting = mode,
-      firstday = source_firstday)
-    rows <- tabela_historico(result, iniSE = target$start_se, lastSE = target$end_se)
-    validate_rows(rows, target)
-    generated[[i]] <- rows
-    existing <- existing_rows(con, target)
-    summary$expected[i] <- length(calendar_weeks(target$start_se, target$end_se))
-    summary$generated[i] <- nrow(rows)
-    summary$existing[i] <- nrow(existing)
-    summary$missing[i] <- nrow(missing_rows(rows, existing))
-    summary$start_date[i] <- min(as.Date(rows$data_iniSE))
-    summary$end_date[i] <- max(as.Date(rows$data_iniSE))
+  generated <- list()
+  summary <- NULL
+  for (name in names(diseases)) {
+    disease <- diseases[[name]]
+    generated[[name]] <- vector("list", nrow(targets))
+    for (i in seq_len(nrow(targets))) {
+      target <- targets[i, ]
+      cat("Generating ", name, " ", target$municipio_geocodigo,
+          " (", target$uf, ")\n", sep = "")
+      result <- pipe_infodengue(target$municipio_geocodigo, cid10 = disease$cid10,
+        finalday = report_end_date, narule = "arima", iniSE = 201001,
+        dataini = "sinpri", completetail = 0, nowcasting = mode,
+        firstday = source_firstday)
+      rows <- tabela_historico(result, iniSE = target$start_se, lastSE = target$end_se)
+      validate_rows(rows, target, disease)
+      generated[[name]][[i]] <- rows
+      existing <- existing_rows(con, target, disease)
+      summary <- rbind(summary, data.frame(
+        disease = name, municipio_geocodigo = target$municipio_geocodigo,
+        start_se = target$start_se, end_se = target$end_se,
+        expected = length(calendar_weeks(target$start_se, target$end_se)),
+        generated = nrow(rows), existing = nrow(existing),
+        missing = nrow(missing_rows(rows, existing)),
+        start_date = min(as.Date(rows$data_iniSE)),
+        end_date = max(as.Date(rows$data_iniSE))))
+    }
   }
   old_width <- getOption("width")
   options(width = 180)
@@ -240,20 +271,24 @@ run_backfill <- function(week, apply = FALSE) {
   on.exit(if (!committed) DBI::dbRollback(con), add = TRUE)
   inserted <- 0L
   transaction_missing <- 0L
-  for (i in seq_len(nrow(targets))) {
-    target <- targets[i, ]
-    before <- existing_rows(con, target)
-    missing <- missing_rows(generated[[i]], before)
-    transaction_missing <- transaction_missing + nrow(missing)
-    for (j in seq_len(nrow(missing))) {
-      inserted <- inserted + DBI::dbExecute(con, insert_sql(con, missing[j, , drop = FALSE]))
-    }
-    after <- existing_rows(con, target)
-    if (anyDuplicated(after[c("SE", "municipio_geocodigo", "Localidade_id")]) ||
-        !identical(as.integer(after$SE), calendar_weeks(target$start_se, target$end_se)) ||
-        !identical(before$row_version, after$row_version[match(before$SE, after$SE)]) ||
-        (nrow(after) - nrow(before)) != nrow(missing)) {
-      stop("Transaction validation failed for ", target$municipio_geocodigo, call. = FALSE)
+  for (name in names(diseases)) {
+    disease <- diseases[[name]]
+    for (i in seq_len(nrow(targets))) {
+      target <- targets[i, ]
+      before <- existing_rows(con, target, disease)
+      missing <- missing_rows(generated[[name]][[i]], before)
+      transaction_missing <- transaction_missing + nrow(missing)
+      for (j in seq_len(nrow(missing))) {
+        inserted <- inserted + DBI::dbExecute(con, insert_sql(con, missing[j, , drop = FALSE], disease))
+      }
+      after <- existing_rows(con, target, disease)
+      if (anyDuplicated(after[c("SE", "municipio_geocodigo", "Localidade_id")]) ||
+          !identical(as.integer(after$SE), calendar_weeks(target$start_se, target$end_se)) ||
+          !identical(before$row_version, after$row_version[match(before$SE, after$SE)]) ||
+          (nrow(after) - nrow(before)) != nrow(missing)) {
+        stop("Transaction validation failed for ", name, " municipality ",
+             target$municipio_geocodigo, call. = FALSE)
+      }
     }
   }
   if (inserted != transaction_missing) {
