@@ -5,6 +5,7 @@ for the AlertaDengueAnalise OCI image. One invocation runs one finite analysis
 job and exits. An external runner needs only the image, PostgreSQL access, job
 arguments, and a writable `/outputs` mount. Containers Sugar is a convenience
 for repository operators; it is not part of this contract.
+The OCI runtime uses Python 3.11, matching the external analysis worker runtime.
 
 ## Inputs and results
 
