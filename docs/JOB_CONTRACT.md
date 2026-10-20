@@ -66,3 +66,7 @@ Concurrent compute jobs using `--load false` can be orchestrated independently
 when outputs are isolated. Concurrent `--load true` jobs against the same
 PostgreSQL target have not been validated. Initial external orchestration must
 serialize `--load true` jobs for the same database.
+
+The supported Conda runtime pins Python to `3.11` to match pipeline worker
+compatibility. Scientific inputs, outputs, and R/INLA dependencies are
+unchanged by that runtime constraint.
