@@ -51,6 +51,11 @@ test_that("the job persists optional correlation metadata in its refresh log", {
   dir.create(job_root)
   on.exit(unlink(job_root, recursive = TRUE), add = TRUE)
   expect_true(file.copy(file.path(root, ".makim.yaml"), job_root))
+  dir.create(file.path(job_root, "scripts"))
+  expect_true(all(file.copy(
+    file.path(root, "scripts", c("load_env.sh", "load_alertas.py")),
+    file.path(job_root, "scripts")
+  )))
   old_wd <- getwd()
   setwd(job_root)
   on.exit(setwd(old_wd), add = TRUE)

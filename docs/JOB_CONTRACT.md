@@ -34,6 +34,10 @@ Exit status `0` means the job completed successfully. A non-zero status means
 the external runner must treat it as failed. With `--load false`, the job
 generates `.RData` and SQL, does not apply SQL, and skips maps. With
 `--load true`, it applies generated SQL to PostgreSQL before generating maps.
+For a failed SQL or map stage, an operator can run `pipeline.load-alertas` or
+the map tasks against the same output mount without rerunning analysis. The
+external orchestrator's existing `refresh-alertas-job` entrypoint and flags
+remain unchanged.
 
 ## Ownership boundary
 
