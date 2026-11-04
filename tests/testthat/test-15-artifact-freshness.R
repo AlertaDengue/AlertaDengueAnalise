@@ -128,6 +128,11 @@ test_that("load refuses stale SQL when analysis regenerates none", {
   dir.create(sandbox)
   on.exit(unlink(sandbox, recursive = TRUE), add = TRUE)
   expect_true(file.copy(file.path(root, ".makim.yaml"), sandbox))
+  dir.create(file.path(sandbox, "scripts"))
+  expect_true(all(file.copy(
+    file.path(root, "scripts", c("load_env.sh", "load_alertas.py")),
+    file.path(sandbox, "scripts")
+  )))
 
   output_dir <- file.path(sandbox, "outputs")
   sql_dir <- file.path(output_dir, "sql")

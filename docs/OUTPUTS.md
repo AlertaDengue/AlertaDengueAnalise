@@ -56,6 +56,9 @@ Notes:
 - The pipeline clears only `output_dengue.sql`, `output_chik.sql`, and
   `output_zika.sql` before generating current-run SQL. A `--load true` refresh
   requires nonempty current-run dengue and chik SQL before applying either.
+- `pipeline.load-alertas --week YYYYWW` reads the existing dengue and chik
+  files from `${ALERTA_OUT_DIR:-main}/sql/` and does not regenerate them.
+  Preserve both files together for an independent retry.
 
 ## 3) BR consolidated artifact
 

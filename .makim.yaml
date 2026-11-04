@@ -51,11 +51,7 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ -f .env ]; then
-            set -a
-            . ./.env
-            set +a
-          fi
+          . scripts/load_env.sh
 
           ${CONDA_EXE:-conda} run --no-capture-output -n "${{ args.env }}" \
             Rscript --vanilla scripts/db_check.R
@@ -85,11 +81,7 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ -f .env ]; then
-            set -a
-            . ./.env
-            set +a
-          fi
+          . scripts/load_env.sh
 
           if ! [[ "${{ args.week }}" =~ ^[0-9]{6}$ ]]; then
             echo "ERRO: --week deve estar no formato YYYYWW (6 dígitos), recebido '${{ args.week }}'."
@@ -164,11 +156,7 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ -f .env ]; then
-            set -a
-            . ./.env
-            set +a
-          fi
+          . scripts/load_env.sh
 
           WEEK="${{ args.week }}"
 
@@ -194,17 +182,6 @@ groups:
           DENGUE_SQL="${SQL_DIR}/output_dengue.sql"
           CHIK_SQL="${SQL_DIR}/output_chik.sql"
           ZIKA_SQL="${SQL_DIR}/output_zika.sql"
-
-          DB_HOST="${ALERTA_DB_HOST:-${DB_HOST:-}}"
-          DB_PORT="${ALERTA_DB_PORT:-${DB_PORT:-5432}}"
-          DB_NAME="${ALERTA_DB_NAME:-${DB_NAME:-}}"
-          DB_USER="${ALERTA_DB_USER:-${DB_USER:-}}"
-          DB_PASS="${ALERTA_DB_PASSWORD:-${DB_PASSWORD:-}}"
-
-          if [ -z "${DB_HOST}" ] || [ -z "${DB_NAME}" ] || [ -z "${DB_USER}" ] || [ -z "${DB_PASS}" ]; then
-            echo "ERRO: faltam variáveis de banco. Defina ALERTA_DB_* ou DB_* no ambiente ou .env."
-            exit 2
-          fi
 
           export ALERTA_DATA_RELATORIO="${WEEK}"
           export ALERTA_REPORT_EPIWEEK="${WEEK}"
@@ -252,36 +229,28 @@ groups:
             exit 0
           fi
 
-          for REQUIRED_SQL in "${DENGUE_SQL}" "${CHIK_SQL}"; do
-            if [ ! -s "${REQUIRED_SQL}" ]; then
-              echo "ERRO: required current-run SQL missing or empty: ${REQUIRED_SQL}" | tee -a "${LOG_FILE}"
-              exit 1
-            fi
-          done
-
-          echo "[II] applying ${DENGUE_SQL}" | tee -a "${LOG_FILE}"
-          PGPASSWORD="${DB_PASS}" \
-            psql \
-              -v ON_ERROR_STOP=1 \
-              -h "${DB_HOST}" \
-              -p "${DB_PORT}" \
-              -U "${DB_USER}" \
-              -d "${DB_NAME}" \
-              -f "${DENGUE_SQL}" 2>&1 | \
-            tee -a "${LOG_FILE}"
-
-          echo "[II] applying ${CHIK_SQL}" | tee -a "${LOG_FILE}"
-          PGPASSWORD="${DB_PASS}" \
-            psql \
-              -v ON_ERROR_STOP=1 \
-              -h "${DB_HOST}" \
-              -p "${DB_PORT}" \
-              -U "${DB_USER}" \
-              -d "${DB_NAME}" \
-              -f "${CHIK_SQL}" 2>&1 | \
-            tee -a "${LOG_FILE}"
+          makim pipeline.load-alertas --week "${WEEK}" 2>&1 | tee -a "${LOG_FILE}"
 
           echo "[II] refresh-alertas completed successfully." | tee -a "${LOG_FILE}"
+
+      load-alertas:
+        help: "Validar e aplicar SQLs dengue/chik existentes sem executar análise R."
+        backend: bash
+        args:
+          week:
+            help: "Semana epidemiológica dos SQLs no formato YYYYWW."
+            type: string
+            required: true
+        run: |
+          set -euo pipefail
+          . scripts/load_env.sh
+          ROOT_DIR="$(pwd)"
+          OUT_BASE="${ALERTA_OUT_DIR:-${ROOT_DIR}/main}"
+          LOG_DIR="${ALERTA_LOG_DIR:-${OUT_BASE}/logs}"
+          mkdir -p "${LOG_DIR}"
+          LOG_FILE="${LOG_DIR}/load-alertas-${{ args.week }}-$(date +%Y%m%d-%H%M%S).log"
+          python3 scripts/load_alertas.py --week "${{ args.week }}" \
+            --sql-dir "${OUT_BASE}/sql" 2>&1 | tee -a "${LOG_FILE}"
 
       maps-state:
         help: "Gerar mapas estaduais de incidência acumulada nas últimas SEs."
@@ -314,11 +283,7 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ -f .env ]; then
-            set -a
-            . ./.env
-            set +a
-          fi
+          . scripts/load_env.sh
 
           WEEK="${{ args.week }}"
 
@@ -411,11 +376,7 @@ groups:
         run: |
           set -euo pipefail
 
-          if [ -f .env ]; then
-            set -a
-            . ./.env
-            set +a
-          fi
+          . scripts/load_env.sh
 
           WEEK="${{ args.week }}"
 
@@ -515,6 +476,7 @@ groups:
             default: "1"
         run: |
           set -euo pipefail
+          . scripts/load_env.sh
           WEEK="${{ args.week }}"
           ROOT_DIR="$(pwd)"
           OUT_BASE="${ALERTA_OUT_DIR:-${ROOT_DIR}/main}"
@@ -611,6 +573,7 @@ groups:
             default: "4"
         run: |
           set -euo pipefail
+          . scripts/load_env.sh
 
           WEEK="${{ args.week }}"
           DISEASES="${{ args.diseases }}"

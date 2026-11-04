@@ -16,10 +16,9 @@ makim pipeline.run-br --week YYYYWW --cores 4
 
 1. **Load environment variables**
 
-   * When present, Makim loads `.env` from the repository root and exports its
-     variables into the process environment. A `.env` file is optional: values
-     already supplied by the environment (for example Docker `--env-file`) are
-     used directly.
+   * When present, Makim loads `.env` from the repository root as defaults.
+     Explicit process values take precedence, including in nested Makim tasks
+     and for both map commands.
 
 2. **Set the epidemiological week**
 
@@ -111,6 +110,34 @@ makim pipeline.run-br --week YYYYWW --cores 4
       This executes `incidence_maps/state.R`.
 
     These scripts fetch data from the PostgreSQL database and use spatial data from `r_maps_scripts/dados/shape/` to produce PNG outputs in `sync_maps/incidence_maps/`.
+
+## Retry SQL loading and maps independently
+
+After a successful analysis run has produced both SQL files, apply them without
+running R again:
+
+```bash
+makim pipeline.load-alertas --week YYYYWW
+```
+
+Set `ALERTA_OUT_DIR` to the same output directory used by analysis. The loader
+requires nonempty `output_dengue.sql` and `output_chik.sql`, checks their
+expected tables and constraints, requires the requested week in both files,
+and validates each SQL statement without requiring the two diseases to have
+the same municipality/week coverage. Both files are passed to one
+`psql --single-transaction` call with
+`ON_ERROR_STOP=1`, so a failed load rolls back both. A retry can use the same
+files. Keep the output directory fixed between analysis and loading; the SQL
+files have no cryptographic run manifest.
+
+`pipeline.refresh-alertas --load` still runs analysis first and then calls the
+same loader. `pipeline.refresh-alertas-job --load true` and
+`pipeline.refresh-alertas-full` retain their existing sequential behavior.
+After loading, run `pipeline.maps-br` and `pipeline.maps-state` separately if
+maps need to be generated or retried. For `refresh-alertas-job` output mounts,
+pass `--output-dir "${ALERTA_OUT_DIR}/incidence_maps/country"` to `maps-br` and
+`--output-dir "${ALERTA_OUT_DIR}/incidence_maps/state"` to `maps-state` so the
+retry writes to the same mounted output directory.
 
 ## How to run a small test (single state)
 
