@@ -6,12 +6,13 @@ on:
   pull_request:
     branches: [ master ]
     paths:
-      - ".github/workflows/run-r-script.yml"
+      - ".github/workflows/run-r-script.yaml"
       - ".makim.yaml"
       - "conda/base.yaml"
       - "config/**"
       - "main/**"
       - "scripts/**"
+      - "tests/test_load_alertas.py"
       - "**/*.R"
   workflow_dispatch:
 
@@ -45,6 +46,13 @@ jobs:
           conda list
           R --version
           python --version
+
+      - name: Test SQL loader
+        run: |
+          command -v initdb
+          command -v pg_ctl
+          command -v psql
+          python -m unittest discover -s tests -p 'test_load_alertas.py' -v
 
       - name: Install extra R dependencies via Makim
         env:

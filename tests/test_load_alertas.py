@@ -1,7 +1,9 @@
-"""Offline integration tests for the Makim SQL loading stage."""
+"""Tests for the Makim SQL loading stage using fake and local PostgreSQL."""
 
+import getpass
 import os
 import shutil
+import socket as socket_module
 import subprocess
 import tempfile
 import unittest
@@ -44,12 +46,12 @@ class LoadAlertasTests(unittest.TestCase):
         })
 
     def sql(self, table: str, constraint: str, week: str = "202520",
-            municipality: str = "5300108") -> str:
+            municipality: str = "5300108", cases: int = 1) -> str:
         return (
             f'INSERT INTO "Municipio"."{table}" '
             '("SE","data_iniSE",casos_est,casos_est_min,casos_est_max,'
             'casos,casprov,municipio_geocodigo) '
-            f"VALUES ({week},'2025-05-11',1,1,1,1,1,{municipality}) \n"
+            f"VALUES ({week},'2025-05-11',1,1,1,{cases},1,{municipality}) \n"
             f" ON CONFLICT ON CONSTRAINT {constraint}  \n"
             ' DO UPDATE SET "SE"=excluded."SE",'
             '"data_iniSE"=excluded."data_iniSE",'
@@ -152,6 +154,87 @@ class LoadAlertasTests(unittest.TestCase):
         second = self.run_load()
         self.assertEqual(second.returncode, 0, second.stdout + second.stderr)
         self.assertEqual(args, self.psql_log.read_text().splitlines())
+
+    def test_postgres_load_and_rollback(self) -> None:
+        initdb = shutil.which("initdb")
+        pg_ctl = shutil.which("pg_ctl")
+        psql = shutil.which("psql", path=os.environ["PATH"])
+        self.assertTrue(all((initdb, pg_ctl, psql)),
+                        "PostgreSQL server and client binaries are required")
+
+        with socket_module.socket() as port_socket:
+            port_socket.bind(("127.0.0.1", 0))
+            port = port_socket.getsockname()[1]
+
+        data = self.root / "pgdata"
+        socket = self.root / "socket"
+        socket.mkdir()
+        initialized = subprocess.run(
+            [initdb, "-D", str(data), "-A", "trust", "--no-instructions"],
+            check=False, capture_output=True, text=True,
+        )
+        self.assertEqual(initialized.returncode, 0,
+                         initialized.stdout + initialized.stderr)
+        started = subprocess.run(
+            [pg_ctl, "-D", str(data), "-l", str(self.root / "postgres.log"), "-o",
+             f"-c unix_socket_directories={socket} -c listen_addresses= -p {port}",
+             "-w", "start"],
+            check=False, capture_output=True, text=True,
+        )
+        self.assertEqual(started.returncode, 0, started.stdout + started.stderr)
+        self.addCleanup(lambda: subprocess.run(
+            [pg_ctl, "-D", str(data), "-m", "immediate", "-w", "stop"],
+            check=True, capture_output=True, text=True,
+        ))
+        self.env.update({
+            "PATH": os.environ["PATH"],
+            "ALERTA_DB_HOST": str(socket),
+            "ALERTA_DB_PORT": str(port),
+            "ALERTA_DB_NAME": "postgres",
+            "ALERTA_DB_USER": getpass.getuser(),
+        })
+
+        def query(sql: str) -> str:
+            result = subprocess.run(
+                [psql, "-X", "-v", "ON_ERROR_STOP=1", "-At", "-h", str(socket),
+                 "-p", str(port), "-U", getpass.getuser(), "-d", "postgres",
+                 "-c", sql],
+                check=False, capture_output=True, text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            return result.stdout.strip()
+
+        query('CREATE SCHEMA "Municipio"')
+        for table, constraint in (
+            ("Historico_alerta", "alertas_unicos"),
+            ("Historico_alerta_chik", "alertas_unicos_chik"),
+        ):
+            query(
+                f'CREATE TABLE "Municipio"."{table}" ('
+                '"SE" integer, "data_iniSE" date, casos_est integer, '
+                'casos_est_min integer, casos_est_max integer, '
+                'casos integer CHECK (casos >= 0), casprov integer, '
+                f'municipio_geocodigo integer, CONSTRAINT {constraint} '
+                'UNIQUE ("SE", municipio_geocodigo))'
+            )
+
+        self.write_sql()
+        result = self.run_load()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        for table in ("Historico_alerta", "Historico_alerta_chik"):
+            self.assertEqual(query(f'SELECT count(*) FROM "Municipio"."{table}"'), "1")
+
+        (self.root / "sql" / "output_dengue.sql").write_text(
+            self.sql("Historico_alerta", "alertas_unicos", municipality="5300109")
+        )
+        (self.root / "sql" / "output_chik.sql").write_text(
+            self.sql("Historico_alerta_chik", "alertas_unicos_chik",
+                     municipality="5300110", cases=-1)
+        )
+        result = self.run_load()
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        for table in ("Historico_alerta", "Historico_alerta_chik"):
+            self.assertEqual(query(f'SELECT count(*) FROM "Municipio"."{table}"'), "1")
 
     def test_refresh_load_reuses_stage_with_nested_env_override(self) -> None:
         self.write_sql()
